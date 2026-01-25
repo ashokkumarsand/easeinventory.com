@@ -48,7 +48,7 @@ const Testimonials: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
             >
-              <Card className="modern-card p-6" radius="3xl">
+              <Card className="modern-card p-6" radius="lg">
                 <CardBody className="p-8">
                   <div className="flex gap-1 mb-8">
                     {[1, 2, 3, 4, 5].map(i => <span key={i} className="text-yellow-500 text-xl font-bold">★</span>)}

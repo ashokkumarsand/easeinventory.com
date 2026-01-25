@@ -34,7 +34,7 @@
   }
 
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)] min-h-screen transition-colors duration-300;
+    @apply bg-[var(--background)] text-[var(--foreground)] min-h-screen transition-colors duration-300 overflow-x-hidden;
   }
 }
 

@@ -50,31 +50,31 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6 lg:p-12">
+    <div className="min-h-screen bg-cream dark:bg-dark-bg flex items-center justify-center p-4 md:p-12 relative overflow-hidden">
       {/* Background Decor */}
-      <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden">
-         <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
-         <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px]" />
+      <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+         <div className="absolute top-[-10%] left-[-5%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+         <div className="absolute bottom-[-10%] right-[-5%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-secondary/5 rounded-full blur-[100px]" />
       </div>
 
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         
         {/* Left: Branding & Info */}
         <div className="hidden lg:block space-y-12">
            <Link href="/" className="inline-flex items-center gap-4 active:scale-95 transition-transform">
              <Logo size={56} />
-             <span className="text-3xl font-black tracking-tight">
+             <span className="text-3xl font-black tracking-tight text-dark dark:text-white">
                Ease<span className="text-primary italic">Inventory</span>
              </span>
            </Link>
 
            <div className="space-y-8">
-              <h1 className="text-6xl font-black leading-[1.1] tracking-tight">
+              <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-dark dark:text-white">
                 Scale your <br />
                 <span className="text-primary italic">Business</span> with <br />
                 confidence.
               </h1>
-              <p className="text-xl text-foreground/50 max-w-md leading-relaxed">
+              <p className="text-lg lg:text-xl text-dark/50 dark:text-white/50 max-w-md leading-relaxed">
                 Join thousands of businesses across India who trust EaseInventory for their daily operations.
               </p>
            </div>
@@ -86,9 +86,9 @@ export default function RegisterPage() {
                 { label: 'Live Support', icon: '🎧' },
                 { label: 'GST Ready', icon: '🇮🇳' },
               ].map(item => (
-                <div key={item.label} className="flex items-center gap-3 p-4 rounded-3xl bg-foreground/5 border border-foreground/5">
+                <div key={item.label} className="flex items-center gap-3 p-4 rounded-3xl bg-dark/5 dark:bg-white/5 border border-dark/5 dark:border-white/5">
                    <span className="text-2xl">{item.icon}</span>
-                   <span className="text-sm font-bold opacity-70">{item.label}</span>
+                   <span className="text-sm font-bold opacity-70 text-dark dark:text-white">{item.label}</span>
                 </div>
               ))}
            </div>
@@ -96,27 +96,27 @@ export default function RegisterPage() {
 
         {/* Right: Actual Form */}
         <div className="relative">
-          <Card className="modern-card p-4 lg:p-8" radius="3xl">
-            <CardBody className="space-y-8">
+          <Card className="modern-card p-4 lg:p-8" radius="lg">
+            <CardBody className="space-y-6 md:space-y-8">
               
               <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                 <div className="lg:hidden mb-10">
                    <Link href="/" className="flex items-center gap-3">
                      <Logo size={40} />
-                     <span className="text-xl font-bold tracking-tight">Ease<span className="text-primary italic">Inventory</span></span>
+                     <span className="text-xl font-bold tracking-tight text-dark dark:text-white">Ease<span className="text-primary italic">Inventory</span></span>
                    </Link>
                 </div>
-                <h2 className="text-3xl font-black tracking-tight mb-2">Create Account</h2>
-                <p className="text-foreground/40 font-medium">Step {step} of 2</p>
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-2 text-dark dark:text-white">Create Account</h2>
+                <p className="text-dark/40 dark:text-white/40 font-medium text-sm">Step {step} of 2</p>
               </div>
 
-              {/* Progress Line */}
+              {/* Progress Tracker */}
               <div className="flex gap-2">
-                 <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-foreground/5'}`} />
-                 <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-foreground/5'}`} />
+                 <div className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-primary' : 'bg-dark/5 dark:bg-white/5'}`} />
+                 <div className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= 2 ? 'bg-primary' : 'bg-dark/5 dark:bg-white/5'}`} />
               </div>
 
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+              <form onSubmit={(e) => e.preventDefault()} className="space-y-5 md:space-y-6">
                 <AnimatePresence mode="wait">
                   {step === 1 ? (
                     <motion.div
@@ -124,7 +124,7 @@ export default function RegisterPage() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
-                      className="space-y-6"
+                      className="space-y-5 md:space-y-6"
                     >
                       <Input
                         label="Business Name"
@@ -133,43 +133,52 @@ export default function RegisterPage() {
                         value={formData.businessName}
                         onChange={(e) => setFormData({...formData, businessName: e.target.value})}
                         size="lg"
-                        radius="2xl"
-                        classNames={{ inputWrapper: "bg-foreground/5 h-14" }}
+                        radius="lg"
+                        classNames={{
+                          label: "font-bold text-dark/80 dark:text-white/90 pb-2",
+                          inputWrapper: "bg-black/5 dark:bg-white/5 h-12 md:h-14 mt-1",
+                          input: "text-base"
+                        }}
                       />
                       
-                      <Input
-                        label="Choose Subdomain"
-                        placeholder="yourshop"
-                        labelPlacement="outside"
-                        value={formData.slug}
-                        onValueChange={(val) => handleSlugChange({ target: { value: val } } as any)}
-                        size="lg"
-                        radius="2xl"
-                        classNames={{ inputWrapper: "bg-foreground/5 h-14 pr-4" }}
-                        endContent={<span className="text-xs font-bold opacity-30">.ease.in</span>}
-                        description={
-                          formData.slug && (
-                            <div className="mt-2 pl-1">
-                              {isCheckingSlug ? (
-                                <span className="text-[10px] uppercase font-bold text-primary animate-pulse">Checking...</span>
-                              ) : isSlugAvailable ? (
-                                <span className="text-[10px] uppercase font-bold text-green-500">Available</span>
-                              ) : <span className="text-[10px] uppercase font-bold text-red-500">Taken</span>}
-                            </div>
-                          )
-                        }
-                      />
+                      <div className="space-y-1">
+                        <label className="text-sm font-bold text-dark/80 dark:text-white/90">Choose Subdomain</label>
+                        <Input
+                          placeholder="yourshop"
+                          value={formData.slug}
+                          onValueChange={(val) => handleSlugChange({ target: { value: val } } as any)}
+                          size="lg"
+                          radius="lg"
+                          classNames={{
+                            inputWrapper: "bg-black/5 dark:bg-white/5 h-12 md:h-14 mt-1 pr-4",
+                            input: "text-base"
+                          }}
+                          endContent={<span className="text-xs font-bold opacity-30 text-dark dark:text-white whitespace-nowrap">.easeinventory.com</span>}
+                        />
+                        {formData.slug && (
+                          <div className="mt-2 pl-1">
+                            {isCheckingSlug ? (
+                              <span className="text-[10px] uppercase font-bold text-primary animate-pulse">Checking Availability...</span>
+                            ) : isSlugAvailable ? (
+                              <span className="text-[10px] uppercase font-bold text-green-500">Subdomain Available</span>
+                            ) : <span className="text-[10px] uppercase font-bold text-red-500">Subdomain Taken</span>}
+                          </div>
+                        )}
+                      </div>
 
                       <Select
                         label="Industry"
-                        placeholder="Retail Store"
+                        placeholder="Select your industry"
                         labelPlacement="outside"
                         size="lg"
-                        radius="2xl"
-                        classNames={{ trigger: "bg-foreground/5 h-14" }}
+                        radius="lg"
+                        classNames={{
+                          label: "font-bold text-dark/80 dark:text-white/90 pb-2",
+                          trigger: "bg-black/5 dark:bg-white/5 h-12 md:h-14 mt-1"
+                        }}
                       >
                         {businessTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
+                          <SelectItem key={type.value} className="text-dark dark:text-white">
                             {type.label}
                           </SelectItem>
                         ))}
@@ -178,12 +187,12 @@ export default function RegisterPage() {
                       <Button 
                         color="primary" 
                         size="lg"
-                        className="w-full font-black h-14 shadow-xl shadow-primary/20 mt-4" 
+                        className="w-full font-black h-12 md:h-14 shadow-xl shadow-primary/20 mt-4" 
                         radius="full"
                         onClick={() => setStep(2)}
-                        disabled={!formData.businessName || !isSlugAvailable}
+                        isDisabled={!formData.businessName || !isSlugAvailable || isCheckingSlug}
                       >
-                        Continue
+                        Continue to Next Step
                       </Button>
                     </motion.div>
                   ) : (
@@ -192,16 +201,22 @@ export default function RegisterPage() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
-                      className="space-y-6"
+                      className="space-y-5 md:space-y-6"
                     >
                       <Input
                         type="email"
                         label="Email"
                         placeholder="you@email.com"
                         labelPlacement="outside"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
                         size="lg"
-                        radius="2xl"
-                        classNames={{ inputWrapper: "bg-foreground/5 h-14" }}
+                        radius="lg"
+                        classNames={{
+                          label: "font-bold text-dark/80 dark:text-white/90 pb-2",
+                          inputWrapper: "bg-black/5 dark:bg-white/5 h-12 md:h-14 mt-1",
+                          input: "text-base"
+                        }}
                       />
 
                       <Input
@@ -209,19 +224,30 @@ export default function RegisterPage() {
                         label="Password"
                         placeholder="••••••••"
                         labelPlacement="outside"
+                        value={formData.password}
+                        onChange={(e) => setFormData({...formData, password: e.target.value})}
                         size="lg"
-                        radius="2xl"
-                        classNames={{ inputWrapper: "bg-foreground/5 h-14" }}
+                        radius="lg"
+                        classNames={{
+                          label: "font-bold text-dark/80 dark:text-white/90 pb-2",
+                          inputWrapper: "bg-black/5 dark:bg-white/5 h-12 md:h-14 mt-1",
+                          input: "text-base"
+                        }}
                       />
 
-                      <Checkbox defaultSelected size="sm" classNames={{ label: "text-xs font-medium opacity-60" }}>
-                        I agree to the <span className="text-primary">Terms & Privacy</span>.
+                      <Checkbox 
+                        isSelected={formData.agreeToTerms}
+                        onValueChange={(val) => setFormData({...formData, agreeToTerms: val})}
+                        size="sm" 
+                        classNames={{ label: "text-xs font-medium opacity-60" }}
+                      >
+                        I agree to the <span className="text-primary font-bold">Terms & Privacy</span>.
                       </Checkbox>
 
-                      <div className="flex gap-4">
+                      <div className="flex gap-4 pt-2">
                         <Button 
                           variant="light"
-                          className="font-bold h-14"
+                          className="font-bold h-12 md:h-14 text-dark dark:text-white"
                           onClick={() => setStep(1)}
                         >
                           Back
@@ -229,10 +255,11 @@ export default function RegisterPage() {
                         <Button 
                           color="primary" 
                           size="lg"
-                          className="flex-1 font-black h-14 shadow-xl shadow-primary/20" 
+                          className="flex-1 font-black h-12 md:h-14 shadow-xl shadow-primary/20" 
                           radius="full"
+                          isDisabled={!formData.email || !formData.password || !formData.agreeToTerms}
                         >
-                          Finish Setup
+                          Complete Registration
                         </Button>
                       </div>
                     </motion.div>
@@ -245,7 +272,7 @@ export default function RegisterPage() {
               <p className="text-center text-sm font-medium opacity-40">
                 Member already?{' '}
                 <Link href="/login" className="text-primary font-bold hover:underline">
-                  Log in
+                  Log in here
                 </Link>
               </p>
             </CardBody>

@@ -44,9 +44,9 @@ const Navbar: React.FC = () => {
     <HeroNavbar
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className={`fixed top-0 transition-all duration-500 border-none z-[1000] ${
+      className={`fixed top-0 transition-all duration-500 border-none z-[999] ${
         isScrolled
-          ? 'bg-background/80 backdrop-blur-md shadow-sm h-16'
+          ? 'bg-background/80 backdrop-blur-xl shadow-sm h-16'
           : 'bg-transparent h-24'
       }`}
       maxWidth="xl"

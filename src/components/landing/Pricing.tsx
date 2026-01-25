@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, CardBody, Chip, Switch } from '@heroui/react';
+import { Button, Card, CardBody, Chip, Tab, Tabs } from '@heroui/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -26,7 +26,7 @@ const plans = [
     description: 'The standard for growth',
     monthlyPrice: 1499,
     yearlyPrice: 1199,
-    period: '/month',
+    period: '/mo',
     features: [
       'Unlimited items',
       '10 staff users',
@@ -44,7 +44,7 @@ const plans = [
     description: 'For chains & distributors',
     monthlyPrice: 4999,
     yearlyPrice: 3999,
-    period: '/month',
+    period: '/mo',
     features: [
       'Multiple locations',
       'API access',
@@ -59,70 +59,100 @@ const plans = [
 ];
 
 const Pricing: React.FC = () => {
-  const [isYearly, setIsYearly] = useState(false);
+  const [billingCycle, setBillingCycle] = useState('monthly');
 
   return (
-    <section id="pricing" className="section-padding bg-background relative overflow-hidden">
+    <section id="pricing" className="section-padding bg-cream dark:bg-dark-bg relative overflow-hidden">
       <div className="container-custom relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-24">
-           <Chip variant="flat" color="secondary" className="mb-6 font-bold uppercase text-xs">
+           <Chip 
+            variant="flat" 
+            color="secondary" 
+            className="mb-6 font-bold uppercase text-[10px] tracking-widest px-4"
+           >
               Pricing Options
            </Chip>
-           <h2 className="heading-lg mb-8">Invest in your <span className="text-secondary italic">Efficiency.</span></h2>
+           <h2 className="heading-lg mb-8 text-dark dark:text-white">
+             Invest in your <span className="text-secondary italic">Efficiency.</span>
+           </h2>
            
-           <div className="flex items-center justify-center gap-4 mt-12 bg-foreground/5 p-3 rounded-full w-fit mx-auto border border-foreground/5">
-              <span className={`text-sm font-bold ${!isYearly ? 'text-primary' : 'opacity-40'}`}>Monthly</span>
-              <Switch
-                isSelected={isYearly}
-                onValueChange={setIsYearly}
-                color="primary"
-                size="sm"
-              />
-              <span className={`text-sm font-bold ${isYearly ? 'text-primary' : 'opacity-40'}`}>Yearly</span>
-              {isYearly && <Chip size="sm" color="success" className="text-[10px] font-bold text-white ml-2">Save 20%</Chip>}
+           <div className="flex flex-col items-center gap-4 mt-8">
+              <Tabs 
+                aria-label="Billing Cycle" 
+                color="primary" 
+                variant="solid"
+                radius="full"
+                size="lg"
+                selectedKey={billingCycle}
+                onSelectionChange={(key) => setBillingCycle(key.toString())}
+                classNames={{
+                  tabList: "bg-dark/5 dark:bg-white/5 p-1 gap-0 border border-dark/5 dark:border-white/5",
+                  cursor: "shadow-md bg-white dark:bg-dark-card",
+                  tab: "h-10 md:h-12 px-8",
+                  tabContent: "font-bold text-sm md:text-base group-data-[selected=true]:text-primary"
+                }}
+              >
+                <Tab key="monthly" title="Monthly" />
+                <Tab 
+                  key="yearly" 
+                  title={
+                    <div className="flex items-center gap-2">
+                       <span>Yearly</span>
+                       <Chip size="sm" color="success" className="text-[10px] font-black h-5 text-white">Save 20%</Chip>
+                    </div>
+                  } 
+                />
+              </Tabs>
            </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 items-end max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto px-4 md:px-0">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className={plan.popular ? 'z-10' : ''}
+              className={`flex ${plan.popular ? 'z-10' : ''}`}
             >
               <Card 
-                className={`modern-card p-4 h-fit ${
+                className={`modern-card flex-1 p-2 md:p-4 border-none shadow-xl transition-all duration-500 overflow-visible ${
                   plan.popular 
-                    ? 'border-primary ring-4 ring-primary/10 shadow-2xl lg:scale-110 bg-white dark:bg-dark-card' 
-                    : 'opacity-80 hover:opacity-100 transition-opacity'
+                    ? 'ring-2 ring-primary bg-white dark:bg-dark-card lg:scale-105 shadow-primary/10' 
+                    : 'bg-white/50 dark:bg-dark-card/50 backdrop-blur-sm'
                 }`}
                 radius="lg"
               >
-                <CardBody className="p-8">
+                <CardBody className="p-6 md:p-10 flex flex-col h-full">
                   {plan.popular && (
-                    <Chip color="primary" size="sm" className="mb-6 font-bold uppercase text-[10px] tracking-widest">
-                       Recommended
-                    </Chip>
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                      <Chip color="primary" size="sm" className="font-black uppercase text-[10px] tracking-widest px-4 shadow-lg">
+                        Recommended
+                      </Chip>
+                    </div>
                   )}
-                  <div className="mb-10">
-                    <h3 className="text-xl font-black mb-1">{plan.name}</h3>
-                    <p className="text-xs font-medium opacity-40">{plan.description}</p>
+
+                  <div className="mb-10 text-center sm:text-left">
+                    <h3 className="text-xl md:text-2xl font-black mb-2 text-dark dark:text-white uppercase tracking-tight">{plan.name}</h3>
+                    <p className="text-xs md:text-sm font-bold opacity-40 text-dark dark:text-white leading-relaxed">{plan.description}</p>
                   </div>
 
-                  <div className="flex items-baseline gap-2 mb-10">
-                    <span className="text-5xl font-black">₹{isYearly ? plan.yearlyPrice : plan.monthlyPrice}</span>
-                    <span className="text-sm font-bold opacity-30">{plan.period}</span>
+                  <div className="flex items-baseline justify-center sm:justify-start gap-1 mb-10 overflow-hidden">
+                    <span className="text-3xl md:text-5xl font-black text-dark dark:text-white">
+                      ₹{billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}
+                    </span>
+                    <span className="text-sm md:text-base font-bold opacity-30 text-dark dark:text-white whitespace-nowrap">
+                      {plan.period}
+                    </span>
                   </div>
 
-                  <ul className="space-y-4 mb-10">
+                  <ul className="space-y-4 mb-10 flex-1">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3 text-sm font-medium opacity-70">
-                        <span className="text-primary">✦</span>
-                        {feature}
+                      <li key={feature} className="flex items-start gap-4 text-sm font-bold opacity-70 text-dark dark:text-white">
+                        <span className="text-primary mt-0.5 shrink-0">✦</span>
+                        <span className="leading-snug">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -132,8 +162,8 @@ const Pricing: React.FC = () => {
                     href="/register"
                     color={plan.popular ? 'primary' : 'default'}
                     variant={plan.popular ? 'solid' : 'bordered'}
-                    className={`w-full font-black h-14 shadow-lg ${
-                      plan.popular ? 'shadow-primary/30' : 'border-foreground/10'
+                    className={`w-full font-black h-12 md:h-14 shadow-lg text-lg ${
+                      plan.popular ? 'shadow-primary/30' : 'border-dark/10 dark:border-white/10 dark:text-white'
                     }`}
                     radius="full"
                     size="lg"
