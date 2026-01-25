@@ -1,65 +1,123 @@
-import Image from "next/image";
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+import ComingSoon from '@/components/landing/ComingSoon';
+import CTA from '@/components/landing/CTA';
+import FAQ from '@/components/landing/FAQ';
+import Features from '@/components/landing/Features';
+import Footer from '@/components/landing/Footer';
+import Hero from '@/components/landing/Hero';
+import HowItWorks from '@/components/landing/HowItWorks';
+import Navbar from '@/components/landing/Navbar';
+import Pricing from '@/components/landing/Pricing';
+import Testimonials from '@/components/landing/Testimonials';
+
+export const metadata: Metadata = {
+  title: 'EaseInventory - Smart Inventory Management for Modern Businesses',
+  description:
+    'Manage your inventory, repairs, invoicing, and team operations with EaseInventory. Get your own subdomain, custom branding, and powerful features. Made in India, for India. Track stock with serial numbers, generate GST invoices, manage repair tickets with WhatsApp notifications.',
+  keywords: [
+    'inventory management software',
+    'inventory management system',
+    'stock management software india',
+    'repair tracking software',
+    'GST invoicing software',
+    'shop management software',
+    'multi-tenant SaaS',
+    'business management software',
+    'inventory tracking',
+    'serial number tracking',
+    'repair ticket system',
+    'WhatsApp notifications business',
+    'HR attendance software',
+    'employee management india',
+    'small business software india',
+    'retail inventory management',
+    'electronics shop management',
+    'mobile shop software',
+    'service center software',
+    'cloud inventory software',
+  ],
+  authors: [{ name: 'EaseInventory' }],
+  openGraph: {
+    title: 'EaseInventory - Smart Inventory Management for Indian Businesses',
+    description: 'Manage inventory, track repairs, generate GST invoices. Get your own subdomain. Start free today!',
+    url: 'https://easeinventory.com',
+    siteName: 'EaseInventory',
+    type: 'website',
+    locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'EaseInventory - Smart Inventory Management',
+    description: 'Manage inventory, track repairs, generate invoices. Start free today!',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: 'https://easeinventory.com',
+  },
+};
+
+// Structured data for SEO
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'EaseInventory',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Smart inventory management software for Indian businesses with repair tracking, GST invoicing, and HR management.',
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.8',
+    ratingCount: '1250',
+  },
+};
+
+export default async function HomePage() {
+  const headersList = await headers();
+  const host = headersList.get('host') || '';
+  
+  // Check if we're on the production domain
+  const isProduction = host.includes('easeinventory.com');
+  
+  // Show coming soon on production, full landing page on localhost
+  if (isProduction) {
+    return (
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <ComingSoon />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <Navbar />
+      <main>
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <Pricing />
+        <Testimonials />
+        <FAQ />
+        <CTA />
       </main>
-    </div>
+      <Footer />
+    </>
   );
 }

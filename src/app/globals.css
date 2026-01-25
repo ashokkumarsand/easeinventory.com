@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: #6A3BF6;
+  --color-primary-dark: #5429E0;
+  --color-primary-light: #8B5CF6;
+
+  --color-secondary: #00D9A5;
+  --color-secondary-dark: #00B88A;
+
+  --color-beige: #EDE8D0;
+  --color-beige-light: #F5F2E8;
+  --color-beige-dark: #D4CDB5;
+  --color-cream: #FAF8F3;
+  --color-warm-white: #FFFCF5;
+
+  --color-dark-bg: #0A0B0F;
+  --color-dark-card: #12131A;
+  --color-dark-border: rgba(255, 255, 255, 0.08);
+
+  --font-sans: var(--font-montserrat), system-ui, -apple-system, sans-serif;
+  --z-navbar: 1000;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #FAF8F3;
+    --foreground: #1A1A1A;
+  }
+
+  .dark {
+    --background: #0A0B0F;
+    --foreground: #FAF8F3;
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--foreground)] min-h-screen transition-colors duration-300;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6A3BF6;
+  border-radius: 4px;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass {
+  background: rgba(18, 19, 26, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Layout Utilities */
+.section-padding {
+  @apply py-20 lg:py-32;
+}
+
+.container-custom {
+  @apply max-w-6xl mx-auto px-6 lg:px-8;
+}
+
+/* Typography Symmetry */
+.heading-xl {
+  @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1];
+}
+
+.heading-lg {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.2];
+}
+
+.paragraph-lg {
+  @apply text-base md:text-lg text-black/60 dark:text-white/60 leading-relaxed;
+}
+
+/* Modern Card Symmetry */
+.modern-card {
+  @apply rounded-3xl border border-black/5 dark:border-white/5 bg-white dark:bg-dark-card shadow-sm hover:shadow-xl transition-all duration-500;
+}
+
+/* Banner Carousel Symmetry */
+.carousel-slide {
+  @apply w-full flex-shrink-0 transition-all duration-700 ease-in-out;
+}
+
+/* Layout Symmetry Helper */
+.layout-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+}
+
+/* Animation Keys */
+@keyframes drift {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(10px, -10px);
+  }
+}
+
+.animate-drift {
+  animation: drift 10s ease-in-out infinite;
 }

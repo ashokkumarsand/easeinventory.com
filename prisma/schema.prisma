@@ -1,0 +1,634 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== MULTI-TENANT MODELS ====================
+
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique // subdomain slug
+  customDomain String? @unique @map("custom_domain")
+  
+  // Branding
+  logo        String?
+  favicon     String?
+  primaryColor String? @default("#6A3BF6") @map("primary_color")
+  
+  // Business Info
+  businessType BusinessType @default(SHOP) @map("business_type")
+  gstNumber   String? @map("gst_number")
+  address     String?
+  city        String?
+  state       String?
+  pincode     String?
+  country     String  @default("India")
+  phone       String?
+  email       String?
+  website     String?
+  
+  // Subscription
+  plan        PlanType @default(FREE)
+  planExpiresAt DateTime? @map("plan_expires_at")
+  
+  // Settings
+  settings    Json?
+  isActive    Boolean @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  users       User[]
+  products    Product[]
+  categories  Category[]
+  suppliers   Supplier[]
+  customers   Customer[]
+  invoices    Invoice[]
+  repairTickets RepairTicket[]
+  stockMovements StockMovement[]
+  employees   Employee[]
+  attendances Attendance[]
+  
+  @@index([slug])
+  @@index([customDomain])
+  @@map("tenants")
+}
+
+enum BusinessType {
+  SHOP
+  COMPANY
+  SERVICE_CENTER
+  WAREHOUSE
+  DISTRIBUTOR
+}
+
+enum PlanType {
+  FREE
+  STARTER
+  BUSINESS
+  ENTERPRISE
+}
+
+// ==================== USER & AUTH MODELS ====================
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  name        String
+  phone       String?
+  avatar      String?
+  
+  // Multi-tenant
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Role & Permissions
+  role        UserRole @default(STAFF)
+  permissions Json?
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  lastLoginAt DateTime? @map("last_login_at")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  createdInvoices Invoice[] @relation("CreatedBy")
+  assignedTickets RepairTicket[] @relation("AssignedTo")
+  stockMovements  StockMovement[]
+  
+  @@unique([email, tenantId])
+  @@index([tenantId])
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  OWNER
+  MANAGER
+  ACCOUNTANT
+  TECHNICIAN
+  SALES_STAFF
+  VIEWER
+  STAFF
+}
+
+// ==================== INVENTORY MODELS ====================
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  parentId    String?  @map("parent_id")
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  products    Product[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@unique([slug, tenantId])
+  @@index([tenantId])
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  
+  // Identifiers
+  sku         String?  // Stock Keeping Unit
+  modelNumber String?  @map("model_number")
+  serialNumber String? @unique @map("serial_number")
+  barcode     String?
+  hsnCode     String?  @map("hsn_code") // For GST
+  
+  // Pricing
+  costPrice   Decimal  @map("cost_price") @db.Decimal(12, 2)
+  modalPrice  Decimal  @map("modal_price") @db.Decimal(12, 2) // MRP
+  salePrice   Decimal  @map("sale_price") @db.Decimal(12, 2)
+  discount    Decimal  @default(0) @db.Decimal(5, 2) // Percentage
+  
+  // Stock
+  quantity    Int      @default(0)
+  minStock    Int      @default(0) @map("min_stock") // Reorder level
+  maxStock    Int?     @map("max_stock")
+  unit        String   @default("pcs") // pieces, kg, etc.
+  
+  // Media
+  images      String[] // Array of image URLs
+  
+  // Tax
+  gstRate     Decimal  @default(18) @map("gst_rate") @db.Decimal(5, 2)
+  
+  // Categorization
+  categoryId  String?  @map("category_id")
+  category    Category? @relation(fields: [categoryId], references: [id])
+  brand       String?
+  
+  // Supplier
+  supplierId  String?  @map("supplier_id")
+  supplier    Supplier? @relation(fields: [supplierId], references: [id])
+  
+  // Multi-tenant
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  invoiceItems InvoiceItem[]
+  stockMovements StockMovement[]
+  repairTickets RepairTicket[]
+  
+  @@unique([slug, tenantId])
+  @@index([tenantId])
+  @@index([serialNumber])
+  @@index([barcode])
+  @@map("products")
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String
+  contactPerson String? @map("contact_person")
+  email       String?
+  phone       String?
+  whatsapp    String?
+  
+  // Address
+  address     String?
+  city        String?
+  state       String?
+  pincode     String?
+  
+  // Business
+  gstNumber   String?  @map("gst_number")
+  panNumber   String?  @map("pan_number")
+  
+  // Payment
+  bankName    String?  @map("bank_name")
+  accountNumber String? @map("account_number")
+  ifscCode    String?  @map("ifsc_code")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  products    Product[]
+  stockMovements StockMovement[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([tenantId])
+  @@map("suppliers")
+}
+
+model StockMovement {
+  id          String   @id @default(cuid())
+  type        MovementType
+  quantity    Int
+  
+  // Reference
+  productId   String   @map("product_id")
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  // Optional references
+  supplierId  String?  @map("supplier_id")
+  supplier    Supplier? @relation(fields: [supplierId], references: [id])
+  invoiceId   String?  @map("invoice_id")
+  
+  // Details
+  unitPrice   Decimal? @map("unit_price") @db.Decimal(12, 2)
+  totalPrice  Decimal? @map("total_price") @db.Decimal(12, 2)
+  notes       String?
+  
+  // User who made the movement
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id])
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([tenantId])
+  @@index([productId])
+  @@map("stock_movements")
+}
+
+enum MovementType {
+  PURCHASE    // Stock In - Purchase
+  SALE        // Stock Out - Sale
+  RETURN_IN   // Stock In - Customer return
+  RETURN_OUT  // Stock Out - Return to supplier
+  ADJUSTMENT  // Manual adjustment
+  TRANSFER    // Transfer between locations
+  DAMAGE      // Stock Out - Damaged
+  REPAIR_IN   // Stock In - From repair
+  REPAIR_OUT  // Stock Out - For repair
+}
+
+// ==================== CUSTOMER & INVOICE MODELS ====================
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  whatsapp    String?
+  
+  // Address
+  address     String?
+  city        String?
+  state       String?
+  pincode     String?
+  
+  // Business (for B2B)
+  companyName String?  @map("company_name")
+  gstNumber   String?  @map("gst_number")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  invoices    Invoice[]
+  repairTickets RepairTicket[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([tenantId])
+  @@index([phone])
+  @@map("customers")
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  invoiceNumber String  @unique @map("invoice_number")
+  
+  // Customer
+  customerId  String?  @map("customer_id")
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  
+  // Amounts
+  subtotal    Decimal  @db.Decimal(12, 2)
+  discount    Decimal  @default(0) @db.Decimal(12, 2)
+  taxAmount   Decimal  @default(0) @map("tax_amount") @db.Decimal(12, 2)
+  total       Decimal  @db.Decimal(12, 2)
+  
+  // Payment
+  paidAmount  Decimal  @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  paymentMode PaymentMode? @map("payment_mode")
+  paymentStatus PaymentStatus @default(PENDING) @map("payment_status")
+  
+  // Status
+  status      InvoiceStatus @default(DRAFT)
+  
+  // Dates
+  invoiceDate DateTime @default(now()) @map("invoice_date")
+  dueDate     DateTime? @map("due_date")
+  
+  // Notes
+  notes       String?
+  termsAndConditions String? @map("terms_and_conditions")
+  
+  // User who created
+  createdById String   @map("created_by_id")
+  createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  items       InvoiceItem[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([tenantId])
+  @@index([customerId])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  
+  invoiceId   String   @map("invoice_id")
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  productId   String?  @map("product_id")
+  product     Product? @relation(fields: [productId], references: [id])
+  
+  description String
+  quantity    Int
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(12, 2)
+  discount    Decimal  @default(0) @db.Decimal(12, 2)
+  taxRate     Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount   Decimal  @default(0) @map("tax_amount") @db.Decimal(12, 2)
+  total       Decimal  @db.Decimal(12, 2)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("invoice_items")
+}
+
+enum PaymentMode {
+  CASH
+  CARD
+  UPI
+  BANK_TRANSFER
+  CHEQUE
+  CREDIT
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  PAID
+  OVERDUE
+  REFUNDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
+
+// ==================== REPAIR & SERVICE MODELS ====================
+
+model RepairTicket {
+  id          String   @id @default(cuid())
+  ticketNumber String  @unique @map("ticket_number")
+  
+  // Product Info
+  productId   String?  @map("product_id")
+  product     Product? @relation(fields: [productId], references: [id])
+  
+  productName String   @map("product_name")
+  modelNumber String?  @map("model_number")
+  serialNumber String? @map("serial_number")
+  
+  // Customer
+  customerId  String   @map("customer_id")
+  customer    Customer @relation(fields: [customerId], references: [id])
+  
+  // Issue
+  issueDescription String @map("issue_description")
+  images      String[] // Before repair photos
+  
+  // Assignment
+  assignedToId String? @map("assigned_to_id")
+  assignedTo  User?    @relation("AssignedTo", fields: [assignedToId], references: [id])
+  
+  // Status & Priority
+  status      RepairStatus @default(RECEIVED)
+  priority    RepairPriority @default(MEDIUM)
+  
+  // Diagnosis & Repair
+  diagnosis   String?
+  repairNotes String?  @map("repair_notes")
+  partsUsed   Json?    @map("parts_used") // Array of parts with cost
+  
+  // Costs
+  laborCost   Decimal  @default(0) @map("labor_cost") @db.Decimal(12, 2)
+  partsCost   Decimal  @default(0) @map("parts_cost") @db.Decimal(12, 2)
+  totalCost   Decimal  @default(0) @map("total_cost") @db.Decimal(12, 2)
+  
+  // Warranty
+  warrantyPeriod Int?  @map("warranty_period") // in days
+  warrantyExpires DateTime? @map("warranty_expires")
+  
+  // Dates
+  receivedAt  DateTime @default(now()) @map("received_at")
+  diagnosedAt DateTime? @map("diagnosed_at")
+  repairedAt  DateTime? @map("repaired_at")
+  deliveredAt DateTime? @map("delivered_at")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([tenantId])
+  @@index([ticketNumber])
+  @@index([customerId])
+  @@map("repair_tickets")
+}
+
+enum RepairStatus {
+  RECEIVED
+  DIAGNOSED
+  WAITING_APPROVAL
+  WAITING_PARTS
+  IN_REPAIR
+  QUALITY_CHECK
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum RepairPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// ==================== HR & ATTENDANCE MODELS ====================
+
+model Employee {
+  id          String   @id @default(cuid())
+  employeeId  String   @map("employee_id") // Company employee ID
+  name        String
+  email       String?
+  phone       String?
+  
+  // Personal
+  dateOfBirth DateTime? @map("date_of_birth")
+  gender      String?
+  address     String?
+  
+  // Employment
+  designation String?
+  department  String?
+  joinDate    DateTime @map("join_date")
+  exitDate    DateTime? @map("exit_date")
+  
+  // Salary
+  baseSalary  Decimal  @map("base_salary") @db.Decimal(12, 2)
+  
+  // Documents
+  panNumber   String?  @map("pan_number")
+  aadharNumber String? @map("aadhar_number")
+  bankAccount String?  @map("bank_account")
+  ifscCode    String?  @map("ifsc_code")
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  attendances Attendance[]
+  leaves      Leave[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@unique([employeeId, tenantId])
+  @@index([tenantId])
+  @@map("employees")
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  date        DateTime @db.Date
+  
+  employeeId  String   @map("employee_id")
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  checkIn     DateTime? @map("check_in")
+  checkOut    DateTime? @map("check_out")
+  
+  status      AttendanceStatus @default(PRESENT)
+  
+  // Location (optional GPS)
+  checkInLat  Float?   @map("check_in_lat")
+  checkInLng  Float?   @map("check_in_lng")
+  checkOutLat Float?   @map("check_out_lat")
+  checkOutLng Float?   @map("check_out_lng")
+  
+  notes       String?
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@unique([employeeId, date])
+  @@index([tenantId])
+  @@index([date])
+  @@map("attendances")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LATE
+  ON_LEAVE
+  HOLIDAY
+}
+
+model Leave {
+  id          String   @id @default(cuid())
+  
+  employeeId  String   @map("employee_id")
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  leaveType   LeaveType @map("leave_type")
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  
+  reason      String?
+  status      LeaveStatus @default(PENDING)
+  
+  approvedBy  String?  @map("approved_by")
+  approvedAt  DateTime? @map("approved_at")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@map("leaves")
+}
+
+enum LeaveType {
+  CASUAL
+  SICK
+  EARNED
+  UNPAID
+  MATERNITY
+  PATERNITY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+// ==================== HOLIDAY MODEL ====================
+
+model Holiday {
+  id          String   @id @default(cuid())
+  name        String
+  date        DateTime @db.Date
+  isOptional  Boolean  @default(false) @map("is_optional")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@unique([date])
+  @@map("holidays")
+}
