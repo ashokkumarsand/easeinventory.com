@@ -26,12 +26,19 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate sending to enquiry@easeinventory.com
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error('Submission failed');
+
       setIsSent(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
       console.error(error);
+      alert('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
