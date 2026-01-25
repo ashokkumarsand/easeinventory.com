@@ -33,10 +33,10 @@ const Testimonials: React.FC = () => {
     <section id="testimonials" className="section-padding bg-background/50 relative overflow-hidden">
       <div className="container-custom relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <Chip variant="flat" color="primary" className="mb-6 font-bold uppercase text-xs">
-             Wall of Love
+          <Chip variant="flat" color="primary" className="mb-6 font-bold uppercase text-[10px] tracking-widest px-4">
+             Success Chronicles
           </Chip>
-          <h2 className="heading-lg mb-8">Trusted by <span className="text-primary italic">Professionals.</span></h2>
+          <h2 className="heading-lg mb-8 text-foreground">Voices of <span className="text-primary italic">Market Leaders.</span></h2>
         </div>
 
         <div className="layout-grid">

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 
 import ComingSoon from '@/components/landing/ComingSoon';
+import ContactForm from '@/components/landing/ContactForm';
 import CTA from '@/components/landing/CTA';
 import FAQ from '@/components/landing/FAQ';
 import Features from '@/components/landing/Features';
@@ -114,6 +115,7 @@ export default async function HomePage() {
         <HowItWorks />
         <Pricing />
         <Testimonials />
+        <ContactForm />
         <FAQ />
         <CTA />
       </main>

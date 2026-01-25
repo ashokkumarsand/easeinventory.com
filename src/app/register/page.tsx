@@ -235,14 +235,17 @@ export default function RegisterPage() {
                         }}
                       />
 
-                      <Checkbox 
-                        isSelected={formData.agreeToTerms}
-                        onValueChange={(val) => setFormData({...formData, agreeToTerms: val})}
-                        size="sm" 
-                        classNames={{ label: "text-xs font-medium opacity-60" }}
-                      >
-                        I agree to the <span className="text-primary font-bold">Terms & Privacy</span>.
-                      </Checkbox>
+                        <Checkbox 
+                          isSelected={formData.agreeToTerms}
+                          onValueChange={(val) => setFormData({...formData, agreeToTerms: val})}
+                          color="primary"
+                          size="md"
+                          classNames={{ 
+                            label: "text-sm font-medium opacity-70 select-none",
+                          }}
+                        >
+                          I agree to the <span className="text-primary font-bold">Terms & Privacy</span>
+                        </Checkbox>
 
                       <div className="flex gap-4 pt-2">
                         <Button 

@@ -91,10 +91,13 @@ export default function LoginPage() {
                 </div>
 
                 <Checkbox 
-                  size="sm" 
                   isSelected={formData.rememberMe}
                   onValueChange={(val) => setFormData({...formData, rememberMe: val})}
-                  classNames={{ label: "text-xs font-medium opacity-60" }}
+                  color="primary"
+                  size="md"
+                  classNames={{ 
+                    label: "text-sm font-medium opacity-70 select-none",
+                  }}
                 >
                   Remember session
                 </Checkbox>

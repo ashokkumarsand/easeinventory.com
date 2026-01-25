@@ -7,8 +7,8 @@ import React, { useState } from 'react';
 
 const plans = [
   {
-    name: 'Free',
-    description: 'Perfect for local small shops',
+    name: 'Starter Accelerator',
+    description: 'Perfect for local shops starting their digital journey',
     monthlyPrice: 0,
     yearlyPrice: 0,
     period: 'forever',
@@ -18,12 +18,12 @@ const plans = [
       'Basic invoicing',
       'Community support',
     ],
-    cta: 'Start Now',
+    cta: 'Start Accelerating',
     popular: false,
   },
   {
-    name: 'Business',
-    description: 'The standard for growth',
+    name: 'Business Catalyst',
+    description: 'The definitive solution for scaling franchises',
     monthlyPrice: 1499,
     yearlyPrice: 1199,
     period: '/mo',
@@ -36,12 +36,12 @@ const plans = [
       'Custom subdomain',
       'Priority support',
     ],
-    cta: 'Try Business',
+    cta: 'Ignite Growth',
     popular: true,
   },
   {
-    name: 'Enterprise',
-    description: 'For chains & distributors',
+    name: 'Elite Commander',
+    description: 'Complete sovereignty for large-scale operations',
     monthlyPrice: 4999,
     yearlyPrice: 3999,
     period: '/mo',
@@ -53,7 +53,7 @@ const plans = [
       'Dedicated manager',
       'Inventory forecasting',
     ],
-    cta: 'Talk to Sales',
+    cta: 'Command Your Empire',
     popular: false,
   },
 ];
@@ -71,10 +71,10 @@ const Pricing: React.FC = () => {
             color="secondary" 
             className="mb-6 font-bold uppercase text-[10px] tracking-widest px-4"
            >
-              Pricing Options
+              The Momentum Engine
            </Chip>
            <h2 className="heading-lg mb-8 text-dark dark:text-white">
-             Invest in your <span className="text-secondary italic">Efficiency.</span>
+             Select Your <span className="text-secondary italic">Growth Trajectory.</span>
            </h2>
            
            <div className="flex flex-col items-center gap-4 mt-8">
