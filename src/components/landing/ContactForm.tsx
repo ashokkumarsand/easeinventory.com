@@ -1,12 +1,12 @@
 'use client';
 
 import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Textarea
+  Button,
+  Card,
+  CardBody,
+  Chip,
+  Input,
+  Textarea
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
@@ -133,67 +133,71 @@ const ContactForm: React.FC = () => {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="font-bold text-foreground/70 text-sm ml-1">Full Name</label>
+                        <Input
+                          placeholder="Ashok Kumar"
+                          size="lg"
+                          radius="lg"
+                          variant="flat"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          classNames={{
+                            inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="font-bold text-foreground/70 text-sm ml-1">Work Email</label>
+                        <Input
+                          type="email"
+                          placeholder="ashok@shop.com"
+                          size="lg"
+                          radius="lg"
+                          variant="flat"
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          classNames={{
+                            inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="font-bold text-foreground/70 text-sm ml-1">Subject</label>
                       <Input
-                        label="Full Name"
-                        placeholder="Ashok Kumar"
+                        placeholder="Pricing Inquiry / Demo Request"
                         size="lg"
                         radius="lg"
                         variant="flat"
                         required
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        value={formData.subject}
+                        onChange={(e) => setFormData({...formData, subject: e.target.value})}
                         classNames={{
-                          label: "font-bold text-foreground/70",
-                          inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
-                        }}
-                      />
-                      <Input
-                        label="Work Email"
-                        type="email"
-                        placeholder="ashok@shop.com"
-                        size="lg"
-                        radius="lg"
-                        variant="flat"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        classNames={{
-                          label: "font-bold text-foreground/70",
                           inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
                         }}
                       />
                     </div>
-                    
-                    <Input
-                      label="Subject"
-                      placeholder="Pricing Inquiry / Demo Request"
-                      size="lg"
-                      radius="lg"
-                      variant="flat"
-                      required
-                      value={formData.subject}
-                      onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                      classNames={{
-                        label: "font-bold text-foreground/70",
-                        inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
-                      }}
-                    />
 
-                    <Textarea
-                      label="Your Message"
-                      placeholder="Tell us about your business needs..."
-                      size="lg"
-                      radius="lg"
-                      variant="flat"
-                      required
-                      minRows={4}
-                      value={formData.message}
-                      onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      classNames={{
-                        label: "font-bold text-foreground/70",
-                        inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
-                      }}
-                    />
+                    <div className="space-y-2">
+                      <label className="font-bold text-foreground/70 text-sm ml-1">Your Message</label>
+                      <Textarea
+                        placeholder="Tell us about your business needs..."
+                        size="lg"
+                        radius="lg"
+                        variant="flat"
+                        required
+                        minRows={4}
+                        value={formData.message}
+                        onChange={(e) => setFormData({...formData, message: e.target.value})}
+                        classNames={{
+                          inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
+                        }}
+                      />
+                    </div>
 
                     <Button 
                       color="primary" 

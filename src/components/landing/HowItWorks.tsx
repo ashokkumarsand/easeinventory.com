@@ -47,7 +47,7 @@ const HowItWorks: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12 lg:gap-16">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-3 gap-12 lg:gap-16 -mx-6 px-6 md:mx-auto md:px-0">
           {steps.map((step, index) => (
             <motion.div
               key={step.number}
@@ -55,6 +55,7 @@ const HowItWorks: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2, duration: 0.8 }}
+              className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
             >
               <div className="relative pt-12 h-full">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-24 bg-background rounded-[32px] flex items-center justify-center border-[6px] border-background group-hover:scale-110 transition-all duration-700 z-30 shadow-none">

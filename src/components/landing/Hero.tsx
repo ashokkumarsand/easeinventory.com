@@ -66,7 +66,7 @@ const Hero: React.FC = () => {
               </div>
             </motion.div>
 
-            <div className="relative min-h-[420px]">
+            <div className="relative min-h-[320px] md:min-h-[420px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
@@ -76,17 +76,17 @@ const Hero: React.FC = () => {
                   transition={{ duration: 0.6, ease: "easeInOut" }}
                   className="w-full"
                 >
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.95] tracking-tighter text-foreground uppercase">
+                  <h1 className="text-4xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.95] tracking-tighter text-foreground uppercase">
                     {bannerSlides[currentSlide].title}{' '}
                     <span className="text-primary italic block md:inline">
                       {bannerSlides[currentSlide].highlight}
                     </span>
                     <br />
-                    <span className="text-foreground/30 text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter mt-2 block">
+                    <span className="text-foreground/30 text-2xl md:text-5xl lg:text-6xl font-black tracking-tighter mt-2 block">
                       {bannerSlides[currentSlide].subtitle}
                     </span>
                   </h1>
-                  <p className="text-lg md:text-xl text-foreground/60 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-10 font-medium italic">
+                  <p className="text-base md:text-xl text-foreground/60 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-10 font-medium italic">
                     {bannerSlides[currentSlide].description}
                   </p>
                 </motion.div>
@@ -100,7 +100,7 @@ const Hero: React.FC = () => {
                 href="/register"
                 color="primary"
                 size="lg"
-                className="font-black px-12 h-20 text-xl shadow-2xl shadow-primary/40 uppercase tracking-widest min-w-[200px]"
+                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl shadow-2xl shadow-primary/40 uppercase tracking-widest w-full sm:w-auto min-w-[200px]"
                 radius="full"
               >
                 Start Trial
@@ -110,7 +110,7 @@ const Hero: React.FC = () => {
                 href="#demo"
                 variant="bordered"
                 size="lg"
-                className="font-black px-12 h-20 text-xl border-foreground/10 text-foreground uppercase tracking-widest hover:bg-foreground/5 min-w-[200px]"
+                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl border-foreground/10 text-foreground uppercase tracking-widest hover:bg-foreground/5 w-full sm:w-auto min-w-[200px]"
                 radius="full"
               >
                 View Demo
@@ -150,7 +150,7 @@ const Hero: React.FC = () => {
                          <Logo size={24} />
                       </div>
                       <div>
-                        <p className="text-sm font-bold opacity-80 text-foreground">yourshop.ease</p>
+                        <p className="text-sm font-bold opacity-80 text-foreground">yourshop.easeinventory.com</p>
                         <p className="text-[10px] uppercase tracking-widest opacity-40 text-foreground font-black">Connected</p>
                       </div>
                     </div>

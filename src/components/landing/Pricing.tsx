@@ -91,22 +91,21 @@ const Pricing: React.FC = () => {
              Select Your <span className="text-primary italic">Growth Trajectory.</span>
            </h2>
            
-            <div className="flex flex-col items-center gap-6 mt-10 w-full max-w-md mx-auto">
+            <div className="flex flex-col items-center gap-6 mt-10 w-full mx-auto">
                <Tabs 
                  aria-label="Billing Cycle" 
                  color="primary" 
                  variant="solid"
                  radius="full"
-                 size="lg"
-                 fullWidth
+                 size="md"
                  selectedKey={billingCycle}
                  onSelectionChange={(key) => setBillingCycle(key.toString())}
                  classNames={{
                    base: "overflow-hidden",
                    tabList: "bg-default-100 p-1 gap-0 border border-default-200 overflow-hidden",
                    cursor: "shadow-lg bg-white dark:bg-primary shadow-primary/20",
-                   tab: "h-12",
-                   tabContent: "font-black text-xs md:text-sm group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full w-full"
+                   tab: "h-10 px-6",
+                   tabContent: "font-black text-[10px] md:text-xs group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full w-full"
                  }}
                >
                  <Tab key="monthly" title="Monthly" />
@@ -118,7 +117,7 @@ const Pricing: React.FC = () => {
                         <div className="relative flex items-center">
                           <div className="absolute inset-0 bg-success blur-md opacity-40 animate-pulse rounded-full" />
                           <div className="relative bg-success text-white text-[8px] px-2 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap leading-none">
-                            SAVE 20%
+                            -20%
                           </div>
                         </div>
                      </div>
@@ -131,7 +130,7 @@ const Pricing: React.FC = () => {
             </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 max-w-[95rem] mx-auto pt-16">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 max-w-[95rem] mx-auto pt-16 pb-12 -mx-6 px-6 md:mx-auto md:px-0">
           {plans.map((plan, index) => {
             const isSelected = selectedPlan === plan.name;
             const isPopular = plan.popular;
@@ -143,7 +142,7 @@ const Pricing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative flex flex-col overflow-visible ${isSelected ? 'z-30' : 'z-10'}`}
+                className={`relative flex flex-col overflow-visible shrink-0 snap-center w-[85vw] md:w-auto ${isSelected ? 'z-30' : 'z-10'}`}
                 onClick={() => setSelectedPlan(plan.name)}
               >
                 <Card 

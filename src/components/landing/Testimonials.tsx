@@ -50,7 +50,7 @@ const Testimonials: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-3 gap-8 -mx-6 px-6 md:mx-auto md:px-0 pb-8 md:pb-0">
           {testimonials.map((t, index) => (
             <motion.div
               key={t.author}
@@ -58,6 +58,7 @@ const Testimonials: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
+              className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
             >
               <Card className="modern-card p-4 h-full bg-card hover:border-primary/30" radius="lg">
                 <CardBody className="p-8 flex flex-col h-full">

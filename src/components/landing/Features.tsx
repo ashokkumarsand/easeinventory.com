@@ -72,7 +72,7 @@ const Features: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 -mx-6 px-6 md:mx-auto md:px-0 pb-8 md:pb-0">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -80,12 +80,13 @@ const Features: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
+              className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
             >
               <Card 
                 className="modern-card group h-full hover:border-primary/30 transition-all duration-700 overflow-visible"
                 radius="lg"
               >
-                <CardBody className="p-10 lg:p-12 flex flex-col items-start text-left">
+                <CardBody className="p-10 lg:p-12 flex flex-col items-start text-left h-full">
                   <div className="flex justify-between items-start w-full mb-12">
                     <div className="w-20 h-20 rounded-[32px] bg-primary/5 dark:bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-all duration-500 shadow-sm border border-primary/5">
                       {feature.icon}
@@ -94,14 +95,14 @@ const Features: React.FC = () => {
                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
                     </div>
                   </div>
-                  <h3 className="text-3xl font-black mb-6 group-hover:text-primary transition-colors text-foreground uppercase tracking-tight">
+                  <h3 className="text-2xl md:text-3xl font-black mb-6 group-hover:text-primary transition-colors text-foreground uppercase tracking-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-foreground/60 leading-relaxed text-base lg:text-lg font-medium italic">
+                  <p className="text-foreground/60 leading-relaxed text-sm md:text-lg font-medium italic mb-8 flex-1">
                     {feature.description}
                   </p>
                   
-                  <div className="mt-auto pt-10 flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] cursor-pointer group-hover:gap-4 transition-all">
+                  <div className="mt-auto pt-6 flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] cursor-pointer group-hover:gap-4 transition-all">
                     System Protocol 
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
