@@ -39,8 +39,8 @@ const HowItWorks: React.FC = () => {
             viewport={{ once: true }}
             className="space-y-6"
           >
-             <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Operational Protocol</span>
+             <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full w-fit">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary whitespace-nowrap leading-relaxed pt-0.5">Operational Protocol</span>
              </div>
              <h2 className="heading-lg">Streamlined <span className="text-secondary italic">Deployment.</span></h2>
              <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERPs. EaseInventory is built for rapid mobilization and absolute control.</p>

@@ -57,9 +57,9 @@ const Features: React.FC = () => {
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full">
+            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full w-fit">
                <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
-               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Precision Stack</span>
+               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">Precision Stack</span>
             </div>
             <h2 className="heading-lg">
               Engineered to manage <br />

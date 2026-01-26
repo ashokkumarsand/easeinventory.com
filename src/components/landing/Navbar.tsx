@@ -2,15 +2,15 @@
 
 import { Logo } from '@/components/icons/Logo';
 import {
-    Button,
-    Navbar as HeroNavbar,
-    NavbarBrand,
-    NavbarContent,
-    NavbarItem,
-    NavbarMenu,
-    NavbarMenuItem,
-    NavbarMenuToggle,
-    Switch,
+  Button,
+  Navbar as HeroNavbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+  Switch,
 } from '@heroui/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -83,7 +83,6 @@ const Navbar: React.FC = () => {
         <NavbarItem className="hidden sm:flex items-center">
           <Switch
             isSelected={theme === 'dark'}
-            size="sm"
             color="secondary"
             onValueChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             startContent={<span className="text-[10px]">🌙</span>}
