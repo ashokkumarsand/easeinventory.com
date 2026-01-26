@@ -109,34 +109,33 @@ const ContactForm: React.FC = () => {
           </div>
 
           {/* Form Side */}
-          <Card className="modern-card p-6 md:p-12 lg:p-16" radius="lg">
-             <CardBody className="p-0 overflow-visible">
+          <Card className="modern-card p-4 md:p-8" radius="lg">
+             <CardBody>
                 {isSent ? (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-20"
+                    className="text-center py-12"
                   >
-                    <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-8 text-white shadow-lg shadow-green-500/20">
+                    <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 text-white shadow-lg shadow-green-500/20">
                        ✓
                     </div>
-                    <h3 className="text-3xl font-black mb-4">Message Received</h3>
-                    <p className="opacity-50 font-medium text-lg">Our specialists will reach out to you via email shortly.</p>
+                    <h3 className="text-2xl font-black mb-2">Message Received</h3>
+                    <p className="opacity-50 font-medium">Our specialists will reach out to you via email shortly.</p>
                     <Button 
                       variant="light" 
-                      className="mt-12 font-bold"
+                      className="mt-8 font-bold"
                       onClick={() => setIsSent(false)}
                     >
                       Send another message
                     </Button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-12">
-                    <div className="grid md:grid-cols-2 gap-10">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
                       <Input
                         label="Full Name"
                         placeholder="Ashok Kumar"
-                        labelPlacement="outside"
                         size="lg"
                         radius="lg"
                         variant="flat"
@@ -144,15 +143,14 @@ const ContactForm: React.FC = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         classNames={{
-                          label: "font-black text-[10px] uppercase tracking-[0.3em] text-foreground/50 pb-3",
-                          inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:!bg-default-100 transition-all h-16 px-6"
+                          label: "font-bold text-foreground/70",
+                          inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
                         }}
                       />
                       <Input
                         label="Work Email"
                         type="email"
                         placeholder="ashok@shop.com"
-                        labelPlacement="outside"
                         size="lg"
                         radius="lg"
                         variant="flat"
@@ -160,8 +158,8 @@ const ContactForm: React.FC = () => {
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         classNames={{
-                          label: "font-black text-[10px] uppercase tracking-[0.3em] text-foreground/50 pb-3",
-                          inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:!bg-default-100 transition-all h-16 px-6"
+                          label: "font-bold text-foreground/70",
+                          inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
                         }}
                       />
                     </div>
@@ -169,7 +167,6 @@ const ContactForm: React.FC = () => {
                     <Input
                       label="Subject"
                       placeholder="Pricing Inquiry / Demo Request"
-                      labelPlacement="outside"
                       size="lg"
                       radius="lg"
                       variant="flat"
@@ -177,43 +174,40 @@ const ContactForm: React.FC = () => {
                       value={formData.subject}
                       onChange={(e) => setFormData({...formData, subject: e.target.value})}
                       classNames={{
-                        label: "font-black text-[10px] uppercase tracking-[0.3em] text-foreground/50 pb-3",
-                        inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:!bg-default-100 transition-all h-16 px-6"
+                        label: "font-bold text-foreground/70",
+                        inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
                       }}
                     />
 
                     <Textarea
                       label="Your Message"
                       placeholder="Tell us about your business needs..."
-                      labelPlacement="outside"
                       size="lg"
                       radius="lg"
                       variant="flat"
                       required
-                      minRows={5}
+                      minRows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
                       classNames={{
-                        label: "font-black text-[10px] uppercase tracking-[0.3em] text-foreground/50 pb-3",
-                        inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:!bg-default-100 transition-all p-6"
+                        label: "font-bold text-foreground/70",
+                        inputWrapper: "bg-default-100/50 hover:bg-default-100 focus-within:!bg-default-100 transition-colors"
                       }}
                     />
 
-                    <div className="pt-6">
-                      <Button 
-                        color="primary" 
-                        size="lg"
-                        className="w-full font-black h-20 text-xl shadow-2xl shadow-primary/30 uppercase tracking-[0.3em]" 
-                        radius="full"
-                        type="submit"
-                        isLoading={isSubmitting}
-                      >
-                        Process Inquiry
-                      </Button>
-                      <p className="text-[10px] text-center uppercase tracking-[0.4em] font-black opacity-20 mt-8">
-                        Response time typically under 2 hours
-                      </p>
-                    </div>
+                    <Button 
+                      color="primary" 
+                      size="lg"
+                      className="w-full font-black h-14 shadow-lg shadow-primary/20 uppercase tracking-widest text-sm" 
+                      radius="full"
+                      type="submit"
+                      isLoading={isSubmitting}
+                    >
+                      Process Inquiry
+                    </Button>
+                    <p className="text-[10px] text-center uppercase tracking-widest font-black opacity-20">
+                      Response time typically under 2 hours
+                    </p>
                   </form>
                 )}
              </CardBody>
