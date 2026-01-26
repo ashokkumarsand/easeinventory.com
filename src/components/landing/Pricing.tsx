@@ -131,7 +131,7 @@ const Pricing: React.FC = () => {
             </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[95rem] mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 max-w-[95rem] mx-auto pt-16">
           {plans.map((plan, index) => {
             const isSelected = selectedPlan === plan.name;
             const isPopular = plan.popular;
@@ -143,22 +143,22 @@ const Pricing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative flex flex-col ${isSelected ? 'z-20' : 'z-0'}`}
+                className={`relative flex flex-col overflow-visible ${isSelected ? 'z-30' : 'z-10'}`}
                 onClick={() => setSelectedPlan(plan.name)}
               >
                 <Card 
                   className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full ${
                     isSelected
-                      ? 'bg-card border-primary shadow-2xl shadow-primary/20 translate-y-[-16px] z-30' 
+                      ? '!bg-background border-primary shadow-2xl shadow-primary/20 translate-y-[-16px]' 
                       : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10 opacity-70 hover:opacity-100'
                   }`}
                   radius="lg"
                   isPressable
                   onPress={() => setSelectedPlan(plan.name)}
                 >
-                  <CardBody className="p-8 flex flex-col h-full relative">
+                  <CardBody className="p-8 flex flex-col h-full relative overflow-visible">
                     {isPopular && (
-                      <div className="absolute -top-9 left-0 w-full flex justify-center z-50 pointer-events-none">
+                      <div className="absolute -top-10 left-0 w-full flex justify-center z-50 pointer-events-none">
                         <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border border-white/20 whitespace-nowrap">
                           Recommended
                         </div>

@@ -45,7 +45,7 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="section-padding bg-cream dark:bg-dark-bg relative overflow-hidden">
+    <section id="contact" className="section-padding bg-background relative overflow-hidden">
       <div className="container-custom relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
            <Chip 
