@@ -55,7 +55,7 @@ const ContactForm: React.FC = () => {
            >
               Get Integrated
            </Chip>
-           <h2 className="heading-lg mb-8 text-dark dark:text-white">
+           <h2 className="heading-lg mb-8 text-foreground">
              Ready to <span className="text-primary italic">Transform?</span>
            </h2>
            <p className="paragraph-lg opacity-60">
@@ -81,8 +81,8 @@ const ContactForm: React.FC = () => {
                     desc: 'Existing users needing help or technical guidance.' 
                   }
                 ].map((item) => (
-                  <div key={item.label} className="flex gap-6 p-6 rounded-[2rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 group hover:bg-primary/5 transition-colors">
-                     <div className="w-14 h-14 rounded-2xl bg-white dark:bg-dark-card flex items-center justify-center text-2xl shadow-sm">
+                  <div key={item.label} className="flex gap-6 p-6 rounded-[2rem] bg-default-50 border border-default-100 group hover:bg-primary/5 transition-colors">
+                     <div className="w-14 h-14 rounded-2xl bg-background flex items-center justify-center text-2xl shadow-sm border border-default-100">
                         {item.icon}
                      </div>
                      <div>
@@ -143,8 +143,8 @@ const ContactForm: React.FC = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         classNames={{
-                          label: "font-bold text-dark/70 dark:text-white/70 pb-2",
-                          inputWrapper: "bg-black/5 dark:bg-white/5 h-14"
+                          label: "font-bold text-foreground/70 pb-2",
+                          inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
                         }}
                       />
                       <Input
@@ -158,8 +158,8 @@ const ContactForm: React.FC = () => {
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         classNames={{
-                          label: "font-bold text-dark/70 dark:text-white/70 pb-2",
-                          inputWrapper: "bg-black/5 dark:bg-white/5 h-14"
+                          label: "font-bold text-foreground/70 pb-2",
+                          inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
                         }}
                       />
                     </div>
@@ -174,8 +174,8 @@ const ContactForm: React.FC = () => {
                       value={formData.subject}
                       onChange={(e) => setFormData({...formData, subject: e.target.value})}
                       classNames={{
-                        label: "font-bold text-dark/70 dark:text-white/70 pb-2",
-                        inputWrapper: "bg-black/5 dark:bg-white/5 h-14"
+                        label: "font-bold text-foreground/70 pb-2",
+                        inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
                       }}
                     />
 
@@ -190,8 +190,8 @@ const ContactForm: React.FC = () => {
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
                       classNames={{
-                        label: "font-bold text-dark/70 dark:text-white/70 pb-2",
-                        inputWrapper: "bg-black/5 dark:bg-white/5"
+                        label: "font-bold text-foreground/70 pb-2",
+                        inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
                       }}
                     />
 

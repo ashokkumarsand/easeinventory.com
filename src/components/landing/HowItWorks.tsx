@@ -56,13 +56,15 @@ const HowItWorks: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.2, duration: 0.8 }}
             >
-              <Card className="modern-card group relative overflow-visible h-full bg-card hover:border-secondary/30" radius="lg">
-                <CardBody className="p-12 lg:p-16 flex flex-col items-center text-center">
-                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 w-24 h-24 bg-background rounded-[32px] flex items-center justify-center border-[6px] border-background group-hover:scale-110 transition-all duration-700 z-30 shadow-none">
+              <div className="relative pt-12 h-full">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-24 bg-background rounded-[32px] flex items-center justify-center border-[6px] border-background group-hover:scale-110 transition-all duration-700 z-30 shadow-none">
                      <div className="w-full h-full rounded-[26px] bg-secondary/10 flex items-center justify-center border border-secondary/20 shadow-xl shadow-secondary/10">
                         <span className="text-4xl">{step.icon}</span>
                      </div>
                   </div>
+                  
+                  <Card className="modern-card group relative overflow-visible h-full bg-card hover:border-secondary/30 pt-8" radius="lg">
+                    <CardBody className="p-12 lg:p-16 flex flex-col items-center text-center">
                   
                   <div className="mt-12 space-y-8">
                     <span className="text-8xl font-black text-foreground/[0.05] block leading-none tracking-tighter italic group-hover:text-secondary/10 transition-colors">{step.number}</span>
@@ -73,6 +75,7 @@ const HowItWorks: React.FC = () => {
                   <div className="mt-12 w-12 h-1.5 bg-secondary/20 rounded-full group-hover:w-full transition-all duration-1000" />
                 </CardBody>
               </Card>
+              </div>
             </motion.div>
           ))}
         </div>
