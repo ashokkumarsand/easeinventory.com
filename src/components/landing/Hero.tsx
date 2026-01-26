@@ -141,7 +141,7 @@ const Hero: React.FC = () => {
               className="transform-gpu"
             >
               <div className="relative rounded-[40px] p-2 bg-gradient-to-br from-primary/30 to-secondary/30 shadow-2xl overflow-visible">
-                <div className="bg-white dark:bg-[#0A0A0A] rounded-[34px] p-6 shadow-inner border border-white/10 dark:border-white/5 overflow-hidden min-h-[400px]">
+                <div className="bg-card rounded-[34px] p-6 shadow-inner border border-foreground/5 overflow-hidden min-h-[400px]">
                   
                   {/* Dashboard Header */}
                   <div className="flex justify-between items-center mb-10">
@@ -161,14 +161,14 @@ const Hero: React.FC = () => {
 
                    {/* Stat Grid */}
                    <div className="grid grid-cols-2 gap-4 mb-8">
-                      <Card className="modern-card bg-primary/5 border-none shadow-none" radius="lg">
+                      <Card className="bg-primary/5 border-none shadow-none" radius="lg">
                          <CardBody className="p-4">
                             <p className="text-[10px] font-black opacity-40 uppercase mb-2 text-foreground tracking-widest">Products</p>
                             <p className="text-2xl font-black text-foreground">2,482</p>
                             <div className="h-1 w-10 bg-primary mt-3 rounded-full" />
                          </CardBody>
                       </Card>
-                      <Card className="modern-card bg-secondary/5 border-none shadow-none" radius="lg">
+                      <Card className="bg-secondary/5 border-none shadow-none" radius="lg">
                         <CardBody className="p-4">
                            <p className="text-[10px] font-black opacity-40 uppercase mb-2 text-foreground tracking-widest">Stock Value</p>
                            <p className="text-2xl font-black text-foreground">₹14.2L</p>
@@ -199,7 +199,7 @@ const Hero: React.FC = () => {
                        initial={{ y: 20, opacity: 0 }}
                        animate={{ y: 0, opacity: 1 }}
                        transition={{ delay: 1, duration: 0.5 }}
-                       className="bg-foreground text-background p-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-white/10"
+                       className="bg-foreground text-background p-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-foreground/5"
                      >
                         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">📈</div>
                         <div>
