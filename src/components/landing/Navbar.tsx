@@ -83,12 +83,19 @@ const Navbar: React.FC = () => {
         <NavbarItem className="hidden sm:flex items-center">
           <Switch
             isSelected={theme === 'dark'}
+            size="md"
             color="secondary"
             onValueChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            startContent={<span className="text-[10px]">🌙</span>}
-            endContent={<span className="text-[10px]">☀️</span>}
+            thumbIcon={({ isSelected, className }) => 
+               isSelected ? (
+                 <span className={className}>🌙</span>
+               ) : (
+                 <span className={className}>☀️</span>
+               )
+            }
             classNames={{
-              wrapper: "bg-foreground/10",
+              wrapper: "bg-foreground/20 group-data-[selected=true]:bg-secondary/20 h-8 w-14",
+              thumb: "shadow-md group-data-[selected=true]:bg-secondary group-data-[selected=false]:bg-white w-6 h-6 group-data-[selected=true]:ml-6",
             }}
           />
         </NavbarItem>

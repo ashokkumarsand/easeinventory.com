@@ -99,23 +99,23 @@ const Pricing: React.FC = () => {
                  radius="full"
                  size="lg"
                  selectedKey={billingCycle}
-                 onSelectionChange={(key) => setBillingCycle(key.toString())}
+                onSelectionChange={(key) => setBillingCycle(key.toString())}
                  classNames={{
-                   tabList: "bg-foreground/5 p-1.5 gap-0 border border-foreground/10 glass",
+                   tabList: "bg-foreground/5 p-1 gap-0 border border-foreground/10 glass",
                    cursor: "shadow-2xl bg-white dark:bg-primary shadow-primary/20",
-                   tab: "h-16 px-14",
-                   tabContent: "font-black text-sm md:text-base group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase"
+                   tab: "h-14 px-8 md:px-12",
+                   tabContent: "font-black text-xs md:text-sm group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full"
                  }}
                >
                  <Tab key="monthly" title="Monthly" />
                  <Tab 
                    key="yearly" 
                    title={
-                     <div className="flex items-center gap-4">
+                     <div className="flex items-center gap-3">
                         <span>Yearly</span>
-                        <div className="relative">
+                        <div className="relative flex items-center">
                           <div className="absolute inset-0 bg-success blur-md opacity-40 animate-pulse rounded-full" />
-                          <div className="relative bg-success text-white text-[10px] px-3 py-1 rounded-full font-black tracking-tighter shadow-lg">
+                          <div className="relative bg-success text-white text-[9px] px-2.5 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap">
                             SAVE 20%
                           </div>
                         </div>
@@ -147,8 +147,8 @@ const Pricing: React.FC = () => {
                 <Card 
                   className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full backdrop-blur-2xl ${
                     isSelected
-                      ? 'bg-white/90 dark:bg-[#121212]/90 border-primary shadow-2xl shadow-primary/20 translate-y-[-16px]' 
-                      : 'bg-white/20 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/40 dark:hover:bg-white/10'
+                      ? 'bg-[#FFFFFF] dark:bg-[#121212] border-primary shadow-2xl shadow-primary/20 translate-y-[-16px] !opacity-100' 
+                      : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10'
                   }`}
                   radius="lg"
                   isPressable
@@ -156,7 +156,7 @@ const Pricing: React.FC = () => {
                 >
                   <CardBody className="p-8 flex flex-col h-full relative">
                     {isPopular && (
-                      <div className="absolute -top-5 left-0 w-full flex justify-center z-50 pointer-events-none">
+                      <div className="absolute -top-9 left-0 w-full flex justify-center z-50 pointer-events-none">
                         <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border border-white/20 whitespace-nowrap">
                           Recommended
                         </div>

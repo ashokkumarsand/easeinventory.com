@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, Card, CardBody, Chip } from '@heroui/react';
+import { Avatar, Card, CardBody } from '@heroui/react';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -30,40 +30,53 @@ const testimonials = [
 
 const Testimonials: React.FC = () => {
   return (
-    <section id="testimonials" className="section-padding bg-background/50 relative overflow-hidden">
+    <section id="testimonials" className="section-padding bg-background relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
       <div className="container-custom relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <Chip variant="flat" color="primary" className="mb-6 font-bold uppercase text-[10px] tracking-widest px-4">
-             Success Chronicles
-          </Chip>
-          <h2 className="heading-lg mb-8 text-foreground">Voices of <span className="text-primary italic">Market Leaders.</span></h2>
+        <div className="text-center max-w-4xl mx-auto mb-20 lg:mb-32">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-6"
+          >
+             <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full w-fit">
+                <span className="text-xl">🏆</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">Success Chronicles</span>
+             </div>
+             <h2 className="heading-lg">Voices of <span className="text-primary italic">Market Leaders.</span></h2>
+          </motion.div>
         </div>
 
-        <div className="layout-grid">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((t, index) => (
             <motion.div
               key={t.author}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
             >
-              <Card className="modern-card p-6" radius="lg">
-                <CardBody className="p-8">
-                  <div className="flex gap-1 mb-8">
-                    {[1, 2, 3, 4, 5].map(i => <span key={i} className="text-yellow-500 text-xl font-bold">★</span>)}
+              <Card className="modern-card p-4 h-full bg-card hover:border-primary/30" radius="lg">
+                <CardBody className="p-8 flex flex-col h-full">
+                  <div className="flex gap-1 mb-10">
+                    {[1, 2, 3, 4, 5].map(i => <span key={i} className="text-primary text-xl font-black">★</span>)}
                   </div>
                   
-                  <p className="text-lg font-medium leading-[1.6] mb-10 opacity-70 italic">&quot;{t.text}&quot;</p>
+                  <blockquote className="text-lg font-medium leading-relaxed mb-12 opacity-80 italic flex-1">
+                    &quot;{t.text}&quot;
+                  </blockquote>
                   
-                  <div className="flex items-center gap-5 pt-8 border-t border-foreground/5">
+                  <div className="flex items-center gap-5 pt-8 border-t border-foreground/5 mt-auto">
                     <Avatar 
                        name={t.initials}
-                       className="w-14 h-14 bg-primary text-white font-black text-lg shadow-lg shadow-primary/20"
+                       className="w-14 h-14 bg-foreground/10 text-foreground font-black text-lg"
                     />
                     <div>
-                      <h4 className="font-black text-lg leading-none mb-1">{t.author}</h4>
-                      <p className="text-xs font-bold opacity-40 uppercase tracking-widest">{t.role}</p>
+                      <h4 className="font-black text-lg leading-none mb-2 text-foreground uppercase tracking-tight">{t.author}</h4>
+                      <p className="text-[10px] font-black opacity-40 uppercase tracking-widest text-foreground">{t.role}</p>
                     </div>
                   </div>
                 </CardBody>
