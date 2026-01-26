@@ -83,15 +83,15 @@ const Pricing: React.FC = () => {
       <div className="container-custom relative z-10">
         
         <div className="text-center max-w-4xl mx-auto mb-20 lg:mb-32">
-           <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-8">
-              <div className="w-2 h-2 bg-secondary rounded-full" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">The Momentum Engine</span>
+           <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-8 w-fit">
+              <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">The Momentum Engine</span>
            </div>
            <h2 className="heading-lg mb-8">
-             Select Your <span className="text-secondary italic">Growth Trajectory.</span>
+             Select Your <span className="text-primary italic">Growth Trajectory.</span>
            </h2>
            
-            <div className="flex flex-col items-center gap-8 mt-12">
+            <div className="flex flex-col items-center gap-6 mt-10">
                <Tabs 
                  aria-label="Billing Cycle" 
                  color="primary" 
@@ -99,11 +99,11 @@ const Pricing: React.FC = () => {
                  radius="full"
                  size="lg"
                  selectedKey={billingCycle}
-                onSelectionChange={(key) => setBillingCycle(key.toString())}
+                 onSelectionChange={(key) => setBillingCycle(key.toString())}
                  classNames={{
                    tabList: "bg-foreground/5 p-1 gap-0 border border-foreground/10 glass",
                    cursor: "shadow-2xl bg-white dark:bg-primary shadow-primary/20",
-                   tab: "h-14 px-6 md:px-10",
+                   tab: "h-12 px-6 md:px-8",
                    tabContent: "font-black text-xs md:text-sm group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full"
                  }}
                >

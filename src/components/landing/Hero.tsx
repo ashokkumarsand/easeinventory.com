@@ -60,9 +60,9 @@ const Hero: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="flex justify-center lg:justify-start"
             >
-              <div className="inline-flex items-center gap-3 bg-foreground/5 border border-foreground/10 px-5 py-2 rounded-full mb-8 shadow-sm">
+              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-5 py-2 rounded-full mb-8 shadow-sm">
                  <span className="text-xl">🇮🇳</span>
-                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/60 leading-none">Made for India</span>
+                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary leading-none">Made for India</span>
               </div>
             </motion.div>
 
