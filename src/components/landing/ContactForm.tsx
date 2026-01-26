@@ -136,30 +136,32 @@ const ContactForm: React.FC = () => {
                       <Input
                         label="Full Name"
                         placeholder="Ashok Kumar"
-                        labelPlacement="outside"
+                        labelPlacement="inside"
                         size="lg"
                         radius="lg"
+                        variant="flat"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         classNames={{
-                          label: "font-bold text-foreground/70 pb-2",
-                          inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
+                          label: "font-bold text-foreground/50",
+                          inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:bg-default-100 transition-colors h-16"
                         }}
                       />
                       <Input
                         label="Work Email"
                         type="email"
                         placeholder="ashok@shop.com"
-                        labelPlacement="outside"
+                        labelPlacement="inside"
                         size="lg"
                         radius="lg"
+                        variant="flat"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         classNames={{
-                          label: "font-bold text-foreground/70 pb-2",
-                          inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
+                          label: "font-bold text-foreground/50",
+                          inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:bg-default-100 transition-colors h-16"
                         }}
                       />
                     </div>
@@ -167,31 +169,33 @@ const ContactForm: React.FC = () => {
                     <Input
                       label="Subject"
                       placeholder="Pricing Inquiry / Demo Request"
-                      labelPlacement="outside"
+                      labelPlacement="inside"
                       size="lg"
                       radius="lg"
+                      variant="flat"
                       required
                       value={formData.subject}
                       onChange={(e) => setFormData({...formData, subject: e.target.value})}
                       classNames={{
-                        label: "font-bold text-foreground/70 pb-2",
-                        inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
+                        label: "font-bold text-foreground/50",
+                        inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:bg-default-100 transition-colors h-16"
                       }}
                     />
 
                     <Textarea
                       label="Your Message"
                       placeholder="Tell us about your business needs..."
-                      labelPlacement="outside"
+                      labelPlacement="inside"
                       size="lg"
                       radius="lg"
+                      variant="flat"
                       required
                       minRows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
                       classNames={{
-                        label: "font-bold text-foreground/70 pb-2",
-                        inputWrapper: "bg-default-100 hover:bg-default-200 focus:bg-default-100 transition-colors"
+                        label: "font-bold text-foreground/50",
+                        inputWrapper: "bg-default-100 hover:bg-default-200 focus-within:bg-default-100 transition-colors"
                       }}
                     />
 

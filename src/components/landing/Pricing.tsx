@@ -159,7 +159,7 @@ const Pricing: React.FC = () => {
                   <CardBody className="p-8 flex flex-col h-full relative overflow-visible">
                     {isPopular && (
                       <div className="absolute -top-10 left-0 w-full flex justify-center z-50 pointer-events-none">
-                        <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border border-white/20 whitespace-nowrap">
+                        <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border-white/20 whitespace-nowrap">
                           Recommended
                         </div>
                       </div>
