@@ -52,8 +52,8 @@ const FAQ: React.FC = () => {
               
               <div className="p-10 rounded-[40px] bg-foreground/5 border border-foreground/5 hover:bg-foreground/[0.08] transition-all duration-500 shadow-sm">
                  <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 mb-6 underline underline-offset-8">Direct Access</p>
-                 <a href="mailto:help@ease.in" className="text-2xl font-black mb-2 block hover:text-primary transition-colors text-foreground tracking-tight">help@ease.in</a>
-                 <p className="text-lg font-bold opacity-60 text-foreground">+91 98765 43210</p>
+                 <a href="mailto:help@easeinventory.com" className="text-2xl font-black mb-2 block hover:text-primary transition-colors text-foreground tracking-tight">help@easeinventory.com</a>
+                 <p className="text-lg font-bold opacity-60 text-foreground">+91 94114 36666</p>
               </div>
            </motion.div>
         </div>

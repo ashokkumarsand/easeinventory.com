@@ -7,9 +7,9 @@ import React from 'react';
 
 const CTA: React.FC = () => {
   return (
-    <section className="section-padding relative overflow-hidden bg-background">
+    <section className="section-padding relative overflow-hidden !bg-background !text-foreground">
       {/* Background with Theme-aware Base and Primary Glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/15" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-50 dark:opacity-100" />
       
       {/* Precision Pattern Overlay */}
       <div 
