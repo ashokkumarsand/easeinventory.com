@@ -10,7 +10,7 @@ const ComingSoon: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+    <div className="min-h-screen bg-[#030407] text-white flex flex-col items-center justify-center p-6 text-center overflow-hidden">
       {/* Background Decor */}
       <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
       <div className="fixed bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] animate-pulse delay-1000" />
@@ -82,9 +82,26 @@ const ComingSoon: React.FC = () => {
           </motion.div>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto opacity-30">
-           {['Inventory Control', 'Repair Logistics', 'GST Invoicing', 'HR Management'].map(item => (
-             <div key={item} className="text-[10px] font-black uppercase tracking-[0.2em]">{item}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+           {[
+             { title: 'Inventory SN Control', desc: 'Track every unit with unique serial numbers and tiered costing.' },
+             { title: 'Repair Logistics', desc: 'Automated Job ID generation and WhatsApp service updates.' },
+             { title: 'GST Billing Engine', desc: 'Generate professional invoices with automatic tax compliance.' },
+             { title: 'Personnel & Attendance', desc: 'Biometric verified punching and integrated payroll.' },
+           ].map((feature, idx) => (
+             <motion.div 
+               key={idx}
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.6 + (idx * 0.1) }}
+               className="p-6 rounded-[32px] bg-foreground/5 border border-foreground/5 text-left space-y-3"
+             >
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                   {idx + 1}
+                </div>
+                <h3 className="font-black text-sm uppercase tracking-tight">{feature.title}</h3>
+                <p className="text-xs font-bold opacity-40 leading-relaxed">{feature.desc}</p>
+             </motion.div>
            ))}
         </div>
       </div>

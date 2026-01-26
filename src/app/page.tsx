@@ -86,19 +86,18 @@ export default async function HomePage() {
   const headersList = await headers();
   const host = headersList.get('host') || '';
   
-  // Check if we're on the production domain
+  // Show coming soon on production domains
   const isProduction = host.includes('easeinventory.com');
   
-  // Show coming soon on production, full landing page on localhost
   if (isProduction) {
     return (
-      <>
+      <div className="bg-[#030407] min-h-screen">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <ComingSoon />
-      </>
+      </div>
     );
   }
 

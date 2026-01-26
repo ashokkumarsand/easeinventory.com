@@ -77,34 +77,36 @@ const Pricing: React.FC = () => {
              Select Your <span className="text-secondary italic">Growth Trajectory.</span>
            </h2>
            
-           <div className="flex flex-col items-center gap-4 mt-8">
-              <Tabs 
-                aria-label="Billing Cycle" 
-                color="primary" 
-                variant="solid"
-                radius="full"
-                size="lg"
-                selectedKey={billingCycle}
-                onSelectionChange={(key) => setBillingCycle(key.toString())}
-                classNames={{
-                  tabList: "bg-dark/5 dark:bg-white/5 p-1 gap-0 border border-dark/5 dark:border-white/5",
-                  cursor: "shadow-md bg-white dark:bg-dark-card",
-                  tab: "h-10 md:h-12 px-8",
-                  tabContent: "font-bold text-sm md:text-base group-data-[selected=true]:text-primary"
-                }}
-              >
-                <Tab key="monthly" title="Monthly" />
-                <Tab 
-                  key="yearly" 
-                  title={
-                    <div className="flex items-center gap-2">
-                       <span>Yearly</span>
-                       <Chip size="sm" color="success" className="text-[10px] font-black h-5 text-white">Save 20%</Chip>
-                    </div>
-                  } 
-                />
-              </Tabs>
-           </div>
+            <div className="flex flex-col items-center gap-4 mt-8">
+               <Tabs 
+                 aria-label="Billing Cycle" 
+                 color="primary" 
+                 variant="solid"
+                 radius="full"
+                 size="lg"
+                 selectedKey={billingCycle}
+                 onSelectionChange={(key) => setBillingCycle(key.toString())}
+                 classNames={{
+                   tabList: "bg-black/5 dark:bg-white/10 p-1.5 gap-0 border border-black/10 dark:border-white/10",
+                   cursor: "shadow-2xl bg-white dark:bg-primary",
+                   tab: "h-12 md:h-14 px-10",
+                   tabContent: "font-black text-sm md:text-base group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white"
+                 }}
+               >
+                 <Tab key="monthly" title="Monthly" />
+                 <Tab 
+                   key="yearly" 
+                   title={
+                     <div className="flex items-center gap-3">
+                        <span>Yearly</span>
+                        <div className="bg-success text-white text-[10px] px-2 py-0.5 rounded-full font-black animate-pulse shadow-lg shadow-success/20">
+                          SAVE 20%
+                        </div>
+                     </div>
+                   } 
+                 />
+               </Tabs>
+            </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto px-4 md:px-0">
@@ -136,21 +138,21 @@ const Pricing: React.FC = () => {
 
                   <div className="mb-10 text-center sm:text-left">
                     <h3 className="text-xl md:text-2xl font-black mb-2 text-dark dark:text-white uppercase tracking-tight">{plan.name}</h3>
-                    <p className="text-xs md:text-sm font-bold opacity-40 text-dark dark:text-white leading-relaxed">{plan.description}</p>
+                    <p className="text-xs md:text-sm font-bold opacity-60 text-dark dark:text-white leading-relaxed">{plan.description}</p>
                   </div>
 
                   <div className="flex items-baseline justify-center sm:justify-start gap-1 mb-10 overflow-hidden">
                     <span className="text-3xl md:text-5xl font-black text-dark dark:text-white">
                       ₹{billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}
                     </span>
-                    <span className="text-sm md:text-base font-bold opacity-30 text-dark dark:text-white whitespace-nowrap">
+                    <span className="text-sm md:text-base font-bold opacity-50 text-dark dark:text-white whitespace-nowrap">
                       {plan.period}
                     </span>
                   </div>
 
                   <ul className="space-y-4 mb-10 flex-1">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-4 text-sm font-bold opacity-70 text-dark dark:text-white">
+                      <li key={feature} className="flex items-start gap-4 text-sm font-bold opacity-90 text-dark dark:text-white">
                         <span className="text-primary mt-0.5 shrink-0">✦</span>
                         <span className="leading-snug">{feature}</span>
                       </li>

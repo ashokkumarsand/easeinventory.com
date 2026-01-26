@@ -1,9 +1,10 @@
 @import "tailwindcss";
+@source "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 
 @theme {
   --color-primary: #6A3BF6;
-  --color-primary-dark: #5429E0;
-  --color-primary-light: #8B5CF6;
+  --color-primary-dark: #4F27C8;
+  --color-primary-light: #9B72FF;
 
   --color-secondary: #00D9A5;
   --color-secondary-dark: #00B88A;
@@ -14,106 +15,107 @@
   --color-cream: #FAF8F3;
   --color-warm-white: #FFFCF5;
 
-  --color-dark-bg: #0A0B0F;
-  --color-dark-card: #12131A;
-  --color-dark-border: rgba(255, 255, 255, 0.08);
+  /* Premium Deep Dark Palette */
+  --color-dark-bg: #030407;
+  --color-dark-card: #0D0E12;
+  --color-dark-border: rgba(255, 255, 255, 0.05);
+
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
 
   --font-sans: var(--font-montserrat), system-ui, -apple-system, sans-serif;
   --z-navbar: 1000;
+
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
 }
 
 @layer base {
   :root {
     --background: #FAF8F3;
-    --foreground: #1A1A1A;
+    --foreground: #000000;
   }
 
   .dark {
-    --background: #0A0B0F;
-    --foreground: #FAF8F3;
+    --background: #030407;
+    --foreground: #FFFFFF;
   }
 
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)] min-h-screen transition-colors duration-300 overflow-x-hidden;
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply min-h-screen transition-all duration-500 overflow-x-hidden antialiased;
   }
 }
 
-/* Custom Scrollbar */
+/* Fix HeroUI Visibility & Colors */
+@layer components {
+
+  /* Ensure HeroUI Chips and Switches have proper presence */
+  .heroui-chip {
+    @apply inline-flex items-center justify-center;
+  }
+
+  /* Deep Dark Mode Overrides */
+  .dark {
+    color-scheme: dark;
+  }
+
+  /* Glassmorphism Refined */
+  .glass {
+    @apply bg-white/70 dark:bg-dark-card/60 backdrop-blur-2xl border border-black/5 dark:border-white/5;
+  }
+
+  .heading-xl {
+    @apply text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.95];
+  }
+
+  .heading-lg {
+    @apply text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1];
+  }
+
+  .paragraph-lg {
+    @apply text-base md:text-xl font-medium opacity-50 leading-relaxed;
+  }
+
+  .modern-card {
+    @apply rounded-3xl border border-black/5 dark:border-white/5 bg-white dark:bg-dark-card shadow-sm hover:shadow-2xl transition-all duration-700;
+  }
+}
+
+/* Custom Scrollbar Premium */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
   background: #6A3BF6;
-  border-radius: 4px;
+  border-radius: 20px;
 }
 
-/* Glassmorphism */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.dark .glass {
-  background: rgba(18, 19, 26, 0.7);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-/* Layout Utilities */
-.section-padding {
-  @apply py-20 lg:py-32;
-}
-
-.container-custom {
-  @apply max-w-6xl mx-auto px-6 lg:px-8;
-}
-
-/* Typography Symmetry */
-.heading-xl {
-  @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1];
-}
-
-.heading-lg {
-  @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.2];
-}
-
-.paragraph-lg {
-  @apply text-base md:text-lg text-black/60 dark:text-white/60 leading-relaxed;
-}
-
-/* Modern Card Symmetry */
-.modern-card {
-  @apply rounded-3xl border border-black/5 dark:border-white/5 bg-white dark:bg-dark-card shadow-sm hover:shadow-xl transition-all duration-500;
-}
-
-/* Banner Carousel Symmetry */
-.carousel-slide {
-  @apply w-full flex-shrink-0 transition-all duration-700 ease-in-out;
-}
-
-/* Layout Symmetry Helper */
-.layout-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
-}
-
-/* Animation Keys */
-@keyframes drift {
+/* Animation Keys for Premium Feel */
+@keyframes float {
 
   0%,
   100% {
-    transform: translate(0, 0);
+    transform: translateY(0);
   }
 
   50% {
-    transform: translate(10px, -10px);
+    transform: translateY(-10px);
   }
 }
 
-.animate-drift {
-  animation: drift 10s ease-in-out infinite;
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Fix for HeroUI Checkbox/Switch visibility in Tailwind 4 */
+[type='checkbox'],
+[type='radio'] {
+  color: #6A3BF6 !important;
 }
