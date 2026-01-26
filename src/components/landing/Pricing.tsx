@@ -103,7 +103,7 @@ const Pricing: React.FC = () => {
                  classNames={{
                    tabList: "bg-foreground/5 p-1 gap-0 border border-foreground/10 glass",
                    cursor: "shadow-2xl bg-white dark:bg-primary shadow-primary/20",
-                   tab: "h-14 px-8 md:px-12",
+                   tab: "h-14 px-6 md:px-10",
                    tabContent: "font-black text-xs md:text-sm group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full"
                  }}
                >
@@ -111,11 +111,11 @@ const Pricing: React.FC = () => {
                  <Tab 
                    key="yearly" 
                    title={
-                     <div className="flex items-center gap-3">
+                     <div className="flex items-center gap-2">
                         <span>Yearly</span>
                         <div className="relative flex items-center">
                           <div className="absolute inset-0 bg-success blur-md opacity-40 animate-pulse rounded-full" />
-                          <div className="relative bg-success text-white text-[9px] px-2.5 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap">
+                          <div className="relative bg-success text-white text-[8px] px-2 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap leading-none">
                             SAVE 20%
                           </div>
                         </div>
@@ -147,7 +147,7 @@ const Pricing: React.FC = () => {
                 <Card 
                   className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full backdrop-blur-2xl ${
                     isSelected
-                      ? 'bg-[#FFFFFF] dark:bg-[#121212] border-primary shadow-2xl shadow-primary/20 translate-y-[-16px] !opacity-100' 
+                      ? '!bg-white dark:!bg-[#121212] border-primary shadow-2xl shadow-primary/20 translate-y-[-16px] !opacity-100' 
                       : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10'
                   }`}
                   radius="lg"
