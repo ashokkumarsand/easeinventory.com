@@ -91,27 +91,28 @@ const Pricing: React.FC = () => {
              Select Your <span className="text-primary italic">Growth Trajectory.</span>
            </h2>
            
-            <div className="flex flex-col items-center gap-6 mt-10">
+            <div className="flex flex-col items-center gap-6 mt-10 w-full max-w-md mx-auto">
                <Tabs 
                  aria-label="Billing Cycle" 
                  color="primary" 
                  variant="solid"
                  radius="full"
                  size="lg"
+                 fullWidth
                  selectedKey={billingCycle}
                  onSelectionChange={(key) => setBillingCycle(key.toString())}
                  classNames={{
-                   tabList: "bg-foreground/5 p-1 gap-0 border border-foreground/10 glass",
-                   cursor: "shadow-2xl bg-white dark:bg-primary shadow-primary/20",
-                   tab: "h-12 px-6 md:px-8",
-                   tabContent: "font-black text-xs md:text-sm group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full"
+                   tabList: "bg-default-100 p-1 gap-0 border border-default-200",
+                   cursor: "shadow-lg bg-white dark:bg-primary shadow-primary/20",
+                   tab: "h-12",
+                   tabContent: "font-black text-xs md:text-sm group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full w-full"
                  }}
                >
                  <Tab key="monthly" title="Monthly" />
                  <Tab 
                    key="yearly" 
                    title={
-                     <div className="flex items-center gap-2">
+                     <div className="flex items-center justify-center gap-2 w-full">
                         <span>Yearly</span>
                         <div className="relative flex items-center">
                           <div className="absolute inset-0 bg-success blur-md opacity-40 animate-pulse rounded-full" />
@@ -145,10 +146,10 @@ const Pricing: React.FC = () => {
                 onClick={() => setSelectedPlan(plan.name)}
               >
                 <Card 
-                  className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full backdrop-blur-2xl ${
+                  className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full ${
                     isSelected
-                      ? '!bg-white dark:!bg-[#121212] border-primary shadow-2xl shadow-primary/20 translate-y-[-16px] !opacity-100' 
-                      : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10'
+                      ? 'bg-card border-primary shadow-2xl shadow-primary/20 translate-y-[-16px] z-30' 
+                      : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10 opacity-70 hover:opacity-100'
                   }`}
                   radius="lg"
                   isPressable
@@ -167,7 +168,7 @@ const Pricing: React.FC = () => {
                       <h3 className={`text-lg font-black mb-2 uppercase tracking-tighter ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                         {plan.name}
                       </h3>
-                      <p className="text-xs font-bold opacity-60 text-foreground leading-relaxed italic h-10">
+                      <p className={`text-xs font-bold opacity-60 leading-relaxed italic h-10 ${isSelected ? 'text-foreground' : 'text-foreground/80'}`}>
                         {plan.description}
                       </p>
                     </div>
@@ -186,7 +187,7 @@ const Pricing: React.FC = () => {
 
                     <ul className="space-y-4 mb-8 flex-1">
                       {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-3 text-xs font-bold text-foreground/90">
+                        <li key={feature} className={`flex items-start gap-3 text-xs font-bold ${isSelected ? 'text-foreground' : 'text-foreground/90'}`}>
                           <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${feature.startsWith('No ') ? 'bg-danger/10' : 'bg-primary/10'}`}>
                              <span className={`text-[8px] ${feature.startsWith('No ') ? 'text-danger' : 'text-primary'}`}>
                                {feature.startsWith('No ') ? '✕' : '✦'}
