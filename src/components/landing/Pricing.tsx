@@ -102,6 +102,7 @@ const Pricing: React.FC = () => {
                  selectedKey={billingCycle}
                  onSelectionChange={(key) => setBillingCycle(key.toString())}
                  classNames={{
+                   base: "overflow-hidden",
                    tabList: "bg-default-100 p-1 gap-0 border border-default-200 overflow-hidden",
                    cursor: "shadow-lg bg-white dark:bg-primary shadow-primary/20",
                    tab: "h-12",
