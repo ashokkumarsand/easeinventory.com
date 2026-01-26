@@ -70,7 +70,7 @@ const Navbar: React.FC = () => {
           <NavbarItem key={link.href}>
             <Link
               href={link.href}
-              className="text-sm font-semibold hover:text-primary transition-all duration-300 relative group py-1"
+              className="text-sm font-semibold hover:text-primary transition-all duration-300 relative group py-1 text-foreground"
             >
               {link.label}
               <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
@@ -95,7 +95,7 @@ const Navbar: React.FC = () => {
             as={Link}
             href="/login"
             variant="light"
-            className="font-bold hover:bg-black/5 dark:hover:bg-white/5"
+            className="font-bold hover:bg-black/5 dark:hover:bg-white/5 text-foreground"
           >
             Log In
           </Button>
@@ -119,21 +119,21 @@ const Navbar: React.FC = () => {
 
       <NavbarMenu className="bg-background/95 backdrop-blur-xl pt-10 gap-6">
         <div className="flex justify-between items-center mb-6">
-           <span className="text-sm font-medium">Appearance</span>
+           <span className="text-sm font-black uppercase tracking-widest opacity-40">Appearance</span>
            <Switch
             isSelected={theme === 'dark'}
             size="md"
             color="secondary"
             onValueChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            startContent={<span>🌙</span>}
-            endContent={<span>☀️</span>}
+            startContent={<div className="scale-75">🌙</div>}
+            endContent={<div className="scale-75">☀️</div>}
           />
         </div>
         {navLinks.map((link) => (
           <NavbarMenuItem key={link.href}>
             <Link
               href={link.href}
-              className="w-full text-2xl font-bold hover:text-primary transition-colors py-2 block"
+              className="w-full text-3xl font-black hover:text-primary transition-colors py-4 block text-foreground active:scale-95 origin-left"
               onClick={() => setIsMenuOpen(false)}
             >
               {link.label}
@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
             as={Link}
             href="/login"
             variant="bordered"
-            className="w-full font-bold h-14 text-lg"
+            className="w-full font-bold h-14 text-lg border-foreground/10"
             radius="full"
             onClick={() => setIsMenuOpen(false)}
           >
@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
             as={Link}
             href="/register"
             color="primary"
-            className="w-full font-bold h-14 text-lg shadow-xl shadow-primary/20"
+            className="w-full font-bold h-14 text-lg shadow-xl shadow-primary/20 text-white"
             radius="full"
             onClick={() => setIsMenuOpen(false)}
           >

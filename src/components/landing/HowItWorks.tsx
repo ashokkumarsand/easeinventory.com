@@ -59,9 +59,9 @@ const HowItWorks: React.FC = () => {
                   </div>
                   
                   <div className="mt-8">
-                    <span className="text-6xl font-black text-foreground/5 mb-6 block leading-none">{step.number}</span>
-                    <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors">{step.title}</h3>
-                    <p className="text-foreground/50 leading-relaxed italic">{step.description}</p>
+                    <span className="text-7xl font-black text-foreground/10 mb-6 block leading-none tracking-tighter italic">{step.number}</span>
+                    <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors text-foreground">{step.title}</h3>
+                    <p className="text-foreground/70 leading-relaxed font-medium">{step.description}</p>
                   </div>
                 </CardBody>
               </Card>

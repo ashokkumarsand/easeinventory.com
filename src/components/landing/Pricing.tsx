@@ -77,7 +77,7 @@ const Pricing: React.FC = () => {
              Select Your <span className="text-secondary italic">Growth Trajectory.</span>
            </h2>
            
-            <div className="flex flex-col items-center gap-4 mt-8">
+            <div className="flex flex-col items-center gap-6 mt-10">
                <Tabs 
                  aria-label="Billing Cycle" 
                  color="primary" 
@@ -87,10 +87,10 @@ const Pricing: React.FC = () => {
                  selectedKey={billingCycle}
                  onSelectionChange={(key) => setBillingCycle(key.toString())}
                  classNames={{
-                   tabList: "bg-black/5 dark:bg-white/10 p-1.5 gap-0 border border-black/10 dark:border-white/10",
-                   cursor: "shadow-2xl bg-white dark:bg-primary",
-                   tab: "h-12 md:h-14 px-10",
-                   tabContent: "font-black text-sm md:text-base group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white"
+                   tabList: "bg-black/5 dark:bg-white/5 p-1.5 gap-0 border border-black/10 dark:border-white/10 glass",
+                   cursor: "shadow-2xl bg-white dark:bg-primary shadow-primary/20",
+                   tab: "h-14 px-12",
+                   tabContent: "font-black text-sm md:text-base group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-wide"
                  }}
                >
                  <Tab key="monthly" title="Monthly" />
@@ -99,13 +99,19 @@ const Pricing: React.FC = () => {
                    title={
                      <div className="flex items-center gap-3">
                         <span>Yearly</span>
-                        <div className="bg-success text-white text-[10px] px-2 py-0.5 rounded-full font-black animate-pulse shadow-lg shadow-success/20">
-                          SAVE 20%
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-success blur-md opacity-40 animate-pulse rounded-full" />
+                          <div className="relative bg-success text-white text-[10px] px-3 py-1 rounded-full font-black tracking-tighter shadow-lg">
+                            SAVE 20%
+                          </div>
                         </div>
                      </div>
                    } 
                  />
                </Tabs>
+               <p className="text-xs font-bold opacity-40 uppercase tracking-[0.2em] animate-bounce">
+                  Limited time launch offer ✦
+               </p>
             </div>
         </div>
 
@@ -120,19 +126,19 @@ const Pricing: React.FC = () => {
               className={`flex ${plan.popular ? 'z-10' : ''}`}
             >
               <Card 
-                className={`modern-card flex-1 p-2 md:p-4 border-none shadow-xl transition-all duration-500 overflow-visible ${
+                className={`modern-card flex-1 p-2 md:p-4 border-none shadow-2xl transition-all duration-700 overflow-visible ${
                   plan.popular 
-                    ? 'ring-2 ring-primary bg-white dark:bg-dark-card lg:scale-105 shadow-primary/10' 
-                    : 'bg-white/50 dark:bg-dark-card/50 backdrop-blur-sm'
+                    ? 'scale-105 bg-white dark:bg-dark-card shadow-primary/20 ring-1 ring-primary/50' 
+                    : 'bg-white/80 dark:bg-dark-card/80 backdrop-blur-md opacity-90'
                 }`}
                 radius="lg"
               >
-                <CardBody className="p-6 md:p-10 flex flex-col h-full">
+                <CardBody className="p-8 md:p-12 flex flex-col h-full relative">
                   {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <Chip color="primary" size="sm" className="font-black uppercase text-[10px] tracking-widest px-4 shadow-lg">
-                        Recommended
-                      </Chip>
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-30">
+                      <div className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-xl shadow-primary/30 border border-white/20">
+                        Strategic Choice
+                      </div>
                     </div>
                   )}
 

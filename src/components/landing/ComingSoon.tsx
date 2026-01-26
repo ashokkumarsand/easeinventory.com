@@ -12,8 +12,8 @@ const ComingSoon: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#030407] text-white flex flex-col items-center justify-center p-6 text-center overflow-hidden">
       {/* Background Decor */}
-      <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="fixed bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] animate-pulse delay-1000 pointer-events-none" />
 
       <div className="relative z-10 max-w-4xl mx-auto space-y-12">
         

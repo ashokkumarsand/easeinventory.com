@@ -69,27 +69,27 @@ const Hero: React.FC = () => {
               </Chip>
             </motion.div>
 
-            <div className="relative">
+            <div className="relative min-h-[420px] mb-12">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="w-full"
                 >
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.1] tracking-tight">
+                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-[0.95] tracking-tight text-foreground">
                     {bannerSlides[currentSlide].title}{' '}
                     <span className="text-primary italic">
                       {bannerSlides[currentSlide].highlight}
                     </span>
                     <br />
-                    <span className="text-foreground/80 text-2xl md:text-4xl lg:text-5xl font-light">
+                    <span className="text-foreground/40 text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter">
                       {bannerSlides[currentSlide].subtitle}
                     </span>
                   </h1>
-                  <p className="text-base md:text-lg text-foreground/60 max-w-2xl leading-relaxed mb-8">
+                  <p className="text-lg md:text-xl text-foreground/70 max-w-2xl leading-relaxed mb-10 font-medium italic">
                     {bannerSlides[currentSlide].description}
                   </p>
                 </motion.div>

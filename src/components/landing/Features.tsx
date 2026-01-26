@@ -88,7 +88,7 @@ const Features: React.FC = () => {
                     <div className="w-16 h-16 rounded-[24px] bg-primary/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-500 shadow-sm border border-primary/5">
                       {feature.icon}
                     </div>
-                    <Chip size="sm" variant="dot" color="primary" className="border-none opacity-60">
+                    <Chip size="sm" variant="flat" color="primary" className="font-bold text-[10px] uppercase tracking-widest px-3">
                        {feature.tag}
                     </Chip>
                   </div>

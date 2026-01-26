@@ -3,31 +3,39 @@
 
 @theme {
   --color-primary: #6A3BF6;
-  --color-primary-dark: #4F27C8;
-  --color-primary-light: #9B72FF;
+  --color-primary-50: #f3f1ff;
+  --color-primary-100: #ebe5ff;
+  --color-primary-200: #d9ceff;
+  --color-primary-300: #bea6ff;
+  --color-primary-400: #9f75ff;
+  --color-primary-500: #6A3BF6;
+  --color-primary-600: #5c21f0;
+  --color-primary-700: #4d10dc;
+  --color-primary-800: #410fb8;
+  --color-primary-900: #370d97;
 
   --color-secondary: #00D9A5;
-  --color-secondary-dark: #00B88A;
+  --color-secondary-50: #e6fff8;
+  --color-secondary-100: #b3ffeb;
+  --color-secondary-200: #80ffde;
+  --color-secondary-300: #4dffd1;
+  --color-secondary-400: #1affc4;
+  --color-secondary-500: #00D9A5;
 
-  --color-beige: #EDE8D0;
-  --color-beige-light: #F5F2E8;
-  --color-beige-dark: #D4CDB5;
-  --color-cream: #FAF8F3;
-  --color-warm-white: #FFFCF5;
+  --color-success: #17c964;
+  --color-warning: #f5a524;
+  --color-danger: #f31260;
 
-  /* Premium Deep Dark Palette */
   --color-dark-bg: #030407;
   --color-dark-card: #0D0E12;
-  --color-dark-border: rgba(255, 255, 255, 0.05);
 
-  --color-foreground: var(--foreground);
+  /* Map Theme Variables to Colors */
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
   --font-sans: var(--font-montserrat), system-ui, -apple-system, sans-serif;
-  --z-navbar: 1000;
 
   --radius-3xl: 24px;
-  --radius-4xl: 32px;
 }
 
 @layer base {
@@ -41,81 +49,63 @@
     --foreground: #FFFFFF;
   }
 
+  html,
   body {
     background-color: var(--background);
     color: var(--foreground);
-    @apply min-h-screen transition-all duration-500 overflow-x-hidden antialiased;
+  }
+
+  body {
+    @apply min-h-screen overflow-x-hidden antialiased transition-colors duration-500;
   }
 }
 
-/* Fix HeroUI Visibility & Colors */
 @layer components {
-
-  /* Ensure HeroUI Chips and Switches have proper presence */
-  .heroui-chip {
-    @apply inline-flex items-center justify-center;
+  .section-padding {
+    @apply py-20 lg:py-32;
   }
 
-  /* Deep Dark Mode Overrides */
-  .dark {
-    color-scheme: dark;
-  }
-
-  /* Glassmorphism Refined */
-  .glass {
-    @apply bg-white/70 dark:bg-dark-card/60 backdrop-blur-2xl border border-black/5 dark:border-white/5;
+  .container-custom {
+    @apply max-w-7xl mx-auto px-6 lg:px-12;
   }
 
   .heading-xl {
-    @apply text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.95];
+    @apply text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-foreground;
   }
 
   .heading-lg {
-    @apply text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1];
+    @apply text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] text-foreground;
   }
 
   .paragraph-lg {
-    @apply text-base md:text-xl font-medium opacity-50 leading-relaxed;
+    @apply text-lg md:text-2xl font-medium opacity-60 leading-relaxed text-foreground;
   }
 
   .modern-card {
-    @apply rounded-3xl border border-black/5 dark:border-white/5 bg-white dark:bg-dark-card shadow-sm hover:shadow-2xl transition-all duration-700;
+    @apply rounded-[40px] border border-black/5 dark:border-white/5 bg-white dark:bg-dark-card shadow-sm hover:shadow-2xl transition-all duration-700;
+  }
+
+  .glass {
+    @apply bg-white/70 dark:bg-dark-bg/60 backdrop-blur-3xl border border-black/10 dark:border-white/10;
   }
 }
 
-/* Custom Scrollbar Premium */
+/* Fix for Button and Input frames */
+button,
+input {
+  @apply outline-none focus:ring-0;
+}
+
+/* Scrollbar Premium */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #6A3BF6;
-  border-radius: 20px;
-}
-
-/* Animation Keys for Premium Feel */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-/* Fix for HeroUI Checkbox/Switch visibility in Tailwind 4 */
-[type='checkbox'],
-[type='radio'] {
-  color: #6A3BF6 !important;
+  border-radius: 10px;
 }
