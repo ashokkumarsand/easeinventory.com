@@ -129,7 +129,7 @@ const Pricing: React.FC = () => {
             </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch max-w-[90rem] mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[95rem] mx-auto">
           {plans.map((plan, index) => {
             const isSelected = selectedPlan === plan.name;
             const isPopular = plan.popular;
@@ -141,14 +141,14 @@ const Pricing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`flex cursor-pointer ${isSelected ? 'z-20 scale-105' : 'scale-100'} transition-transform duration-500`}
+                className={`relative flex flex-col ${isSelected ? 'z-20' : 'z-0'}`}
                 onClick={() => setSelectedPlan(plan.name)}
               >
                 <Card 
-                  className={`modern-card flex-1 p-4 border-none shadow-2xl transition-all duration-500 overflow-visible relative ${
+                  className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full backdrop-blur-2xl ${
                     isSelected
-                      ? 'bg-white dark:bg-card-bg shadow-primary/30 ring-2 ring-primary' 
-                      : 'bg-white/60 dark:bg-card-bg/60 backdrop-blur-md opacity-80 hover:opacity-100 ring-1 ring-foreground/5'
+                      ? 'bg-white/90 dark:bg-[#121212]/90 border-primary shadow-2xl shadow-primary/20 translate-y-[-16px]' 
+                      : 'bg-white/20 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/40 dark:hover:bg-white/10'
                   }`}
                   radius="lg"
                   isPressable
@@ -156,18 +156,18 @@ const Pricing: React.FC = () => {
                 >
                   <CardBody className="p-8 flex flex-col h-full relative">
                     {isPopular && (
-                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-30">
-                        <div className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.4em] px-6 py-2 rounded-full shadow-xl shadow-primary/40 border border-white/20 whitespace-nowrap">
+                      <div className="absolute -top-5 left-0 w-full flex justify-center z-50 pointer-events-none">
+                        <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border border-white/20 whitespace-nowrap">
                           Recommended
                         </div>
                       </div>
                     )}
 
-                    <div className="mb-8 text-center sm:text-left">
-                      <h3 className={`text-xl font-black mb-3 uppercase tracking-tighter ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                    <div className="mb-6 text-center sm:text-left mt-4">
+                      <h3 className={`text-lg font-black mb-2 uppercase tracking-tighter ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                         {plan.name}
                       </h3>
-                      <p className="text-xs font-bold opacity-60 text-foreground leading-relaxed italic line-clamp-2 md:min-h-[2.5em]">
+                      <p className="text-xs font-bold opacity-60 text-foreground leading-relaxed italic h-10">
                         {plan.description}
                       </p>
                     </div>
@@ -184,7 +184,7 @@ const Pricing: React.FC = () => {
                       </span>
                     </div>
 
-                    <ul className="space-y-4 mb-10 flex-1">
+                    <ul className="space-y-4 mb-8 flex-1">
                       {plan.features.map((feature) => (
                         <li key={feature} className="flex items-start gap-3 text-xs font-bold text-foreground/90">
                           <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${feature.startsWith('No ') ? 'bg-danger/10' : 'bg-primary/10'}`}>
@@ -204,7 +204,7 @@ const Pricing: React.FC = () => {
                       href="/register"
                       color={isSelected ? 'primary' : 'default'}
                       variant={isSelected ? 'solid' : 'bordered'}
-                      className={`w-full font-black h-14 text-sm uppercase tracking-[0.2em] shadow-lg ${
+                      className={`w-full font-black h-12 text-xs uppercase tracking-[0.2em] shadow-lg ${
                         isSelected 
                           ? 'shadow-primary/30' 
                           : 'border-foreground/10 text-foreground hover:bg-foreground/5'
