@@ -46,31 +46,31 @@ const Navbar: React.FC = () => {
       onMenuOpenChange={setIsMenuOpen}
       className={`fixed top-0 transition-all duration-500 border-none z-[999] ${
         isScrolled
-          ? 'bg-background/80 backdrop-blur-xl shadow-sm h-16'
-          : 'bg-transparent h-24'
+          ? 'bg-background/80 backdrop-blur-xl shadow-sm h-20'
+          : 'bg-transparent h-28'
       }`}
       maxWidth="xl"
       position="sticky"
     >
       <NavbarContent justify="start">
         <NavbarBrand>
-          <Link href="/" className="flex items-center gap-3 active:scale-95 transition-transform">
-            <Logo size={isScrolled ? 36 : 44} />
-            <span className={`text-xl font-bold tracking-tight hidden sm:block ${
-              theme === 'dark' ? 'text-white' : 'text-dark'
-            }`}>
-              Ease<span className="text-primary">Inventory</span>
+          <Link href="/" className="flex items-center gap-4 active:scale-95 transition-transform group">
+            <div className={`p-2 rounded-xl transition-colors ${isScrolled ? 'bg-primary/10' : 'bg-foreground/5'}`}>
+              <Logo size={isScrolled ? 32 : 40} />
+            </div>
+            <span className="text-2xl font-black tracking-tighter hidden sm:block uppercase text-foreground">
+              Ease<span className="text-primary italic">Inventory</span>
             </span>
           </Link>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden lg:flex gap-10" justify="center">
+      <NavbarContent className="hidden lg:flex gap-12" justify="center">
         {navLinks.map((link) => (
           <NavbarItem key={link.href}>
             <Link
               href={link.href}
-              className="text-sm font-semibold hover:text-primary transition-all duration-300 relative group py-1 text-foreground"
+              className="text-[10px] font-black uppercase tracking-[0.3em] hover:text-primary transition-all duration-300 relative group py-2 text-foreground/60 hover:text-foreground"
             >
               {link.label}
               <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
         ))}
       </NavbarContent>
 
-      <NavbarContent justify="end" className="gap-5">
+      <NavbarContent justify="end" className="gap-6">
         <NavbarItem className="hidden sm:flex items-center">
           <Switch
             isSelected={theme === 'dark'}
@@ -88,6 +88,9 @@ const Navbar: React.FC = () => {
             onValueChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             startContent={<span className="text-[10px]">🌙</span>}
             endContent={<span className="text-[10px]">☀️</span>}
+            classNames={{
+              wrapper: "bg-foreground/10",
+            }}
           />
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
@@ -95,7 +98,7 @@ const Navbar: React.FC = () => {
             as={Link}
             href="/login"
             variant="light"
-            className="font-bold hover:bg-black/5 dark:hover:bg-white/5 text-foreground"
+            className="font-black text-[10px] uppercase tracking-widest hover:bg-foreground/5 text-foreground"
           >
             Log In
           </Button>
@@ -105,7 +108,7 @@ const Navbar: React.FC = () => {
             as={Link}
             href="/register"
             color="primary"
-            className="font-bold px-6 shadow-xl shadow-primary/20"
+            className="font-black px-8 h-12 shadow-xl shadow-primary/20 uppercase tracking-widest text-[10px]"
             radius="full"
           >
             Join Free
@@ -113,53 +116,53 @@ const Navbar: React.FC = () => {
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          className="lg:hidden"
+          className="lg:hidden text-foreground"
         />
       </NavbarContent>
 
-      <NavbarMenu className="bg-background/95 backdrop-blur-xl pt-10 gap-6">
-        <div className="flex justify-between items-center mb-6">
-           <span className="text-sm font-black uppercase tracking-widest opacity-40">Appearance</span>
+      <NavbarMenu className="bg-background/98 backdrop-blur-2xl pt-12 gap-8 border-t border-foreground/5">
+        <div className="flex justify-between items-center mb-8 px-4">
+           <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Interface Mode</span>
            <Switch
             isSelected={theme === 'dark'}
-            size="md"
+            size="lg"
             color="secondary"
             onValueChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            startContent={<div className="scale-75">🌙</div>}
-            endContent={<div className="scale-75">☀️</div>}
+            startContent={<div className="scale-110">🌙</div>}
+            endContent={<div className="scale-110">☀️</div>}
           />
         </div>
         {navLinks.map((link) => (
-          <NavbarMenuItem key={link.href}>
+          <NavbarMenuItem key={link.href} className="px-4">
             <Link
               href={link.href}
-              className="w-full text-3xl font-black hover:text-primary transition-colors py-4 block text-foreground active:scale-95 origin-left"
+              className="w-full text-4xl font-black hover:text-primary transition-all py-4 block text-foreground active:scale-95 origin-left uppercase tracking-tighter"
               onClick={() => setIsMenuOpen(false)}
             >
               {link.label}
             </Link>
           </NavbarMenuItem>
         ))}
-        <NavbarMenuItem className="pt-8 flex flex-col gap-4">
+        <NavbarMenuItem className="pt-12 px-4 flex flex-col gap-6">
           <Button
             as={Link}
             href="/login"
             variant="bordered"
-            className="w-full font-bold h-14 text-lg border-foreground/10"
+            className="w-full font-black h-20 text-xl border-foreground/10 text-foreground uppercase tracking-widest"
             radius="full"
             onClick={() => setIsMenuOpen(false)}
           >
-            Log In
+            System Login
           </Button>
           <Button
             as={Link}
             href="/register"
             color="primary"
-            className="w-full font-bold h-14 text-lg shadow-xl shadow-primary/20 text-white"
+            className="w-full font-black h-20 text-xl shadow-2xl shadow-primary/30 text-white uppercase tracking-widest"
             radius="full"
             onClick={() => setIsMenuOpen(false)}
           >
-            Get Started
+            Initialize
           </Button>
         </NavbarMenuItem>
       </NavbarMenu>

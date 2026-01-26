@@ -1,44 +1,49 @@
 'use client';
 
 import { Button } from '@heroui/react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
 
 const CTA: React.FC = () => {
   return (
-    <section className="py-24 lg:py-32 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary" />
+    <section className="section-padding relative overflow-hidden">
+      {/* Background with Dark Base and Primary Glow */}
+      <div className="absolute inset-0 bg-[#030407]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-secondary/20" />
       
-      {/* Pattern Overlay */}
+      {/* Precision Pattern Overlay */}
       <div 
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '32px 32px',
+          backgroundSize: '48px 48px',
         }}
       />
 
-      {/* Decorative Shapes */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-      <div className="absolute bottom-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
-
-      <div className="container mx-auto px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Ready to Transform Your Business?
+      <div className="container-custom relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-4xl mx-auto"
+        >
+          <h2 className="heading-lg text-white mb-10 uppercase tracking-tighter">
+            Ready to <span className="text-secondary italic">Accelerate</span> <br />
+            Your Enterprise?
           </h2>
-          <p className="text-xl text-white/80 mb-10 leading-relaxed">
-            Join 10,000+ businesses already using EaseInventory. Start free today.
+          <p className="paragraph-lg text-white/60 mb-16 italic">
+            Join 10,000+ modern businesses redefining retail in India. <br />
+            No legacy systems. Just pure momentum.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-12">
             <Button
               as={Link}
               href="/register"
               size="lg"
-              radius="lg"
-              className="bg-white text-primary font-semibold px-8 min-w-[200px] shadow-xl hover:bg-white/90"
+              className="bg-white text-black font-black px-12 h-20 text-xl shadow-2xl hover:scale-105 transition-transform"
+              radius="full"
             >
               Get Started Free
             </Button>
@@ -47,17 +52,24 @@ const CTA: React.FC = () => {
               href="/contact"
               variant="bordered"
               size="lg"
-              radius="lg"
-              className="border-white/40 text-white font-semibold px-8 min-w-[200px] hover:bg-white/10"
+              className="border-white/20 text-white font-black px-12 h-20 text-xl hover:bg-white/5"
+              radius="full"
             >
-              Talk to Sales
+              Consult an Expert
             </Button>
           </div>
           
-          <p className="text-white/60 text-sm">
-            No credit card required • Free forever plan available
-          </p>
-        </div>
+          <div className="flex items-center justify-center gap-8 text-white/30">
+            <div className="flex items-center gap-2">
+               <div className="w-1.5 h-1.5 bg-secondary rounded-full" />
+               <span className="text-[10px] font-black uppercase tracking-widest">No keys required</span>
+            </div>
+            <div className="flex items-center gap-2">
+               <div className="w-1.5 h-1.5 bg-primary rounded-full" />
+               <span className="text-[10px] font-black uppercase tracking-widest">Free forever plan</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

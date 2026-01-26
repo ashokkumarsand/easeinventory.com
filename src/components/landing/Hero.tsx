@@ -1,7 +1,6 @@
 'use client';
 
-import { Logo } from '@/components/icons/Logo';
-import { Button, Card, CardBody, Chip } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -44,52 +43,49 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen pt-32 pb-20 flex flex-col justify-center overflow-hidden">
-      {/* Background Orbs */}
-      <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-drift" />
-      <div className="absolute bottom-[0%] left-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[150px] animate-drift delay-1000" />
+    <section className="relative min-h-[90vh] pt-40 pb-24 lg:pt-56 lg:pb-40 flex flex-col justify-center overflow-hidden bg-background">
+      {/* Dynamic Background Orbs */}
+      <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] animate-drift pointer-events-none" />
+      <div className="absolute bottom-[0%] left-[-10%] w-[700px] h-[700px] bg-secondary/10 rounded-full blur-[180px] animate-drift delay-1000 pointer-events-none" />
       
       <div className="container-custom relative z-10">
-        <div className="grid lg:grid-cols-12 gap-16 items-center">
+        <div className="grid lg:grid-cols-12 gap-20 lg:gap-24 items-center">
           
           {/* Left: Content */}
-          <div className="lg:col-span-7 text-center lg:text-left">
+          <div className="lg:col-span-12 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="flex justify-center"
             >
-              <Chip
-                variant="flat"
-                size="lg"
-                className="bg-primary/10 border border-primary/20 px-5 mb-8 text-primary font-bold tracking-wide uppercase text-xs"
-                startContent={<span className="text-xl">🇮🇳</span>}
-              >
-                Proudly Built in India
-              </Chip>
+              <div className="inline-flex items-center gap-4 bg-foreground/5 border border-foreground/10 px-6 py-3 rounded-full mb-12 shadow-sm">
+                 <span className="text-2xl">🇮🇳</span>
+                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/60 leading-none">Proudly Engineered in India</span>
+              </div>
             </motion.div>
 
-            <div className="relative min-h-[420px] mb-12">
+            <div className="relative min-h-[480px] md:min-h-[520px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full"
                 >
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-[0.95] tracking-tight text-foreground">
+                  <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-10 leading-[0.85] tracking-tighter text-foreground uppercase">
                     {bannerSlides[currentSlide].title}{' '}
                     <span className="text-primary italic">
                       {bannerSlides[currentSlide].highlight}
                     </span>
                     <br />
-                    <span className="text-foreground/40 text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter">
+                    <span className="text-foreground/30 text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter">
                       {bannerSlides[currentSlide].subtitle}
                     </span>
                   </h1>
-                  <p className="text-lg md:text-xl text-foreground/70 max-w-2xl leading-relaxed mb-10 font-medium italic">
+                  <p className="text-xl md:text-2xl lg:text-3xl text-foreground/60 max-w-4xl mx-auto leading-relaxed mb-14 font-medium italic">
                     {bannerSlides[currentSlide].description}
                   </p>
                 </motion.div>
@@ -97,117 +93,42 @@ const Hero: React.FC = () => {
             </div>
 
             {/* CTA's */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start mt-10">
+            <div className="flex flex-col sm:flex-row items-center gap-8 justify-center mt-12">
               <Button
                 as={Link}
                 href="/register"
                 color="primary"
                 size="lg"
-                className="font-bold px-10 h-16 text-lg shadow-2xl shadow-primary/30"
+                className="font-black px-16 h-24 text-2xl shadow-2xl shadow-primary/40 uppercase tracking-widest"
                 radius="full"
               >
-                Start Free Trial
+                Inaugurate Trial
               </Button>
               <Button
                 as={Link}
                 href="#demo"
                 variant="bordered"
                 size="lg"
-                className="font-bold px-10 h-16 text-lg border-foreground/10 hover:bg-foreground/5"
+                className="font-black px-16 h-24 text-2xl border-foreground/10 text-foreground uppercase tracking-widest hover:bg-foreground/5"
                 radius="full"
               >
-                Book a Demo
+                Request Access
               </Button>
             </div>
 
             {/* Dots */}
-            <div className="flex gap-4 mt-16 justify-center lg:justify-start">
+            <div className="flex gap-6 mt-20 justify-center">
               {bannerSlides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`h-1.5 transition-all duration-500 rounded-full ${
-                    index === currentSlide ? 'w-12 bg-primary' : 'w-4 bg-foreground/10 hover:bg-foreground/20'
+                  className={`h-2 transition-all duration-700 rounded-full ${
+                    index === currentSlide ? 'w-24 bg-primary' : 'w-6 bg-foreground/10 hover:bg-foreground/30'
                   }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
-          </div>
-
-          {/* Right: Modern Dashboard Mockup */}
-          <div className="lg:col-span-5 relative group">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            >
-              <div className="relative rounded-[40px] p-2 bg-gradient-to-br from-primary/30 to-secondary/30 shadow-2xl overflow-hidden">
-                <div className="bg-background rounded-[34px] p-6 shadow-inner border border-white/10 overflow-hidden">
-                  
-                  {/* Dashboard Header */}
-                  <div className="flex justify-between items-center mb-10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                         <Logo size={24} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold opacity-80">yourshop.ease</p>
-                        <p className="text-[10px] uppercase tracking-widest opacity-40">Connected</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                       <div className="w-8 h-8 rounded-full bg-foreground/5 animate-pulse" />
-                       <div className="w-8 h-8 rounded-full bg-foreground/5 animate-pulse" />
-                    </div>
-                  </div>
-
-                   {/* Stat Grid */}
-                   <div className="grid grid-cols-2 gap-4 mb-8">
-                      <Card className="modern-card bg-primary/5 border-none shadow-none" radius="lg">
-                         <CardBody className="p-4">
-                            <p className="text-xs font-medium opacity-50 uppercase mb-1">Products</p>
-                            <p className="text-2xl font-black">2,482</p>
-                            <div className="h-1 w-10 bg-primary mt-2 rounded-full" />
-                         </CardBody>
-                      </Card>
-                      <Card className="modern-card bg-secondary/5 border-none shadow-none" radius="lg">
-                        <CardBody className="p-4">
-                           <p className="text-xs font-medium opacity-50 uppercase mb-1">Stock Value</p>
-                           <p className="text-2xl font-black">₹14.2L</p>
-                           <div className="h-1 w-10 bg-secondary mt-2 rounded-full" />
-                        </CardBody>
-                     </Card>
-                  </div>
-
-                  {/* List Item Mockup */}
-                  <div className="space-y-4">
-                     {[1, 2, 3].map((i) => (
-                       <div key={i} className="flex items-center gap-4 p-3 rounded-2xl bg-foreground/5 hover:bg-foreground/[0.08] transition-colors">
-                          <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-lg">
-                             {i === 1 ? '📦' : i === 2 ? '🔧' : '📱'}
-                          </div>
-                          <div className="flex-1">
-                             <div className="h-2 w-24 bg-foreground/10 rounded mb-2" />
-                             <div className="h-1.5 w-16 bg-foreground/5 rounded" />
-                          </div>
-                          <div className="h-6 w-12 bg-primary/10 rounded-full" />
-                       </div>
-                     ))}
-                  </div>
-
-                  {/* Overlays for depth */}
-                  <div className="absolute bottom-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-700">
-                     <div className="bg-primary text-white p-4 rounded-3xl shadow-xl flex items-center gap-4">
-                        <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">📈</div>
-                        <div>
-                           <p className="text-[10px] uppercase font-bold opacity-60">Revenue</p>
-                           <p className="text-lg font-black">+42%</p>
-                        </div>
-                     </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
 
         </div>

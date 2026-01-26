@@ -1,6 +1,6 @@
 'use client';
 
-import { Accordion, AccordionItem, Chip } from '@heroui/react';
+import { Accordion, AccordionItem } from '@heroui/react';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -29,26 +29,31 @@ const faqs = [
 
 const FAQ: React.FC = () => {
   return (
-    <section id="faq" className="section-padding bg-background relative">
-      <div className="container-custom relative z-10 flex flex-col lg:flex-row gap-20">
+    <section id="faq" className="section-padding bg-background relative overflow-hidden">
+      {/* Background Accent */}
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none" />
+
+      <div className="container-custom relative z-10 flex flex-col lg:flex-row gap-24 lg:gap-32">
         
         {/* Left Side: Text */}
         <div className="lg:w-1/3">
            <motion.div
-             initial={{ opacity: 0, x: -20 }}
+             initial={{ opacity: 0, x: -30 }}
              whileInView={{ opacity: 1, x: 0 }}
              viewport={{ once: true }}
+             transition={{ duration: 0.8 }}
+             className="sticky top-40"
            >
-              <Chip variant="flat" color="primary" className="mb-6 font-bold uppercase text-xs">
-                 Support Lab
-              </Chip>
-              <h2 className="heading-lg mb-8">Got <span className="text-primary italic">Questions?</span></h2>
-              <p className="paragraph-lg mb-10 text-sm">Everything you need to know about setting up and scaling with EaseInventory. Still stuck? Reach out to our 24/7 support.</p>
+              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-8">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Intelligence Hub</span>
+              </div>
+              <h2 className="heading-lg mb-10">Got <span className="text-primary italic">Questions?</span></h2>
+              <p className="paragraph-lg mb-12 italic">Everything you need to know about scaling operations with EaseInventory. Still stuck? Reach out to our 24/7 command center.</p>
               
-              <div className="p-8 rounded-[32px] bg-primary/5 border border-primary/10">
-                 <p className="text-sm font-bold opacity-60 mb-4 uppercase tracking-[0.2em]">Contact Us</p>
-                 <p className="text-xl font-black mb-1">help@ease.in</p>
-                 <p className="text-sm font-medium opacity-50">+91 98765 43210</p>
+              <div className="p-10 rounded-[40px] bg-foreground/5 border border-foreground/5 hover:bg-foreground/[0.08] transition-all duration-500 shadow-sm">
+                 <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 mb-6 underline underline-offset-8">Direct Access</p>
+                 <a href="mailto:help@ease.in" className="text-2xl font-black mb-2 block hover:text-primary transition-colors text-foreground tracking-tight">help@ease.in</a>
+                 <p className="text-lg font-bold opacity-60 text-foreground">+91 98765 43210</p>
               </div>
            </motion.div>
         </div>
@@ -58,10 +63,10 @@ const FAQ: React.FC = () => {
            <Accordion 
              variant="splitted"
              itemClasses={{
-               base: "px-6 mb-4 !shadow-none border border-black/5 dark:border-white/5 !bg-foreground/[0.02] rounded-[24px] overflow-hidden",
-               title: "font-black text-lg py-6",
-               content: "pb-8 opacity-60 font-medium leading-relaxed",
-               indicator: "text-primary text-xl",
+               base: "px-8 mb-6 !shadow-none border border-foreground/5 bg-foreground/[0.02] hover:bg-foreground/5 hover:border-primary/20 rounded-[32px] overflow-hidden transition-all duration-500",
+               title: "font-black text-2xl py-8 text-foreground uppercase tracking-tight",
+               content: "pb-10 opacity-70 font-medium leading-relaxed italic text-lg text-foreground",
+               indicator: "text-primary text-2xl",
                trigger: "py-0 h-auto"
              }}
            >

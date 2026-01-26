@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody, Chip } from '@heroui/react';
+import { Card, CardBody } from '@heroui/react';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -46,31 +46,33 @@ const features = [
 const Features: React.FC = () => {
   return (
     <section id="features" className="section-padding bg-background relative overflow-hidden">
-      {/* Decorative Blur */}
-      <div className="absolute top-1/2 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-[100px]" />
+      {/* Subtle Background Glow */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
       
       <div className="container-custom relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20 lg:mb-28">
+        <div className="text-center max-w-4xl mx-auto mb-24 lg:mb-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            className="space-y-6"
           >
-            <Chip variant="flat" color="primary" className="mb-6 font-bold uppercase text-xs">
-              Feature Stack
-            </Chip>
-            <h2 className="heading-lg mb-8">
-              Built to manage <span className="text-primary italic">everything.</span>
+            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full">
+               <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
+               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Precision Stack</span>
+            </div>
+            <h2 className="heading-lg">
+              Engineered to manage <br />
+              <span className="text-primary italic">Absolute Zero</span> chaos.
             </h2>
-            <p className="paragraph-lg">
+            <p className="paragraph-lg italic">
               We combined inventory, repairs, and accounting into one fluid interface 
               designed for the speed of modern Indian retail.
             </p>
           </motion.div>
         </div>
 
-        <div className="layout-grid">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -80,29 +82,29 @@ const Features: React.FC = () => {
               transition={{ delay: index * 0.1 }}
             >
               <Card 
-                className="modern-card group hover:translate-y-[-8px] transition-all duration-500 overflow-visible"
+                className="modern-card group h-full hover:border-primary/30 transition-all duration-700 overflow-visible"
                 radius="lg"
               >
-                <CardBody className="p-10">
-                  <div className="flex justify-between items-start mb-10">
-                    <div className="w-16 h-16 rounded-[24px] bg-primary/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-500 shadow-sm border border-primary/5">
+                <CardBody className="p-10 lg:p-12 flex flex-col items-start text-left">
+                  <div className="flex justify-between items-start w-full mb-12">
+                    <div className="w-20 h-20 rounded-[32px] bg-primary/5 dark:bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-all duration-500 shadow-sm border border-primary/5">
                       {feature.icon}
                     </div>
-                    <Chip size="sm" variant="flat" color="primary" className="font-bold text-[10px] uppercase tracking-widest px-3">
-                       {feature.tag}
-                    </Chip>
+                    <div className="bg-foreground/[0.03] dark:bg-white/5 px-4 py-1.5 rounded-full border border-foreground/[0.05] dark:border-white/10">
+                       <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors">
+                  <h3 className="text-3xl font-black mb-6 group-hover:text-primary transition-colors text-foreground uppercase tracking-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-foreground/70 leading-relaxed text-sm font-medium">
+                  <p className="text-foreground/60 leading-relaxed text-base lg:text-lg font-medium italic">
                     {feature.description}
                   </p>
                   
-                  <div className="mt-8 pt-8 border-t border-black/5 dark:border-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest cursor-pointer">
-                    Learn more 
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <div className="mt-auto pt-10 flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] cursor-pointer group-hover:gap-4 transition-all">
+                    System Protocol 
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </div>
                 </CardBody>
