@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionProvider>
-      <NextThemesProvider attribute="class" defaultTheme="light">
+      <NextThemesProvider attribute="class" defaultTheme="dark">
         <HeroUIProvider navigate={router.push}>
           {children}
         </HeroUIProvider>

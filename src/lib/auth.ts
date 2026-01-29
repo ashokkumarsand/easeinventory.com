@@ -24,11 +24,30 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        workspace: { label: 'Workspace', type: 'text' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Invalid credentials');
         }
+
+        // --- MASTER ADMIN CHECK ---
+        const MASTER_ADMIN_USER = process.env.ADMIN_USERNAME || 'easeinventoryadmin';
+        const MASTER_ADMIN_PASS = process.env.ADMIN_PASSWORD || '123456789';
+
+        if (credentials.email === MASTER_ADMIN_USER && credentials.password === MASTER_ADMIN_PASS) {
+          return {
+            id: 'master-admin',
+            email: 'admin@easeinventory.com',
+            name: 'Master Admin',
+            tenantId: 'system',
+            tenantSlug: 'admin',
+            role: 'SUPER_ADMIN',
+            onboardingStatus: 'COMPLETED',
+            registrationStatus: 'APPROVED',
+          };
+        }
+        // --------------------------
 
         const user = await prisma.user.findUnique({
           where: {
@@ -41,6 +60,15 @@ export const authOptions: NextAuthOptions = {
 
         if (!user || !user.password) {
           throw new Error('User not found');
+        }
+
+        // Validate workspace if provided, otherwise default to user's first tenant
+        if (credentials.workspace) {
+          if (user.tenant?.slug !== credentials.workspace) {
+            throw new Error('Invalid workspace for this user');
+          }
+        } else if (!user.tenantId) {
+          throw new Error('This user is not associated with any workspace');
         }
 
         const isPasswordCorrect = await bcrypt.compare(
@@ -56,20 +84,54 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          tenantId: user.tenantId,
-          tenantSlug: user.tenant.slug,
+          tenantId: user.tenantId || null,
+          tenantSlug: user.tenant?.slug || null,
           role: user.role,
+          onboardingStatus: (user.tenant?.settings as any)?.onboardingStatus || 'PENDING',
+          registrationStatus: user.tenant?.registrationStatus || 'PENDING',
+          customDomain: user.tenant?.customDomain || null,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google') {
+        // You can add logic here to check if user exists or needs onboarding
+        return true;
+      }
+      return true;
+    },
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.tenantId = (user as any).tenantId;
         token.tenantSlug = (user as any).tenantSlug;
         token.role = (user as any).role;
+        token.onboardingStatus = (user as any).onboardingStatus;
+        token.registrationStatus = (user as any).registrationStatus;
+        token.customDomain = (user as any).customDomain;
+
+        // Check if internal staff
+        const isInternalDomain = user.email?.endsWith('@easeinventory.com');
+        const isMasterAdmin = (user as any).role === 'SUPER_ADMIN';
+        
+        if (isInternalDomain || isMasterAdmin) {
+          const staffRecord = await prisma.backofficeStaff.findUnique({
+            where: { userId: user.id }
+          });
+          token.isInternalStaff = true;
+          token.backofficePermissions = staffRecord?.permissions || (isMasterAdmin ? { "ALL": "FULL" } : {});
+        } else {
+          token.isInternalStaff = false;
+        }
+      }
+      // If we update the session (e.g. after onboarding)
+      if (trigger === "update" && session) {
+        token.tenantId = session.tenantId;
+        token.tenantSlug = session.tenantSlug;
+        token.onboardingStatus = session.onboardingStatus;
+        token.registrationStatus = session.registrationStatus;
       }
       return token;
     },
@@ -79,6 +141,11 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).tenantId = token.tenantId;
         (session.user as any).tenantSlug = token.tenantSlug;
         (session.user as any).role = token.role;
+        (session.user as any).onboardingStatus = token.onboardingStatus;
+        (session.user as any).registrationStatus = token.registrationStatus;
+        (session.user as any).customDomain = token.customDomain;
+        (session.user as any).isInternalStaff = token.isInternalStaff;
+        (session.user as any).backofficePermissions = token.backofficePermissions;
       }
       return session;
     },

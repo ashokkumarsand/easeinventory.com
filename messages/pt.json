@@ -1,0 +1,21 @@
+{
+  "Dashboard": {
+    "title": "Visão Geral do Painel",
+    "welcome": "Bem-vindo de volta",
+    "total_sales": "Vendas Totais",
+    "total_invoices": "Faturas Totais",
+    "active_repairs": "Reparos Ativos"
+  },
+  "Inventory": {
+    "title": "Gestão de Inventário",
+    "add_product": "Adicionar Produto",
+    "stock_alert": "Alerta de Estoque",
+    "categories": "Categorias"
+  },
+  "GST": {
+    "generate_eway": "Gerar Guia de Remessa",
+    "generate_einvoice": "Gerar Fatura Eletrônica",
+    "summary": "Resumo de Impostos",
+    "tax_inclusive": "Imposto Incluso"
+  }
+}

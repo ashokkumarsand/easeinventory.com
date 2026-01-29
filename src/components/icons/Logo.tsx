@@ -48,8 +48,9 @@ export const LogoWithText: React.FC<LogoProps & { showText?: boolean }> = ({
     <div className={`flex items-center gap-3 ${className}`}>
       <Logo size={size} />
       {showText && (
-        <span className="text-xl font-bold text-white tracking-tight">
-          Ease<span className="text-primary">Inventory</span>
+        <span className="text-xl font-bold tracking-tight">
+          <span className="text-foreground">Ease</span>
+          <span className="text-primary">Inventory</span>
         </span>
       )}
     </div>

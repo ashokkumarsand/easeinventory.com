@@ -1,34 +1,42 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
+import LocaleSwitcher from '@/components/LocaleSwitcher';
 import {
-    Avatar,
-    Button,
-    Divider,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
-    ScrollShadow,
-    Tooltip
+  Avatar,
+  Button,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  ScrollShadow,
+  Tooltip
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    Calendar,
-    FileText,
-    Home,
-    Menu,
-    Package,
-    PlusCircle,
-    Settings,
-    TrendingUp,
-    Truck,
-    Users,
-    Wrench
+  ArrowRightLeft,
+  Building2,
+  Calendar,
+  FileText,
+  Fingerprint,
+  Globe,
+  Home,
+  Mail,
+  Menu,
+  Package,
+  PlusCircle,
+  Settings,
+  Shield,
+  TrendingUp,
+  Truck,
+  Users,
+  Wrench
 } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 const menuItems = [
   { group: 'Overview', items: [
@@ -37,23 +45,61 @@ const menuItems = [
   ]},
   { group: 'Operations', items: [
     { label: 'Inventory', icon: Package, href: '/dashboard/inventory' },
+    { label: 'Warehouse Transfers', icon: ArrowRightLeft, href: '/dashboard/inventory/transfers' },
+    { label: 'Inventory Locations', icon: Building2, href: '/dashboard/inventory/locations' },
+    { label: 'Suppliers', icon: Truck, href: '/dashboard/suppliers' },
     { label: 'Repair Center', icon: Wrench, href: '/dashboard/repairs' },
     { label: 'Invoices', icon: FileText, href: '/dashboard/invoices' },
     { label: 'Delivery', icon: Truck, href: '/dashboard/delivery' },
   ]},
   { group: 'Team', items: [
-    { label: 'Employees', icon: Calendar, href: '/dashboard/hr' },
-    { label: 'Team', icon: Users, href: '/dashboard/team' },
+    { label: 'Employees', icon: Users, href: '/dashboard/hr' },
+    { label: 'Attendance', icon: Fingerprint, href: '/dashboard/attendance' },
+    { label: 'Leaves', icon: Calendar, href: '/dashboard/leaves' },
   ]},
   { group: 'Support & Settings', items: [
+    { label: 'Inventory Requests', icon: Package, href: '/dashboard/support/inventory' },
+    { label: 'Refund Requests', icon: Mail, href: '/dashboard/support/refunds' },
     { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
+    { label: 'Custom Domain', icon: Globe, href: '/dashboard/settings/domains' },
   ]}
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    } else if (status === 'authenticated') {
+      const user = session?.user as any;
+      
+      // If tenant is still pending approval, redirect to pending-approval page
+      // But skip this for SUPER_ADMINs
+      if (user?.role !== 'SUPER_ADMIN' && user?.registrationStatus === 'PENDING' && pathname !== '/pending-approval') {
+        router.push('/pending-approval');
+        return;
+      }
+
+      if (user?.onboardingStatus === 'PENDING' && pathname !== '/onboarding') {
+        router.push('/onboarding');
+      }
+    }
+  }, [status, session, pathname, router]);
+
+  if (status === 'loading') {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-background">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const user = session?.user as any;
 
   return (
     <div className="flex h-screen bg-[#F8F9FA] dark:bg-[#0A0B0F] transition-colors duration-500 overflow-hidden">
@@ -100,7 +146,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Menu Items */}
           <ScrollShadow className="flex-grow py-6" hideScrollBar>
             <div className="px-4 space-y-8">
-              {menuItems.map((group, idx) => (
+              {[
+                ...menuItems,
+                ...(user?.role === 'SUPER_ADMIN' ? [{
+                  group: 'Administration',
+                  items: [
+                    { label: 'Backoffice', icon: Building2, href: '/admin/backoffice' },
+                    { label: 'Manage Tenants', icon: Users, href: '/admin/tenants' },
+                    { label: 'Staff Management', icon: Shield, href: '/admin/staff' },
+                  ]
+                }] : [])
+              ].map((group, idx) => (
                 <div key={idx} className="space-y-4">
                   {isSidebarOpen && (
                     <h4 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/20">
@@ -143,14 +199,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
              <div className={`p-4 rounded-3xl bg-black/[0.03] dark:bg-white/5 transition-all ${!isSidebarOpen && 'p-1 bg-transparent'}`}>
                 <div className={`flex items-center gap-4 ${!isSidebarOpen && 'justify-center'}`}>
                    <Avatar 
-                    src="https://i.pravatar.cc/150?u=a042581f4e29026704d" 
+                    name={user?.name || 'User'}
+                    src={user?.image} 
                     size={isSidebarOpen ? 'md' : 'sm'}
                     className="ring-2 ring-primary ring-offset-2 shrink-0"
                    />
                    {isSidebarOpen && (
                      <div className="flex-grow min-w-0 pr-2">
-                        <p className="text-sm font-black truncate leading-tight">Ashok Kumar</p>
-                        <p className="text-[10px] font-bold opacity-40 uppercase truncate">Super Admin</p>
+                        <p className="text-sm font-black truncate leading-tight">{user?.name || 'Administrator'}</p>
+                        <p className="text-[10px] font-bold opacity-40 uppercase truncate">{user?.role || 'User'}</p>
                      </div>
                    )}
                    {isSidebarOpen && (
@@ -160,10 +217,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                            <Settings className="w-4 h-4" />
                          </Button>
                        </DropdownTrigger>
-                       <DropdownMenu variant="flat">
-                         <DropdownItem key="profile">Profile Settings</DropdownItem>
-                         <DropdownItem key="logout" className="text-danger" color="danger">log Out</DropdownItem>
-                       </DropdownMenu>
+                         <DropdownMenu variant="flat">
+                           <DropdownItem key="profile">Profile Settings</DropdownItem>
+                           <DropdownItem key="logout" className="text-danger" color="danger" onClick={() => signOut()}>Log Out</DropdownItem>
+                         </DropdownMenu>
                      </Dropdown>
                    )}
                 </div>
@@ -194,9 +251,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               >
                 <Menu className="w-5 h-5" />
               </Button>
-              <h2 className="text-xl font-black tracking-tight flex items-center gap-3">
-                 Dashboard
-              </h2>
+               <h2 className="text-xl font-black tracking-tight flex items-center gap-3">
+                 {pathname.split('/').pop()?.charAt(0).toUpperCase()}{pathname.split('/').pop()?.slice(1) || 'Dashboard'}
+                 {user?.onboardingStatus === 'UNDER_REVIEW' && (
+                   <span className="text-[10px] bg-warning/10 text-warning px-2 py-1 rounded-full border border-warning/20">
+                     UNDER REVIEW
+                   </span>
+                 )}
+               </h2>
            </div>
 
            <div className="flex items-center gap-3 md:gap-4">
@@ -210,6 +272,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 Quick Action
               </Button>
               <div className="w-[1px] h-6 bg-black/10 dark:bg-white/10 hidden md:block mx-1" />
+              <LocaleSwitcher />
               <Tooltip content="Notifications">
                  <Button isIconOnly variant="light" radius="full" className="relative">
                     <div className="w-2 h-2 bg-secondary rounded-full absolute top-2 right-2 border-2 border-white dark:border-black" />

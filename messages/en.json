@@ -1,0 +1,130 @@
+{
+  "Dashboard": {
+    "title": "Dashboard Overview",
+    "welcome": "Welcome back",
+    "total_sales": "Total Sales",
+    "total_invoices": "Total Invoices",
+    "active_repairs": "Active Repairs"
+  },
+  "Inventory": {
+    "title": "Inventory Management",
+    "add_product": "Add Product",
+    "stock_alert": "Stock Alert",
+    "categories": "Categories"
+  },
+  "GST": {
+    "generate_eway": "Generate e-Way Bill",
+    "generate_einvoice": "Generate e-Invoice",
+    "summary": "GST Summary",
+    "tax_inclusive": "Tax Inclusive"
+  },
+  "Settings": {
+    "title": "Enterprise Settings",
+    "subtitle": "Configure your business identity and payment protocols.",
+    "save": "Save Changes",
+    "tabs": {
+      "business": "Business Profile",
+      "payments": "Payment Protocols",
+      "security": "ISO 27001 & Compliance"
+    },
+    "identity": "Identity",
+    "location": "Location",
+    "upi": "UPI Integration (India)",
+    "banking": "Banking Details",
+    "upi_helper": "Dynamic UPI QR codes will be generated using this ID for instant settlement.",
+    "security_standards": "Security Standards",
+    "protection_subtitle": "Enterprise Grade Data Protection"
+  },
+  "HR": {
+    "title": "HR Command Center",
+    "subtitle": "Manage workforce, payroll, and organizational data.",
+    "export": "Export Roster",
+    "add_employee": "Add Employee",
+    "stats": {
+      "active": "Active Workforce",
+      "departments": "Across {count} Departments",
+      "commitment": "Monthly Commitment",
+      "salary_base": "Fixed Salary Base",
+      "leaves": "Leaves Today",
+      "absence": "Authorized Absence"
+    },
+    "tabs": {
+      "roster": "Employee Roster",
+      "payroll": "Payroll & Salary"
+    },
+    "table": {
+      "employee": "EMPLOYEE",
+      "department": "DEPARTMENT",
+      "join_date": "JOIN DATE",
+      "salary": "SALARY",
+      "status": "STATUS",
+      "action": "ACTION"
+    },
+    "modal": {
+      "title": "Onboard New Talent",
+      "subtitle": "Record Employee Organizational Data",
+      "cancel": "Cancel",
+      "confirm": "Confirm Onboarding"
+    }
+  },
+  "Logistics": {
+    "title": "Logistics Command",
+    "subtitle": "Real-time dispatch tracking and fleet orchestration.",
+    "dispatch_manifest": "Dispatch Manifest",
+    "fleet_stats": {
+      "vehicles_active": "Vehicles Active",
+      "deliveries_today": "Deliveries Today",
+      "avg_time": "Avg Delivery Time",
+      "pending_dispatch": "Pending Dispatch",
+      "capacity": "{count}% Capacity",
+      "completed": "{count} Completed",
+      "comparison": "{val} vs Yesterday",
+      "processing": "Urgent Processing"
+    },
+    "view": {
+      "active_dispatches": "Active Dispatches",
+      "view_all": "View All",
+      "no_dispatches": "No Active Dispatches Found",
+      "shipment": "Shipment",
+      "walk_in": "Walk-in Customer",
+      "personnel": "Personnel",
+      "inventory": "Inventory",
+      "estimated": "Estimated",
+      "progress": "Progress"
+    },
+    "sidebar": {
+      "fleet_map": "Live Fleet Map",
+      "geofence": "Geofence Enforced • {count} Tracks Active",
+      "service_area": "Service Area Performance",
+      "hotlines": "Dispatch Hotlines"
+    },
+    "modal": {
+      "title": "Create Manifest",
+      "recipient": "Recipient Organization",
+      "items": "Item Count",
+      "weight": "Total Weight",
+      "address": "Shipping Address",
+      "confirm": "Confirm Dispatch"
+    }
+  },
+  "Roles": {
+    "title": "Roles & Permissions",
+    "subtitle": "Manage access control and team permissions.",
+    "predefined_roles": "Predefined Roles",
+    "permissions_count": "{count} permissions",
+    "users_count": "{count} users",
+    "permissions_title": "{role} Permissions",
+    "read_only": "READ-ONLY",
+    "enabled_count": "{count}/{total} enabled",
+    "overrides_title": "Team Permission Overrides",
+    "overrides_hint": "Click a user to customize their permissions",
+    "unnamed": "Unnamed",
+    "custom": "Custom",
+    "modal": {
+      "title": "Edit Permissions: {name}",
+      "subtitle": "Override default role permissions",
+      "reset": "Reset to Default",
+      "save": "Save Permissions"
+    }
+  }
+}

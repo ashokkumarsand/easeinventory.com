@@ -1,3 +1,4 @@
+import prisma from '@/lib/prisma';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 
@@ -12,90 +13,49 @@ import HowItWorks from '@/components/landing/HowItWorks';
 import Navbar from '@/components/landing/Navbar';
 import Pricing from '@/components/landing/Pricing';
 import Testimonials from '@/components/landing/Testimonials';
+import PublicTenantPage from '@/components/public/PublicTenantPage';
 
 export const metadata: Metadata = {
-  title: 'EaseInventory - Smart Inventory Management for Modern Businesses',
+  title: 'EaseInventory | All-in-One ERP & Smart Inventory Management System',
   description:
-    'Manage your inventory, repairs, invoicing, and team operations with EaseInventory. Get your own subdomain, custom branding, and powerful features. Made in India, for India. Track stock with serial numbers, generate GST invoices, manage repair tickets with WhatsApp notifications.',
-  keywords: [
-    'inventory management software',
-    'inventory management system',
-    'stock management software india',
-    'repair tracking software',
-    'GST invoicing software',
-    'shop management software',
-    'multi-tenant SaaS',
-    'business management software',
-    'inventory tracking',
-    'serial number tracking',
-    'repair ticket system',
-    'WhatsApp notifications business',
-    'HR attendance software',
-    'employee management india',
-    'small business software india',
-    'retail inventory management',
-    'electronics shop management',
-    'mobile shop software',
-    'service center software',
-    'cloud inventory software',
-  ],
-  authors: [{ name: 'EaseInventory' }],
+    'The ultimate shop management and ERP solution for modern businesses. Streamline inventory, repair tracking, GST billing, and team operations with EaseInventory. Built for retailers, distributors, and service centers.',
+  keywords: ['ERP solution', 'inventory management software', 'shop management system', 'GST billing software', 'repair tracking system', 'multi-tenant inventory'],
   openGraph: {
-    title: 'EaseInventory - Smart Inventory Management for Indian Businesses',
-    description: 'Manage inventory, track repairs, generate GST invoices. Get your own subdomain. Start free today!',
-    url: 'https://easeinventory.com',
-    siteName: 'EaseInventory',
-    type: 'website',
-    locale: 'en_IN',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'EaseInventory - Smart Inventory Management',
-    description: 'Manage inventory, track repairs, generate invoices. Start free today!',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: 'https://easeinventory.com',
-  },
-};
-
-// Structured data for SEO
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'EaseInventory',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'INR',
-  },
-  description: 'Smart inventory management software for Indian businesses with repair tracking, GST invoicing, and HR management.',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.8',
-    ratingCount: '1250',
-  },
+    title: 'EaseInventory | Smart Inventory & ERP Solution',
+    description: 'Transform your business operations with our integrated ERP and inventory management platform.',
+    images: ['/og-image.jpg'],
+  }
 };
 
 export default async function HomePage() {
   const headersList = await headers();
   const host = headersList.get('host') || '';
+  const tenantSlug = headersList.get('x-tenant-slug');
+  const customHost = headersList.get('x-tenant-host');
   
-  // Show coming soon on production domains
-  const isProduction = host.includes('easeinventory.com');
+  // 1. Resolve Tenant for White-labeling/Subdomains
+  if (tenantSlug || customHost) {
+    const tenant = await prisma.tenant.findFirst({
+      where: {
+        OR: [
+          { slug: tenantSlug || '' },
+          { customDomain: customHost || '' }
+        ]
+      }
+    });
+
+    if (tenant) {
+      return <PublicTenantPage tenant={tenant as any} />;
+    }
+  }
+
+  // 2. Main Site Logic
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'easeinventory.com';
+  const isProduction = host.includes(rootDomain) && !host.includes('localhost');
   
   if (isProduction) {
     return (
       <div className="bg-[#030407] min-h-screen">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
         <ComingSoon />
       </div>
     );
@@ -103,10 +63,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
       <Navbar />
       <main>
         <Hero />

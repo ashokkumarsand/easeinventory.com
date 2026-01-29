@@ -7,279 +7,374 @@ import {
     CardBody,
     Chip,
     Input,
-    Progress,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem,
+    Tab,
     Table,
     TableBody,
     TableCell,
     TableColumn,
     TableHeader,
-    TableRow
+    TableRow,
+    Tabs,
+    useDisclosure
 } from '@heroui/react';
-import { motion } from 'framer-motion';
 import {
-    ArrowRight,
-    Award,
-    CalendarCheck,
-    CheckCircle,
-    Clock,
-    Fingerprint,
-    MapPin,
-    Plus,
+    Briefcase,
+    Calculator,
+    ChevronRight,
+    Download,
     Search,
-    TrendingUp,
+    UserPlus,
     Users
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import PayrollTab from './payroll-tab';
 
-// Mock Data
-const EMPLOYEES = [
-  { id: '1', name: 'Rahul S.', role: 'Technician', salary: 28000, joined: '2023-01-10', attendance: 95, status: 'present' },
-  { id: '2', name: 'Priya K.', role: 'Technician', salary: 32000, joined: '2023-03-15', attendance: 88, status: 'present' },
-  { id: '3', name: 'Amit Singh', role: 'Sales Lead', salary: 45000, joined: '2022-11-20', attendance: 92, status: 'absent' },
-  { id: '4', name: 'Sunita Mehra', role: 'Accountant', salary: 40000, joined: '2023-06-05', attendance: 100, status: 'present' },
-];
+export default function HRDashboardPage() {
+    const t = useTranslations('HR');
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [employees, setEmployees] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
-const holidays = [
-  { name: 'Republic Day', date: 'Jan 26, 2024', type: 'Public' },
-  { name: 'Holi', date: 'Mar 25, 2024', type: 'Public' },
-  { name: 'Good Friday', date: 'Mar 29, 2024', type: 'Regional' },
-];
+    // New Employee State
+    const [newEmployee, setNewEmployee] = useState({
+        employeeId: '',
+        name: '',
+        email: '',
+        phone: '',
+        designation: '',
+        department: '',
+        baseSalary: '',
+        joinDate: new Date().toISOString().split('T')[0]
+    });
 
-export default function HRPage() {
-  const [time, setTime] = useState(new Date());
-  const [isPresent, setIsPresent] = useState(false);
-  const [punchHistory, setPunchHistory] = useState([
-    { type: 'In', time: '09:12 AM', location: 'Noida Hub' },
-    { type: 'Out', time: '06:05 PM', location: 'Remote' },
-  ]);
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
 
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handlePunch = () => {
-    const newEntry = {
-        type: isPresent ? 'Out' : 'In',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        location: 'Current System'
+    const fetchEmployees = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch('/api/hr/employees');
+            const data = await response.json();
+            setEmployees(data.employees || []);
+        } catch (error) {
+            console.error('Fetch employees error:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
-    setPunchHistory([newEntry, ...punchHistory]);
-    setIsPresent(!isPresent);
-  };
 
-  return (
-    <div className="space-y-10 pb-20">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-           <div className="flex items-center gap-3 mb-2">
-             <div className="w-10 h-10 rounded-2xl bg-success/10 flex items-center justify-center text-success">
-                <Users size={22} strokeWidth={2.5} />
-             </div>
-             <h1 className="text-3xl font-black tracking-tight text-success">People Hub</h1>
-           </div>
-           <p className="text-black/40 dark:text-white/40 font-bold ml-1">Automated attendance punching and integrated payroll engine.</p>
-        </div>
-        <div className="flex items-center gap-3">
-           <Button color="success" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-success/20 text-white" startContent={<Plus size={20} />}>
-              Add Employee
-           </Button>
-        </div>
-      </div>
+    const handleAddEmployee = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch('/api/hr/employees', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newEmployee),
+            });
 
-      <div className="grid lg:grid-cols-3 gap-8">
-         <div className="lg:col-span-2 space-y-10">
-            {/* Punching System Card */}
-            <Card className="modern-card bg-primary p-6 lg:p-10 shadow-2xl shadow-primary/20 text-white relative overflow-hidden" radius="lg">
-               <CardBody className="p-0 relative z-10">
-                  <div className="flex flex-col md:flex-row items-center gap-10">
-                     <div className="text-center md:text-left space-y-2">
-                        <p className="text-sm font-black uppercase tracking-[0.3em] opacity-60">Digital Punch Clock</p>
-                        <h2 className="text-5xl lg:text-7xl font-black tracking-tighter">
-                           {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                        </h2>
-                        <p className="text-lg font-bold opacity-80">{time.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                     </div>
-                     
-                     <div className="w-[2px] h-24 bg-white/20 hidden md:block" />
+            if (response.ok) {
+                fetchEmployees();
+                onOpenChange();
+                setNewEmployee({
+                    employeeId: '',
+                    name: '',
+                    email: '',
+                    phone: '',
+                    designation: '',
+                    department: '',
+                    baseSalary: '',
+                    joinDate: new Date().toISOString().split('T')[0]
+                });
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to add employee');
+            }
+        } catch (error) {
+            alert('Error creating employee record');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-                     <div className="flex-grow flex flex-col items-center gap-6">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={handlePunch}
-                          className={`w-32 h-32 rounded-full flex flex-col items-center justify-center gap-2 border-4 transition-all shadow-xl ${
-                            isPresent 
-                            ? 'bg-danger/20 border-danger hover:bg-danger/30 shadow-danger/20' 
-                            : 'bg-white/20 border-white hover:bg-white/30 shadow-white/20'
-                          }`}
-                        >
-                           <Fingerprint size={40} />
-                           <span className="text-xs font-black uppercase tracking-widest">{isPresent ? 'Punch Out' : 'Punch In'}</span>
-                        </motion.button>
-                        <div className="flex items-center gap-2 text-xs font-bold px-4 py-2 bg-black/20 rounded-full">
-                           <MapPin size={14} /> Noida HQ • Subnet Verified
+    const filteredEmployees = employees.filter(emp => 
+        emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        emp.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const totalSalary = employees.reduce((acc, emp) => acc + Number(emp.baseSalary), 0);
+
+    return (
+        <div className="space-y-10 pb-20">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
+                            <Users size={22} strokeWidth={2.5} />
                         </div>
-                     </div>
-                  </div>
-
-                  <div className="mt-10 pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6">
-                     {[
-                       { label: 'Work Shifts', val: '09:00 - 18:00', icon: Clock },
-                       { label: 'Total Hours', val: '42h 10m', icon: TrendingUp },
-                       { label: 'Avg In-time', val: '09:14 AM', icon: Award },
-                       { label: 'Status', val: isPresent ? 'ACTIVE' : 'IDLE', icon: CheckCircle },
-                     ].map(it => (
-                        <div key={it.label} className="space-y-1">
-                           <p className="text-[10px] font-black uppercase opacity-50 tracking-widest flex items-center gap-1">
-                              <it.icon size={10} /> {it.label}
-                           </p>
-                           <p className="font-bold">{it.val}</p>
-                        </div>
-                     ))}
-                  </div>
-               </CardBody>
-            </Card>
-
-            {/* Employee Management Section */}
-            <div className="space-y-6">
-               <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                     <div className="w-1.5 h-6 bg-success rounded-full" />
-                     <h3 className="text-xl font-black tracking-tight">Active Workforce</h3>
-                  </div>
-                  <Input 
-                    placeholder="Search personnel..."
-                    size="sm"
-                    radius="lg"
-                    className="max-w-[240px]"
-                    startContent={<Search size={16} />}
-                  />
-               </div>
-
-               <Table 
-                 aria-label="Staff Table"
-                 classNames={{
-                    wrapper: "p-0 modern-card border border-black/5 dark:border-white/5 bg-white dark:bg-[#111318] rounded-[2.5rem] overflow-hidden shadow-none",
-                    th: "bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase text-[10px] first:pl-8 last:pr-8 opacity-40 text-black dark:text-white",
-                    td: "py-4 first:pl-8 last:pr-8 font-bold",
-                 }}
-               >
-                 <TableHeader>
-                   <TableColumn>EMPLOYEE</TableColumn>
-                   <TableColumn>ROLE</TableColumn>
-                   <TableColumn>ATTENDANCE</TableColumn>
-                   <TableColumn>STATUS</TableColumn>
-                   <TableColumn>EST. PAYOUT</TableColumn>
-                   <TableColumn align="center">ACTION</TableColumn>
-                 </TableHeader>
-                 <TableBody>
-                   {EMPLOYEES.map(emp => (
-                     <TableRow key={emp.id} className="border-b last:border-none border-black/5 dark:border-white/5">
-                       <TableCell>
-                          <div className="flex items-center gap-3">
-                             <Avatar size="sm" name={emp.name[0]} className="bg-primary/10 text-primary font-black" />
-                             <span className="font-black tracking-tight">{emp.name}</span>
-                          </div>
-                       </TableCell>
-                       <TableCell><span className="opacity-50">{emp.role}</span></TableCell>
-                       <TableCell>
-                          <div className="flex flex-col gap-1 w-24">
-                             <div className="flex justify-between text-[10px]">
-                                <span>{emp.attendance}%</span>
-                             </div>
-                             <Progress value={emp.attendance} size="sm" color={emp.attendance > 90 ? 'success' : 'warning'} className="h-1" />
-                          </div>
-                       </TableCell>
-                       <TableCell>
-                          <Chip size="sm" variant="flat" color={emp.status === 'present' ? 'success' : 'danger'} className="font-black text-[10px] uppercase">
-                             {emp.status}
-                          </Chip>
-                       </TableCell>
-                       <TableCell>
-                          <div className="flex flex-col">
-                             <span className="font-black">₹{(emp.salary * (emp.attendance/100)).toFixed(0).toLocaleString()}</span>
-                             <span className="text-[10px] opacity-30 tracking-tight">BASE: ₹{emp.salary.toLocaleString()}</span>
-                          </div>
-                       </TableCell>
-                       <TableCell>
-                          <Button isIconOnly variant="light" size="sm" radius="full"><ArrowRight size={16} /></Button>
-                       </TableCell>
-                     </TableRow>
-                   ))}
-                 </TableBody>
-               </Table>
+                        <h1 className="text-3xl font-black tracking-tight text-secondary">{t('title')}</h1>
+                    </div>
+                    <p className="text-black/40 dark:text-white/40 font-bold ml-1">{t('subtitle')}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button variant="flat" color="default" className="font-bold rounded-2xl" startContent={<Download size={18} />}>
+                        {t('export')}
+                    </Button>
+                    <Button color="secondary" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-secondary/20" startContent={<UserPlus size={20} />} onClick={onOpen}>
+                        {t('add_employee')}
+                    </Button>
+                </div>
             </div>
-         </div>
 
-         {/* Sidebar for HR Stats */}
-         <div className="space-y-8">
-            <Card className="modern-card p-6" radius="lg">
-               <CardBody>
-                  <div className="flex items-center gap-3 mb-8">
-                     <CalendarCheck size={20} className="text-success" />
-                     <h4 className="text-sm font-black uppercase tracking-widest">Holiday Calendar</h4>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    {holidays.map(holiday => (
-                      <div key={holiday.name} className="flex gap-4 p-4 rounded-2xl bg-black/[0.02] dark:bg-white/5 group border border-transparent hover:border-success/10 transition-all">
-                        <div className="w-12 h-12 rounded-xl bg-success/5 flex flex-col items-center justify-center text-success shrink-0 group-hover:bg-success group-hover:text-white transition-colors">
-                           <span className="text-[10px] font-black uppercase">{holiday.date.split(' ')[0]}</span>
-                           <span className="text-lg font-black">{holiday.date.split(' ')[1].replace(',', '')}</span>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Card className="modern-card bg-secondary text-white p-6" radius="lg">
+                    <CardBody className="p-0">
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4 text-white">{t('stats.active')}</p>
+                        <h2 className="text-5xl font-black mb-1">{employees.length}</h2>
+                        <p className="text-xs font-bold opacity-60">{t('stats.departments', { count: new Set(employees.map(e => e.department)).size })}</p>
+                    </CardBody>
+                </Card>
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+                    <CardBody className="p-0">
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">{t('stats.commitment')}</p>
+                        <h2 className="text-4xl font-black mb-1 text-secondary">₹{totalSalary.toLocaleString()}</h2>
+                        <p className="text-xs font-bold opacity-40 uppercase">{t('stats.salary_base')}</p>
+                    </CardBody>
+                </Card>
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+                    <CardBody className="p-0">
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">{t('stats.leaves')}</p>
+                        <h2 className="text-4xl font-black text-danger">2</h2>
+                        <p className="text-xs font-bold opacity-40 uppercase">{t('stats.absence')}</p>
+                    </CardBody>
+                </Card>
+            </div>
+
+            <Tabs 
+                aria-label="HR Options" 
+                color="secondary" 
+                variant="underlined"
+                classNames={{
+                    tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
+                    cursor: "w-full bg-secondary",
+                    tab: "max-w-fit px-0 h-12",
+                    tabContent: "group-data-[selected=true]:text-secondary font-black uppercase tracking-widest text-[10px]"
+                }}
+            >
+                <Tab
+                    key="roster"
+                    title={
+                        <div className="flex items-center space-x-2">
+                            <Users size={16}/>
+                            <span>{t('tabs.roster')}</span>
                         </div>
-                        <div className="flex flex-col justify-center">
-                           <h5 className="font-black text-sm">{holiday.name}</h5>
-                           <p className="text-[10px] font-bold opacity-30 uppercase">{holiday.type} Holiday</p>
+                    }
+                >
+                    <div className="space-y-6 pt-6">
+                        <div className="flex items-center gap-4 max-w-md">
+                            <Input 
+                                placeholder="Search by name or ID..." 
+                                labelPlacement="outside"
+                                startContent={<Search size={18} className="opacity-30" />}
+                                value={searchTerm}
+                                onValueChange={setSearchTerm}
+                                classNames={{ inputWrapper: "bg-black/5 h-12 rounded-2xl" }}
+                            />
                         </div>
-                      </div>
-                    ))}
-                  </div>
 
-                  <Button variant="flat" color="success" className="w-full mt-8 font-black py-6 rounded-[1.5rem]">
-                     Company Calendar
-                  </Button>
-               </CardBody>
-            </Card>
+                        <Table 
+                            aria-label="Employee Roster"
+                            className="modern-card border-none"
+                            classNames={{
+                                wrapper: "p-0 modern-card bg-white dark:bg-[#111318] border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
+                                th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
+                                td: "py-6 px-8 font-bold",
+                            }}
+                        >
+                            <TableHeader>
+                                <TableColumn>EMPLOYEE</TableColumn>
+                                <TableColumn>DEPARTMENT</TableColumn>
+                                <TableColumn>JOIN DATE</TableColumn>
+                                <TableColumn>SALARY</TableColumn>
+                                <TableColumn>STATUS</TableColumn>
+                                <TableColumn align="center">ACTION</TableColumn>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredEmployees.map((emp) => (
+                                    <TableRow key={emp.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                                        <TableCell>
+                                            <div className="flex items-center gap-4">
+                                                <Avatar name={emp.name} radius="lg" className="bg-secondary/10 text-secondary font-black" />
+                                                <div className="flex flex-col">
+                                                    <span className="font-black tracking-tight">{emp.name}</span>
+                                                    <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">{emp.employeeId}</span>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <Briefcase size={14} className="opacity-30" />
+                                                <span className="text-xs">{emp.designation || 'Staff'}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-[10px] font-black opacity-40 uppercase">{new Date(emp.joinDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>
+                                            <span className="font-black text-lg">₹{Number(emp.baseSalary).toLocaleString()}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Chip variant="flat" size="sm" color={emp.isActive ? "success" : "danger"} className="font-black text-[10px] uppercase">
+                                                {emp.isActive ? 'Active' : 'Inactive'}
+                                            </Chip>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button isIconOnly radius="full" variant="light" size="sm"><ChevronRight size={18} className="opacity-30" /></Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </Tab>
+                <Tab
+                    key="payroll"
+                    title={
+                        <div className="flex items-center space-x-2">
+                            <Calculator size={16}/>
+                            <span>{t('tabs.payroll')}</span>
+                        </div>
+                    }
+                >
+                    <div className="pt-6">
+                        <PayrollTab />
+                    </div>
+                </Tab>
+            </Tabs>
 
-            <Card className="modern-card border border-black/5 dark:border-white/5 p-6" radius="lg">
-               <CardBody className="p-0">
-                  <div className="flex items-center gap-3 mb-8">
-                     <Clock size={20} className="text-primary" />
-                     <h4 className="text-sm font-black uppercase tracking-widest">Recent Activity</h4>
-                  </div>
-                  
-                  <div className="space-y-6">
-                     {punchHistory.map((punch, idx) => (
-                       <div key={idx} className="flex gap-4">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${punch.type === 'In' ? 'bg-primary/10 text-primary' : 'bg-black/5 dark:bg-white/10 dark:text-white'}`}>
-                             {punch.type === 'In' ? <ArrowRight size={18} /> : <div className="rotate-180"><ArrowRight size={18} /></div>}
-                          </div>
-                          <div>
-                             <p className="text-xs font-black">Punched {punch.type}</p>
-                             <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter">{punch.time} • {punch.location}</p>
-                          </div>
-                       </div>
-                     ))}
-                  </div>
-               </CardBody>
-            </Card>
-
-            <Card className="modern-card bg-success/10 border-none p-6" radius="lg">
-               <CardBody className="p-0 flex items-center gap-4">
-                  <div className="w-14 h-14 bg-success text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-success/20">
-                     <Award size={32} />
-                  </div>
-                  <div>
-                     <h5 className="font-black text-sm">System Recognition</h5>
-                     <p className="text-xs opacity-60 font-medium">92% Compliance achieved this week in biometrics.</p>
-                  </div>
-               </CardBody>
-            </Card>
-         </div>
-      </div>
-    </div>
-  );
+            {/* Add Employee Modal */}
+            <Modal 
+                isOpen={isOpen} 
+                onOpenChange={onOpenChange}
+                size="3xl"
+                classNames={{ base: "modern-card p-6" }}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                <h2 className="text-2xl font-black tracking-tight">{t('modal.title')}</h2>
+                                <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">{t('modal.subtitle')}</p>
+                            </ModalHeader>
+                            <ModalBody className="py-10 space-y-8">
+                                <div className="grid grid-cols-2 gap-x-8 gap-y-10">
+                                    <Input 
+                                        label="Full Name" 
+                                        placeholder="e.g. John Doe" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        value={newEmployee.name}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, name: val})}
+                                    />
+                                    <Input 
+                                        label="Employee ID (Alpha-numeric)" 
+                                        placeholder="e.g. EMP-101" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        value={newEmployee.employeeId}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, employeeId: val})}
+                                    />
+                                    <Input 
+                                        label="Email Address" 
+                                        placeholder="johndoe@example.com" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        value={newEmployee.email}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, email: val})}
+                                    />
+                                    <Input 
+                                        label="Phone Number" 
+                                        placeholder="+91 00000 00000" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        value={newEmployee.phone}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, phone: val})}
+                                    />
+                                    <Input 
+                                        label="Designation" 
+                                        placeholder="e.g. Senior Technician" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        value={newEmployee.designation}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, designation: val})}
+                                    />
+                                    <Select 
+                                        label="Department" 
+                                        placeholder="Select department" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ trigger: "bg-black/5 h-14" }}
+                                        onSelectionChange={(keys) => setNewEmployee({...newEmployee, department: Array.from(keys)[0] as string})}
+                                    >
+                                        <SelectItem key="Operations">Operations</SelectItem>
+                                        <SelectItem key="Repairs">Repairs & Tech</SelectItem>
+                                        <SelectItem key="Inventory">Inventory Control</SelectItem>
+                                        <SelectItem key="Accounting">Accounting & GST</SelectItem>
+                                        <SelectItem key="Logistics">Logistics & Delivery</SelectItem>
+                                    </Select>
+                                    <Input 
+                                        label="Monthly Base Salary" 
+                                        placeholder="0.00" 
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        startContent={<span className="text-xs font-black opacity-30">₹</span>}
+                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        value={newEmployee.baseSalary}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, baseSalary: val})}
+                                    />
+                                    <Input 
+                                        label="Join Date" 
+                                        type="date"
+                                        labelPlacement="outside"
+                                        size="lg"
+                                        radius="lg"
+                                        classNames={{ inputWrapper: "bg-black/5 h-14 text-xs" }}
+                                        value={newEmployee.joinDate}
+                                        onValueChange={(val) => setNewEmployee({...newEmployee, joinDate: val})}
+                                    />
+                                </div>
+                            </ModalBody>
+                            <ModalFooter className="border-t border-black/5 pt-6">
+                                <Button variant="light" className="font-bold h-12 px-8" onPress={onClose}>{t('modal.cancel')}</Button>
+                                <Button color="secondary" className="font-black h-12 px-10 shadow-xl shadow-secondary/20" radius="full" onClick={handleAddEmployee} isLoading={isLoading}>
+                                    {t('modal.confirm')}
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </div>
+    );
 }

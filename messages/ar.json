@@ -1,0 +1,21 @@
+{
+  "Dashboard": {
+    "title": "نظرة عامة على لوحة القيادة",
+    "welcome": "مرحباً بعودتك",
+    "total_sales": "إجمالي المبيعات",
+    "total_invoices": "إجمالي الفواتير",
+    "active_repairs": "الإصلاحات النشطة"
+  },
+  "Inventory": {
+    "title": "إدارة المخزون",
+    "add_product": "إضافة منتج",
+    "stock_alert": "تنبيه المخزون",
+    "categories": "الفئات"
+  },
+  "GST": {
+    "generate_eway": "إنشاء بوليصة الطريق الإلكترونية",
+    "generate_einvoice": "إنشاء الفاتورة الإلكترونية",
+    "summary": "ملخص ضريبة القيمة المضافة",
+    "tax_inclusive": "شامل الضريبة"
+  }
+}

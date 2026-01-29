@@ -28,7 +28,7 @@ export interface UpdateTenantInput {
   phone?: string;
   email?: string;
   website?: string;
-  settings?: Prisma.JsonValue;
+  settings?: Prisma.InputJsonValue;
 }
 
 export class TenantService {

@@ -35,15 +35,17 @@ import {
     Users,
     Wrench
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-// Mock Data
-const INITIAL_TEAM = [
-  { id: '1', name: 'Ashok Kumar', email: 'ashok@shop.com', role: 'owner', status: 'active', permissions: ['all'] },
-  { id: '2', name: 'Sunita Mehra', email: 'sunita@shop.com', role: 'admin', status: 'active', permissions: ['inventory', 'invoices', 'hr'] },
-  { id: '3', name: 'Kamal Kishor', email: 'kamal@shop.com', role: 'technician', status: 'active', permissions: ['repairs'] },
-  { id: '4', name: 'Amit Singh', email: 'amit@shop.com', role: 'staff', status: 'inactive', permissions: ['inventory:view'] },
-];
+// Role color mapping
+const roleColors: Record<string, "primary" | "secondary" | "success" | "warning" | "danger" | "default"> = {
+  OWNER: 'primary',
+  ADMIN: 'secondary',
+  MANAGER: 'warning',
+  STAFF: 'default',
+  TECHNICIAN: 'success',
+  DELIVERY_AGENT: 'success'
+};
 
 const permissionModules = [
   { id: 'inventory', label: 'Inventory Management', icon: Package, desc: 'Add/Edit stock, valuation, pricing' },
@@ -55,8 +57,64 @@ const permissionModules = [
 export default function TeamPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { isOpen: isPermOpen, onOpen: onPermOpen, onOpenChange: onPermOpenChange } = useDisclosure();
-  const [team, setTeam] = useState(INITIAL_TEAM);
+  const [team, setTeam] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [inviteData, setInviteData] = useState({ name: '', email: '', role: 'STAFF', phone: '', password: 'Password@123' });
+
+  useEffect(() => {
+    fetchTeam();
+  }, []);
+
+  const fetchTeam = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/users');
+      const data = await response.json();
+      setTeam(data.users || []);
+    } catch (error) {
+      console.error('Fetch team error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInvite = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inviteData),
+      });
+
+      if (response.ok) {
+        fetchTeam();
+        onOpenChange();
+        setInviteData({ name: '', email: '', role: 'STAFF', phone: '', password: 'Password@123' });
+      } else {
+        const data = await response.json();
+        alert(data.message || 'Invitation failed');
+      }
+    } catch (error) {
+      alert('Error inviting member');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleUserStatus = async (id: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !currentStatus }),
+      });
+      if (response.ok) fetchTeam();
+    } catch (error) {
+      alert('Error updating status');
+    }
+  };
 
   const openPermissions = (user: any) => {
     setSelectedUser(user);
@@ -70,16 +128,16 @@ export default function TeamPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
            <div className="flex items-center gap-3 mb-2">
-             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                <Shield size={22} strokeWidth={2.5} />
-             </div>
-             <h1 className="text-3xl font-black tracking-tight">Access Control</h1>
+              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                 <Shield size={22} strokeWidth={2.5} />
+              </div>
+              <h1 className="text-3xl font-black tracking-tight">Team Management</h1>
            </div>
-           <p className="text-black/40 dark:text-white/40 font-bold ml-1">Securely delegate authority and manage team permissions.</p>
+           <p className="text-black/40 dark:text-white/40 font-bold ml-1">Manage team roles and system permissions securely.</p>
         </div>
         <div className="flex items-center gap-3">
            <Button variant="flat" color="primary" className="font-black rounded-2xl" startContent={<ArrowLeftRight size={18} />}>
-              Ownership Transfer
+              Transfer Account Ownership
            </Button>
            <Button color="primary" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-primary/20" startContent={<UserPlus size={20} />} onClick={onOpen}>
               Invite Member
@@ -90,10 +148,10 @@ export default function TeamPage() {
       {/* Role Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          {[
-           { label: 'Owners', count: 1, color: 'primary' },
-           { label: 'Administrators', count: 1, color: 'secondary' },
-           { label: 'Field Staff', count: 8, color: 'success' },
-           { label: 'Guest Viewers', count: 2, color: 'default' },
+           { label: 'Owners', count: team.filter(u => u.role === 'OWNER').length, color: 'primary' },
+           { label: 'Administrators', count: team.filter(u => u.role === 'ADMIN').length, color: 'secondary' },
+           { label: 'Total Personnel', count: team.length, color: 'success' },
+           { label: 'Active Sessions', count: team.filter(u => u.isActive).length, color: 'default' },
          ].map((r) => (
            <div key={r.label} className="p-6 rounded-[2rem] bg-white dark:bg-[#111318] border border-black/5 dark:border-white/5 flex flex-col gap-1 hover:border-primary/10 transition-all cursor-default group">
               <span className="text-[10px] font-black uppercase tracking-widest opacity-30 group-hover:opacity-100 transition-opacity">{r.label}</span>
@@ -115,7 +173,7 @@ export default function TeamPage() {
                 <CardBody className="p-8">
                    <div className="flex justify-between items-start mb-8">
                       <div className="relative">
-                         <Badge content="" color={member.status === 'active' ? 'success' : 'danger'} shape="circle" placement="bottom-right" className="border-4 border-white dark:border-black w-5 h-5">
+                         <Badge content="" color={member.isActive ? 'success' : 'danger'} shape="circle" placement="bottom-right" className="border-4 border-white dark:border-black w-5 h-5">
                             <Avatar 
                               src={`https://i.pravatar.cc/150?u=${member.email}`}
                               className="w-20 h-20 text-xl font-black shadow-lg"
@@ -131,8 +189,10 @@ export default function TeamPage() {
                             <DropdownItem key="edit">Edit Profile</DropdownItem>
                             <DropdownItem key="perms" onClick={() => openPermissions(member)}>Manage Access Rights</DropdownItem>
                             <DropdownItem key="transfer">Make Primary Owner</DropdownItem>
-                            <DropdownItem key="deactivate" className="text-danger" color="danger">Revoke Access</DropdownItem>
-                         </DropdownMenu>
+                            <DropdownItem key="toggleStatus" className="text-danger" color="danger" onClick={() => toggleUserStatus(member.id, member.isActive)}>
+                               {member.isActive ? 'Revoke Access' : 'Restore Access'}
+                             </DropdownItem>
+                          </DropdownMenu>
                       </Dropdown>
                    </div>
 
@@ -146,24 +206,26 @@ export default function TeamPage() {
                          <Chip 
                             size="sm" 
                             variant="flat" 
-                            color={member.role === 'owner' ? 'primary' : member.role === 'admin' ? 'secondary' : 'default'}
+                            color={roleColors[member.role] || 'default'}
                             className="font-black uppercase text-[10px] px-3 h-7 tracking-widest"
                             startContent={<Shield size={12} />}
                          >
-                            {member.role === 'owner' ? 'Sovereign' : member.role}
+                            {member.role}
                          </Chip>
-                         <Chip size="sm" variant="dot" className="font-black uppercase text-[10px] opacity-40">{member.status}</Chip>
-                      </div>
+                         <Chip size="sm" variant="dot" color={member.isActive ? "success" : "danger"} className="font-black uppercase text-[10px] opacity-40">
+                            {member.isActive ? 'Active' : 'Disabled'}
+                          </Chip>
+                       </div>
 
                       <Divider className="opacity-50" />
 
                       <div>
-                         <p className="text-[10px] font-black uppercase tracking-widest opacity-20 mb-3">Modular Authority</p>
+                         <p className="text-[10px] font-black uppercase tracking-widest opacity-20 mb-3">Module Permissions</p>
                          <div className="flex flex-wrap gap-2">
-                            {member.permissions.map(p => (
+                            {member.permissions.map((p: string) => (
                                <div key={p} className="p-2 rounded-xl bg-black/[0.03] dark:bg-white/5 border border-black/5 flex items-center gap-2">
                                   <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                  <span className="text-[10px] font-black uppercase tracking-tight">{p.replace(':', ' ')}</span>
+                                  <span className="text-[10px] font-black uppercase tracking-tight">{member.role} Full Access</span>
                                 </div>
                             ))}
                          </div>
@@ -193,7 +255,7 @@ export default function TeamPage() {
                  <div className="flex items-center gap-4">
                     <Avatar src={`https://i.pravatar.cc/150?u=${selectedUser?.email}`} className="w-12 h-12" />
                     <div>
-                      <h2 className="text-2xl font-black tracking-tight">Authority Matrix</h2>
+                      <h2 className="text-2xl font-black tracking-tight">Permission Settings</h2>
                       <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Configuring Access for {selectedUser?.name}</p>
                     </div>
                  </div>
@@ -221,7 +283,7 @@ export default function TeamPage() {
                             <div className="flex items-center gap-4">
                                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-dark-card shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                                   <mod.icon size={24} strokeWidth={2.5} />
-                               </div>
+                                </div>
                                <div>
                                   <h5 className="font-black text-sm">{mod.label}</h5>
                                   <p className="text-[10px] font-medium opacity-40">{mod.desc}</p>
@@ -238,7 +300,7 @@ export default function TeamPage() {
                 <Button variant="light" className="font-bold" onPress={onClose}>Discard</Button>
                 <div className="flex-grow flex justify-end">
                    <Button color="primary" className="px-10 font-black h-14 shadow-xl shadow-primary/20" radius="full" onPress={onClose}>
-                      Update Protocol
+                      Save Permissions
                    </Button>
                 </div>
               </ModalFooter>
@@ -258,19 +320,29 @@ export default function TeamPage() {
           {(onClose) => (
             <>
               <ModalHeader>
-                 <h2 className="text-2xl font-black tracking-tight">Invite Strategic Partner</h2>
+                 <h2 className="text-2xl font-black tracking-tight">Invite Team Member</h2>
               </ModalHeader>
-              <ModalBody className="py-6 space-y-6">
-                 <Input label="Full Name" placeholder="e.g. Aman Gupta" labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
-                 <Input label="Business Email" placeholder="aman@google.com" labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
-                 <div className="grid grid-cols-2 gap-4">
-                    <Button variant="flat" className="h-14 font-bold rounded-2xl opacity-60">Manager Role</Button>
-                    <Button variant="flat" color="primary" className="h-14 font-black rounded-2xl">Staff Role</Button>
-                 </div>
+               <ModalBody className="py-6 space-y-6">
+                  <Input label="Full Name" placeholder="e.g. Aman Gupta" value={inviteData.name} onValueChange={(val) => setInviteData({...inviteData, name: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                  <Input label="Business Email" type="email" placeholder="aman@business.com" value={inviteData.email} onValueChange={(val) => setInviteData({...inviteData, email: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                  <Input label="Mobile Number" placeholder="+91 98XXX XXXXX" value={inviteData.phone} onValueChange={(val) => setInviteData({...inviteData, phone: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                  <div className="grid grid-cols-2 gap-4">
+                     {['ADMIN', 'MANAGER', 'STAFF', 'TECHNICIAN'].map(role => (
+                       <Button 
+                        key={role}
+                        variant={inviteData.role === role ? 'flat' : 'light'} 
+                        color={inviteData.role === role ? 'primary' : 'default'}
+                        className="h-14 font-black rounded-2xl"
+                        onClick={() => setInviteData({...inviteData, role})}
+                       >
+                         {role}
+                       </Button>
+                     ))}
+                  </div>
               </ModalBody>
               <ModalFooter>
                 <Button variant="light" className="font-bold" onPress={onClose}>Cancel</Button>
-                <Button color="primary" className="px-8 font-black rounded-full h-12 shadow-lg shadow-primary/20">Send Invite</Button>
+                <Button color="primary" className="px-8 font-black rounded-full h-12 shadow-lg shadow-primary/20" onClick={handleInvite} isLoading={isLoading}>Send Invite</Button>
               </ModalFooter>
             </>
           )}

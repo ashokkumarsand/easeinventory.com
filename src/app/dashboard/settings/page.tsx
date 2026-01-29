@@ -1,0 +1,280 @@
+'use client';
+
+import {
+    Button,
+    Card,
+    CardBody,
+    Input,
+    Tab,
+    Tabs
+} from '@heroui/react';
+import {
+    Building2,
+    CreditCard,
+    Globe,
+    Save,
+    ShieldCheck
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+
+export default function SettingsPage() {
+  const t = useTranslations('Settings');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [tenant, setTenant] = useState<any>({
+    name: '',
+    businessType: '',
+    gstNumber: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    phone: '',
+    email: '',
+    website: '',
+    upiId: '',
+    bankName: '',
+    accountNumber: '',
+    ifscCode: ''
+  });
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/settings/tenant');
+      const data = await res.json();
+      if (data.tenant) setTenant(data.tenant);
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/settings/tenant', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tenant),
+      });
+      if (res.ok) {
+        alert('Settings updated successfully');
+      }
+    } catch (error) {
+      alert('Error updating settings');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) return <div className="h-40 flex items-center justify-center">Loading...</div>;
+
+  return (
+    <div className="space-y-10">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight">{t('title')}</h1>
+          <p className="text-black/40 dark:text-white/40 font-bold">{t('subtitle')}</p>
+        </div>
+        <Button 
+          color="primary" 
+          radius="full" 
+          size="lg" 
+          className="font-black px-8" 
+          startContent={<Save size={20} />}
+          onClick={handleSave}
+          isLoading={isSaving}
+        >
+          {t('save')}
+        </Button>
+      </div>
+
+      <Tabs 
+        aria-label="Settings categories" 
+        variant="underlined" 
+        classNames={{
+            tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
+            cursor: "w-full bg-primary",
+            tab: "max-w-fit px-0 h-12",
+            tabContent: "group-data-[selected=true]:text-primary font-black uppercase text-[10px] tracking-widest"
+        }}
+      >
+        <Tab
+          key="business"
+          title={
+            <div className="flex items-center space-x-2">
+              <Building2 size={18} />
+              <span>{t('tabs.business')}</span>
+            </div>
+          }
+        >
+          <div className="mt-8 grid lg:grid-cols-2 gap-8">
+            <Card className="modern-card p-6" radius="lg">
+                <CardBody className="space-y-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-4 bg-primary rounded-full" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('identity')}</h4>
+                    </div>
+                    <Input 
+                        label="Legal Business Name" 
+                        value={tenant.name} 
+                        onValueChange={(v) => setTenant({...tenant, name: v})}
+                        labelPlacement="outside" placeholder="Enter business name" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input 
+                            label="GST Number" 
+                            value={tenant.gstNumber || ''} 
+                            onValueChange={(v) => setTenant({...tenant, gstNumber: v})}
+                            labelPlacement="outside" placeholder="27XXXXX..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        />
+                         <Input 
+                            label="Phone" 
+                            value={tenant.phone || ''} 
+                            onValueChange={(v) => setTenant({...tenant, phone: v})}
+                            labelPlacement="outside" placeholder="+91..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        />
+                    </div>
+                </CardBody>
+            </Card>
+
+            <Card className="modern-card p-6" radius="lg">
+                <CardBody className="space-y-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-4 bg-primary rounded-full" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('location')}</h4>
+                    </div>
+                    <Input 
+                        label="Address" 
+                        value={tenant.address || ''} 
+                        onValueChange={(v) => setTenant({...tenant, address: v})}
+                        labelPlacement="outside" placeholder="Floor, Building, Street" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input 
+                            label="City" 
+                            value={tenant.city || ''} 
+                            onValueChange={(v) => setTenant({...tenant, city: v})}
+                            labelPlacement="outside" placeholder="Mumbai" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        />
+                        <Input 
+                            label="Pincode" 
+                            value={tenant.pincode || ''} 
+                            onValueChange={(v) => setTenant({...tenant, pincode: v})}
+                            labelPlacement="outside" placeholder="400001" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        />
+                    </div>
+                </CardBody>
+            </Card>
+          </div>
+        </Tab>
+
+        <Tab
+          key="payments"
+          title={
+            <div className="flex items-center space-x-2">
+              <CreditCard size={18} />
+              <span>{t('tabs.payments')}</span>
+            </div>
+          }
+        >
+          <div className="mt-8 grid lg:grid-cols-2 gap-8">
+             <Card className="modern-card p-6" radius="lg">
+                <CardBody className="space-y-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-4 bg-success rounded-full" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-success">{t('upi')}</h4>
+                    </div>
+                    <p className="text-xs font-bold opacity-40">{t('upi_helper')}</p>
+                    <Input 
+                        label="Business VPA / UPI ID" 
+                        value={tenant.upiId || ''} 
+                        onValueChange={(v) => setTenant({...tenant, upiId: v})}
+                        labelPlacement="outside" placeholder="e.g. business@okaxis" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        startContent={<Globe size={18} className="opacity-20" />}
+                    />
+                </CardBody>
+            </Card>
+
+            <Card className="modern-card p-6" radius="lg">
+                <CardBody className="space-y-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-4 bg-success rounded-full" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-success">{t('banking')}</h4>
+                    </div>
+                    <Input 
+                        label="Bank Name" 
+                        value={tenant.bankName || ''} 
+                        onValueChange={(v) => setTenant({...tenant, bankName: v})}
+                        labelPlacement="outside" placeholder="HDFC Bank" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Input 
+                            label="Account Number" 
+                            value={tenant.accountNumber || ''} 
+                            onValueChange={(v) => setTenant({...tenant, accountNumber: v})}
+                            labelPlacement="outside" placeholder="501XXX..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        />
+                        <Input 
+                            label="IFSC Code" 
+                            value={tenant.ifscCode || ''} 
+                            onValueChange={(v) => setTenant({...tenant, ifscCode: v})}
+                            labelPlacement="outside" placeholder="HDFC000..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        />
+                    </div>
+                </CardBody>
+            </Card>
+          </div>
+        </Tab>
+
+        <Tab
+          key="security"
+          title={
+            <div className="flex items-center space-x-2">
+              <ShieldCheck size={18} />
+              <span>{t('tabs.security')}</span>
+            </div>
+          }
+        >
+          <div className="mt-8 max-w-2xl">
+            <Card className="modern-card p-8 bg-black text-white" radius="lg">
+                <CardBody className="space-y-8">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="text-2xl font-black mb-1">{t('security_standards')}</h3>
+                            <p className="text-xs font-bold opacity-40 uppercase tracking-widest">{t('protection_subtitle')}</p>
+                        </div>
+                        <div className="px-3 py-1 bg-success/20 text-success rounded-full border border-success/30 text-[10px] font-black italic">
+                            ISO 27001 ACTIVE
+                        </div>
+                    </div>
+                    
+                    <div className="space-y-6">
+                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                            <h5 className="text-sm font-black mb-1">Encryption at Rest</h5>
+                            <p className="text-[10px] opacity-40 font-bold leading-relaxed">
+                                All sensitive credentials (GSP, WhatsApp, SMTP) are encrypted using AES-256-GCM before being persisted to the database.
+                            </p>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                            <h5 className="text-sm font-black mb-1">Audit Trail</h5>
+                            <p className="text-[10px] opacity-40 font-bold leading-relaxed">
+                                System tracks all administrative changes to business settings and financial protocols in compliance with quality control guidelines.
+                            </p>
+                        </div>
+                    </div>
+                </CardBody>
+            </Card>
+          </div>
+        </Tab>
+      </Tabs>
+    </div>
+  );
+}

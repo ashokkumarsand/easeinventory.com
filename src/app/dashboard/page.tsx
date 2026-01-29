@@ -17,6 +17,8 @@ import {
     Users,
     Wrench
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 
 const stats = [
   { 
@@ -53,14 +55,18 @@ const stats = [
 ];
 
 export default function OverviewPage() {
+  const t = useTranslations('Dashboard');
+  const { data: session } = useSession();
+  const userName = session?.user?.name?.split(' ')[0] || 'Administrator';
+
   return (
     <div className="space-y-10">
       
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-           <h1 className="text-3xl lg:text-4xl font-black tracking-tight mb-2">Morning, Ashok.</h1>
-           <p className="text-black/40 dark:text-white/40 font-bold">Here is your business empire status for today.</p>
+           <h1 className="text-3xl lg:text-4xl font-black tracking-tight mb-2">{t('welcome')}, {userName}.</h1>
+           <p className="text-black/40 dark:text-white/40 font-bold">{t('title')}</p>
         </div>
         <div className="flex items-center gap-3">
            <div className="flex flex-col items-end mr-4">

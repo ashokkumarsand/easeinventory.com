@@ -15,6 +15,9 @@ import {
     ModalFooter,
     ModalHeader,
     Pagination,
+    Select,
+    SelectItem,
+    Switch,
     Table,
     TableBody,
     TableCell,
@@ -30,9 +33,11 @@ import {
     Package,
     Plus,
     Search,
-    Tag
+    Tag,
+    Truck
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useMemo, useState } from 'react';
 
 // Mock Data
 const INITIAL_PRODUCTS = [
@@ -46,9 +51,53 @@ const INITIAL_PRODUCTS = [
 ];
 
 export default function InventoryPage() {
+  const { data: session } = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [filterValue, setFilterValue] = useState("");
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<any[]>([]);
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const [locations, setLocations] = useState<any[]>([]);
+  
+  useEffect(() => {
+    fetchProducts();
+    fetchSuppliers();
+    fetchLocations();
+  }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch('/api/inventory/locations');
+      const data = await response.json();
+      setLocations(data.locations || []);
+    } catch (error) {
+      console.error('Fetch locations error:', error);
+    }
+  };
+
+  const fetchSuppliers = async () => {
+    try {
+      const response = await fetch('/api/suppliers');
+      const data = await response.json();
+      setSuppliers(data.suppliers || []);
+    } catch (error) {
+      console.error('Fetch suppliers error:', error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      setProducts(data.products || []);
+    } catch (error) {
+      console.error('Fetch products error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // New Product State
   const [newProduct, setNewProduct] = useState({
@@ -59,7 +108,11 @@ export default function InventoryPage() {
     mrp: 0,
     sale: 0,
     discount: 0,
-    stock: 0
+    stock: 0,
+    supplierId: '',
+    initialLocationId: '',
+    isConsignment: false,
+    consignmentCommission: 10
   });
 
   // Calculate prices logic
@@ -88,16 +141,42 @@ export default function InventoryPage() {
     setFilterValue(value);
   };
 
-  const handleAddProduct = () => {
-    const p = { 
-        ...newProduct, 
-        id: (products.length + 1).toString(),
-        sale: Number(newProduct.sale.toFixed(2)),
-        discount: Number(newProduct.discount.toFixed(1))
-    };
-    setProducts([p, ...products]);
-    onOpenChange();
-    setNewProduct({ name: '', sn: '', category: '', cost: 0, mrp: 0, sale: 0, discount: 0, stock: 0 });
+  const handleAddProduct = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newProduct.name,
+          sku: newProduct.sn, // Mapping sn to sku for API
+          category: newProduct.category,
+          costPrice: newProduct.cost,
+          mrp: newProduct.mrp,
+          salePrice: newProduct.sale,
+          discountPercent: newProduct.discount,
+          quantity: newProduct.stock,
+          unit: 'pcs',
+          supplierId: newProduct.supplierId,
+          initialLocationId: newProduct.initialLocationId,
+          isConsignment: newProduct.isConsignment,
+          consignmentCommission: newProduct.consignmentCommission
+        }),
+      });
+
+      if (response.ok) {
+        fetchProducts();
+        onOpenChange();
+        setNewProduct({ name: '', sn: '', category: '', cost: 0, mrp: 0, sale: 0, discount: 0, stock: 0, supplierId: '', initialLocationId: '', isConsignment: false, consignmentCommission: 10 });
+      } else {
+        const data = await response.json();
+        alert(data.message || 'Failed to add product');
+      }
+    } catch (error) {
+      alert('Error adding product');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -201,35 +280,45 @@ export default function InventoryPage() {
           <TableColumn>STATUS</TableColumn>
           <TableColumn align="center">ACTIONS</TableColumn>
         </TableHeader>
-        <TableBody items={filteredItems}>
+        <TableBody items={filteredItems} loadingContent={<div className="font-bold">Scanning...</div>} isLoading={isLoading}>
           {(item) => (
             <TableRow key={item.id} className="border-b last:border-none border-black/5 dark:border-white/5 hover:bg-black/[0.01] dark:hover:bg-white/[0.01] transition-colors">
               <TableCell>
                 <div>
                    <p className="font-black text-dark dark:text-white leading-tight">{item.name}</p>
-                   <p className="text-[10px] font-black opacity-30 mt-1 uppercase tracking-tighter">{item.sn}</p>
+                   <p className="text-[10px] font-black opacity-30 mt-1 uppercase tracking-tighter inline-flex items-center gap-2">
+                       {item.sku || item.sn}
+                       {item.supplier && (
+                           <span className="text-primary flex items-center gap-1">
+                               <Truck size={8} /> {item.supplier.name}
+                           </span>
+                       )}
+                       {item.isConsignment && (
+                           <Chip size="sm" variant="flat" color="warning" className="h-4 text-[8px] font-black uppercase">Consignment</Chip>
+                       )}
+                   </p>
                 </div>
               </TableCell>
               <TableCell>
-                 <Chip size="sm" variant="flat" className="font-black text-[10px] uppercase">{item.category}</Chip>
+                 <Chip size="sm" variant="flat" className="font-black text-[10px] uppercase">{item.category?.name || item.category || 'General'}</Chip>
               </TableCell>
-              <TableCell>₹{item.cost.toLocaleString()}</TableCell>
+              <TableCell>₹{(item.costPrice || item.cost).toLocaleString()}</TableCell>
               <TableCell>
                 <div className="flex flex-col">
-                   <span className="text-black/40 dark:text-white/40 line-through text-xs">₹{item.mrp.toLocaleString()}</span>
+                   <span className="text-black/40 dark:text-white/40 line-through text-xs">₹{(item.mrp || 0).toLocaleString()}</span>
                    <span className="text-secondary font-black">MRP</span>
                 </div>
               </TableCell>
               <TableCell>
-                 <div className="flex flex-col">
-                    <span className="font-black text-lg">₹{item.sale.toLocaleString()}</span>
-                    <span className="text-success text-[10px] font-black">-{item.discount}% OFF</span>
+                <div className="flex flex-col">
+                    <span className="font-black text-lg">₹{(item.salePrice || item.sale || 0).toLocaleString()}</span>
+                    <span className="text-success text-[10px] font-black">-{item.discountPercent || item.discount || 0}% OFF</span>
                  </div>
               </TableCell>
               <TableCell>
                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${item.stock < 5 ? 'bg-danger animate-pulse' : 'bg-primary'}`} />
-                    <span className="font-black">{item.stock} Units</span>
+                    <span className={`w-2 h-2 rounded-full ${(item.quantity || item.stock) < 5 ? 'bg-danger animate-pulse' : 'bg-primary'}`} />
+                    <span className="font-black">{item.quantity || item.stock} Units</span>
                  </div>
               </TableCell>
               <TableCell>
@@ -309,20 +398,82 @@ export default function InventoryPage() {
                      onValueChange={(val) => setNewProduct({...newProduct, category: val})}
                      classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
                    />
-                   <Input
-                     label="Current In-Stock"
-                     type="number"
-                     placeholder="0"
-                     labelPlacement="outside"
-                     size="lg"
-                     radius="lg"
-                     value={newProduct.stock.toString()}
-                     onValueChange={(val) => setNewProduct({...newProduct, stock: parseInt(val) || 0})}
-                     classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
-                   />
-                </div>
+                    <Input
+                      label="Current In-Stock"
+                      type="number"
+                      placeholder="0"
+                      labelPlacement="outside"
+                      size="lg"
+                      radius="lg"
+                      value={newProduct.stock.toString()}
+                      onValueChange={(val) => setNewProduct({...newProduct, stock: parseInt(val) || 0})}
+                      classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
+                    />
+                 </div>
 
-                <Divider className="opacity-50" />
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <Select
+                      label="Primary Supplier (Partner)"
+                      placeholder="Select vendor"
+                      labelPlacement="outside"
+                      size="lg"
+                      radius="lg"
+                      value={newProduct.supplierId}
+                      onSelectionChange={(keys) => setNewProduct({...newProduct, supplierId: Array.from(keys)[0] as string})}
+                      classNames={{ trigger: "bg-black/5 h-14" }}
+                    >
+                      {suppliers.map((sup) => (
+                        <SelectItem key={sup.id} textValue={sup.name}>
+                          {sup.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                    
+                    <Select
+                      label="Initial Stock Location"
+                      placeholder="Select storage point"
+                      labelPlacement="outside"
+                      size="lg"
+                      radius="lg"
+                      value={newProduct.initialLocationId}
+                      onSelectionChange={(keys) => setNewProduct({...newProduct, initialLocationId: Array.from(keys)[0] as string})}
+                      classNames={{ trigger: "bg-black/5 h-14" }}
+                    >
+                      {locations.map((loc) => (
+                        <SelectItem key={loc.id} textValue={loc.name}>
+                          {loc.name} ({loc.type})
+                        </SelectItem>
+                      ))}
+                    </Select>
+                 </div>
+
+                  <div className="grid md:grid-cols-2 gap-6 items-center bg-warning/5 p-6 rounded-2xl border border-warning/10">
+                    <div className="space-y-1">
+                        <h4 className="font-black text-sm text-warning uppercase tracking-widest">Consignment Mode</h4>
+                        <p className="text-[10px] font-bold opacity-40">Stock owned by vendor until sold.</p>
+                    </div>
+                    <div className="flex justify-end gap-6 items-center">
+                        {newProduct.isConsignment && (
+                            <div className="max-w-[120px]">
+                                <Input 
+                                    label="Our %" 
+                                    type="number" 
+                                    size="sm" 
+                                    variant="bordered"
+                                    value={newProduct.consignmentCommission.toString()}
+                                    onValueChange={(val) => setNewProduct({...newProduct, consignmentCommission: parseFloat(val) || 0})}
+                                />
+                            </div>
+                        )}
+                        <Switch 
+                            color="warning" 
+                            isSelected={newProduct.isConsignment} 
+                            onValueChange={(val) => setNewProduct({...newProduct, isConsignment: val})}
+                        />
+                    </div>
+                 </div>
+
+                 <Divider className="opacity-50" />
 
                 <div>
                    <div className="flex items-center gap-3 mb-6">

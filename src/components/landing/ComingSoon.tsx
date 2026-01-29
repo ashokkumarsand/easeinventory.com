@@ -1,118 +1,243 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button, Chip, Input } from '@heroui/react';
-import { motion } from 'framer-motion';
+import { Button, Card, CardBody, Chip, Input } from '@heroui/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Building2, CheckCircle2, Globe, Rocket, Shield, Store, Users, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 
 const ComingSoon: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [businessName, setBusinessName] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
-  return (
-    <div className="min-h-screen bg-[#030407] text-white flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] animate-pulse delay-1000 pointer-events-none" />
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/waitlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    name,
+                    businessName,
+                    interests: ['ERP', 'Inventory', 'Shop Management']
+                })
+            });
+            if (res.ok) setIsSubmitted(true);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-      <div className="relative z-10 max-w-4xl mx-auto space-y-12">
-        
-        <motion.div
-           initial={{ scale: 0.8, opacity: 0 }}
-           animate={{ scale: 1, opacity: 1 }}
-           transition={{ duration: 0.8 }}
-           className="flex justify-center"
-        >
-          <Logo size={100} />
-        </motion.div>
+    return (
+        <div className="min-h-screen bg-[#030407] text-white flex flex-col items-center justify-center p-6 text-center overflow-hidden selection:bg-primary selection:text-black">
+            {/* Ambient Animated Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[160px] rounded-full animate-pulse transition-all duration-1000" />
+                <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-secondary/20 blur-[160px] rounded-full animate-pulse delay-1000 transition-all duration-1000" />
+                <div className="absolute top-[30%] left-[20%] w-[30%] h-[30%] bg-warning/10 blur-[140px] rounded-full animate-drift" />
+            </div>
 
-        <motion.div
-           initial={{ y: 20, opacity: 0 }}
-           animate={{ y: 0, opacity: 1 }}
-           transition={{ delay: 0.2, duration: 0.8 }}
-           className="space-y-6"
-        >
-          <Chip variant="flat" color="primary" className="mb-4 font-black uppercase tracking-widest text-[10px] px-4 py-1">
-             Phase 1: Deployment
-          </Chip>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9]">
-             The future of <br />
-             <span className="text-primary italic">Inventory</span> is arriving.
-          </h1>
-          <p className="text-xl md:text-2xl font-medium opacity-50 max-w-2xl mx-auto leading-relaxed italic">
-             Smart inventory, repair tracking, and automated GST billing — all personalized with your business subdomain.
-          </p>
-        </motion.div>
+            <div className="relative z-10 max-w-6xl mx-auto py-20 px-4">
+                {/* Logo Section */}
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 1, ease: "circOut" }}
+                    className="flex justify-center mb-16"
+                >
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-primary/40 blur-3xl rounded-full scale-110 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="bg-black/50 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] relative">
+                            <Logo size={120} />
+                        </div>
+                    </div>
+                </motion.div>
 
-        {!isSubmitted ? (
-          <motion.form 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            onSubmit={(e) => { e.preventDefault(); setIsSubmitted(true); }}
-            className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto bg-foreground/5 p-3 rounded-[32px] border border-foreground/5"
-          >
-            <Input 
-              placeholder="Join the waitlist (you@email.com)"
-              value={email}
-              onValueChange={setEmail}
-              variant="flat"
-              classNames={{
-                inputWrapper: "bg-transparent shadow-none h-14",
-                input: "font-bold text-lg"
-              }}
-            />
-            <Button 
-              color="primary" 
-              className="h-14 px-10 font-black text-lg shadow-xl shadow-primary/20"
-              radius="full"
-              type="submit"
-            >
-               Notify Me
-            </Button>
-          </motion.form>
-        ) : (
-          <motion.div 
-             initial={{ scale: 0.9, opacity: 0 }}
-             animate={{ scale: 1, opacity: 1 }}
-             className="bg-green-500/10 text-green-500 border border-green-500/20 p-8 rounded-[40px] inline-block"
-          >
-             <p className="text-2xl font-black mb-2">You&apos;re in the inner circle!</p>
-             <p className="text-sm font-bold opacity-60">We&apos;ll ping you the moment we flip the switch.</p>
-          </motion.div>
-        )}
+                {/* Hero Section */}
+                <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 1 }}
+                    className="space-y-8 mb-20"
+                >
+                    <div className="flex flex-wrap justify-center gap-3">
+                        <Chip variant="flat" color="primary" className="font-black uppercase tracking-widest text-[10px] px-6 py-2 bg-primary/10 border border-primary/20">
+                            INDIA READY ERP 🇮🇳
+                        </Chip>
+                        <Chip variant="flat" color="secondary" className="font-black uppercase tracking-widest text-[10px] px-6 py-2 bg-secondary/10 border border-secondary/20">
+                            GST COMPLIANT
+                        </Chip>
+                    </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-           {[
-             { title: 'Inventory SN Control', desc: 'Track every unit with unique serial numbers and tiered costing.' },
-             { title: 'Repair Logistics', desc: 'Automated Job ID generation and WhatsApp service updates.' },
-             { title: 'GST Billing Engine', desc: 'Generate professional invoices with automatic tax compliance.' },
-             { title: 'Personnel & Attendance', desc: 'Biometric verified punching and integrated payroll.' },
-           ].map((feature, idx) => (
-             <motion.div 
-               key={idx}
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.6 + (idx * 0.1) }}
-               className="p-6 rounded-[32px] bg-foreground/5 border border-foreground/5 text-left space-y-3"
-             >
-                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black">
-                   {idx + 1}
+                    <h1 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.85] uppercase">
+                        Master Your <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-secondary italic">Business Pulse.</span>
+                    </h1>
+
+                    <p className="text-xl md:text-3xl font-bold text-white/40 max-w-3xl mx-auto leading-relaxed italic tracking-tight">
+                        The definitive Shop Management & ERP platform for ambitious retailers, service centers, and distributors.
+                    </p>
+                </motion.div>
+
+                <div className="grid lg:grid-cols-5 gap-10 items-start">
+                    {/* Features Showcase */}
+                    <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {[
+                            { title: 'ERP Solution', desc: 'Unified control for products, sales, and complex logistics.', icon: Rocket },
+                            { title: 'Inventory Intel', desc: 'S/N tracking, multi-location stock, and tiered pricing.', icon: Zap },
+                            { title: 'Shop Authority', desc: 'Professional job cards & real-time customer repair tracking.', icon: Store },
+                            { title: 'Personnel Guard', desc: 'Verified attendance and automated payroll generation.', icon: Users },
+                        ].map((feature, idx) => (
+                            <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.5 + (idx * 0.1) }}
+                                className="group p-8 rounded-[2.5rem] bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-primary/40 transition-all duration-500 text-left"
+                            >
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.1] border border-white/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-500 mb-6">
+                                    <feature.icon size={28} />
+                                </div>
+                                <h3 className="font-black text-xl mb-2 uppercase tracking-tight">{feature.title}</h3>
+                                <p className="text-sm font-bold opacity-30 leading-relaxed">{feature.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Waitlist Card */}
+                    <div className="lg:col-span-2">
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <Card className="modern-card bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-10 rounded-[3rem] shadow-2xl relative overflow-visible">
+                                <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/20 blur-3xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                                <CardBody className="p-0 space-y-8">
+                                    <div className="text-left">
+                                        <h2 className="text-3xl font-black mb-2 uppercase tracking-tight">Join the Elite</h2>
+                                        <p className="text-xs font-bold opacity-40 uppercase tracking-[0.2em]">Secure early access and exclusive benefits</p>
+                                    </div>
+
+                                    <AnimatePresence mode="wait">
+                                        {!isSubmitted ? (
+                                            <motion.form
+                                                key="waitlist-form"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                onSubmit={handleSubmit}
+                                                className="space-y-4"
+                                            >
+                                                <Input
+                                                    label="Business Name"
+                                                    placeholder="ACME Electronics"
+                                                    labelPlacement="outside"
+                                                    radius="lg"
+                                                    value={businessName}
+                                                    onValueChange={setBusinessName}
+                                                    classNames={{
+                                                        inputWrapper: "bg-white/5 h-14 border border-white/5 hover:border-white/20 transition-all",
+                                                        input: "font-black"
+                                                    }}
+                                                />
+                                                <Input
+                                                    label="Your Name"
+                                                    placeholder="Rahul Kumar"
+                                                    labelPlacement="outside"
+                                                    radius="lg"
+                                                    value={name}
+                                                    onValueChange={setName}
+                                                    classNames={{
+                                                        inputWrapper: "bg-white/5 h-14 border border-white/5 hover:border-white/20 transition-all",
+                                                        input: "font-black"
+                                                    }}
+                                                />
+                                                <Input
+                                                    label="Work Email"
+                                                    placeholder="rahul@acme.com"
+                                                    labelPlacement="outside"
+                                                    radius="lg"
+                                                    required
+                                                    type="email"
+                                                    value={email}
+                                                    onValueChange={setEmail}
+                                                    classNames={{
+                                                        inputWrapper: "bg-white/5 h-14 border border-white/5 hover:border-white/20 transition-all",
+                                                        input: "font-black"
+                                                    }}
+                                                />
+                                                <Button
+                                                    color="primary"
+                                                    className="w-full h-16 font-black text-xl shadow-2xl shadow-primary/30 uppercase tracking-widest mt-4"
+                                                    radius="full"
+                                                    type="submit"
+                                                    isLoading={isLoading}
+                                                    startContent={!isLoading && <Rocket size={20} />}
+                                                >
+                                                    Claim Access
+                                                </Button>
+                                            </motion.form>
+                                        ) : (
+                                            <motion.div
+                                                key="success-message"
+                                                initial={{ scale: 0.8, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                className="py-10 text-center space-y-6"
+                                            >
+                                                <div className="w-20 h-20 bg-green-500/20 border-2 border-green-500/30 rounded-[2.5rem] flex items-center justify-center mx-auto text-green-500">
+                                                    <CheckCircle2 size={40} />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <p className="text-3xl font-black uppercase tracking-tight">You&apos;re Onboard!</p>
+                                                    <p className="text-sm font-bold opacity-40 leading-relaxed italic mx-auto max-w-[250px]">
+                                                        Your VIP pass is secured. We&apos;ll reach out personally to finalize your onboarding.
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </CardBody>
+                            </Card>
+                        </motion.div>
+                    </div>
                 </div>
-                <h3 className="font-black text-sm uppercase tracking-tight">{feature.title}</h3>
-                <p className="text-xs font-bold opacity-40 leading-relaxed">{feature.desc}</p>
-             </motion.div>
-           ))}
-        </div>
-      </div>
 
-      <footer className="fixed bottom-10 left-0 w-full flex justify-center opacity-20">
-         <div className="flex items-center gap-3">
-            <span className="text-xs font-black uppercase tracking-widest">EaseInventory 🇮🇳 2026</span>
-         </div>
-      </footer>
-    </div>
-  );
+                {/* Trust Signals */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    className="mt-32 pt-20 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-12"
+                >
+                    {[
+                        { label: 'Uptime', val: '99.99%', icon: Shield },
+                        { label: 'India Regions', val: 'All 28', icon: Building2 },
+                        { label: 'Security', val: 'AES-256', icon: Globe },
+                        { label: 'Waitlist', val: '5k+', icon: Users },
+                    ].map((stat, i) => (
+                        <div key={i} className="flex flex-col items-center gap-2 group">
+                            <stat.icon size={20} className="text-primary opacity-30 group-hover:opacity-100 transition-opacity" />
+                            <span className="text-3xl font-black">{stat.val}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest opacity-30">{stat.label}</span>
+                        </div>
+                    ))}
+                </motion.div>
+            </div>
+
+            <footer className="fixed bottom-10 left-0 w-full flex justify-center opacity-10 pointer-events-none px-4">
+                <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black uppercase tracking-[1em]">EaseInventory • Powered by Advanced Precision • 2026</span>
+                </div>
+            </footer>
+        </div>
+    );
 };
 
 export default ComingSoon;

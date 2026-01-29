@@ -7,6 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ==================== MULTI-TENANT MODELS ====================
@@ -14,7 +15,7 @@ datasource db {
 model Tenant {
   id          String   @id @default(cuid())
   name        String
-  slug        String   @unique // subdomain slug
+  slug        String?   @unique // optional subdomain slug
   customDomain String? @unique @map("custom_domain")
   
   // Branding
@@ -33,6 +34,13 @@ model Tenant {
   phone       String?
   email       String?
   website     String?
+  currency    String  @default("INR")
+  
+  // Payment Details (India)
+  upiId       String? @map("upi_id")
+  bankName    String? @map("bank_name")
+  accountNumber String? @map("account_number")
+  ifscCode    String? @map("ifsc_code")
   
   // Subscription
   plan        PlanType @default(FREE)
@@ -40,7 +48,8 @@ model Tenant {
   
   // Settings
   settings    Json?
-  isActive    Boolean @default(true) @map("is_active")
+  isActive    Boolean @default(false) @map("is_active")
+  registrationStatus TenantStatus @default(PENDING) @map("registration_status")
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -56,6 +65,12 @@ model Tenant {
   stockMovements StockMovement[]
   employees   Employee[]
   attendances Attendance[]
+  settlements ConsignmentSettlement[]
+  locations   Location[]
+  stockTransfers StockTransfer[]
+  payslips    Payslip[]
+  refundRequests RefundRequest[] @relation("TenantRefunds")
+  inventoryRequests InventoryRequest[] @relation("TenantInventoryRequests")
   
   @@index([slug])
   @@index([customDomain])
@@ -77,38 +92,103 @@ enum PlanType {
   ENTERPRISE
 }
 
+enum TenantStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 // ==================== USER & AUTH MODELS ====================
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  password    String
-  name        String
-  phone       String?
-  avatar      String?
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  password      String?
+  phone         String?   @unique
+  image         String?   @map("avatar")
   
   // Multi-tenant
-  tenantId    String   @map("tenant_id")
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId      String?   @map("tenant_id")
+  tenant        Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   // Role & Permissions
-  role        UserRole @default(STAFF)
-  permissions Json?
+  role          UserRole  @default(STAFF)
+  permissions   Json?
   
-  isActive    Boolean  @default(true) @map("is_active")
-  lastLoginAt DateTime? @map("last_login_at")
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
   
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
   
-  // Relations
+  // NextAuth Relations
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Business Relations
   createdInvoices Invoice[] @relation("CreatedBy")
   assignedTickets RepairTicket[] @relation("AssignedTo")
   stockMovements  StockMovement[]
+  deliveries      Delivery[] @relation("DeliveryAgent")
+  backofficeStaff BackofficeStaff?
   
   @@unique([email, tenantId])
   @@index([tenantId])
   @@map("users")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Waitlist {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  businessName String?  @map("business_name")
+  interests    String[] // ERP, Inventory, Shop Management, etc.
+  status       String   @default("PENDING")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("waitlist")
 }
 
 enum UserRole {
@@ -192,6 +272,10 @@ model Product {
   
   isActive    Boolean  @default(true) @map("is_active")
   
+  // Consignment
+  isConsignment Boolean @default(false) @map("is_consignment")
+  consignmentCommission Decimal? @map("consignment_commission") @db.Decimal(5, 2) // % for tenant
+  
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   
@@ -199,6 +283,9 @@ model Product {
   invoiceItems InvoiceItem[]
   stockMovements StockMovement[]
   repairTickets RepairTicket[]
+  settlements   ConsignmentSettlement[]
+  stockAtLocations StockAtLocation[]
+  transferItems    StockTransferItem[]
   
   @@unique([slug, tenantId])
   @@index([tenantId])
@@ -206,6 +293,40 @@ model Product {
   @@index([barcode])
   @@map("products")
 }
+
+model ConsignmentSettlement {
+  id          String   @id @default(cuid())
+  productId   String   @map("product_id")
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  supplierId  String   @map("supplier_id")
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  
+  invoiceId   String   @map("invoice_id")
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  
+  salePrice   Decimal  @map("sale_price") @db.Decimal(12, 2)
+  payoutAmount Decimal @map("payout_amount") @db.Decimal(12, 2) // Amount due to supplier
+  
+  status      SettlementStatus @default(UNSETTLED)
+  settledAt   DateTime? @map("settled_at")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([tenantId])
+  @@index([supplierId])
+  @@map("consignment_settlements")
+}
+
+enum SettlementStatus {
+  UNSETTLED
+  PAID
+  CANCELLED
+}
+
 
 model Supplier {
   id          String   @id @default(cuid())
@@ -235,6 +356,7 @@ model Supplier {
   
   products    Product[]
   stockMovements StockMovement[]
+  settlements ConsignmentSettlement[]
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -321,6 +443,24 @@ model Customer {
   @@map("customers")
 }
 
+model SecurityLog {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  userId      String?  @map("user_id")
+  action      String   // e.g., "SENSITIVE_DATA_UPDATE", "LOGIN_SUCCESS", "KEY_ROTATION"
+  resource    String?  // e.g., "TenantSettings", "Invoice:INV-001"
+  details     Json?    
+  ipAddress   String?  @map("ip_address")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([tenantId])
+  @@index([action])
+  @@map("security_logs")
+}
+
 model Invoice {
   id          String   @id @default(cuid())
   invoiceNumber String  @unique @map("invoice_number")
@@ -334,6 +474,8 @@ model Invoice {
   discount    Decimal  @default(0) @db.Decimal(12, 2)
   taxAmount   Decimal  @default(0) @map("tax_amount") @db.Decimal(12, 2)
   total       Decimal  @db.Decimal(12, 2)
+  currency    String   @default("INR")
+  isTaxInclusive Boolean @default(false) @map("is_tax_inclusive")
   
   // Payment
   paidAmount  Decimal  @default(0) @map("paid_amount") @db.Decimal(12, 2)
@@ -351,6 +493,12 @@ model Invoice {
   notes       String?
   termsAndConditions String? @map("terms_and_conditions")
   
+  // GST Compliance (e-Invoicing)
+  irn            String? @unique // Invoice Reference Number
+  signedQrCode   String? @map("signed_qr_code") // For government QR
+  signedInvoice  String? @map("signed_invoice") // Official signed XML/JSON
+  gstStatus      String? @default("NOT_GENERATED") @map("gst_status") // NOT_GENERATED, GENERATED, CANCELLED, FAILED
+  
   // User who created
   createdById String   @map("created_by_id")
   createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
@@ -359,6 +507,8 @@ model Invoice {
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   items       InvoiceItem[]
+  settlements ConsignmentSettlement[]
+  deliveries  Delivery[]
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -366,6 +516,49 @@ model Invoice {
   @@index([tenantId])
   @@index([customerId])
   @@map("invoices")
+}
+
+// Delivery model for tracking shipments
+model Delivery {
+  id              String   @id @default(cuid())
+  
+  invoiceId       String   @map("invoice_id")
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  // Delivery agent
+  deliveryAgentId String?  @map("delivery_agent_id")
+  deliveryAgent   User?    @relation("DeliveryAgent", fields: [deliveryAgentId], references: [id])
+  
+  // Address
+  address         String?
+  city            String?
+  pincode         String?
+  
+  // Status tracking
+  status          DeliveryStatus @default(PENDING)
+  scheduledDate   DateTime?      @map("scheduled_date")
+  deliveredAt     DateTime?      @map("delivered_at")
+  
+  // Proof of delivery
+  proofPhoto      String?        @map("proof_photo")
+  signature       String?
+  notes           String?
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  @@index([invoiceId])
+  @@index([deliveryAgentId])
+  @@map("deliveries")
+}
+
+enum DeliveryStatus {
+  PENDING
+  ASSIGNED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  CANCELLED
 }
 
 model InvoiceItem {
@@ -378,6 +571,7 @@ model InvoiceItem {
   product     Product? @relation(fields: [productId], references: [id])
   
   description String
+  hsnCode     String?  @map("hsn_code")
   quantity    Int
   unitPrice   Decimal  @map("unit_price") @db.Decimal(12, 2)
   discount    Decimal  @default(0) @db.Decimal(12, 2)
@@ -531,6 +725,7 @@ model Employee {
   
   attendances Attendance[]
   leaves      Leave[]
+  payslips    Payslip[]
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -619,6 +814,13 @@ enum LeaveStatus {
   CANCELLED
 }
 
+enum PayrollStatus {
+  DRAFT
+  PROCESSED
+  PAID
+  CANCELLED
+}
+
 // ==================== HOLIDAY MODEL ====================
 
 model Holiday {
@@ -631,4 +833,241 @@ model Holiday {
   
   @@unique([date])
   @@map("holidays")
+}
+model Location {
+  id          String   @id @default(cuid())
+  name        String
+  code        String?  // e.g. WH-01
+  address     String?
+  city        String?
+  type        LocationType @default(STORE)
+  
+  // Inventory-level discount
+  discount    Decimal  @default(0) @db.Decimal(5, 2) // Percentage discount for all items
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  stock       StockAtLocation[]
+  transfersFrom StockTransfer[] @relation("SourceLocation")
+  transfersTo   StockTransfer[] @relation("DestinationLocation")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([name, tenantId])
+  @@index([tenantId])
+  @@map("locations")
+}
+
+enum LocationType {
+  STORE
+  WAREHOUSE
+  SERVICE_CENTER
+}
+
+model StockAtLocation {
+  id          String   @id @default(cuid())
+  productId   String   @map("product_id")
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  locationId  String   @map("location_id")
+  location    Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  quantity    Int      @default(0)
+  
+  @@unique([productId, locationId])
+  @@map("stock_at_locations")
+}
+
+model StockTransfer {
+  id              String   @id @default(cuid())
+  transferNumber  String   @unique @map("transfer_number")
+  
+  sourceLocationId String   @map("source_location_id")
+  sourceLocation   Location @relation("SourceLocation", fields: [sourceLocationId], references: [id])
+  
+  destLocationId   String   @map("dest_location_id")
+  destLocation     Location @relation("DestinationLocation", fields: [destLocationId], references: [id])
+  
+  status          TransferStatus @default(PENDING)
+  notes           String?
+  
+  // GST Compliance (e-Way Bill)
+  ewayBillNumber  String? @unique @map("eway_bill_number")
+  ewayBillDate    DateTime? @map("eway_bill_date")
+  transporterId   String? @map("transporter_id")
+  transporterName String? @map("transporter_name")
+  vehicleNumber   String? @map("vehicle_number")
+  distance        Int? // In KM
+  
+  items           StockTransferItem[]
+  
+  // Auditing
+  createdById     String   @map("created_by_id")
+  approvedById    String?  @map("approved_by_id")
+  
+  tenantId        String   @map("tenant_id")
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  @@index([tenantId])
+  @@map("stock_transfers")
+}
+
+model StockTransferItem {
+  id          String   @id @default(cuid())
+  transferId  String   @map("transfer_id")
+  transfer    StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  
+  productId   String   @map("product_id")
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  quantity    Int
+  
+  @@map("stock_transfer_items")
+}
+
+enum TransferStatus {
+  PENDING
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+}
+model Payslip {
+  id              String   @id @default(cuid())
+  month           Int
+  year            Int
+  
+  employeeId      String   @map("employee_id")
+  employee        Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  baseSalary      Decimal  @map("base_salary") @db.Decimal(12, 2)
+  workingDays     Int      @map("working_days")
+  presentDays     Int      @map("present_days")
+  leaveDays       Int      @map("leave_days")
+  
+  overtimeHours   Float    @default(0) @map("overtime_hours")
+  overtimePay     Decimal  @default(0) @map("overtime_pay") @db.Decimal(12, 2)
+  
+  deductions      Decimal  @default(0) @db.Decimal(12, 2)
+  bonus           Decimal  @default(0) @db.Decimal(12, 2)
+  
+  netSalary       Decimal  @map("net_salary") @db.Decimal(12, 2)
+  
+  status          PayrollStatus @default(DRAFT)
+  paidAt          DateTime? @map("paid_at")
+  
+  tenantId        String   @map("tenant_id")
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([employeeId, month, year])
+  @@index([tenantId])
+  @@map("payslips")
+}
+
+// ==================== BACKOFFICE & ADMIN MODELS ====================
+
+model BackofficeStaff {
+  id          String   @id @default(cuid())
+  userId      String   @unique @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Role & Module Access
+  permissions Json     // Map of module -> access level (e.g., { "TENANTS": "READ", "REFUNDS": "WRITE" })
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("backoffice_staff")
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  type        PromotionType @default(EMAIL)
+  targetPlans PlanType[]    @map("target_plans")
+  
+  status      PromotionStatus @default(DRAFT)
+  scheduledAt DateTime? @map("scheduled_at")
+  sentAt      DateTime? @map("sent_at")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("promotions")
+}
+
+enum PromotionType {
+  EMAIL
+  DASHBOARD_BANNER
+  SMS
+}
+
+enum PromotionStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  CANCELLED
+}
+
+model RefundRequest {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation("TenantRefunds", fields: [tenantId], references: [id])
+  
+  invoiceId   String?  @map("invoice_id")
+  amount      Decimal  @db.Decimal(12, 2)
+  reason      String
+  status      RefundStatus @default(OPEN)
+  
+  // Communication
+  messages    Json?    // Array of { sender, message, sentAt }
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("refund_requests")
+}
+
+enum RefundStatus {
+  OPEN
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model InventoryRequest {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation("TenantInventoryRequests", fields: [tenantId], references: [id])
+  
+  type        String   @default("PRODUCT") // PRODUCT or CATEGORY
+  details     Json     // Details of what to add
+  
+  status      RequestStatus @default(PENDING)
+  adminNote   String?  @map("admin_note")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("inventory_requests")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
