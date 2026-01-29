@@ -6,9 +6,9 @@ import { redirect } from 'next/navigation';
 export default async function TenantPortalPage({
   params,
 }: {
-  params: { tenantId: string };
+  params: Promise<{ tenantId: string }>;
 }) {
-  const { tenantId } = params;
+  const { tenantId } = await params;
   const session = await getServerSession(authOptions);
 
   // Find the tenant to verify it exists

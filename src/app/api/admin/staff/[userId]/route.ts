@@ -5,9 +5,10 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const { userId } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session || (session.user as any).role !== "SUPER_ADMIN") {
@@ -19,7 +20,7 @@ export async function PATCH(
 
     const updatedUser = await prisma.user.update({
       where: {
-        id: params.userId,
+        id: userId,
       },
       data: {
         role: role || undefined,

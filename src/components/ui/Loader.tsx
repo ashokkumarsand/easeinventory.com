@@ -45,7 +45,7 @@ export const ScatterLoader: React.FC<LoaderProps> = ({
           style={{
             width: '100px',
             height: '100px',
-            background: '#6A3BF6',
+            background: '#1E3A8A',
             opacity: isComplete ? 1 : 0,
             transform: isComplete 
               ? 'translate(-50%, -50%) scale(1)'
@@ -79,7 +79,7 @@ export const ScatterLoader: React.FC<LoaderProps> = ({
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-2xl border-2"
           style={{
-            borderColor: '#6A3BF6',
+            borderColor: '#1E3A8A',
             animation: 'pulse-ring 1.5s ease-out infinite',
             opacity: isComplete ? 0 : 0.5,
           }}

@@ -10,31 +10,63 @@ export const Logo: React.FC<LogoProps> = ({ size = 40, className = '' }) => {
     <svg
       width={size}
       height={size}
-      viewBox="0 0 200 200"
+      viewBox="0 0 240 240"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      <path
-        d="M154 30H46C37.1634 30 30 37.1634 30 46V154C30 162.837 37.1634 170 46 170H154C162.837 170 170 162.837 170 154V46C170 37.1634 162.837 30 154 30Z"
-        fill="#6A3BF6"
-      />
-      <path
-        d="M87 105H53C48.5817 105 45 108.582 45 113V147C45 151.418 48.5817 155 53 155H87C91.4183 155 95 151.418 95 147V113C95 108.582 91.4183 105 87 105Z"
-        fill="#EDE8D0"
-      />
-      <path
-        d="M147 105H113C108.582 105 105 108.582 105 113V147C105 151.418 108.582 155 113 155H147C151.418 155 155 151.418 155 147V113C155 108.582 151.418 105 147 105Z"
-        fill="#EDE8D0"
-      />
-      <path
-        d="M87 45H53C48.5817 45 45 48.5817 45 53V87C45 91.4183 48.5817 95 53 95H87C91.4183 95 95 91.4183 95 87V53C95 48.5817 91.4183 45 87 45Z"
-        fill="#EDE8D0"
-      />
-      <path
-        d="M147 45H113C108.582 45 105 48.5817 105 53V87C105 91.4183 108.582 95 113 95H147C151.418 95 155 91.4183 155 87V53C155 48.5817 151.418 45 147 45Z"
-        fill="#EDE8D0"
-      />
+      <defs>
+        {/* Gradients for faces */}
+        <linearGradient id="top-grad" x1="120" y1="40" x2="120" y2="100" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#A3E635" />
+          <stop offset="100%" stopColor="#65A30D" />
+        </linearGradient>
+        <linearGradient id="left-grad" x1="55" y1="75" x2="120" y2="170" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#1E3A8A" />
+          <stop offset="100%" stopColor="#3B82F6" />
+        </linearGradient>
+        <linearGradient id="right-grad-top" x1="120" y1="110" x2="185" y2="140" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#0EA5E9" />
+          <stop offset="100%" stopColor="#0284C7" />
+        </linearGradient>
+        <linearGradient id="right-grad-bottom" x1="120" y1="140" x2="185" y2="170" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#F59E0B" />
+          <stop offset="100%" stopColor="#D97706" />
+        </linearGradient>
+        <linearGradient id="swoosh-grad" x1="40" y1="180" x2="200" y2="180" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#1E3A8A" />
+          <stop offset="50%" stopColor="#3B82F6" />
+          <stop offset="100%" stopColor="#F59E0B" />
+        </linearGradient>
+      </defs>
+
+      {/* CUBE LAYERS (Aligned Heights) */}
+      <g>
+        {/* Top Face */}
+        <path d="M120 40L185 75L120 110L55 75L120 40Z" fill="url(#top-grad)" />
+        
+        {/* Left Side (Blue - 60px height) */}
+        <path d="M55 75L120 110V170L55 135V75Z" fill="url(#left-grad)" />
+        
+        {/* Right Side (Total 60px height: 30px Cyan + 30px Orange) */}
+        <path d="M120 110L185 75V105L120 140V110Z" fill="url(#right-grad-top)" />
+        <path d="M120 140L185 105V135L120 170V140Z" fill="url(#right-grad-bottom)" />
+      </g>
+
+      {/* BASE SWOOSH ELEMENTS (Reduced Space) */}
+      <g transform="translate(0, -6)">
+        {/* Outer Glow/Layer */}
+        <path
+          d="M35 185C35 185 75 225 120 225C165 225 205 185 205 185C205 185 165 212 120 212C75 212 35 185 35 185Z"
+          fill="url(#swoosh-grad)"
+          fillOpacity="0.2"
+        />
+        {/* Main Solid Swoosh */}
+        <path
+          d="M45 180C45 180 80 215 120 215C160 215 195 180 195 180C195 180 160 205 120 205C80 205 45 180 45 180Z"
+          fill="url(#swoosh-grad)"
+        />
+      </g>
     </svg>
   );
 };
@@ -48,10 +80,19 @@ export const LogoWithText: React.FC<LogoProps & { showText?: boolean }> = ({
     <div className={`flex items-center gap-3 ${className}`}>
       <Logo size={size} />
       {showText && (
-        <span className="text-xl font-bold tracking-tight">
-          <span className="text-foreground">Ease</span>
-          <span className="text-primary">Inventory</span>
-        </span>
+        <div className="flex flex-col leading-none">
+          <span className="text-2xl font-black tracking-tight flex items-center">
+            <span className="bg-clip-text text-transparent bg-gradient-to-br from-[#A3E635] to-[#65A30D]">
+              EASE
+            </span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] ml-1">
+              INVENTORY
+            </span>
+          </span>
+          <span className="text-[10px] font-bold text-[#1E3A8A]/30 tracking-[0.25em] uppercase mt-0.5">
+            Smart ERP Solutions
+          </span>
+        </div>
       )}
     </div>
   );

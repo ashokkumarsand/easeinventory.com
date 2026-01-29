@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { refundId: string } }
+  { params }: { params: Promise<{ refundId: string }> }
 ) {
   try {
     const { status, message } = await req.json();
-    const { refundId } = params;
+    const { refundId } = await params;
 
     const refund = await prisma.refundRequest.update({
       where: { id: refundId },

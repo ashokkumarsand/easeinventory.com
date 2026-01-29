@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { requestId: string } }
+  { params }: { params: Promise<{ requestId: string }> }
 ) {
   try {
     const { status, adminNote } = await req.json();
-    const { requestId } = params;
+    const { requestId } = await params;
 
     const request = await prisma.inventoryRequest.update({
       where: { id: requestId },

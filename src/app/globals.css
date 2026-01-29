@@ -2,25 +2,25 @@
 @source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 
 @theme {
-  --color-primary: #6A3BF6;
-  --color-primary-50: #f3f1ff;
-  --color-primary-100: #ebe5ff;
-  --color-primary-200: #d9ceff;
-  --color-primary-300: #bea6ff;
-  --color-primary-400: #9f75ff;
-  --color-primary-500: #6A3BF6;
-  --color-primary-600: #5c21f0;
-  --color-primary-700: #4d10dc;
-  --color-primary-800: #410fb8;
-  --color-primary-900: #370d97;
+  --color-primary: #1E3A8A;
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #1E3A8A;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
 
-  --color-secondary: #00D9A5;
-  --color-secondary-50: #e6fff8;
-  --color-secondary-100: #b3ffeb;
-  --color-secondary-200: #80ffde;
-  --color-secondary-300: #4dffd1;
-  --color-secondary-400: #1affc4;
-  --color-secondary-500: #00D9A5;
+  --color-secondary: #65A30D;
+  --color-secondary-50: #f7fee7;
+  --color-secondary-100: #ecfccb;
+  --color-secondary-200: #d9f99d;
+  --color-secondary-300: #bef264;
+  --color-secondary-400: #a3e635;
+  --color-secondary-500: #65A30D;
 
   --color-success: #17c964;
   --color-warning: #f5a524;
@@ -119,7 +119,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6A3BF6;
+  background: #1E3A8A;
   border-radius: 10px;
 }
 
