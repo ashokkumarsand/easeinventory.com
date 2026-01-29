@@ -233,7 +233,9 @@ const ComingSoon: React.FC = () => {
 
             <footer className="fixed bottom-10 left-0 w-full flex justify-center opacity-10 pointer-events-none px-4">
                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[1em]">EaseInventory • Powered by Advanced Precision • 2026</span>
+                    <span className="text-[10px] font-black uppercase tracking-[1em]">
+                        <span className="italic">Ease</span><span className="text-primary italic">Inventory</span> • Powered by Advanced Precision • 2026
+                    </span>
                 </div>
             </footer>
         </div>

@@ -57,8 +57,8 @@ const Footer: React.FC = () => {
               <div className="p-3 bg-foreground/5 rounded-2xl group-hover:bg-primary/20 transition-colors">
                 <Logo size={40} />
               </div>
-              <span className="text-3xl font-black tracking-tighter uppercase">
-                Ease<span className="text-primary italic">Inventory</span>
+              <span className="text-3xl font-black tracking-tighter uppercase text-foreground">
+                <span className="italic">Ease</span><span className="text-primary italic">Inventory</span>
               </span>
             </Link>
             <p className="text-foreground/60 text-xl font-medium leading-relaxed max-w-sm italic">

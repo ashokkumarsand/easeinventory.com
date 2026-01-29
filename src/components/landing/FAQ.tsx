@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     question: 'Can I use a custom domain?',
-    answer: 'Yes! While every business gets a free .easeinventory.com link, you can easily map your own domain (e.g., portal.yourbrand.com) in the settings.',
+    answer: 'Yes! While every business gets a free .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link, you can easily map your own domain (e.g., portal.yourbrand.com) in the settings.',
   },
   {
     question: 'What about data privacy?',
@@ -48,7 +48,7 @@ const FAQ: React.FC = () => {
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Intelligence Hub</span>
               </div>
               <h2 className="heading-lg mb-10">Got <span className="text-primary italic">Questions?</span></h2>
-              <p className="paragraph-lg mb-12 italic">Everything you need to know about scaling operations with EaseInventory. Still stuck? Reach out to our 24/7 command center.</p>
+              <p className="paragraph-lg mb-12 italic">Everything you need to know about scaling operations with <span className="italic">Ease</span><span className="text-primary italic">Inventory</span>. Still stuck? Reach out to our 24/7 command center.</p>
               
               <div className="p-10 rounded-[40px] bg-foreground/5 border border-foreground/5 hover:bg-foreground/[0.08] transition-all duration-500 shadow-sm">
                  <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 mb-6 underline underline-offset-8">Direct Access</p>

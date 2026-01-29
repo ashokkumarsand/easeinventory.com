@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
               <Logo size={isScrolled ? 32 : 40} />
             </div>
             <span className="text-2xl font-black tracking-tighter hidden sm:block uppercase text-foreground">
-              Ease<span className="text-primary italic">Inventory</span>
+              <span className='italic'>Ease</span><span className="text-primary italic">Inventory</span>
             </span>
           </Link>
         </NavbarBrand>

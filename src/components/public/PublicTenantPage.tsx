@@ -83,7 +83,7 @@ export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
                 {/* Hero Content */}
                 <div className="space-y-10">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-primary">
-                        <Globe size={12} /> Live Powered by EaseInventory
+                        <Globe size={12} /> Live Powered by <span className="italic">Ease</span><span className="text-primary italic">Inventory</span>
                     </div>
                     <h1 className="text-6xl lg:text-8xl font-black leading-none tracking-tight">
                         Expert Care for Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Premium Tech</span>

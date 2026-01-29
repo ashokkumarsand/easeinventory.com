@@ -1,12 +1,12 @@
 'use client';
 
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Input,
-  Textarea
+    Button,
+    Card,
+    CardBody,
+    Chip,
+    Input,
+    Textarea
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
@@ -97,7 +97,7 @@ const ContactForm: React.FC = () => {
              <div className="p-8 rounded-[2rem] bg-primary text-white shadow-xl shadow-primary/20">
                 <h4 className="text-xl font-black mb-4">India Headquarters</h4>
                 <p className="opacity-80 leading-relaxed mb-6">
-                  EaseInventory Technologies Private Limited<br />
+                  <span className="italic">Ease</span><span className="italic text-white">Inventory</span> Technologies Private Limited<br />
                   Business Hub, Sector 62<br />
                   Noida, Uttar Pradesh 201301
                 </p>

@@ -81,15 +81,11 @@ export const LogoWithText: React.FC<LogoProps & { showText?: boolean }> = ({
       <Logo size={size} />
       {showText && (
         <div className="flex flex-col leading-none">
-          <span className="text-2xl font-black tracking-tight flex items-center">
-            <span className="bg-clip-text text-transparent bg-gradient-to-br from-[#A3E635] to-[#65A30D]">
-              EASE
-            </span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] ml-1">
-              INVENTORY
-            </span>
+          <span className="text-2xl font-black tracking-tighter flex items-center uppercase text-foreground">
+            <span className="italic">Ease</span>
+            <span className="text-primary italic">Inventory</span>
           </span>
-          <span className="text-[10px] font-bold text-[#1E3A8A]/30 tracking-[0.25em] uppercase mt-0.5">
+          <span className="text-[10px] font-bold text-primary/40 tracking-[0.25em] uppercase mt-0.5 opacity-60">
             Smart ERP Solutions
           </span>
         </div>

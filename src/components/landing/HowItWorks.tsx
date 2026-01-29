@@ -8,7 +8,7 @@ const steps = [
   {
     number: '01',
     title: 'Claim your domain',
-    description: 'Get your unique .easeinventory.com link and set up your business profile in seconds.',
+    description: 'Get your unique .<span className="italic">ease</span><span className="text-secondary italic">inventory</span>.com link and set up your business profile in seconds.',
     icon: '🌐',
   },
   {
@@ -43,7 +43,7 @@ const HowItWorks: React.FC = () => {
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary whitespace-nowrap leading-relaxed pt-0.5">Operational Protocol</span>
              </div>
              <h2 className="heading-lg">Streamlined <span className="text-secondary italic">Deployment.</span></h2>
-             <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERPs. EaseInventory is built for rapid mobilization and absolute control.</p>
+             <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERPs. <span className="italic">Ease</span><span className="text-secondary italic">Inventory</span> is built for rapid mobilization and absolute control.</p>
           </motion.div>
         </div>
 
