@@ -71,6 +71,7 @@ model Tenant {
   payslips    Payslip[]
   refundRequests RefundRequest[] @relation("TenantRefunds")
   inventoryRequests InventoryRequest[] @relation("TenantInventoryRequests")
+  securityLogs SecurityLog[]
   
   @@index([slug])
   @@index([customDomain])

@@ -65,6 +65,14 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  alternates: {
+    canonical: 'https://easeinventory.com',
+    languages: {
+      'en-IN': 'https://easeinventory.com/en',
+      'pt-BR': 'https://easeinventory.com/pt',
+      'ar-SA': 'https://easeinventory.com/ar',
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -75,6 +83,7 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
+  manifest: '/manifest.json',
 };
 
 import { NextIntlClientProvider } from 'next-intl';
@@ -90,6 +99,31 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              'name': 'EaseInventory',
+              'operatingSystem': 'Web',
+              'applicationCategory': 'BusinessApplication',
+              'offers': {
+                '@type': 'Offer',
+                'price': '0',
+                'priceCurrency': 'INR'
+              },
+              'description': 'Smart Inventory & ERP Solution for modern businesses in India.',
+              'aggregateRating': {
+                '@type': 'AggregateRating',
+                'ratingValue': '4.9',
+                'ratingCount': '124'
+              }
+            })
+          }}
+        />
+      </head>
       <body className={`${montserrat.variable} font-sans antialiased bg-background text-foreground min-h-screen transition-colors duration-500`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>

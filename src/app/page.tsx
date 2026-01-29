@@ -20,10 +20,13 @@ export const metadata: Metadata = {
   description:
     'The ultimate shop management and ERP solution for modern businesses. Streamline inventory, repair tracking, GST billing, and team operations with EaseInventory. Built for retailers, distributors, and service centers.',
   keywords: ['ERP solution', 'inventory management software', 'shop management system', 'GST billing software', 'repair tracking system', 'multi-tenant inventory'],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'EaseInventory | Smart Inventory & ERP Solution',
     description: 'Transform your business operations with our integrated ERP and inventory management platform.',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.png'],
   }
 };
 
