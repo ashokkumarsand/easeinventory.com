@@ -44,11 +44,14 @@ export async function POST(req: NextRequest) {
       const outstanding = totalInvoiced - totalPaid;
 
       try {
-        await sendWhatsAppNotification(
-          debtor.phone,
-          WA_TEMPLATES.PAYMENT_REMINDER || 'payment_reminder',
-          [debtor.name, `₹${outstanding.toLocaleString()}`]
-        );
+        await sendWhatsAppNotification({
+          to: debtor.phone,
+          templateName: WA_TEMPLATES.PAYMENT_REMINDER || 'payment_reminder',
+          variables: {
+            customerName: debtor.name,
+            amount: `₹${outstanding.toLocaleString()}`
+          }
+        });
         sentCount++;
       } catch (err) {
         console.error(`Failed to send reminder to ${debtor.phone}:`, err);

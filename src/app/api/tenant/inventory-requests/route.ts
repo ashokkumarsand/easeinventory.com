@@ -5,11 +5,12 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.tenantId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!(session?.user as any)?.tenantId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const tenantId = (session!.user as any).tenantId;
 
   try {
     const requests = await prisma.inventoryRequest.findMany({
-      where: { tenantId: session.user.tenantId as string },
+      where: { tenantId },
       orderBy: { createdAt: 'desc' }
     });
     return NextResponse.json(requests);
@@ -20,13 +21,14 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.tenantId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!(session?.user as any)?.tenantId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const tenantId = (session!.user as any).tenantId;
 
   try {
     const data = await req.json();
     const request = await prisma.inventoryRequest.create({
       data: {
-        tenantId: session.user.tenantId as string,
+        tenantId,
         type: data.type,
         details: data,
         status: 'PENDING',

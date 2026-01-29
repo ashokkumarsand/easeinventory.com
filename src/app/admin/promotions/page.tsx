@@ -107,9 +107,9 @@ export default function PromotionsPage() {
                                 size="lg"
                                 radius="lg"
                             >
-                                <SelectItem key="EMAIL" value="EMAIL">Email Campaign</SelectItem>
-                                <SelectItem key="DASHBOARD_BANNER" value="DASHBOARD_BANNER">Dashboard Banner</SelectItem>
-                                <SelectItem key="SMS" value="SMS">SMS Alert</SelectItem>
+                                <SelectItem key="EMAIL">Email Campaign</SelectItem>
+                                <SelectItem key="DASHBOARD_BANNER">Dashboard Banner</SelectItem>
+                                <SelectItem key="SMS">SMS Alert</SelectItem>
                             </Select>
                         </div>
 

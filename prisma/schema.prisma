@@ -841,6 +841,8 @@ model Location {
   code        String?  // e.g. WH-01
   address     String?
   city        String?
+  state       String?
+  pincode     String?
   type        LocationType @default(STORE)
   
   // Inventory-level discount

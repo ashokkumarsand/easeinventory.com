@@ -187,7 +187,7 @@ export default function RolesManagementPage() {
                         <CardBody className="p-0 space-y-6">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-xl font-black tracking-tight">
-                                    {t('permissions_title', { role: currentRole?.label })}
+                                    {t('permissions_title', { role: currentRole?.label || '' })}
                                 </h3>
                                 <Chip color="warning" variant="flat" className="font-black text-[10px]">
                                     {t('read_only')}
@@ -287,7 +287,7 @@ export default function RolesManagementPage() {
                         <>
                             <ModalHeader className="flex flex-col gap-1 p-8">
                                 <h2 className="text-2xl font-black tracking-tight">
-                                    {t('modal.title', { name: editingUser?.name || editingUser?.email })}
+                                    {t('modal.title', { name: editingUser?.name || editingUser?.email || '' })}
                                 </h2>
                                 <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">
                                     {t('modal.subtitle')}
