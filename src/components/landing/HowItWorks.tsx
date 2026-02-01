@@ -8,7 +8,11 @@ const steps = [
   {
     number: '01',
     title: 'Claim your domain',
-    description: 'Get your unique .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link and set up your business profile in seconds.',
+    description: (
+      <>
+        Get your unique .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link and set up your business profile in seconds.
+      </>
+    ),
     icon: '🌐',
   },
   {

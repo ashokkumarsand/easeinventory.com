@@ -19,7 +19,11 @@ const faqs = [
   },
   {
     question: 'Can I use a custom domain?',
-    answer: 'Yes! While every business gets a free .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link, you can easily map your own domain (e.g., portal.yourbrand.com) in the settings.',
+    answer: (
+      <>
+        Yes! While every business gets a free .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link, you can easily map your own domain (e.g., portal.yourbrand.com) in the settings.
+      </>
+    ),
   },
   {
     question: 'What about data privacy?',

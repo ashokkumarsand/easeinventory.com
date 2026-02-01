@@ -7,7 +7,11 @@ import React from 'react';
 const testimonials = [
   {
     rating: 5,
-    text: "Switched from a legacy ERP and never looked back. The speed of <span class='italic'>Ease</span><span class='text-primary italic'>Inventory</span> is just incredible for our busy retail counters.",
+    text: (
+      <>
+        Switched from a legacy ERP and never looked back. The speed of <span className='italic'>Ease</span><span className='text-primary italic'>Inventory</span> is just incredible for our busy retail counters.
+      </>
+    ),
     author: 'Rajesh K.',
     role: 'Mobility Solutions, Pune',
     initials: 'RK',
@@ -66,10 +70,9 @@ const Testimonials: React.FC = () => {
                     {[1, 2, 3, 4, 5].map(i => <span key={i} className="text-primary text-xl font-black">★</span>)}
                   </div>
                   
-                  <blockquote 
-                    className="text-lg font-medium leading-relaxed mb-12 opacity-80 italic flex-1"
-                    dangerouslySetInnerHTML={{ __html: `&quot;${t.text}&quot;` }}
-                  />
+                  <blockquote className="text-lg font-medium leading-relaxed mb-12 opacity-80 italic flex-1">
+                    &quot;{t.text}&quot;
+                  </blockquote>
                   
                   <div className="flex items-center gap-5 pt-8 border-t border-foreground/5 mt-auto">
                     <Avatar 
