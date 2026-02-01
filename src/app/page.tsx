@@ -54,9 +54,29 @@ export default async function HomePage() {
 
   // 2. Main Site Logic
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'easeinventory.com';
-  const isProduction = host.includes(rootDomain) && !host.includes('localhost');
+  const isRootDomain = host === rootDomain || host === `www.${rootDomain}`;
+  const isVercel = host.endsWith('.vercel.app');
+  const isLocal = host.includes('localhost') || host.includes('0.0.0.0') || host.includes('127.0.0.1');
+
+  // If we have a custom host or tenant slug but no tenant was found, it must be a 404
+  // We exclude root domains, vercel domains, and local environments from this check
+  if ((tenantSlug || customHost) && !isRootDomain && !isVercel && !isLocal) {
+    const tenantExists = await prisma.tenant.findFirst({
+        where: {
+          OR: [
+            { slug: tenantSlug || '' },
+            { customDomain: customHost || '' }
+          ]
+        }
+    });
+    if (!tenantExists) {
+        const { notFound } = await import('next/navigation');
+        notFound();
+    }
+  }
   
-  if (isProduction) {
+  // Show Coming Soon only on the actual production root domain
+  if (isRootDomain && !isLocal) {
     return (
       <div className="bg-[#030407] min-h-screen">
         <ComingSoon />

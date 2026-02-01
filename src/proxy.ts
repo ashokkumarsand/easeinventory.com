@@ -28,8 +28,13 @@ export default async function proxy(req: NextRequest) {
   // Define allowed domains for the main app
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'easeinventory.com';
   
-  // 1. Handle local development or main landing page
-  if (hostname === 'localhost:3000' || hostname === rootDomain) {
+  // 1. Handle local development or main landing page variants
+  const isMainDomain = hostname === 'localhost:3000' || 
+                       hostname === rootDomain || 
+                       hostname === `www.${rootDomain}` ||
+                       hostname.endsWith('.vercel.app');
+
+  if (isMainDomain) {
     return res;
   }
 

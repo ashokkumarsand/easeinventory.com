@@ -8,7 +8,7 @@ const steps = [
   {
     number: '01',
     title: 'Claim your domain',
-    description: 'Get your unique .<span className="italic">ease</span><span className="text-secondary italic">inventory</span>.com link and set up your business profile in seconds.',
+    description: 'Get your unique .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link and set up your business profile in seconds.',
     icon: '🌐',
   },
   {
@@ -39,11 +39,11 @@ const HowItWorks: React.FC = () => {
             viewport={{ once: true }}
             className="space-y-6"
           >
-             <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full w-fit">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary whitespace-nowrap leading-relaxed pt-0.5">Operational Protocol</span>
+             <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full w-fit">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">Operational Protocol</span>
              </div>
-             <h2 className="heading-lg">Streamlined <span className="text-secondary italic">Deployment.</span></h2>
-             <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERPs. <span className="italic">Ease</span><span className="text-secondary italic">Inventory</span> is built for rapid mobilization and absolute control.</p>
+             <h2 className="heading-lg">Streamlined <span className="text-primary italic">Deployment.</span></h2>
+             <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERPs. <span className="italic">Ease</span><span className="text-primary italic">Inventory</span> is built for rapid mobilization and absolute control.</p>
           </motion.div>
         </div>
 
@@ -59,21 +59,21 @@ const HowItWorks: React.FC = () => {
             >
               <div className="relative pt-12 h-full">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-24 bg-background rounded-[32px] flex items-center justify-center border-[6px] border-background group-hover:scale-110 transition-all duration-700 z-30 shadow-none">
-                     <div className="w-full h-full rounded-[26px] bg-secondary/10 flex items-center justify-center border border-secondary/20 shadow-xl shadow-secondary/10">
+                     <div className="w-full h-full rounded-[26px] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-xl shadow-primary/10">
                         <span className="text-4xl">{step.icon}</span>
                      </div>
                   </div>
                   
-                  <Card className="modern-card group relative overflow-visible h-full bg-card hover:border-secondary/30 pt-8" radius="lg">
+                  <Card className="modern-card group relative overflow-visible h-full bg-card hover:border-primary/30 pt-8" radius="lg">
                     <CardBody className="p-12 lg:p-16 flex flex-col items-center text-center">
                   
                   <div className="mt-12 space-y-8">
-                    <span className="text-8xl font-black text-foreground/[0.05] block leading-none tracking-tighter italic group-hover:text-secondary/10 transition-colors">{step.number}</span>
-                    <h3 className="text-3xl font-black group-hover:text-secondary transition-colors text-foreground uppercase tracking-tight">{step.title}</h3>
+                    <span className="text-8xl font-black text-foreground/[0.05] block leading-none tracking-tighter italic group-hover:text-primary/10 transition-colors">{step.number}</span>
+                    <h3 className="text-3xl font-black group-hover:text-primary transition-colors text-foreground uppercase tracking-tight">{step.title}</h3>
                     <p className="text-lg font-medium opacity-60 leading-relaxed italic text-foreground">{step.description}</p>
                   </div>
 
-                  <div className="mt-12 w-12 h-1.5 bg-secondary/20 rounded-full group-hover:w-full transition-all duration-1000" />
+                  <div className="mt-12 w-12 h-1.5 bg-primary/20 rounded-full group-hover:w-full transition-all duration-1000" />
                 </CardBody>
               </Card>
               </div>
