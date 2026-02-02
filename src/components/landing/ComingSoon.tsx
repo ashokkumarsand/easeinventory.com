@@ -1,15 +1,16 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button, Card, CardBody, Chip, Input } from '@heroui/react';
+import { Button, Card, CardBody, Checkbox, Chip, Input } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Building2, CheckCircle2, Globe, Rocket, Shield, Store, Users, Zap } from 'lucide-react';
+import { Bell, Building2, CheckCircle2, Globe, Rocket, Shield, Store, Users, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 
 const ComingSoon: React.FC = () => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [businessName, setBusinessName] = useState('');
+    const [notifyOnRelease, setNotifyOnRelease] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -24,6 +25,7 @@ const ComingSoon: React.FC = () => {
                     email,
                     name,
                     businessName,
+                    notifyOnRelease,
                     interests: ['ERP', 'Inventory', 'Shop Management']
                 })
             });
@@ -89,12 +91,12 @@ const ComingSoon: React.FC = () => {
                     </div>
 
                     <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[1.15] md:leading-[0.85] uppercase">
-                        Master Your <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-secondary italic pb-6 px-4 inline-block transform translate-y-2">Business Pulse.</span>
+                        Defy the Weight <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-secondary italic pb-6 px-4 inline-block transform translate-y-2">Of Operations.</span>
                     </h1>
 
                     <p className="text-lg md:text-2xl lg:text-3xl font-bold text-white/40 max-w-3xl mx-auto leading-relaxed italic tracking-tight px-4">
-                        The definitive Shop Management & ERP platform for ambitious retailers, service centers, and distributors.
+                        Stop fighting the pull of outdated legacy systems. Experience the **Antigravity Protocol**: High-precision management designed to make your business feel weightless.
                     </p>
                 </motion.div>
 
@@ -102,10 +104,10 @@ const ComingSoon: React.FC = () => {
                     {/* Features Showcase */}
                     <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {[
-                            { title: 'ERP Solution', desc: 'Unified control for products, sales, and complex logistics.', icon: Rocket },
-                            { title: 'Inventory Intel', desc: 'S/N tracking, multi-location stock, and tiered pricing.', icon: Zap },
-                            { title: 'Shop Authority', desc: 'Professional job cards & real-time customer repair tracking.', icon: Store },
-                            { title: 'Personnel Guard', desc: 'Verified attendance and automated payroll generation.', icon: Users },
+                            { title: 'Operational Engine', desc: 'Unified control for products, sales, and complex zero-friction logistics.', icon: Rocket },
+                            { title: 'Inventory Intel', desc: 'S/N tracking, multi-location stock, and cloud-velocity pricing.', icon: Zap },
+                            { title: 'Authority Hub', desc: 'Professional technical job cards & real-time customer repair lifting.', icon: Store },
+                            { title: 'Personnel Guard', desc: 'High-precision attendance and automated payroll mobilization.', icon: Users },
                         ].map((feature, idx) => (
                             <motion.div
                                 key={idx}
@@ -134,8 +136,8 @@ const ComingSoon: React.FC = () => {
                                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/20 blur-3xl opacity-50 pointer-events-none" />
                                 <CardBody className="p-0 space-y-6 md:space-y-8">
                                     <div className="text-left">
-                                        <h2 className="text-2xl md:text-3xl font-black mb-1 md:mb-2 uppercase tracking-tight italic">Join the Elite</h2>
-                                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-[0.15em] md:tracking-[0.2em]">Secure early access and exclusive benefits</p>
+                                        <h2 className="text-2xl md:text-3xl font-black mb-1 md:mb-2 uppercase tracking-tight italic">Activate Protocol</h2>
+                                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-[0.15em] md:tracking-[0.2em]">Secure early access and exclusive operational benefits</p>
                                     </div>
 
                                     <AnimatePresence mode="wait">
@@ -150,36 +152,40 @@ const ComingSoon: React.FC = () => {
                                             >
                                                 <Input
                                                     label="Business Name"
-                                                    placeholder="ACME Electronics"
-                                                    labelPlacement="outside"
+                                                    placeholder="Vertex Solutions"
+                                                    labelPlacement="inside"
                                                     radius="lg"
                                                     size="lg"
                                                     value={businessName}
                                                     onValueChange={setBusinessName}
                                                     classNames={{
-                                                        inputWrapper: "bg-white/5 h-12 md:h-14 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50",
-                                                        input: "font-black text-sm",
-                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-60"
+                                                        base: "max-w-full",
+                                                        mainWrapper: "h-full",
+                                                        inputWrapper: "bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50 px-4 py-2",
+                                                        input: "font-black text-base md:text-lg pt-2",
+                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-40 group-data-[filled-within=true]:opacity-60"
                                                     }}
                                                 />
                                                 <Input
                                                     label="Your Name"
-                                                    placeholder="Rahul Kumar"
-                                                    labelPlacement="outside"
+                                                    placeholder="John Doe"
+                                                    labelPlacement="inside"
                                                     radius="lg"
                                                     size="lg"
                                                     value={name}
                                                     onValueChange={setName}
                                                     classNames={{
-                                                        inputWrapper: "bg-white/5 h-12 md:h-14 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50",
-                                                        input: "font-black text-sm",
-                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-60"
+                                                        base: "max-w-full",
+                                                        mainWrapper: "h-full",
+                                                        inputWrapper: "bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50 px-4 py-2",
+                                                        input: "font-black text-base md:text-lg pt-2",
+                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-40 group-data-[filled-within=true]:opacity-60"
                                                     }}
                                                 />
                                                 <Input
                                                     label="Work Email"
-                                                    placeholder="rahul@acme.com"
-                                                    labelPlacement="outside"
+                                                    placeholder="hello@vertex.com"
+                                                    labelPlacement="inside"
                                                     radius="lg"
                                                     size="lg"
                                                     required
@@ -187,11 +193,32 @@ const ComingSoon: React.FC = () => {
                                                     value={email}
                                                     onValueChange={setEmail}
                                                     classNames={{
-                                                        inputWrapper: "bg-white/5 h-12 md:h-14 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50",
-                                                        input: "font-black text-sm",
-                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-60"
+                                                        base: "max-w-full",
+                                                        mainWrapper: "h-full",
+                                                        inputWrapper: "bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50 px-4 py-2",
+                                                        input: "font-black text-base md:text-lg pt-2",
+                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-40 group-data-[filled-within=true]:opacity-60"
                                                     }}
                                                 />
+                                                
+                                                {/* Notify on Release Checkbox */}
+                                                <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/10">
+                                                    <Checkbox
+                                                        isSelected={notifyOnRelease}
+                                                        onValueChange={setNotifyOnRelease}
+                                                        color="primary"
+                                                        classNames={{
+                                                            wrapper: "before:border-white/20",
+                                                            label: "text-sm font-bold"
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            <Bell size={16} className="text-primary" />
+                                                            <span>Notify me when EaseInventory launches</span>
+                                                        </div>
+                                                    </Checkbox>
+                                                </div>
+
                                                 <Button
                                                     color="primary"
                                                     className="w-full h-14 md:h-16 font-black text-lg md:text-xl shadow-2xl shadow-primary/30 uppercase tracking-widest mt-2 md:mt-4"
@@ -200,7 +227,7 @@ const ComingSoon: React.FC = () => {
                                                     isLoading={isLoading}
                                                     startContent={!isLoading && <Rocket size={20} />}
                                                 >
-                                                    Claim Access
+                                                    Mobilize Access
                                                 </Button>
                                             </motion.form>
                                         ) : (

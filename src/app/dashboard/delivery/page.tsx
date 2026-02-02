@@ -34,10 +34,10 @@ import { useEffect, useState } from 'react';
 
 // Mock Data
 const SHIPMENTS = [
-  { id: 'SHP-88201', customer: 'Rahul Verma', items: 2, status: 'in_transit', manifest: '4.2 kg', driver: 'Sanjeev K.', eta: 'Today, 4:00 PM', address: 'B-12, Sector 62, Noida' },
-  { id: 'SHP-88202', customer: 'Sunita Mehra', items: 1, status: 'pending', manifest: '1.5 kg', driver: 'Unassigned', eta: 'Tomorrow', address: 'A-45, Indirapuram, Ghaziabad' },
-  { id: 'SHP-88203', customer: 'Amit Singh', items: 5, status: 'delivered', manifest: '8.4 kg', driver: 'Rahul S.', eta: 'Delivered', address: 'F-90, Greater Noida' },
-  { id: 'SHP-88204', customer: 'Singla Electronics', items: 12, status: 'out_for_delivery', manifest: '45 kg', driver: 'Vikram Singh', eta: 'Today, 2:30 PM', address: 'D-Mall, Rohini, Delhi' },
+  { id: 'SHP-88201', customer: 'Alex Smith', items: 2, status: 'in_transit', manifest: '4.2 kg', driver: 'Agent A.', eta: 'Today, 4:00 PM', address: 'Tech Park, Sector 1' },
+  { id: 'SHP-88202', customer: 'Jordan Lee', items: 1, status: 'pending', manifest: '1.5 kg', driver: 'Unassigned', eta: 'Tomorrow', address: 'Business District, Area 42' },
+  { id: 'SHP-88203', customer: 'Sam Taylor', items: 5, status: 'delivered', manifest: '8.4 kg', driver: 'Agent B.', eta: 'Delivered', address: 'Innovation Square, Block C' },
+  { id: 'SHP-88204', customer: 'Premier Solutions', items: 12, status: 'out_for_delivery', manifest: '45 kg', driver: 'Agent C.', eta: 'Today, 2:30 PM', address: 'Retail Hub, Downtown' },
 ];
 
 export default function DeliveryPage() {
@@ -266,7 +266,7 @@ export default function DeliveryPage() {
                  <h2 className="text-2xl font-black tracking-tight">{t('modal.title')}</h2>
               </ModalHeader>
               <ModalBody className="py-6 space-y-6">
-                 <Input label={t('modal.recipient')} placeholder="e.g. Ramesh Distribution" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
+                 <Input label={t('modal.recipient')} placeholder="e.g. Global Logistics" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
                  <div className="grid md:grid-cols-2 gap-6">
                     <Input label={t('modal.items')} type="number" placeholder="200" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
                     <Input label={t('modal.weight')} placeholder="45 kg" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />

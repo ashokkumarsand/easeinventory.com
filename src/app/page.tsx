@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 
+import AboutUs from '@/components/landing/AboutUs';
 import ComingSoon from '@/components/landing/ComingSoon';
 import ContactForm from '@/components/landing/ContactForm';
 import CTA from '@/components/landing/CTA';
@@ -56,7 +57,10 @@ export default async function HomePage() {
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'easeinventory.com';
   const isRootDomain = host === rootDomain || host === `www.${rootDomain}`;
   const isVercel = host.endsWith('.vercel.app');
-  const isLocal = host.includes('localhost') || host.includes('0.0.0.0') || host.includes('127.0.0.1');
+  const isLocal = host.includes('localhost') || 
+                  host.includes('127.0.0.1') || 
+                  host.includes('lvh.me') || 
+                  host.includes('nip.io');
 
   // If we have a custom host or tenant slug but no tenant was found, it must be a 404
   // We exclude root domains, vercel domains, and local environments from this check
@@ -90,6 +94,7 @@ export default async function HomePage() {
       <main>
         <Hero />
         <Features />
+        <AboutUs />
         <HowItWorks />
         <Pricing />
         <Testimonials />

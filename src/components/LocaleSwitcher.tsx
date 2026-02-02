@@ -13,6 +13,7 @@ import { useTransition } from 'react';
 
 const locales = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'hi', name: 'हिंदी', flag: '🇮🇳' },
   { code: 'pt', name: 'Português', flag: '🇧🇷' },
   { code: 'ar', name: 'العربية', flag: '🇸🇦' }
 ];

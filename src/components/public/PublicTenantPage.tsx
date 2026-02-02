@@ -225,7 +225,7 @@ export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
                                 <p className="text-[10px] font-black uppercase opacity-40 tracking-widest">Connect with local experts</p>
                             </ModalHeader>
                             <ModalBody className="space-y-6 py-8">
-                                <Input label="Full Name" placeholder="Rahul Singh" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
+                                <Input label="Full Name" placeholder="Alex Smith" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
                                 <Input label="Phone Number" placeholder="+91 00000 00000" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
                                 <Input label="What are you looking for?" placeholder="e.g. MacBook Pro repair, iPhone battery" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
                                 <Button color="primary" className="w-full h-14 font-black text-lg" radius="full" onPress={onClose}>Send Request</Button>

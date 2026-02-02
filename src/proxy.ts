@@ -29,7 +29,12 @@ export default async function proxy(req: NextRequest) {
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'easeinventory.com';
   
   // 1. Handle local development or main landing page variants
-  const isMainDomain = hostname === 'localhost:3000' || 
+  const isLocalBase = hostname === 'localhost:3000' || 
+                      hostname === '127.0.0.1:3000' ||
+                      hostname === '127.0.0.1.nip.io:3000' ||
+                      hostname === 'lvh.me:3000';
+
+  const isMainDomain = isLocalBase || 
                        hostname === rootDomain || 
                        hostname === `www.${rootDomain}` ||
                        hostname.endsWith('.vercel.app');
@@ -42,12 +47,20 @@ export default async function proxy(req: NextRequest) {
   const searchParams = url.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
-  // If it's a subdomain (e.g. acme.easeinventory.com)
+  // Local testing subdomains (e.g. acme.localhost:3000, acme.lvh.me:3000, or acme.127.0.0.1.nip.io:3000)
+  const isLocalSubdomain = hostname.endsWith('.localhost:3000') || 
+                           hostname.endsWith('.lvh.me:3000') || 
+                           hostname.endsWith('.127.0.0.1.nip.io:3000');
+
+  if (isLocalSubdomain) {
+    const slug = hostname.split('.')[0];
+    res.headers.set('x-tenant-slug', slug);
+    return res;
+  }
+
+  // If it's a production subdomain (e.g. acme.easeinventory.com)
   if (hostname.endsWith(`.${rootDomain}`)) {
     const slug = hostname.replace(`.${rootDomain}`, '');
-    // Rewrite to the dashboard with the slug context (if we used path-based multi-tenancy)
-    // However, our app uses session-based multi-tenancy. 
-    // We can use the middleware to inject a header that the app can use to verify context.
     res.headers.set('x-tenant-slug', slug);
     return res;
   }

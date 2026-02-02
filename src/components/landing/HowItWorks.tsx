@@ -7,24 +7,24 @@ import React from 'react';
 const steps = [
   {
     number: '01',
-    title: 'Claim your domain',
+    title: 'Rapid Mobilization',
     description: (
       <>
-        Get your unique .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com link and set up your business profile in seconds.
+        Deploy your unique .<span className="italic">ease</span><span className="text-primary italic">inventory</span>.com engine and capture your business profile in seconds.
       </>
     ),
     icon: '🌐',
   },
   {
     number: '02',
-    title: 'Onboard inventory',
-    description: 'Import products via Excel or add them manually with high-def photos and serial numbers.',
+    title: 'Onboard Inventory',
+    description: 'Lift your catalog via Excel or manual entry with high-precision photos and serial tracking.',
     icon: '📦',
   },
   {
     number: '03',
-    title: 'Go Live',
-    description: 'Start selling, tracking repairs, and generating GST-ready bills for your customers.',
+    title: 'Launch & Deploy',
+    description: 'Defy the weight of operations: Start selling, tracking repairs, and lifting your revenue.',
     icon: '🚀',
   },
 ];
@@ -46,8 +46,8 @@ const HowItWorks: React.FC = () => {
              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full w-fit">
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">Operational Protocol</span>
              </div>
-             <h2 className="heading-lg">Streamlined <span className="text-primary italic">Deployment.</span></h2>
-             <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERPs. <span className="italic">Ease</span><span className="text-primary italic">Inventory</span> is built for rapid mobilization and absolute control.</p>
+              <h2 className="heading-lg">Operational <span className="text-primary italic">Protocols.</span></h2>
+              <p className="paragraph-lg italic max-w-2xl mx-auto">We removed the friction of legacy ERP gravity. <span className="italic">Ease</span><span className="text-primary italic">Inventory</span> is built for high-velocity deployment and absolute control.</p>
           </motion.div>
         </div>
 

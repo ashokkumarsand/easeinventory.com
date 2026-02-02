@@ -1,0 +1,162 @@
+{
+  "Dashboard": {
+    "title": "डैशबोर्ड अवलोकन",
+    "welcome": "आपका स्वागत है",
+    "total_sales": "कुल बिक्री",
+    "total_invoices": "कुल चालान",
+    "active_repairs": "सक्रिय मरम्मत"
+  },
+  "Inventory": {
+    "title": "इन्वेंटरी प्रबंधन",
+    "add_product": "उत्पाद जोड़ें",
+    "stock_alert": "स्टॉक अलर्ट",
+    "categories": "श्रेणियाँ"
+  },
+  "GST": {
+    "generate_eway": "ई-वे बिल बनाएं",
+    "generate_einvoice": "ई-इनवॉइस बनाएं",
+    "summary": "जीएसटी सारांश",
+    "tax_inclusive": "कर सहित"
+  },
+  "Settings": {
+    "title": "एंटरप्राइज सेटिंग्स",
+    "subtitle": "अपनी व्यावसायिक पहचान और भुगतान प्रोटोकॉल कॉन्फ़िगर करें।",
+    "save": "परिवर्तन सहेजें",
+    "tabs": {
+      "business": "व्यवसाय प्रोफ़ाइल",
+      "payments": "भुगतान प्रोटोकॉल",
+      "security": "ISO 27001 एवं अनुपालन"
+    },
+    "identity": "पहचान",
+    "location": "स्थान",
+    "upi": "यूपीआई एकीकरण (भारत)",
+    "banking": "बैंकिंग विवरण",
+    "upi_helper": "इस आईडी का उपयोग करके तत्काल निपटान के लिए डायनामिक यूपीआई क्यूआर कोड बनाए जाएंगे।",
+    "security_standards": "सुरक्षा मानक",
+    "protection_subtitle": "एंटरप्राइज ग्रेड डेटा सुरक्षा"
+  },
+  "HR": {
+    "title": "एचआर कमांड सेंटर",
+    "subtitle": "कार्यबल, पेरोल और संगठनात्मक डेटा प्रबंधित करें।",
+    "export": "रोस्टर निर्यात करें",
+    "add_employee": "कर्मचारी जोड़ें",
+    "stats": {
+      "active": "सक्रिय कार्यबल",
+      "departments": "{count} विभागों में",
+      "commitment": "मासिक प्रतिबद्धता",
+      "salary_base": "निश्चित वेतन आधार",
+      "leaves": "आज की छुट्टियाँ",
+      "absence": "अधिकृत अनुपस्थिति"
+    },
+    "tabs": {
+      "roster": "कर्मचारी रोस्टर",
+      "payroll": "पेरोल एवं वेतन"
+    },
+    "table": {
+      "employee": "कर्मचारी",
+      "department": "विभाग",
+      "join_date": "शामिल होने की तिथि",
+      "salary": "वेतन",
+      "status": "स्थिति",
+      "action": "कार्य"
+    },
+    "modal": {
+      "title": "नई प्रतिभा शामिल करें",
+      "subtitle": "कर्मचारी संगठनात्मक डेटा रिकॉर्ड करें",
+      "cancel": "रद्द करें",
+      "confirm": "ऑनबोर्डिंग की पुष्टि करें"
+    }
+  },
+  "Logistics": {
+    "title": "लॉजिस्टिक्स कमांड",
+    "subtitle": "रियल-टाइम डिस्पैच ट्रैकिंग और फ्लीट ऑर्केस्ट्रेशन।",
+    "dispatch_manifest": "डिस्पैच मैनिफेस्ट",
+    "fleet_stats": {
+      "vehicles_active": "सक्रिय वाहन",
+      "deliveries_today": "आज की डिलीवरी",
+      "avg_time": "औसत डिलीवरी समय",
+      "pending_dispatch": "लंबित डिस्पैच",
+      "capacity": "{count}% क्षमता",
+      "completed": "{count} पूर्ण",
+      "comparison": "कल की तुलना में {val}",
+      "processing": "तत्काल प्रोसेसिंग"
+    },
+    "view": {
+      "active_dispatches": "सक्रिय डिस्पैच",
+      "view_all": "सभी देखें",
+      "no_dispatches": "कोई सक्रिय डिस्पैच नहीं मिला",
+      "shipment": "शिपमेंट",
+      "walk_in": "वॉक-इन ग्राहक",
+      "personnel": "कर्मचारी",
+      "inventory": "इन्वेंटरी",
+      "estimated": "अनुमानित",
+      "progress": "प्रगति"
+    },
+    "sidebar": {
+      "fleet_map": "लाइव फ्लीट मैप",
+      "geofence": "जियोफेंस लागू • {count} ट्रैक सक्रिय",
+      "service_area": "सर्विस एरिया प्रदर्शन",
+      "hotlines": "डिस्पैच हॉटलाइन"
+    },
+    "modal": {
+      "title": "मैनिफेस्ट बनाएं",
+      "recipient": "प्राप्तकर्ता संगठन",
+      "items": "आइटम गिनती",
+      "weight": "कुल वजन",
+      "address": "शिपिंग पता",
+      "confirm": "डिस्पैच की पुष्टि करें"
+    }
+  },
+  "Roles": {
+    "title": "भूमिकाएं और अनुमतियां",
+    "subtitle": "एक्सेस कंट्रोल और टीम अनुमतियां प्रबंधित करें।",
+    "predefined_roles": "पूर्वनिर्धारित भूमिकाएं",
+    "permissions_count": "{count} अनुमतियां",
+    "users_count": "{count} उपयोगकर्ता",
+    "permissions_title": "{role} अनुमतियां",
+    "read_only": "केवल-पढ़ने",
+    "enabled_count": "{count}/{total} सक्षम",
+    "overrides_title": "टीम अनुमति ओवरराइड",
+    "overrides_hint": "उनकी अनुमतियों को कस्टमाइज़ करने के लिए उपयोगकर्ता पर क्लिक करें",
+    "unnamed": "अनाम",
+    "custom": "कस्टम",
+    "modal": {
+      "title": "अनुमतियां संपादित करें: {name}",
+      "subtitle": "डिफ़ॉल्ट भूमिका अनुमतियों को ओवरराइड करें",
+      "reset": "डिफ़ॉल्ट पर रीसेट करें",
+      "save": "अनुमतियां सहेजें"
+    }
+  },
+  "Common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "add": "जोड़ें",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "export": "निर्यात",
+    "import": "आयात",
+    "loading": "लोड हो रहा है...",
+    "no_results": "कोई परिणाम नहीं मिला",
+    "confirm": "पुष्टि करें",
+    "back": "वापस",
+    "next": "अगला",
+    "previous": "पिछला",
+    "close": "बंद करें",
+    "submit": "सबमिट करें",
+    "actions": "कार्य",
+    "status": "स्थिति",
+    "date": "तारीख",
+    "time": "समय",
+    "name": "नाम",
+    "email": "ईमेल",
+    "phone": "फ़ोन",
+    "address": "पता",
+    "amount": "राशि",
+    "total": "कुल",
+    "subtotal": "उप-कुल",
+    "discount": "छूट",
+    "tax": "कर"
+  }
+}

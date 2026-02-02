@@ -488,7 +488,7 @@ export default function InvoicesPage() {
                       </Select>
                       <Input 
                         label="Billing Name" 
-                        placeholder="e.g. Rahul Verma" 
+                        placeholder="e.g. Alex Smith" 
                         value={customerInfo.name}
                         onValueChange={(val) => setCustomerInfo({...customerInfo, name: val})}
                         labelPlacement="outside" 

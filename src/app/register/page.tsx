@@ -2,14 +2,14 @@
 
 import { Logo } from '@/components/icons/Logo';
 import {
-  Button,
-  Card,
-  CardBody,
-  Checkbox,
-  Divider,
-  Input,
-  Select,
-  SelectItem
+    Button,
+    Card,
+    CardBody,
+    Checkbox,
+    Divider,
+    Input,
+    Select,
+    SelectItem
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Building2, Check, Crown, Zap } from 'lucide-react';
@@ -215,7 +215,7 @@ export default function RegisterPage() {
                       <div className="space-y-1">
                         <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Owner / Manager Name</label>
                         <Input
-                          placeholder="Ashok Kumar Sand"
+                          placeholder="John Doe"
                           value={formData.ownerName}
                           onChange={(e) => setFormData({...formData, ownerName: e.target.value})}
                           size="lg"
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                       <div className="space-y-1">
                         <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Company/Entity Name</label>
                         <Input
-                          placeholder="Nand Shop"
+                          placeholder="Vertex Solutions"
                           value={formData.brandName}
                           onChange={(e) => setFormData({...formData, brandName: e.target.value})}
                           size="lg"
@@ -280,7 +280,7 @@ export default function RegisterPage() {
                           GSTIN <span className="text-foreground/20">(Optional)</span>
                         </label>
                         <Input
-                          placeholder="27AABCU9603R1ZM"
+                          placeholder="22AAAAA0000A1Z5"
                           value={formData.gstin}
                           onChange={(e) => setFormData({...formData, gstin: e.target.value.toUpperCase()})}
                           size="lg"

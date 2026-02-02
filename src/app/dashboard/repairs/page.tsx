@@ -362,7 +362,7 @@ export default function RepairCenterPage() {
                    <div className="grid md:grid-cols-2 gap-6">
                       <Input
                         label="Customer Name"
-                        placeholder="e.g. Rahul Verma"
+                        placeholder="e.g. Alex Smith"
                         labelPlacement="outside"
                         size="lg"
                         radius="lg"

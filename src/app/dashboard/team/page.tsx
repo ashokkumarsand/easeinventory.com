@@ -25,7 +25,10 @@ import {
 import { motion } from 'framer-motion';
 import {
     ArrowLeftRight,
+    Camera,
+    CreditCard,
     FileText,
+    Fingerprint,
     Lock,
     MoreVertical,
     Package,
@@ -60,7 +63,16 @@ export default function TeamPage() {
   const [team, setTeam] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [inviteData, setInviteData] = useState({ name: '', email: '', role: 'STAFF', phone: '', password: 'Password@123' });
+  const [inviteData, setInviteData] = useState({ 
+    name: '', 
+    email: '', 
+    role: 'STAFF', 
+    phone: '', 
+    password: 'Password@123',
+    profileImage: '',
+    rfidToken: '',
+    accessZones: [] as string[]
+  });
 
   useEffect(() => {
     fetchTeam();
@@ -91,7 +103,7 @@ export default function TeamPage() {
       if (response.ok) {
         fetchTeam();
         onOpenChange();
-        setInviteData({ name: '', email: '', role: 'STAFF', phone: '', password: 'Password@123' });
+        setInviteData({ name: '', email: '', role: 'STAFF', phone: '', password: 'Password@123', profileImage: '', rfidToken: '', accessZones: [] });
       } else {
         const data = await response.json();
         alert(data.message || 'Invitation failed');
@@ -313,6 +325,7 @@ export default function TeamPage() {
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
+        size="2xl"
         radius="lg"
         classNames={{ base: "modern-card p-4" }}
       >
@@ -323,24 +336,95 @@ export default function TeamPage() {
                  <h2 className="text-2xl font-black tracking-tight">Invite Team Member</h2>
               </ModalHeader>
                <ModalBody className="py-6 space-y-6">
-                  <Input label="Full Name" placeholder="e.g. Aman Gupta" value={inviteData.name} onValueChange={(val) => setInviteData({...inviteData, name: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
-                  <Input label="Business Email" type="email" placeholder="aman@business.com" value={inviteData.email} onValueChange={(val) => setInviteData({...inviteData, email: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                  {/* Profile Image Upload */}
+                  <div className="flex items-center gap-6">
+                    <div className="relative group">
+                      <Avatar 
+                        src={inviteData.profileImage || undefined}
+                        className="w-24 h-24 text-2xl font-black border-4 border-dashed border-black/10 group-hover:border-primary/30 transition-colors"
+                        name={inviteData.name?.[0] || '?'}
+                      />
+                      <button 
+                        className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => {
+                          // TODO: Implement file picker
+                          const url = prompt('Enter image URL (or implement file upload):');
+                          if (url) setInviteData({...inviteData, profileImage: url});
+                        }}
+                      >
+                        <Camera size={24} className="text-white" />
+                      </button>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Profile Photo</p>
+                      <p className="text-sm opacity-60">Upload a professional photo for easy identification.</p>
+                    </div>
+                  </div>
+
+                  <Divider />
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <Input label="Full Name" placeholder="e.g. Alex Smith" value={inviteData.name} onValueChange={(val) => setInviteData({...inviteData, name: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                    <Input label="Business Email" type="email" placeholder="alex@business.com" value={inviteData.email} onValueChange={(val) => setInviteData({...inviteData, email: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                  </div>
+                  
                   <Input label="Mobile Number" placeholder="+91 98XXX XXXXX" value={inviteData.phone} onValueChange={(val) => setInviteData({...inviteData, phone: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
-                  <div className="grid grid-cols-2 gap-4">
-                     {['ADMIN', 'MANAGER', 'STAFF', 'TECHNICIAN'].map(role => (
-                       <Button 
-                        key={role}
-                        variant={inviteData.role === role ? 'flat' : 'light'} 
-                        color={inviteData.role === role ? 'primary' : 'default'}
-                        className="h-14 font-black rounded-2xl"
-                        onClick={() => setInviteData({...inviteData, role})}
-                       >
-                         {role}
-                       </Button>
-                     ))}
+
+                  <Divider />
+
+                  {/* Biometric & Access Section */}
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Access Control</p>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <Input 
+                        label="RFID Token" 
+                        placeholder="Scan or enter token ID" 
+                        value={inviteData.rfidToken} 
+                        onValueChange={(val) => setInviteData({...inviteData, rfidToken: val})} 
+                        labelPlacement="outside" 
+                        size="lg" 
+                        radius="lg" 
+                        startContent={<CreditCard size={18} className="opacity-30" />}
+                        classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} 
+                      />
+                      
+                      <div className="space-y-2">
+                        <label className="font-black opacity-40 text-sm">Fingerprint</label>
+                        <Button 
+                          variant="flat" 
+                          color="primary" 
+                          className="w-full h-14 font-black rounded-2xl"
+                          startContent={<Fingerprint size={20} />}
+                          onClick={() => alert('Fingerprint scanner integration requires device SDK. Placeholder for biometric enrollment.')}
+                        >
+                          Capture Fingerprint
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Divider />
+
+                  {/* Role Selection */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Select Role</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                       {['ADMIN', 'MANAGER', 'STAFF', 'TECHNICIAN'].map(role => (
+                         <Button 
+                          key={role}
+                          variant={inviteData.role === role ? 'flat' : 'light'} 
+                          color={inviteData.role === role ? 'primary' : 'default'}
+                          className="h-12 font-black rounded-2xl text-xs"
+                          onClick={() => setInviteData({...inviteData, role})}
+                         >
+                           {role}
+                         </Button>
+                       ))}
+                    </div>
                   </div>
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="border-t border-black/5 pt-4">
                 <Button variant="light" className="font-bold" onPress={onClose}>Cancel</Button>
                 <Button color="primary" className="px-8 font-black rounded-full h-12 shadow-lg shadow-primary/20" onClick={handleInvite} isLoading={isLoading}>Send Invite</Button>
               </ModalFooter>

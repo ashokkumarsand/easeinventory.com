@@ -1,5 +1,6 @@
 'use client';
 
+import StockFlowChart from '@/components/charts/StockFlowChart';
 import {
     Button,
     Card,
@@ -9,7 +10,6 @@ import {
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
-    Activity,
     ArrowDownRight,
     ArrowUpRight,
     Package,
@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-
 const stats = [
   { 
     label: 'Inventory Value', 
@@ -121,29 +120,12 @@ export default function OverviewPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
-         {/* Main Activity Chart Area (Placeholder for now) */}
+         {/* Main Activity Chart Area */}
          <Card className="col-span-2 modern-card p-4" radius="lg">
-            <CardBody className="space-y-10 p-4">
-               <div className="flex items-center justify-between">
-                  <div className="flex gap-4 items-center">
-                    <div className="w-1.5 h-6 bg-primary rounded-full" />
-                    <h3 className="text-xl font-black tracking-tight">Recent Stock Flow</h3>
-                  </div>
-                  <div className="flex gap-2">
-                     <Button size="sm" variant="flat" radius="full" className="font-bold">Weekly</Button>
-                     <Button size="sm" variant="light" radius="full" className="font-bold opacity-40">Monthly</Button>
-                  </div>
-               </div>
+            <CardBody className="space-y-6 p-4">
+               <StockFlowChart />
 
-               {/* Simulated Chart Placeholder */}
-               <div className="h-[300px] w-full bg-black/[0.02] dark:bg-white/[0.02] rounded-[2rem] border border-dashed border-black/5 dark:border-white/5 flex items-center justify-center">
-                  <div className="flex flex-col items-center gap-4 text-center px-10">
-                     <Activity size={48} className="text-primary/20 animate-pulse" />
-                     <p className="text-sm font-bold opacity-30">Interactive Analytics Engine <br />Calculating live stock movements...</p>
-                  </div>
-               </div>
-
-               <div className="grid grid-cols-3 gap-6 pt-4">
+               <div className="grid grid-cols-3 gap-6 pt-4 border-t border-black/5 dark:border-white/5">
                    {[
                      { label: 'Purchase In', val: '1,240', color: 'primary' },
                      { label: 'Sales Out', val: '842', color: 'success' },
@@ -170,8 +152,8 @@ export default function OverviewPage() {
                   
                   <div className="space-y-6">
                      {[
-                       { sn: 'SN-48291', model: 'iPhone 15 Pro', status: 'In Repair', technician: 'Rahul S.' },
-                       { sn: 'SN-10292', model: 'Samsung S24 Ultra', status: 'Diagnostics', technician: 'Priya K.' },
+                       { sn: 'SN-48291', model: 'iPhone 15 Pro', status: 'In Repair', technician: 'Tech A.' },
+                       { sn: 'SN-10292', model: 'Samsung S24 Ultra', status: 'Diagnostics', technician: 'Tech B.' },
                        { sn: 'SN-99201', model: 'MacBook M3 Max', status: 'Waiting Parts', technician: 'Unassigned' },
                      ].map((item, idx) => (
                        <div key={item.sn} className="flex gap-4 group cursor-pointer">

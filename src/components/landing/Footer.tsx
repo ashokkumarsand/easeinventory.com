@@ -136,9 +136,12 @@ const Footer: React.FC = () => {
                 <div className="w-1 h-1 bg-primary rounded-full" />
                 <span className="text-foreground/60 text-xs font-black italic">Made with 🇮🇳 pride.</span>
              </div>
-             <p className="text-foreground/15 text-[10px] font-medium tracking-tight">
+              <p className="text-foreground/15 text-[10px] font-medium tracking-tight">
                 All rights reserved. Secure Cloud Hosting by AWS Mumbai (ap-south-1).
-             </p>
+              </p>
+              <p className="text-foreground/20 text-[9px] font-medium leading-relaxed max-w-2xl text-center md:text-left">
+                Disclaimer: &quot;Antigravity&quot; is a metaphorical brand concept representing operational efficiency and cloud velocity. EaseInventory does not claim to alter physical laws or provide literal levitation capabilities.
+              </p>
           </div>
           <div className="flex gap-8">
             {socialLinks.map((social) => (

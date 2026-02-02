@@ -136,7 +136,7 @@ const ContactForm: React.FC = () => {
                       <div className="space-y-2">
                         <label className="font-bold text-foreground/70 text-sm ml-1">Full Name</label>
                         <Input
-                          placeholder="Ashok Kumar"
+                          placeholder="John Doe"
                           size="lg"
                           radius="lg"
                           variant="flat"
@@ -152,7 +152,7 @@ const ContactForm: React.FC = () => {
                         <label className="font-bold text-foreground/70 text-sm ml-1">Work Email</label>
                         <Input
                           type="email"
-                          placeholder="ashok@shop.com"
+                          placeholder="john@vertex.com"
                           size="lg"
                           radius="lg"
                           variant="flat"

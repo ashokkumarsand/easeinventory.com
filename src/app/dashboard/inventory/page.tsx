@@ -1,5 +1,6 @@
 'use client';
 
+import { DataTable } from '@/components/ui/DataTable';
 import {
     Button,
     Chip,
@@ -14,18 +15,12 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    Pagination,
     Select,
     SelectItem,
     Switch,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
     useDisclosure
 } from '@heroui/react';
+import { ColDef } from 'ag-grid-community';
 import {
     Download,
     Filter,
@@ -131,11 +126,120 @@ export default function InventoryPage() {
   };
 
   const filteredItems = useMemo(() => {
+    if (!filterValue) return products;
     return products.filter((item) =>
       item.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-      item.sn.toLowerCase().includes(filterValue.toLowerCase())
+      (item.sku || item.sn || '').toLowerCase().includes(filterValue.toLowerCase())
     );
   }, [filterValue, products]);
+
+  // AG Grid Column Definitions
+  const columnDefs: ColDef[] = useMemo(() => [
+    {
+      headerName: 'Product / Serial',
+      field: 'name',
+      minWidth: 250,
+      flex: 2,
+      cellRenderer: (params: any) => {
+        const item = params.data;
+        return (
+          <div className="py-2">
+            <p className="font-black text-foreground leading-tight">{item.name}</p>
+            <p className="text-[10px] font-black opacity-30 mt-1 uppercase tracking-tighter inline-flex items-center gap-2">
+              {item.sku || item.sn}
+              {item.supplier && (
+                <span className="text-primary flex items-center gap-1">
+                  <Truck size={8} /> {item.supplier.name}
+                </span>
+              )}
+              {item.isConsignment && (
+                <Chip size="sm" variant="flat" color="warning" className="h-4 text-[8px] font-black uppercase">Consignment</Chip>
+              )}
+            </p>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: 'Category',
+      field: 'category',
+      minWidth: 120,
+      cellRenderer: (params: any) => (
+        <Chip size="sm" variant="flat" className="font-black text-[10px] uppercase">
+          {params.data.category?.name || params.data.category || 'General'}
+        </Chip>
+      ),
+    },
+    {
+      headerName: 'Cost Price',
+      field: 'costPrice',
+      minWidth: 120,
+      cellRenderer: (params: any) => (
+        <span className="font-bold">₹{(params.data.costPrice || params.data.cost || 0).toLocaleString()}</span>
+      ),
+    },
+    {
+      headerName: 'MRP',
+      field: 'mrp',
+      minWidth: 100,
+      cellRenderer: (params: any) => (
+        <div className="flex flex-col">
+          <span className="text-foreground/40 line-through text-xs">₹{(params.data.mrp || 0).toLocaleString()}</span>
+          <span className="text-secondary font-black text-xs">MRP</span>
+        </div>
+      ),
+    },
+    {
+      headerName: 'Sale Price',
+      field: 'salePrice',
+      minWidth: 130,
+      cellRenderer: (params: any) => (
+        <div className="flex flex-col">
+          <span className="font-black text-lg">₹{(params.data.salePrice || params.data.sale || 0).toLocaleString()}</span>
+          <span className="text-success text-[10px] font-black">-{params.data.discountPercent || params.data.discount || 0}% OFF</span>
+        </div>
+      ),
+    },
+    {
+      headerName: 'Stock',
+      field: 'quantity',
+      minWidth: 100,
+      cellRenderer: (params: any) => {
+        const stock = params.data.quantity || params.data.stock || 0;
+        return (
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${stock < 5 ? 'bg-danger animate-pulse' : 'bg-primary'}`} />
+            <span className="font-black">{stock} Units</span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: 'Status',
+      field: 'stock',
+      minWidth: 100,
+      cellRenderer: (params: any) => {
+        const stock = params.data.quantity || params.data.stock || 0;
+        return (
+          <Chip color={stock > 0 ? 'success' : 'danger'} size="sm" variant="flat" className="font-black">
+            {stock > 0 ? 'IN STOCK' : 'OUT'}
+          </Chip>
+        );
+      },
+    },
+    {
+      headerName: 'Actions',
+      field: 'id',
+      minWidth: 100,
+      sortable: false,
+      cellRenderer: () => (
+        <div className="flex items-center gap-1">
+          <Button isIconOnly size="sm" variant="light" radius="full"><Tag size={16} className="opacity-40" /></Button>
+          <Button isIconOnly size="sm" variant="light" radius="full"><MoreVertical size={16} className="opacity-40" /></Button>
+        </div>
+      ),
+    },
+  ], []);
 
   const onSearchChange = (value: string) => {
     setFilterValue(value);
@@ -260,86 +364,16 @@ export default function InventoryPage() {
          </div>
       </div>
 
-      {/* Data Table */}
-      <Table 
-        aria-label="Inventory Table"
-        className="modern-card border-none"
-        classNames={{
-            wrapper: "p-0 bg-white dark:bg-[#111318] border border-black/5 dark:border-white/5 rounded-[2.5rem] overflow-hidden",
-            th: "bg-black/[0.02] dark:bg-white/[0.02] text-black/50 dark:text-white/40 h-16 font-black uppercase tracking-wider text-[10px] first:pl-8 last:pr-8",
-            td: "py-5 first:pl-8 last:pr-8 text-sm font-bold",
-        }}
-      >
-        <TableHeader>
-          <TableColumn>PRODUCT / SERIAL</TableColumn>
-          <TableColumn>CATEGORY</TableColumn>
-          <TableColumn>COST PRICE</TableColumn>
-          <TableColumn>MRP / MODAL</TableColumn>
-          <TableColumn>SALE PRICE</TableColumn>
-          <TableColumn>STOCK</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn align="center">ACTIONS</TableColumn>
-        </TableHeader>
-        <TableBody items={filteredItems} loadingContent={<div className="font-bold">Scanning...</div>} isLoading={isLoading}>
-          {(item) => (
-            <TableRow key={item.id} className="border-b last:border-none border-black/5 dark:border-white/5 hover:bg-black/[0.01] dark:hover:bg-white/[0.01] transition-colors">
-              <TableCell>
-                <div>
-                   <p className="font-black text-dark dark:text-white leading-tight">{item.name}</p>
-                   <p className="text-[10px] font-black opacity-30 mt-1 uppercase tracking-tighter inline-flex items-center gap-2">
-                       {item.sku || item.sn}
-                       {item.supplier && (
-                           <span className="text-primary flex items-center gap-1">
-                               <Truck size={8} /> {item.supplier.name}
-                           </span>
-                       )}
-                       {item.isConsignment && (
-                           <Chip size="sm" variant="flat" color="warning" className="h-4 text-[8px] font-black uppercase">Consignment</Chip>
-                       )}
-                   </p>
-                </div>
-              </TableCell>
-              <TableCell>
-                 <Chip size="sm" variant="flat" className="font-black text-[10px] uppercase">{item.category?.name || item.category || 'General'}</Chip>
-              </TableCell>
-              <TableCell>₹{(item.costPrice || item.cost).toLocaleString()}</TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                   <span className="text-black/40 dark:text-white/40 line-through text-xs">₹{(item.mrp || 0).toLocaleString()}</span>
-                   <span className="text-secondary font-black">MRP</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                    <span className="font-black text-lg">₹{(item.salePrice || item.sale || 0).toLocaleString()}</span>
-                    <span className="text-success text-[10px] font-black">-{item.discountPercent || item.discount || 0}% OFF</span>
-                 </div>
-              </TableCell>
-              <TableCell>
-                 <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${(item.quantity || item.stock) < 5 ? 'bg-danger animate-pulse' : 'bg-primary'}`} />
-                    <span className="font-black">{item.quantity || item.stock} Units</span>
-                 </div>
-              </TableCell>
-              <TableCell>
-                 <Chip color={item.stock > 0 ? 'success' : 'danger'} size="sm" variant="flat" className="font-black">
-                    {item.stock > 0 ? 'IN STOCK' : 'OUT'}
-                 </Chip>
-              </TableCell>
-              <TableCell>
-                 <div className="flex items-center gap-2">
-                    <Button isIconOnly size="sm" variant="light" radius="full"><Tag size={16} className="opacity-40" /></Button>
-                    <Button isIconOnly size="sm" variant="light" radius="full"><MoreVertical size={16} className="opacity-40" /></Button>
-                 </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-
-      <div className="flex justify-center">
-         <Pagination isCompact showControls showShadow color="primary" radius="full" total={10} initialPage={1} />
-      </div>
+      {/* Data Table - AG Grid */}
+      <DataTable
+        data={filteredItems}
+        columns={columnDefs}
+        isLoading={isLoading}
+        rowHeight={72}
+        height={500}
+        onAddFirst={onOpen}
+        emptyMessage="No products found"
+      />
 
       {/* Add Product Modal */}
       <Modal 
