@@ -96,7 +96,7 @@ const ComingSoon: React.FC = () => {
                     </h1>
 
                     <p className="text-lg md:text-2xl lg:text-3xl font-bold text-white/40 max-w-3xl mx-auto leading-relaxed italic tracking-tight px-4">
-                        Stop fighting the pull of outdated legacy systems. Experience the **Antigravity Protocol**: High-precision management designed to make your business feel weightless.
+                        Stop fighting the pull of outdated legacy systems. Experience the <span className="text-white font-black">Antigravity Protocol</span>: High-precision management designed to make your business feel weightless.
                     </p>
                 </motion.div>
 
@@ -104,10 +104,10 @@ const ComingSoon: React.FC = () => {
                     {/* Features Showcase */}
                     <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {[
-                            { title: 'Operational Engine', desc: 'Unified control for products, sales, and complex zero-friction logistics.', icon: Rocket },
-                            { title: 'Inventory Intel', desc: 'S/N tracking, multi-location stock, and cloud-velocity pricing.', icon: Zap },
-                            { title: 'Authority Hub', desc: 'Professional technical job cards & real-time customer repair lifting.', icon: Store },
-                            { title: 'Personnel Guard', desc: 'High-precision attendance and automated payroll mobilization.', icon: Users },
+                            { title: 'Operational Engine', desc: 'Unified control for products, sales, and seamless logistics management.', icon: Rocket },
+                            { title: 'Inventory Intel', desc: 'Serial number tracking, multi-location stock, and dynamic pricing tools.', icon: Zap },
+                            { title: 'Service Hub', desc: 'Professional job cards and real-time customer repair tracking.', icon: Store },
+                            { title: 'Personnel Guard', desc: 'Automated attendance tracking and payroll management.', icon: Users },
                         ].map((feature, idx) => (
                             <motion.div
                                 key={idx}

@@ -32,7 +32,7 @@ const AboutUs: React.FC = () => {
                                 Gravity is the enemy of progress. In business, it looks like slow data, heavy logistics, and the friction of outdated ERPs that drag your growth down.
                             </p>
                             <p>
-                                At <span className="text-foreground font-black italic">Ease</span><span className="text-primary font-black italic">Inventory</span>, we engineered the **Antigravity Protocol**. Our mission is to remove the physical and digital burdens of inventory management, allowing your operations to achieve zero-friction velocity.
+                            At <span className="text-foreground font-black italic">Ease</span><span className="text-primary font-black italic">Inventory</span>, we engineered the <span className="text-foreground font-black">Antigravity Protocol</span>. Our mission is to remove the physical and digital burdens of inventory management, allowing your operations to achieve seamless operational velocity.
                             </p>
                         </div>
 
