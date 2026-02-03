@@ -2,7 +2,7 @@
 
 import { Button, ButtonGroup } from '@heroui/react';
 import { BarChart3, LineChart, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Area,
     AreaChart,
@@ -18,8 +18,8 @@ import {
     YAxis,
 } from 'recharts';
 
-// Sample data for the chart
-const weeklyData = [
+// Fallback data when API fails or returns empty
+const fallbackWeeklyData = [
   { name: 'Mon', purchases: 420, sales: 280, repairs: 4 },
   { name: 'Tue', purchases: 380, sales: 320, repairs: 6 },
   { name: 'Wed', purchases: 520, sales: 450, repairs: 3 },
@@ -29,12 +29,19 @@ const weeklyData = [
   { name: 'Sun', purchases: 320, sales: 180, repairs: 1 },
 ];
 
-const monthlyData = [
+const fallbackMonthlyData = [
   { name: 'Week 1', purchases: 2800, sales: 2100, repairs: 24 },
   { name: 'Week 2', purchases: 3200, sales: 2800, repairs: 18 },
   { name: 'Week 3', purchases: 2600, sales: 3100, repairs: 22 },
   { name: 'Week 4', purchases: 3800, sales: 3400, repairs: 16 },
 ];
+
+interface ChartDataPoint {
+  name: string;
+  purchases: number;
+  sales: number;
+  repairs: number;
+}
 
 type ChartType = 'line' | 'bar' | 'area';
 type TimeRange = 'weekly' | 'monthly';
@@ -46,8 +53,38 @@ interface StockFlowChartProps {
 export default function StockFlowChart({ className }: StockFlowChartProps) {
   const [chartType, setChartType] = useState<ChartType>('area');
   const [timeRange, setTimeRange] = useState<TimeRange>('weekly');
+  const [data, setData] = useState<ChartDataPoint[]>(fallbackWeeklyData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLiveData, setIsLiveData] = useState(false);
 
-  const data = timeRange === 'weekly' ? weeklyData : monthlyData;
+  useEffect(() => {
+    fetchStockFlowData();
+  }, [timeRange]);
+
+  const fetchStockFlowData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/dashboard/stock-flow?range=${timeRange}`);
+      if (!response.ok) throw new Error('API error');
+      
+      const result = await response.json();
+      
+      if (result.data && result.data.length > 0) {
+        setData(result.data);
+        setIsLiveData(true);
+      } else {
+        // Use fallback data if API returns empty
+        setData(timeRange === 'weekly' ? fallbackWeeklyData : fallbackMonthlyData);
+        setIsLiveData(false);
+      }
+    } catch (error) {
+      console.error('Failed to fetch stock flow data:', error);
+      setData(timeRange === 'weekly' ? fallbackWeeklyData : fallbackMonthlyData);
+      setIsLiveData(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const renderChart = () => {
     const commonProps = {

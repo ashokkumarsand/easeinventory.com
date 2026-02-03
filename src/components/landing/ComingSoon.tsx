@@ -1,6 +1,9 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
+import BetaGallery from '@/components/landing/BetaGallery';
+import Footer from '@/components/landing/Footer';
+import WhyUs from '@/components/landing/WhyUs';
 import { Button, Card, CardBody, Checkbox, Chip, Input } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, Building2, CheckCircle2, Globe, Rocket, Shield, Store, Users, Zap } from 'lucide-react';
@@ -274,17 +277,19 @@ const ComingSoon: React.FC = () => {
                         </div>
                     ))}
                 </motion.div>
+
+                {/* Why Choose Us Section */}
+                <WhyUs />
+
+                {/* Beta Snapshots Gallery */}
+                <BetaGallery />
             </div>
 
-            <footer className="w-full flex justify-center opacity-30 mt-12 md:mt-20 pb-8 px-4">
-                <div className="flex items-center gap-3">
-                    <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.5em] md:tracking-[1em] text-center">
-                        <span className="italic">Ease</span><span className="text-primary italic">Inventory</span> • Powered by Advanced Precision • 2026
-                    </span>
-                </div>
-            </footer>
+            {/* Full Footer */}
+            <Footer />
         </div>
     );
 };
 
 export default ComingSoon;
+

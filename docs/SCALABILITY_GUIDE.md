@@ -5,15 +5,130 @@
 ---
 
 ## 📋 Table of Contents
-1. [Core Principles](#-core-principles)
-2. [Growth Phase Checklist](#-growth-phase-checklist)
-3. [Technical Deep Dives](#-technical-deep-dives)
-4. [Cost Optimization Strategy](#-cost-optimization-strategy)
-5. [Developer Governance Rules](#-developer-governance-rules)
-6. [Future Technology Radar](#-future-technology-radar)
-7. [Reference Reading List](#-reference-reading-list)
+1. [Deployment Guide](#-deployment-guide)
+2. [Core Principles](#-core-principles)
+3. [Growth Phase Checklist](#-growth-phase-checklist)
+4. [Technical Deep Dives](#-technical-deep-dives)
+5. [Cost Optimization Strategy](#-cost-optimization-strategy)
+6. [Developer Governance Rules](#-developer-governance-rules)
+7. [Future Technology Radar](#-future-technology-radar)
+8. [Reference Reading List](#-reference-reading-list)
 
 ---
+
+## 🚀 Deployment Guide
+
+### Environment Variables
+
+> [!IMPORTANT]
+> Copy `.env.example` to `.env` and configure all required variables before deployment.
+
+#### Database (Required)
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string with pooling | `postgresql://user:pass@host:6543/db?pgbouncer=true` |
+| `DIRECT_URL` | Direct connection for Prisma migrations | `postgresql://user:pass@host:5432/db` |
+
+#### Supabase (Required)
+| Variable | Description | Where to Find |
+|----------|-------------|---------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Supabase Dashboard → Settings → API |
+| `SUPABASE_ANON_KEY` | Anonymous/public key | Supabase Dashboard → Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (keep secret!) | Supabase Dashboard → Settings → API |
+
+#### App Configuration (Required)
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_APP_URL` | Public URL of your app | `https://easeinventory.com` |
+| `NEXT_PUBLIC_APP_NAME` | Display name | `EaseInventory` |
+
+#### Authentication (Required)
+| Variable | Description | Notes |
+|----------|-------------|-------|
+| `NEXTAUTH_SECRET` | Random secret for JWT signing | Generate with `openssl rand -hex 32` |
+| `NEXTAUTH_URL` | Canonical URL for NextAuth | Same as `NEXT_PUBLIC_APP_URL` |
+| `JWT_SECRET` | Additional JWT secret | Generate with `openssl rand -hex 32` |
+| `JWT_EXPIRY` | Token expiration time | `7d` (7 days) |
+
+#### Email (Optional - For Notifications)
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `SMTP_HOST` | SMTP server host | `smtp.gmail.com` |
+| `SMTP_PORT` | SMTP server port | `587` |
+| `SMTP_SECURE` | Use TLS | `false` for port 587, `true` for 465 |
+| `SMTP_USER` | Email username | `noreply@yourcompany.com` |
+| `SMTP_PASS` | Email password or app password | Gmail App Password |
+| `SMTP_FROM` | Default "From" address | `EaseInventory <noreply@easeinventory.com>` |
+
+#### Razorpay Payments (Optional - For Subscriptions)
+| Variable | Description | Where to Find |
+|----------|-------------|---------------|
+| `RAZORPAY_KEY_ID` | Public API key | Razorpay Dashboard → Settings → API Keys |
+| `RAZORPAY_KEY_SECRET` | Secret API key | Razorpay Dashboard → Settings → API Keys |
+| `RAZORPAY_WEBHOOK_SECRET` | Webhook signature verification | Razorpay Dashboard → Webhooks |
+
+#### Razorpay Subscription Plans (Optional)
+| Variable | Description |
+|----------|-------------|
+| `RAZORPAY_PLAN_STARTER_MONTHLY` | Plan ID for Starter monthly |
+| `RAZORPAY_PLAN_STARTER_ANNUAL` | Plan ID for Starter annual |
+| `RAZORPAY_PLAN_BUSINESS_MONTHLY` | Plan ID for Business monthly |
+| `RAZORPAY_PLAN_BUSINESS_ANNUAL` | Plan ID for Business annual |
+| `RAZORPAY_PLAN_PROFESSIONAL_MONTHLY` | Plan ID for Professional monthly |
+| `RAZORPAY_PLAN_PROFESSIONAL_ANNUAL` | Plan ID for Professional annual |
+
+#### WhatsApp Integration (Optional)
+| Variable | Description | Where to Find |
+|----------|-------------|---------------|
+| `WHATSAPP_ACCESS_TOKEN` | Meta API access token | Meta Business Suite |
+| `WHATSAPP_PHONE_NUMBER_ID` | Phone number ID | WhatsApp Business API |
+| `WHATSAPP_BUSINESS_ACCOUNT_ID` | Business account ID | Meta Business Suite |
+| `WHATSAPP_WEBHOOK_VERIFY_TOKEN` | Webhook verification token | Custom value you set |
+
+#### Security (Required)
+| Variable | Description | Notes |
+|----------|-------------|-------|
+| `ENCRYPTION_KEY` | 256-bit encryption key | Generate with `openssl rand -hex 32` |
+
+---
+
+### Quick Setup Commands
+
+```bash
+# 1. Clone and install
+git clone https://github.com/your-org/easeinventory.git
+cd easeinventory
+npm install
+
+# 2. Setup environment
+cp .env.example .env
+# Edit .env with your values
+
+# 3. Generate secrets
+openssl rand -hex 32  # Use for NEXTAUTH_SECRET
+openssl rand -hex 32  # Use for JWT_SECRET
+openssl rand -hex 32  # Use for ENCRYPTION_KEY
+
+# 4. Run database migrations
+npx prisma migrate deploy
+npx prisma generate
+
+# 5. Build and start
+npm run build
+npm start
+```
+
+### Vercel Deployment
+
+1. Connect your GitHub repository to Vercel
+2. Add all environment variables in Vercel Dashboard → Settings → Environment Variables
+3. Deploy!
+
+> [!TIP]
+> Use Vercel's **Environment Variable Groups** to manage staging vs production configs.
+
+---
+
 
 ## 🧭 Core Principles
 

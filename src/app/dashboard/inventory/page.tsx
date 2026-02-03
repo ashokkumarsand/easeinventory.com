@@ -1,35 +1,34 @@
 'use client';
 
 import { DataTable } from '@/components/ui/DataTable';
+import { FormRow, FormSection, StyledInput, StyledSelect } from '@/components/ui/FormField';
 import {
-    Button,
-    Chip,
-    Divider,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Select,
-    SelectItem,
-    Switch,
-    useDisclosure
+  Button,
+  Chip,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Switch,
+  useDisclosure
 } from '@heroui/react';
 import { ColDef } from 'ag-grid-community';
 import {
-    Download,
-    Filter,
-    MoreVertical,
-    Package,
-    Plus,
-    Search,
-    Tag,
-    Truck
+  Download,
+  Filter,
+  MoreVertical,
+  Package,
+  Plus,
+  Search,
+  Tag,
+  Truck
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -396,176 +395,131 @@ export default function InventoryPage() {
                  <h2 className="text-2xl font-black tracking-tight">Register New Asset</h2>
                  <p className="text-xs font-bold opacity-30 uppercase tracking-widest">Enter serial numbers and pricing metrics</p>
               </ModalHeader>
-              <ModalBody className="py-8 space-y-8">
+               <ModalBody className="py-8 space-y-8">
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                   <Input
-                     label="Legal Product Name"
-                     placeholder="e.g. MacBook Pro M3"
-                     labelPlacement="outside"
-                     size="lg"
-                     radius="lg"
-                     value={newProduct.name}
-                     onValueChange={(val) => setNewProduct({...newProduct, name: val})}
-                     classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
-                   />
-                   <Input
-                     label="Permanent Serial Number"
-                     placeholder="SN-67890-XYZ"
-                     labelPlacement="outside"
-                     size="lg"
-                     radius="lg"
-                     value={newProduct.sn}
-                     onValueChange={(val) => setNewProduct({...newProduct, sn: val})}
-                     classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
-                   />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                   <Input
-                     label="Category Track"
-                     placeholder="Laptops / Mobiles"
-                     labelPlacement="outside"
-                     size="lg"
-                     radius="lg"
-                     value={newProduct.category}
-                     onValueChange={(val) => setNewProduct({...newProduct, category: val})}
-                     classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
-                   />
-                    <Input
-                      label="Current In-Stock"
+                <FormSection title="Product Details" description="Basic product information">
+                  <FormRow>
+                    <StyledInput
+                      label="Legal Product Name"
+                      placeholder="e.g. MacBook Pro M3"
+                      value={newProduct.name}
+                      onChange={(val) => setNewProduct({...newProduct, name: val})}
+                      required
+                    />
+                    <StyledInput
+                      label="Permanent Serial Number"
+                      placeholder="SN-67890-XYZ"
+                      value={newProduct.sn}
+                      onChange={(val) => setNewProduct({...newProduct, sn: val})}
+                    />
+                  </FormRow>
+                  <FormRow>
+                    <StyledInput
+                      label="Category"
+                      placeholder="Laptops / Mobiles"
+                      value={newProduct.category}
+                      onChange={(val) => setNewProduct({...newProduct, category: val})}
+                    />
+                    <StyledInput
+                      label="Initial Stock Quantity"
                       type="number"
                       placeholder="0"
-                      labelPlacement="outside"
-                      size="lg"
-                      radius="lg"
                       value={newProduct.stock.toString()}
-                      onValueChange={(val) => setNewProduct({...newProduct, stock: parseInt(val) || 0})}
-                      classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
+                      onChange={(val) => setNewProduct({...newProduct, stock: parseInt(val) || 0})}
                     />
-                 </div>
+                  </FormRow>
+                </FormSection>
 
-                 <div className="grid md:grid-cols-2 gap-6">
-                    <Select
-                      label="Primary Supplier (Partner)"
+                <FormSection title="Supplier & Location" description="Vendor and storage information">
+                  <FormRow>
+                    <StyledSelect
+                      label="Primary Supplier"
                       placeholder="Select vendor"
-                      labelPlacement="outside"
-                      size="lg"
-                      radius="lg"
                       value={newProduct.supplierId}
-                      onSelectionChange={(keys) => setNewProduct({...newProduct, supplierId: Array.from(keys)[0] as string})}
-                      classNames={{ trigger: "bg-black/5 h-14" }}
-                    >
-                      {suppliers.map((sup) => (
-                        <SelectItem key={sup.id} textValue={sup.name}>
-                          {sup.name}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                    
-                    <Select
-                      label="Initial Stock Location"
+                      onChange={(val) => setNewProduct({...newProduct, supplierId: val})}
+                      options={suppliers.map((sup) => ({ value: sup.id, label: sup.name }))}
+                    />
+                    <StyledSelect
+                      label="Initial Location"
                       placeholder="Select storage point"
-                      labelPlacement="outside"
-                      size="lg"
-                      radius="lg"
                       value={newProduct.initialLocationId}
-                      onSelectionChange={(keys) => setNewProduct({...newProduct, initialLocationId: Array.from(keys)[0] as string})}
-                      classNames={{ trigger: "bg-black/5 h-14" }}
-                    >
-                      {locations.map((loc) => (
-                        <SelectItem key={loc.id} textValue={loc.name}>
-                          {loc.name} ({loc.type})
-                        </SelectItem>
-                      ))}
-                    </Select>
-                 </div>
+                      onChange={(val) => setNewProduct({...newProduct, initialLocationId: val})}
+                      options={locations.map((loc) => ({ value: loc.id, label: `${loc.name} (${loc.type})` }))}
+                    />
+                  </FormRow>
+                </FormSection>
 
-                  <div className="grid md:grid-cols-2 gap-6 items-center bg-warning/5 p-6 rounded-2xl border border-warning/10">
+                <div className="p-6 rounded-2xl bg-warning/5 border border-warning/10">
+                  <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                        <h4 className="font-black text-sm text-warning uppercase tracking-widest">Consignment Mode</h4>
-                        <p className="text-[10px] font-bold opacity-40">Stock owned by vendor until sold.</p>
+                      <h4 className="font-black text-sm text-warning uppercase tracking-widest">Consignment Mode</h4>
+                      <p className="text-[10px] font-bold opacity-40">Stock owned by vendor until sold.</p>
                     </div>
-                    <div className="flex justify-end gap-6 items-center">
-                        {newProduct.isConsignment && (
-                            <div className="max-w-[120px]">
-                                <Input 
-                                    label="Our %" 
-                                    type="number" 
-                                    size="sm" 
-                                    variant="bordered"
-                                    value={newProduct.consignmentCommission.toString()}
-                                    onValueChange={(val) => setNewProduct({...newProduct, consignmentCommission: parseFloat(val) || 0})}
-                                />
-                            </div>
-                        )}
-                        <Switch 
-                            color="warning" 
-                            isSelected={newProduct.isConsignment} 
-                            onValueChange={(val) => setNewProduct({...newProduct, isConsignment: val})}
-                        />
+                    <div className="flex items-center gap-4">
+                      {newProduct.isConsignment && (
+                        <div className="w-24">
+                          <Input 
+                            label="Our %" 
+                            type="number" 
+                            size="sm" 
+                            variant="bordered"
+                            value={newProduct.consignmentCommission.toString()}
+                            onValueChange={(val) => setNewProduct({...newProduct, consignmentCommission: parseFloat(val) || 0})}
+                          />
+                        </div>
+                      )}
+                      <Switch 
+                        color="warning" 
+                        isSelected={newProduct.isConsignment} 
+                        onValueChange={(val) => setNewProduct({...newProduct, isConsignment: val})}
+                      />
                     </div>
-                 </div>
-
-                 <Divider className="opacity-50" />
-
-                <div>
-                   <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center text-success"><Tag size={18} /></div>
-                      <h4 className="text-sm font-black uppercase tracking-widest">Pricing Intelligence</h4>
-                   </div>
-
-                   <div className="space-y-6">
-                      <div className="grid md:grid-cols-3 gap-6 text-center">
-                         <Input
-                           label="Total Cost Price"
-                           placeholder="0.00"
-                           labelPlacement="outside"
-                           startContent={<span className="text-default-400 text-xs font-black">₹</span>}
-                           size="lg"
-                           radius="lg"
-                           value={newProduct.cost.toString()}
-                           onValueChange={(val) => setNewProduct({...newProduct, cost: parseFloat(val) || 0})}
-                           classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
-                         />
-                         <Input
-                           label="Modal Price (MRP)"
-                           placeholder="0.00"
-                           labelPlacement="outside"
-                           startContent={<span className="text-default-400 text-xs font-black">₹</span>}
-                           size="lg"
-                           radius="lg"
-                           value={newProduct.mrp.toString()}
-                           onValueChange={(val) => handlePriceChange('mrp', parseFloat(val) || 0)}
-                           classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14 focus-within:ring-2 ring-secondary" }}
-                         />
-                         <Input
-                           label="Sale Discount (% OFF)"
-                           placeholder="0"
-                           labelPlacement="outside"
-                           endContent={<span className="text-default-400 text-xs font-black">%</span>}
-                           size="lg"
-                           radius="lg"
-                           value={newProduct.discount.toString()}
-                           onValueChange={(val) => handlePriceChange('discount', parseFloat(val) || 0)}
-                           classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }}
-                         />
-                      </div>
-
-                      <div className="p-8 rounded-[2rem] bg-black/[0.03] dark:bg-white/[0.03] border border-black/5 dark:border-white/5 flex items-center justify-between">
-                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Projected Unit Sale Price</p>
-                            <h3 className="text-4xl font-black leading-none">₹{Number(newProduct.sale.toFixed(2)).toLocaleString()}</h3>
-                         </div>
-                         <div className="text-right space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Gross Profit / Unit</p>
-                            <h4 className={`text-xl font-black ${(newProduct.sale - newProduct.cost) > 0 ? 'text-success' : 'text-danger'}`}>
-                               ₹{(newProduct.sale - newProduct.cost).toLocaleString()}
-                            </h4>
-                         </div>
-                      </div>
-                   </div>
+                  </div>
                 </div>
+
+                <Divider className="opacity-50" />
+
+                <FormSection title="Pricing Intelligence" description="Cost and sale price configuration">
+                  <FormRow columns={3}>
+                    <StyledInput
+                      label="Cost Price"
+                      placeholder="0.00"
+                      type="number"
+                      value={newProduct.cost.toString()}
+                      onChange={(val) => setNewProduct({...newProduct, cost: parseFloat(val) || 0})}
+                      startContent={<span className="text-foreground/40 text-xs font-black">₹</span>}
+                    />
+                    <StyledInput
+                      label="MRP"
+                      placeholder="0.00"
+                      type="number"
+                      value={newProduct.mrp.toString()}
+                      onChange={(val) => handlePriceChange('mrp', parseFloat(val) || 0)}
+                      startContent={<span className="text-foreground/40 text-xs font-black">₹</span>}
+                    />
+                    <StyledInput
+                      label="Discount"
+                      placeholder="0"
+                      type="number"
+                      value={newProduct.discount.toString()}
+                      onChange={(val) => handlePriceChange('discount', parseFloat(val) || 0)}
+                      endContent={<span className="text-foreground/40 text-xs font-black">%</span>}
+                    />
+                  </FormRow>
+
+                  <div className="p-8 rounded-[2rem] bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Sale Price</p>
+                      <h3 className="text-4xl font-black leading-none">₹{Number(newProduct.sale.toFixed(2)).toLocaleString()}</h3>
+                    </div>
+                    <div className="text-right space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Gross Profit</p>
+                      <h4 className={`text-xl font-black ${(newProduct.sale - newProduct.cost) > 0 ? 'text-success' : 'text-danger'}`}>
+                        ₹{(newProduct.sale - newProduct.cost).toLocaleString()}
+                      </h4>
+                    </div>
+                  </div>
+                </FormSection>
 
               </ModalBody>
               <ModalFooter className="py-6">
