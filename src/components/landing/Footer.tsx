@@ -4,15 +4,15 @@ import React from 'react';
 
 const footerLinks = {
   product: [
-    { label: 'Capabilities', href: '#features' },
-    { label: 'Investment', href: '#pricing' },
+    { label: 'Capabilities', href: '/#features' },
+    { label: 'Investment', href: '/#pricing' },
     { label: 'Integrations', href: '#' },
     { label: 'Changelog', href: '#' },
   ],
   company: [
     { label: 'Our Mission', href: '#' },
     { label: 'Press Kit', href: '#' },
-    { label: 'Contact Experts', href: '#contact' },
+    { label: 'Contact Experts', href: '/#contact' },
   ],
   support: [
     { label: 'Knowledge Base', href: '#' },
