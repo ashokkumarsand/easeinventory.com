@@ -6,22 +6,22 @@ const footerLinks = {
   product: [
     { label: 'Capabilities', href: '/#features' },
     { label: 'Investment', href: '/#pricing' },
-    { label: 'Integrations', href: '#' },
-    { label: 'Changelog', href: '#' },
+    { label: 'Integrations', href: '/integrations' },
+    { label: 'Changelog', href: '/changelog' },
   ],
   company: [
-    { label: 'Our Mission', href: '#' },
-    { label: 'Press Kit', href: '#' },
+    { label: 'Our Mission', href: '/about' },
+    { label: 'Press Kit', href: '/press' },
     { label: 'Contact Experts', href: '/#contact' },
   ],
   support: [
-    { label: 'Knowledge Base', href: '#' },
-    { label: 'API Reference', href: '#' },
-    { label: 'System Status', href: '#' },
+    { label: 'Knowledge Base', href: '/help' },
+    { label: 'API Reference', href: '/api-docs' },
+    { label: 'System Status', href: '/status' },
   ],
   legal: [
-    { label: 'Privacy Protocol', href: '#' },
-    { label: 'Terms of Growth', href: '#' },
+    { label: 'Privacy Protocol', href: '/privacy' },
+    { label: 'Terms of Growth', href: '/terms' },
   ],
 };
 

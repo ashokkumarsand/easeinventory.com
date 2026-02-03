@@ -1,404 +1,364 @@
 'use client';
 
-import { Button, Card, CardBody, Chip } from '@heroui/react';
-import { ArrowRight, Camera, Check, CheckCircle, Clock, FileText, MessageCircle, Phone, Settings, Smartphone, TrendingUp, User, Users, Wrench, Zap } from 'lucide-react';
+import { Button, Card, CardBody } from '@heroui/react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
 
-const repairWorkflow = [
-  {
-    step: '01',
-    title: 'Device Intake',
-    description: 'Customer arrives with faulty device. Create ticket in 30 seconds with device details, problem description, and photos of current condition.',
-    icon: Smartphone,
-  },
-  {
-    step: '02',
-    title: 'Diagnosis & Quotation',
-    description: 'Technician diagnoses the issue, adds spare part requirements. System generates quotation. WhatsApp sent to customer for approval.',
-    icon: Wrench,
-  },
-  {
-    step: '03',
-    title: 'Repair & Quality Check',
-    description: 'Work begins after approval. Track time spent, parts used. Upload after-repair photos. Quality check before delivery.',
-    icon: Settings,
-  },
-  {
-    step: '04',
-    title: 'Delivery & Payment',
-    description: 'Customer notified via WhatsApp. Generate invoice with warranty. Record payment. Ticket closed with complete history.',
-    icon: CheckCircle,
-  },
+const stats = [
+  { value: '40%', label: 'Faster Turnaround', icon: '⚡' },
+  { value: '0', label: 'Lost Devices', icon: '🔒' },
+  { value: '95%', label: 'Customer Satisfaction', icon: '⭐' },
+  { value: '2x', label: 'Team Efficiency', icon: '🚀' },
 ];
 
 const coreFeatures = [
   {
-    icon: FileText,
+    icon: '📋',
     title: 'Smart Ticket Management',
-    description: 'Create detailed repair tickets with device info, IMEI/serial numbers, fault description, and condition photos. Track status from intake to delivery.',
-    highlights: ['Auto-generated ticket numbers', 'Priority levels (Normal/Urgent/VIP)', 'Multiple devices per customer', 'Linked to inventory for parts'],
+    tag: 'Organize',
+    description: 'Create detailed repair tickets with device info, IMEI/serial numbers, fault description, and condition photos.',
+    highlights: ['Auto ticket numbers', 'Priority levels', 'Multiple devices', 'Linked to inventory'],
   },
   {
-    icon: Users,
-    title: 'Technician Assignment & Tracking',
-    description: 'Assign repairs to technicians based on skill and workload. Track time spent per repair. Performance dashboards for each technician.',
-    highlights: ['Skill-based assignment', 'Time tracking per job', 'Daily workload view', 'Performance benchmarks'],
+    icon: '👨‍🔧',
+    title: 'Technician Assignment',
+    tag: 'Assign',
+    description: 'Assign repairs to technicians based on skill and workload. Track time spent per repair.',
+    highlights: ['Skill-based assignment', 'Time tracking', 'Daily workload view', 'Performance metrics'],
   },
   {
-    icon: MessageCircle,
+    icon: '💬',
     title: 'WhatsApp Notifications',
-    description: 'Automatic WhatsApp messages to customers at every stage. Quotation approval, repair updates, ready-for-pickup alerts—all automated.',
+    tag: 'Communicate',
+    description: 'Automatic WhatsApp messages to customers at every stage. Quotation approval and pickup alerts.',
     highlights: ['Status change alerts', 'Quotation sharing', 'Payment reminders', 'Pickup notifications'],
   },
   {
-    icon: Camera,
+    icon: '📸',
     title: 'Photo Documentation',
-    description: 'Attach before and after photos to every repair. Protect against false damage claims. Build a visual history of each device.',
-    highlights: ['Before/after comparison', 'Damage documentation', 'Cloud storage', 'Easy retrieval'],
+    tag: 'Protect',
+    description: 'Attach before and after photos to every repair. Protect against false damage claims.',
+    highlights: ['Before/after photos', 'Damage documentation', 'Cloud storage', 'Easy retrieval'],
   },
+];
+
+const howItWorks = [
+  { step: '01', title: 'Device Intake', description: 'Create ticket in 30 seconds with device details, problem description, and condition photos.', icon: '📱' },
+  { step: '02', title: 'Diagnosis & Quote', description: 'Technician diagnoses, adds parts needed. WhatsApp quotation sent to customer.', icon: '🔍' },
+  { step: '03', title: 'Repair & Deliver', description: 'Repair after approval, quality check, notify customer. Generate invoice with warranty.', icon: '✅' },
 ];
 
 const additionalFeatures = [
-  { icon: Clock, title: 'TAT Tracking', description: 'Monitor turnaround time with SLA alerts' },
-  { icon: Wrench, title: 'Spare Parts Integration', description: 'Link repairs to inventory for parts tracking' },
-  { icon: TrendingUp, title: 'Repair Analytics', description: 'Common issues, success rates, revenue reports' },
-  { icon: User, title: 'Customer History', description: 'Complete repair history per customer/device' },
-  { icon: Phone, title: 'Warranty Tracking', description: 'Internal and manufacturer warranty management' },
-  { icon: Zap, title: 'Quick Actions', description: 'One-click status updates and notifications' },
-];
-
-const testimonials = [
-  {
-    quote: "We used to lose track of repairs all the time. Now every phone is accounted for with photos and status updates. Customers love the WhatsApp updates!",
-    author: "Rajesh Kumar",
-    role: "Mobile Galaxy, Chennai",
-    rating: 5,
-  },
-  {
-    quote: "The technician performance tracking helped us identify our best staff. Service time dropped by 30% after we optimized assignments.",
-    author: "Priya Sharma",
-    role: "TechCare Solutions, Mumbai",
-    rating: 5,
-  },
+  { icon: '⏱️', title: 'TAT Tracking', description: 'Monitor turnaround time with SLA alerts and escalations.' },
+  { icon: '🔧', title: 'Parts Integration', description: 'Link repairs to inventory for spare parts tracking.' },
+  { icon: '📊', title: 'Repair Analytics', description: 'Common issues, success rates, revenue reports.' },
+  { icon: '📱', title: 'Warranty Tracking', description: 'Internal and manufacturer warranty management.' },
+  { icon: '⚙️', title: 'Custom Workflow', description: 'Configure repair statuses to match your process.' },
+  { icon: '⚡', title: 'Quick Actions', description: 'One-click status updates and customer notifications.' },
 ];
 
 const faqs = [
-  {
-    question: 'Can I track repairs for multiple device types?',
-    answer: 'Yes! EaseInventory handles mobiles, laptops, TVs, ACs, appliances, and any other device type. You can customize fields per device category.',
-  },
-  {
-    question: 'How do WhatsApp notifications work?',
-    answer: 'We integrate with WhatsApp Business API (official Meta API). Messages are sent automatically when ticket status changes. Customers can respond directly. No third-party tools needed.',
-  },
-  {
-    question: 'Can technicians access the system on their phones?',
-    answer: 'Absolutely. EaseInventory is fully mobile-responsive. Technicians can update status, add notes, upload photos, and view their assigned jobs from any device.',
-  },
-  {
-    question: 'How is repair revenue calculated?',
-    answer: 'Each repair ticket includes labor charges, spare parts (linked to inventory cost), and any additional fees. The system calculates profit per repair, per technician, and overall.',
-  },
+  { q: 'Can I track repairs for multiple device types?', a: 'Yes! Handles mobiles, laptops, TVs, ACs, appliances, and any other device type. Customize fields per category.' },
+  { q: 'How do WhatsApp notifications work?', a: 'Official WhatsApp Business API integration. Messages sent automatically when ticket status changes. Customers can respond directly.' },
+  { q: 'Can technicians access on their phones?', a: 'Absolutely. Fully mobile-responsive. Update status, add notes, upload photos from any device.' },
+  { q: 'How is repair revenue calculated?', a: 'Each ticket includes labor charges, spare parts (linked to inventory cost), and additional fees. Profit calculated automatically.' },
 ];
 
-const pricingComparison = [
-  { feature: 'Repair Tickets/Month', starter: '100', business: '500', professional: 'Unlimited' },
-  { feature: 'Technicians', starter: '2', business: '5', professional: '15+' },
-  { feature: 'WhatsApp Notifications', starter: '50/mo', business: '200/mo', professional: 'Unlimited' },
-  { feature: 'Photo Attachments', starter: '✓', business: '✓', professional: '✓' },
-  { feature: 'Technician Performance', starter: '—', business: '✓', professional: '✓' },
-  { feature: 'Custom Workflow', starter: '—', business: '—', professional: '✓' },
-];
-
-export default function RepairLogisticsPage() {
+export default function RepairsPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background overflow-hidden">
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[200px]" />
-        
+      <section className="relative min-h-[90vh] pt-32 pb-20 lg:pt-40 lg:pb-32 flex items-center">
+        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[150px] pointer-events-none" />
+
         <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-6">
-                <Wrench size={14} className="text-secondary" />
-                <span className="text-xs font-black uppercase tracking-widest text-secondary">Service Management</span>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-5 py-2 rounded-full mb-8">
+                <span className="text-xl">🔧</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Repair Management</span>
               </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 leading-tight">
+
+              <h1 className="heading-lg mb-8">
                 Repair Chaos?<br />
-                <span className="text-secondary">Consider It Fixed.</span>
+                <span className="text-primary italic">Consider It Fixed.</span>
               </h1>
-              
-              <p className="text-lg text-foreground/60 leading-relaxed mb-8 max-w-xl">
-                Track every repair from intake to delivery. Assign technicians, document with photos, 
-                auto-notify customers via WhatsApp, and analyze your service performance—all in one place.
+
+              <p className="paragraph-lg mb-10 max-w-xl">
+                Track every repair from intake to delivery. Assign technicians, document with photos,
+                auto-notify customers via WhatsApp, and analyze service performance.
               </p>
-              
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Button as={Link} href="/register" color="secondary" size="lg" className="font-black" radius="full">
-                  Start 14-Day Free Trial
-                  <ArrowRight size={18} />
+
+              <div className="flex flex-wrap gap-4 mb-10">
+                <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
+                  Start Free Trial
+                  <ArrowRight size={20} />
                 </Button>
-                <Button as={Link} href="#workflow" variant="bordered" size="lg" className="font-bold" radius="full">
-                  See How It Works
+                <Button as={Link} href="#features" variant="bordered" size="lg" className="font-black px-10 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                  Explore
                 </Button>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-secondary" />
-                  <span className="text-foreground/60">Mobile & electronics</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-secondary" />
-                  <span className="text-foreground/60">WhatsApp built-in</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-secondary" />
-                  <span className="text-foreground/60">Photo documentation</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="modern-card p-6">
-                <div className="text-4xl font-black text-secondary mb-2">40%</div>
-                <div className="text-sm font-bold text-foreground/50">Faster Turnaround</div>
-                <p className="text-xs text-foreground/40 mt-2">Average improvement after 2 months</p>
-              </Card>
-              <Card className="modern-card p-6">
-                <div className="text-4xl font-black text-secondary mb-2">0</div>
-                <div className="text-sm font-bold text-foreground/50">Lost Devices</div>
-                <p className="text-xs text-foreground/40 mt-2">With complete ticket tracking</p>
-              </Card>
-              <Card className="modern-card p-6">
-                <div className="text-4xl font-black text-secondary mb-2">95%</div>
-                <div className="text-sm font-bold text-foreground/50">Customer Satisfaction</div>
-                <p className="text-xs text-foreground/40 mt-2">With automated WhatsApp updates</p>
-              </Card>
-              <Card className="modern-card p-6">
-                <div className="text-4xl font-black text-secondary mb-2">2x</div>
-                <div className="text-sm font-bold text-foreground/50">Team Efficiency</div>
-                <p className="text-xs text-foreground/40 mt-2">With smart assignment & tracking</p>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Repair Workflow */}
-      <section id="workflow" className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="secondary" variant="flat" className="mb-4">Repair Workflow</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              From Faulty Device to Happy Customer
-            </h2>
-            <p className="text-foreground/60">
-              A streamlined workflow that covers every step of the repair process.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {repairWorkflow.map((item, index) => (
-              <div key={item.step} className="relative">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4 relative">
-                    <item.icon size={28} className="text-secondary" />
-                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-secondary text-white text-sm font-black flex items-center justify-center">
-                      {item.step}
+              <div className="flex flex-wrap gap-8">
+                {['Mobile & electronics', 'WhatsApp built-in', 'Photo documentation'].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Check size={12} className="text-primary" />
                     </div>
+                    <span className="text-sm font-bold text-foreground/60">{item}</span>
                   </div>
-                  <h3 className="text-lg font-black mb-2">{item.title}</h3>
-                  <p className="text-sm text-foreground/60">{item.description}</p>
-                </div>
-                {index < 3 && (
-                  <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] border-t-2 border-dashed border-secondary/20" />
-                )}
+                ))}
               </div>
-            ))}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="grid grid-cols-2 gap-5"
+            >
+              {stats.map((stat) => (
+                <Card key={stat.label} className="modern-card group hover:scale-105 transition-transform duration-500">
+                  <CardBody className="p-8">
+                    <div className="text-4xl mb-4">{stat.icon}</div>
+                    <div className="text-4xl font-black text-primary mb-2">{stat.value}</div>
+                    <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
+                  </CardBody>
+                </Card>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Core Features */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Core Features</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Everything for Professional Service Centers
+      <section id="features" className="section-padding relative">
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Core Features</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Everything for Professional <span className="text-primary italic">Service Centers</span>
             </h2>
-          </div>
+            <p className="paragraph-lg">
+              Streamline your repair workflow from device intake to customer delivery.
+            </p>
+          </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {coreFeatures.map((feature) => (
-              <Card key={feature.title} className="modern-card overflow-hidden">
-                <CardBody className="p-8">
-                  <div className="flex gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0">
-                      <feature.icon size={28} className="text-secondary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-black mb-2">{feature.title}</h3>
-                      <p className="text-foreground/60 mb-4">{feature.description}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {feature.highlights.map((item) => (
-                          <div key={item} className="flex items-center gap-2 text-sm">
-                            <Check size={14} className="text-secondary shrink-0" />
-                            <span className="text-foreground/70">{item}</span>
-                          </div>
-                        ))}
+            {coreFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card h-full group hover:border-primary/30 transition-all duration-500">
+                  <CardBody className="p-10">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="w-20 h-20 rounded-[28px] bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
+                        {feature.icon}
+                      </div>
+                      <div className="bg-foreground/[0.03] dark:bg-white/5 px-4 py-1.5 rounded-full">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
                       </div>
                     </div>
+                    <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-foreground/60 leading-relaxed mb-6 italic">{feature.description}</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {feature.highlights.map((item) => (
+                        <div key={item} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          <span className="text-sm text-foreground/70">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardBody>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-secondary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">How It Works</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              From Faulty Device to <span className="text-secondary italic">Happy Customer</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                className="text-center"
+              >
+                <div className="relative inline-block mb-8">
+                  <div className="w-24 h-24 rounded-full bg-secondary/10 flex items-center justify-center text-5xl mx-auto">
+                    {item.icon}
                   </div>
-                </CardBody>
-              </Card>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-black text-sm">
+                    {item.step}
+                  </div>
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-foreground/60 italic">{item.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Additional Features */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="warning" variant="flat" className="mb-4">More Features</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              And That's Not All
+      <section className="section-padding relative">
+        <div className="absolute top-1/3 left-0 w-96 h-96 bg-warning/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-warning/10 border border-warning/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-warning animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-warning">Advanced</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              And That's <span className="text-warning italic">Not All</span>
             </h2>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {additionalFeatures.map((feature) => (
-              <Card key={feature.title} className="modern-card">
-                <CardBody className="p-6">
-                  <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center mb-4">
-                    <feature.icon size={24} className="text-warning" />
-                  </div>
-                  <h3 className="font-black mb-2">{feature.title}</h3>
-                  <p className="text-sm text-foreground/60">{feature.description}</p>
-                </CardBody>
-              </Card>
+            {additionalFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+              >
+                <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
+                  <CardBody className="p-8">
+                    <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-black mb-3 uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-foreground/60 italic">{feature.description}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="success" variant="flat" className="mb-4">Testimonials</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              What Service Centers Say
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.author} className="modern-card">
-                <CardBody className="p-8">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-yellow-500">★</span>
-                    ))}
-                  </div>
-                  <p className="text-foreground/70 italic mb-6">"{testimonial.quote}"</p>
-                  <div>
-                    <p className="font-black">{testimonial.author}</p>
-                    <p className="text-sm text-foreground/50">{testimonial.role}</p>
-                  </div>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Pricing</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Repair Features by Plan
-            </h2>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse max-w-4xl mx-auto">
-              <thead>
-                <tr className="border-b border-foreground/10">
-                  <th className="text-left py-4 px-4 font-bold">Feature</th>
-                  <th className="text-center py-4 px-4 font-bold">Starter</th>
-                  <th className="text-center py-4 px-4 font-bold bg-secondary/5">Business</th>
-                  <th className="text-center py-4 px-4 font-bold">Professional</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pricingComparison.map((row) => (
-                  <tr key={row.feature} className="border-b border-foreground/5">
-                    <td className="py-4 px-4 text-foreground/70">{row.feature}</td>
-                    <td className="py-4 px-4 text-center">{row.starter}</td>
-                    <td className="py-4 px-4 text-center bg-secondary/5">{row.business}</td>
-                    <td className="py-4 px-4 text-center">{row.professional}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       </section>
 
       {/* FAQs */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="default" variant="flat" className="mb-4">FAQs</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Frequently Asked Questions
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-foreground/5 border border-foreground/10 px-4 py-2 rounded-full mb-6">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/50">FAQs</span>
+            </div>
+            <h2 className="heading-lg">
+              Questions? <span className="text-primary italic">Answered.</span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
-            {faqs.map((faq) => (
-              <Card key={faq.question} className="modern-card">
-                <CardBody className="p-6">
-                  <h3 className="font-black mb-3">{faq.question}</h3>
-                  <p className="text-foreground/60">{faq.answer}</p>
-                </CardBody>
-              </Card>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={faq.q}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card">
+                  <CardBody className="p-8">
+                    <h3 className="text-lg font-black mb-3">{faq.q}</h3>
+                    <p className="text-foreground/60 italic leading-relaxed">{faq.a}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20">
-        <div className="container-custom">
-          <Card className="modern-card bg-gradient-to-br from-secondary/10 to-secondary/5 border-secondary/20">
-            <CardBody className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Ready to Streamline Your Repairs?
-              </h2>
-              <p className="text-foreground/60 mb-8 max-w-xl mx-auto">
-                Join service centers across India who've reduced turnaround time and increased customer satisfaction.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button as={Link} href="/register" color="secondary" size="lg" className="font-black" radius="full">
-                  Start Free 14-Day Trial
-                  <ArrowRight size={18} />
-                </Button>
-                <Button as={Link} href="/contact" variant="bordered" size="lg" className="font-bold" radius="full">
-                  Request Demo
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+      <section className="section-padding relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
+              <CardBody className="p-12 lg:p-20 text-center relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-6xl mb-8">🔧</div>
+                  <h2 className="heading-lg mb-6">
+                    Ready to Streamline Your <span className="text-primary italic">Repairs?</span>
+                  </h2>
+                  <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
+                    Join service centers across India who have reduced turnaround time and increased satisfaction.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
+                      Start Free Trial
+                      <ArrowRight size={20} />
+                    </Button>
+                    <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                      Request Demo
+                    </Button>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
     </main>

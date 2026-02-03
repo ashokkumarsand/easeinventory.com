@@ -1,410 +1,364 @@
 'use client';
 
-import { Button, Card, CardBody, Chip, Progress } from '@heroui/react';
-import { ArrowRight, Calendar, Check, Clock, DollarSign, Lock, TrendingUp, Users } from 'lucide-react';
+import { Button, Card, CardBody } from '@heroui/react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
+
+const stats = [
+  { value: '80%', label: 'Payroll Time Saved', icon: '⚡' },
+  { value: '100%', label: 'Attendance Accuracy', icon: '🎯' },
+  { value: '15min', label: 'Monthly Payroll', icon: '⏱️' },
+  { value: '0', label: 'Payroll Errors', icon: '✅' },
+];
 
 const coreFeatures = [
   {
-    icon: Clock,
+    icon: '⏰',
     title: 'Attendance Tracking',
-    description: 'Digital check-in/check-out via app or dashboard. Optional geo-tagging to verify location. Late arrival and early departure reports.',
-    highlights: ['Mobile check-in', 'Geo-location tagging', 'Late arrival reports', 'Shift management'],
+    tag: 'Daily',
+    description: 'Digital check-in/check-out via app or dashboard. Optional geo-tagging to verify location.',
+    highlights: ['Mobile check-in', 'Geo-location', 'Late arrival reports', 'Shift management'],
   },
   {
-    icon: DollarSign,
+    icon: '💰',
     title: 'Payroll Calculation',
-    description: 'Automatic salary calculation based on attendance, leaves, and incentives. Monthly payslip generation. Bank-ready reports.',
+    tag: 'Automated',
+    description: 'Automatic salary calculation based on attendance, leaves, and incentives. Monthly payslip generation.',
     highlights: ['Auto calculation', 'Leave deductions', 'Incentive tracking', 'Payslip generation'],
   },
   {
-    icon: Lock,
+    icon: '🔐',
     title: 'Role-Based Access',
-    description: 'Control who sees what. Create roles like Cashier, Store Manager, Inventory Staff with specific permissions.',
+    tag: 'Security',
+    description: 'Control who sees what. Create roles like Cashier, Store Manager with specific permissions.',
     highlights: ['Custom roles', 'Granular permissions', 'Feature-level control', 'Audit logging'],
   },
   {
-    icon: TrendingUp,
+    icon: '📊',
     title: 'Performance Tracking',
-    description: 'Track sales per employee, repairs completed, and targets achieved. Leaderboards and performance incentives.',
+    tag: 'Insights',
+    description: 'Track sales per employee, repairs completed, and targets achieved. Leaderboards and incentives.',
     highlights: ['Sales per employee', 'Target tracking', 'Leaderboards', 'Incentive triggers'],
   },
 ];
 
-const permissionModules = [
-  { module: 'Inventory', permissions: ['View stock', 'Add products', 'Edit prices', 'Delete products', 'Stock adjustments'] },
-  { module: 'Billing', permissions: ['Create invoices', 'Apply discounts', 'Void invoices', 'View all invoices', 'Refunds'] },
-  { module: 'Repairs', permissions: ['Create tickets', 'Assign technicians', 'Update status', 'View all repairs', 'Quotations'] },
-  { module: 'Reports', permissions: ['View sales reports', 'View inventory reports', 'Export data', 'Financial reports'] },
-  { module: 'Settings', permissions: ['Manage staff', 'Business settings', 'Integrations', 'Billing/subscription'] },
+const howItWorks = [
+  { step: '01', title: 'Add Staff', description: 'Create user accounts with roles, salary structure, and permissions.', icon: '👤' },
+  { step: '02', title: 'Track Attendance', description: 'Staff check in via app or dashboard. Late arrivals flagged automatically.', icon: '📲' },
+  { step: '03', title: 'Generate Payroll', description: 'One-click payroll calculation with attendance and leave adjustments.', icon: '💵' },
 ];
 
-const roleTemplates = [
-  { role: 'Owner/Admin', description: 'Full access to everything', color: 'danger' },
-  { role: 'Store Manager', description: 'All except billing/subscription settings', color: 'warning' },
-  { role: 'Cashier', description: 'Billing, basic inventory view', color: 'success' },
-  { role: 'Inventory Staff', description: 'Full inventory, no billing', color: 'primary' },
-  { role: 'Technician', description: 'Repair tickets only', color: 'secondary' },
-];
-
-const leaveTypes = [
-  { type: 'Casual Leave', days: '12/year', description: 'For personal matters' },
-  { type: 'Sick Leave', days: '6/year', description: 'Medical reasons' },
-  { type: 'Earned Leave', days: 'Based on tenure', description: 'Carry forward allowed' },
-  { type: 'Holidays', days: 'As per calendar', description: 'National/regional holidays' },
-];
-
-const hrStats = [
-  { value: '80%', label: 'Payroll Time Saved', desc: 'vs manual calculation' },
-  { value: '100%', label: 'Attendance Accuracy', desc: 'With digital tracking' },
-  { value: '15min', label: 'Monthly Payroll', desc: 'From calculation to payslip' },
-  { value: '0', label: 'Payroll Errors', desc: 'With automated deductions' },
+const additionalFeatures = [
+  { icon: '📅', title: 'Leave Management', description: 'Casual, sick, earned leave tracking with approval workflow.' },
+  { icon: '👥', title: 'Pre-built Roles', description: 'Owner, Manager, Cashier, Technician templates ready to use.' },
+  { icon: '🛡️', title: 'Granular Permissions', description: 'Control access at feature level—view, create, edit, delete.' },
+  { icon: '🎯', title: 'Sales Targets', description: 'Set and track individual sales targets with incentive triggers.' },
+  { icon: '💎', title: 'Incentive Structures', description: 'Flat bonus, percentage, or tiered incentives on target achievement.' },
+  { icon: '⏱️', title: 'Overtime Tracking', description: 'Automatic overtime calculation based on shift rules.' },
 ];
 
 const faqs = [
-  {
-    question: 'How does attendance tracking work?',
-    answer: 'Staff can check in via the EaseInventory app (punch in button) or from the dashboard. You can optionally enable geo-location to verify they are at the store. Check-in/out times are recorded for payroll calculation.',
-  },
-  {
-    question: 'Can I set different salary structures for different staff?',
-    answer: 'Yes. Each staff member can have their own salary structure: fixed salary, daily wages, or hourly rates. You can also define per-day deductions for absence and incentive structures.',
-  },
-  {
-    question: 'How granular are the permissions?',
-    answer: "Very granular. You can control access at the feature level. For example, a cashier can create invoices but not apply discounts above 10%. A manager can edit inventory but not delete it. It's fully customizable.",
-  },
-  {
-    question: 'Can staff access EaseInventory on their phones?',
-    answer: 'Yes. EaseInventory is fully mobile-responsive. Staff can use their phones to check-in, create invoices, update inventory, and more—based on their assigned permissions.',
-  },
-  {
-    question: 'How do incentives work?',
-    answer: 'You can set sales targets for each staff member. When they exceed targets, incentives are automatically calculated and added to their payroll. Common models: flat bonus, percentage of sales above target, tiered incentives.',
-  },
+  { q: 'How does attendance tracking work?', a: 'Staff check in via the EaseInventory app (punch button) or dashboard. Optionally enable geo-location to verify they are at the store.' },
+  { q: 'Can I set different salary structures?', a: 'Yes. Each staff member can have fixed salary, daily wages, or hourly rates with per-day deductions and incentives.' },
+  { q: 'How granular are the permissions?', a: 'Very granular. Control at feature level—a cashier can create invoices but not apply discounts above 10%.' },
+  { q: 'Can staff access EaseInventory on phones?', a: 'Yes. Fully mobile-responsive. Staff can check-in, create invoices, update inventory based on permissions.' },
 ];
 
-const pricingComparison = [
-  { feature: 'Staff Members', starter: '3', business: '10', professional: '25+' },
-  { feature: 'Attendance Tracking', starter: '✓', business: '✓', professional: '✓' },
-  { feature: 'Geo-Location Check-in', starter: '—', business: '✓', professional: '✓' },
-  { feature: 'Leave Management', starter: '—', business: '✓', professional: '✓' },
-  { feature: 'Payroll Calculation', starter: '—', business: '✓', professional: '✓' },
-  { feature: 'Performance Tracking', starter: '—', business: '—', professional: '✓' },
-  { feature: 'Custom Roles', starter: '2', business: '5', professional: 'Unlimited' },
-];
-
-export default function StaffManagementPage() {
+export default function StaffPage() {
   return (
-    <main className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="relative py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent" />
-        <div className="absolute top-20 right-20 w-80 h-80 bg-secondary/10 rounded-full blur-[150px]" />
-        
+    <main className="min-h-screen bg-background overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] pt-32 pb-20 lg:pt-40 lg:pb-32 flex items-center">
+        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[150px] pointer-events-none" />
+
         <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-6">
-                <Users size={14} className="text-secondary" />
-                <span className="text-xs font-black uppercase tracking-widest text-secondary">Human Resources</span>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-5 py-2 rounded-full mb-8">
+                <span className="text-xl">👥</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Staff Management</span>
               </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 leading-tight">
+
+              <h1 className="heading-lg mb-8">
                 Your Team.<br />
-                <span className="text-secondary">Managed Right.</span>
+                <span className="text-primary italic">Managed Right.</span>
               </h1>
-              
-              <p className="text-lg text-foreground/60 leading-relaxed mb-8 max-w-xl">
-                Track attendance, calculate payroll, assign roles, and monitor performance—all from 
-                EaseInventory. Complete HR for retail teams without a separate HR system.
+
+              <p className="paragraph-lg mb-10 max-w-xl">
+                Track attendance, calculate payroll, assign roles, and monitor performance—all from
+                EaseInventory. Complete HR for retail teams without a separate system.
               </p>
-              
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Button as={Link} href="/register" color="secondary" size="lg" className="font-black" radius="full">
-                  Start 14-Day Free Trial
-                  <ArrowRight size={18} />
+
+              <div className="flex flex-wrap gap-4 mb-10">
+                <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
+                  Start Free Trial
+                  <ArrowRight size={20} />
                 </Button>
-                <Button as={Link} href="#features" variant="bordered" size="lg" className="font-bold" radius="full">
-                  Explore Features
+                <Button as={Link} href="#features" variant="bordered" size="lg" className="font-black px-10 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                  Explore
                 </Button>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-secondary" />
-                  <span className="text-foreground/60">Mobile attendance</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-secondary" />
-                  <span className="text-foreground/60">Auto payroll</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-secondary" />
-                  <span className="text-foreground/60">Custom roles</span>
-                </div>
+              <div className="flex flex-wrap gap-8">
+                {['Mobile attendance', 'Auto payroll', 'Custom roles'].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Check size={12} className="text-primary" />
+                    </div>
+                    <span className="text-sm font-bold text-foreground/60">{item}</span>
+                  </div>
+                ))}
               </div>
-            </div>
+            </motion.div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              {hrStats.map((stat) => (
-                <Card key={stat.label} className="modern-card p-6">
-                  <div className="text-3xl font-black text-secondary mb-1">{stat.value}</div>
-                  <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
-                  <p className="text-xs text-foreground/40 mt-2">{stat.desc}</p>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="grid grid-cols-2 gap-5"
+            >
+              {stats.map((stat) => (
+                <Card key={stat.label} className="modern-card group hover:scale-105 transition-transform duration-500">
+                  <CardBody className="p-8">
+                    <div className="text-4xl mb-4">{stat.icon}</div>
+                    <div className="text-4xl font-black text-primary mb-2">{stat.value}</div>
+                    <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
+                  </CardBody>
                 </Card>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Core Features */}
-      <section id="features" className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="secondary" variant="flat" className="mb-4">Core Features</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Complete Staff Management
+      <section id="features" className="section-padding relative">
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Core Features</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Complete Staff <span className="text-primary italic">Management</span>
             </h2>
-          </div>
+            <p className="paragraph-lg">
+              Everything you need to manage your retail team efficiently.
+            </p>
+          </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {coreFeatures.map((feature) => (
-              <Card key={feature.title} className="modern-card overflow-hidden">
-                <CardBody className="p-8">
-                  <div className="flex gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0">
-                      <feature.icon size={28} className="text-secondary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-black mb-2">{feature.title}</h3>
-                      <p className="text-foreground/60 mb-4">{feature.description}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {feature.highlights.map((item) => (
-                          <div key={item} className="flex items-center gap-2 text-sm">
-                            <Check size={14} className="text-secondary shrink-0" />
-                            <span className="text-foreground/70">{item}</span>
-                          </div>
-                        ))}
+            {coreFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card h-full group hover:border-primary/30 transition-all duration-500">
+                  <CardBody className="p-10">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="w-20 h-20 rounded-[28px] bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
+                        {feature.icon}
+                      </div>
+                      <div className="bg-foreground/[0.03] dark:bg-white/5 px-4 py-1.5 rounded-full">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
                       </div>
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Role Templates */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Role Management</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Pre-Built Role Templates
-            </h2>
-            <p className="text-foreground/60">
-              Start with our templates and customize as needed.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {roleTemplates.map((role) => (
-              <Card key={role.role} className="modern-card w-[200px]">
-                <CardBody className="p-4 text-center">
-                  <Chip color={role.color as any} size="sm" className="mb-2">{role.role}</Chip>
-                  <p className="text-xs text-foreground/50">{role.description}</p>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-
-          {/* Permissions Matrix Preview */}
-          <Card className="modern-card overflow-hidden max-w-4xl mx-auto">
-            <CardBody className="p-0">
-              <div className="p-6 border-b border-foreground/5">
-                <h3 className="font-black">Granular Permission Control</h3>
-                <p className="text-sm text-foreground/50">Control access at the feature level</p>
-              </div>
-              <div className="divide-y divide-foreground/5">
-                {permissionModules.slice(0, 3).map((module) => (
-                  <div key={module.module} className="p-4 flex flex-wrap items-center gap-4">
-                    <div className="w-24 font-bold">{module.module}</div>
-                    <div className="flex-1 flex flex-wrap gap-2">
-                      {module.permissions.map((perm) => (
-                        <Chip key={perm} size="sm" variant="flat">{perm}</Chip>
+                    <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-foreground/60 leading-relaxed mb-6 italic">{feature.description}</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {feature.highlights.map((item) => (
+                        <div key={item} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          <span className="text-sm text-foreground/70">{item}</span>
+                        </div>
                       ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-4 bg-foreground/[0.02] text-center">
-                <p className="text-sm text-foreground/50">+ 20 more permission categories</p>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-      </section>
-
-      {/* Leave Management */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="warning" variant="flat" className="mb-4">Leave Management</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Track Leaves Effortlessly
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {leaveTypes.map((leave) => (
-              <Card key={leave.type} className="modern-card">
-                <CardBody className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Calendar size={20} className="text-warning" />
-                    <h3 className="font-black">{leave.type}</h3>
-                  </div>
-                  <p className="text-2xl font-black text-warning mb-2">{leave.days}</p>
-                  <p className="text-sm text-foreground/50">{leave.description}</p>
-                </CardBody>
-              </Card>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Performance Example */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="success" variant="flat" className="mb-4">Performance</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Track & Reward Top Performers
-            </h2>
-          </div>
+      {/* How It Works */}
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none" />
 
-          <div className="max-w-3xl mx-auto">
-            <Card className="modern-card">
-              <CardBody className="p-8">
-                <h3 className="font-black mb-6">This Month's Leaderboard</h3>
-                <div className="space-y-6">
-                  {[
-                    { name: 'Rahul S.', role: 'Cashier', sales: 245000, target: 200000, emoji: '🥇' },
-                    { name: 'Priya M.', role: 'Cashier', sales: 218000, target: 200000, emoji: '🥈' },
-                    { name: 'Amit K.', role: 'Sales', sales: 195000, target: 200000, emoji: '🥉' },
-                  ].map((staff, idx) => (
-                    <div key={staff.name} className="flex items-center gap-4">
-                      <div className="text-2xl">{staff.emoji}</div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center mb-1">
-                          <div>
-                            <span className="font-bold">{staff.name}</span>
-                            <span className="text-sm text-foreground/50 ml-2">{staff.role}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="font-black text-success">₹{(staff.sales / 1000).toFixed(0)}K</span>
-                            <span className="text-sm text-foreground/50 ml-1">/ ₹{(staff.target / 1000).toFixed(0)}K</span>
-                          </div>
-                        </div>
-                        <Progress 
-                          value={Math.min((staff.sales / staff.target) * 100, 100)} 
-                          color={staff.sales >= staff.target ? 'success' : 'warning'}
-                          size="sm"
-                          className="h-2"
-                        />
-                      </div>
-                    </div>
-                  ))}
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-secondary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">How It Works</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Simple Staff Management in <span className="text-secondary italic">3 Steps</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                className="text-center"
+              >
+                <div className="relative inline-block mb-8">
+                  <div className="w-24 h-24 rounded-full bg-secondary/10 flex items-center justify-center text-5xl mx-auto">
+                    {item.icon}
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-black text-sm">
+                    {item.step}
+                  </div>
                 </div>
-              </CardBody>
-            </Card>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-foreground/60 italic">{item.description}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Pricing</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Staff Features by Plan
-            </h2>
-          </div>
+      {/* Additional Features */}
+      <section className="section-padding relative">
+        <div className="absolute top-1/3 left-0 w-96 h-96 bg-warning/5 rounded-full blur-[150px] pointer-events-none" />
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse max-w-4xl mx-auto">
-              <thead>
-                <tr className="border-b border-foreground/10">
-                  <th className="text-left py-4 px-4 font-bold">Feature</th>
-                  <th className="text-center py-4 px-4 font-bold">Starter</th>
-                  <th className="text-center py-4 px-4 font-bold bg-secondary/5">Business</th>
-                  <th className="text-center py-4 px-4 font-bold">Professional</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pricingComparison.map((row) => (
-                  <tr key={row.feature} className="border-b border-foreground/5">
-                    <td className="py-4 px-4 text-foreground/70">{row.feature}</td>
-                    <td className="py-4 px-4 text-center">{row.starter}</td>
-                    <td className="py-4 px-4 text-center bg-secondary/5">{row.business}</td>
-                    <td className="py-4 px-4 text-center">{row.professional}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-warning/10 border border-warning/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-warning animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-warning">Advanced</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              More HR Features <span className="text-warning italic">Built In</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {additionalFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+              >
+                <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
+                  <CardBody className="p-8">
+                    <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-black mb-3 uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-foreground/60 italic">{feature.description}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* FAQs */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="default" variant="flat" className="mb-4">FAQs</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Frequently Asked Questions
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-foreground/5 border border-foreground/10 px-4 py-2 rounded-full mb-6">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/50">FAQs</span>
+            </div>
+            <h2 className="heading-lg">
+              Questions? <span className="text-primary italic">Answered.</span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
-            {faqs.map((faq) => (
-              <Card key={faq.question} className="modern-card">
-                <CardBody className="p-6">
-                  <h3 className="font-black mb-3">{faq.question}</h3>
-                  <p className="text-foreground/60">{faq.answer}</p>
-                </CardBody>
-              </Card>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={faq.q}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card">
+                  <CardBody className="p-8">
+                    <h3 className="text-lg font-black mb-3">{faq.q}</h3>
+                    <p className="text-foreground/60 italic leading-relaxed">{faq.a}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20">
-        <div className="container-custom">
-          <Card className="modern-card bg-gradient-to-br from-secondary/10 to-secondary/5 border-secondary/20">
-            <CardBody className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Manage Your Team Better
-              </h2>
-              <p className="text-foreground/60 mb-8 max-w-xl mx-auto">
-                From attendance to payroll, simplify HR for your retail business.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button as={Link} href="/register" color="secondary" size="lg" className="font-black" radius="full">
-                  Start Free 14-Day Trial
-                  <ArrowRight size={18} />
-                </Button>
-                <Button as={Link} href="/contact" variant="bordered" size="lg" className="font-bold" radius="full">
-                  Talk to Sales
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+      <section className="section-padding relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
+              <CardBody className="p-12 lg:p-20 text-center relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-6xl mb-8">👥</div>
+                  <h2 className="heading-lg mb-6">
+                    Manage Your Team <span className="text-primary italic">Better</span>
+                  </h2>
+                  <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
+                    From attendance to payroll, simplify HR for your retail business.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
+                      Start Free Trial
+                      <ArrowRight size={20} />
+                    </Button>
+                    <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                      Talk to Sales
+                    </Button>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
     </main>

@@ -96,7 +96,13 @@ export default function LoginPage() {
         if (user?.customDomain && hostname !== user.customDomain) {
            window.location.href = `https://${user.customDomain}/dashboard`;
         } else if (user?.tenantSlug && (hostname === rootDomain || hostname === 'localhost')) {
-           window.location.href = `https://${user.tenantSlug}.${rootDomain}/dashboard`;
+           // For local development, redirect to subdomain.localhost
+           if (hostname === 'localhost') {
+             const port = window.location.port ? `:${window.location.port}` : '';
+             window.location.href = `http://${user.tenantSlug}.localhost${port}/dashboard`;
+           } else {
+             window.location.href = `https://${user.tenantSlug}.${rootDomain}/dashboard`;
+           }
         } else {
            router.push('/dashboard');
         }

@@ -1,437 +1,364 @@
 'use client';
 
-import { Button, Card, CardBody, Chip, Divider } from '@heroui/react';
-import { ArrowRight, BarChart3, Check, Clock, Layers, MapPin, Package, QrCode, RefreshCw, Shield, TrendingUp } from 'lucide-react';
+import { Button, Card, CardBody } from '@heroui/react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
 
-// Comprehensive feature data
+const stats = [
+  { value: '99.9%', label: 'Inventory Accuracy', icon: '🎯' },
+  { value: '50%', label: 'Time Saved', icon: '⚡' },
+  { value: '<2s', label: 'Search Speed', icon: '🔍' },
+  { value: '₹0', label: 'Stockout Losses', icon: '📈' },
+];
+
 const coreFeatures = [
   {
-    icon: QrCode,
-    title: 'Barcode & QR Scanning',
-    description: 'Scan products instantly using your phone camera. Supports EAN-13, UPC, Code-128, and QR codes. No additional hardware needed.',
-    details: ['Camera-based scanning', 'Supports 7+ barcode formats', 'Print custom labels', 'Bulk barcode generation'],
-  },
-  {
-    icon: Layers,
-    title: 'Serial Number Tracking',
-    description: 'Track individual units with unique serial numbers. Perfect for electronics, appliances, and high-value items with warranty tracking.',
-    details: ['Unique unit identification', 'Warranty tracking', 'History per unit', 'Easy recall management'],
-  },
-  {
-    icon: MapPin,
-    title: 'Multi-Location Management',
-    description: 'Manage inventory across multiple stores, warehouses, and locations. Transfer stock seamlessly with full audit trails.',
-    details: ['Unlimited locations', 'Inter-location transfers', 'Location-wise reports', 'Centralized dashboard'],
-  },
-  {
-    icon: TrendingUp,
-    title: 'Automated Profit Analysis',
-    description: 'Know your margins instantly. Automatic calculation of cost price, sale price, and profit percentage for every item.',
-    details: ['Real-time profit tracking', 'Margin alerts', 'Cost history', 'Pricing suggestions'],
-  },
-];
-
-const advancedFeatures = [
-  {
-    icon: Clock,
-    title: 'Batch & Expiry Tracking',
-    description: 'Track batch numbers and expiry dates. FIFO/FEFO alerts ensure oldest stock sells first. Essential for pharma, food, and FMCG.',
-  },
-  {
-    icon: RefreshCw,
-    title: 'Stock Movement History',
-    description: 'Complete audit trail of every stock movement. Know who moved what, when, and why. Perfect for compliance and analysis.',
-  },
-  {
-    icon: Shield,
-    title: 'Low Stock Alerts',
-    description: 'Never run out of stock. Automated alerts when inventory falls below minimum levels. Configurable per product.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Inventory Analytics',
-    description: 'Identify slow-moving items, fast sellers, and dead stock. Make data-driven purchasing decisions.',
-  },
-];
-
-const useCases = [
-  {
-    title: 'Electronics & Mobile Stores',
-    description: 'Track IMEI numbers, warranty periods, and accessories. Manage repairs alongside inventory.',
     icon: '📱',
+    title: 'Barcode & QR Scanning',
+    tag: 'Mobile',
+    description: 'Scan products instantly using your phone camera. Supports EAN-13, UPC, Code-128, and QR codes.',
+    highlights: ['Camera-based scanning', '7+ barcode formats', 'Print custom labels', 'Bulk generation'],
   },
   {
-    title: 'Pharmacies & Medical Shops',
-    description: 'Batch tracking with expiry dates. Drug license compliance. Schedule H drug management.',
-    icon: '💊',
+    icon: '🔢',
+    title: 'Serial Number Tracking',
+    tag: 'Precision',
+    description: 'Track individual units with unique serial numbers. Perfect for electronics and high-value items.',
+    highlights: ['Unique unit IDs', 'Warranty tracking', 'History per unit', 'Recall management'],
   },
   {
-    title: 'Fashion & Apparel',
-    description: 'Size and color variants. Season-wise inventory. Multi-brand management.',
-    icon: '👗',
+    icon: '📍',
+    title: 'Multi-Location Management',
+    tag: 'Scale',
+    description: 'Manage inventory across multiple stores and warehouses. Transfer stock with full audit trails.',
+    highlights: ['Unlimited locations', 'Inter-location transfers', 'Location-wise reports', 'Centralized view'],
   },
   {
-    title: 'Hardware & Auto Parts',
-    description: 'SKU management with vehicle compatibility. OEM vs aftermarket tracking.',
-    icon: '🔧',
+    icon: '💰',
+    title: 'Automated Profit Analysis',
+    tag: 'Insights',
+    description: 'Know your margins instantly. Automatic calculation of cost, sale price, and profit percentage.',
+    highlights: ['Real-time tracking', 'Margin alerts', 'Cost history', 'Pricing suggestions'],
   },
 ];
 
-const pricingComparison = [
-  { feature: 'Number of Products', starter: '500', business: '5,000', professional: 'Unlimited' },
-  { feature: 'Locations', starter: '1', business: '3', professional: '10+' },
-  { feature: 'Barcode Scanning', starter: '✓', business: '✓', professional: '✓' },
-  { feature: 'Serial Number Tracking', starter: '—', business: '✓', professional: '✓' },
-  { feature: 'Batch/Expiry Tracking', starter: '—', business: '✓', professional: '✓' },
-  { feature: 'Advanced Analytics', starter: '—', business: '—', professional: '✓' },
+const howItWorks = [
+  { step: '01', title: 'Import Products', description: 'Upload existing inventory via Excel or add products manually with our guided wizard.', icon: '📤' },
+  { step: '02', title: 'Configure Locations', description: 'Set up stores, warehouses, and define minimum stock levels for each product.', icon: '⚙️' },
+  { step: '03', title: 'Start Tracking', description: 'Scan barcodes, record purchases, process sales. Every movement tracked in real-time.', icon: '🚀' },
+];
+
+const additionalFeatures = [
+  { icon: '📅', title: 'Batch & Expiry Tracking', description: 'Track batch numbers and expiry dates with FIFO/FEFO alerts.' },
+  { icon: '📊', title: 'Stock Movement History', description: 'Complete audit trail of every stock movement with user details.' },
+  { icon: '🔔', title: 'Low Stock Alerts', description: 'Automated alerts when inventory falls below minimum levels.' },
+  { icon: '📈', title: 'Inventory Analytics', description: 'Identify slow-moving items, fast sellers, and dead stock.' },
+  { icon: '🤝', title: 'Consignment Support', description: 'Track consignment inventory with supplier settlement tracking.' },
+  { icon: '💡', title: 'Reorder Suggestions', description: 'Smart suggestions based on sales velocity and lead times.' },
 ];
 
 const faqs = [
-  {
-    question: 'Can I import my existing inventory from Excel?',
-    answer: 'Yes! EaseInventory supports bulk import from Excel and CSV files. Our guided import wizard maps your columns automatically. You can import product names, SKUs, quantities, prices, and even images in one go.',
-  },
-  {
-    question: 'How does serial number tracking work?',
-    answer: 'When you purchase or receive stock, you can assign unique serial numbers to each unit. These serial numbers are tracked through sales, repairs, and returns. You can search any serial number to see its complete history.',
-  },
-  {
-    question: 'Can I manage multiple stores from one account?',
-    answer: 'Absolutely. Add unlimited locations (stores, warehouses, vans) and track inventory at each. Transfer stock between locations with full documentation. Each location can have its own staff with role-based access.',
-  },
-  {
-    question: 'Do I need special hardware for barcode scanning?',
-    answer: 'No! EaseInventory uses your phone or tablet camera for barcode scanning. Works with any smartphone. You can also use traditional USB barcode scanners if you prefer.',
-  },
+  { q: 'Can I import my existing inventory from Excel?', a: 'Yes! EaseInventory supports bulk import from Excel and CSV files. Our guided import wizard maps your columns automatically.' },
+  { q: 'How does serial number tracking work?', a: 'When you receive stock, assign unique serial numbers to each unit. These are tracked through sales, repairs, and returns.' },
+  { q: 'Can I manage multiple stores from one account?', a: 'Absolutely. Add unlimited locations and track inventory at each. Transfer stock between locations with full documentation.' },
+  { q: 'Do I need special hardware for barcode scanning?', a: 'No! EaseInventory uses your phone or tablet camera. You can also use traditional USB barcode scanners if you prefer.' },
 ];
 
-export default function PrecisionInventoryPage() {
+export default function InventoryPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background overflow-hidden">
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
-        <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-[150px]" />
-        
+      <section className="relative min-h-[90vh] pt-32 pb-20 lg:pt-40 lg:pb-32 flex items-center">
+        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[150px] pointer-events-none" />
+
         <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-6">
-                <Package size={14} className="text-primary" />
-                <span className="text-xs font-black uppercase tracking-widest text-primary">Inventory Management</span>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-5 py-2 rounded-full mb-8">
+                <span className="text-xl">📦</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Precision Inventory</span>
               </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 leading-tight">
+
+              <h1 className="heading-lg mb-8">
                 Know Your Stock.<br />
-                <span className="text-primary">Down to the Last Unit.</span>
+                <span className="text-primary italic">Down to the Last Unit.</span>
               </h1>
-              
-              <p className="text-lg text-foreground/60 leading-relaxed mb-8 max-w-xl">
-                EaseInventory gives you complete visibility into your stock. Track every item with 
-                serial numbers, scan barcodes with your phone, get low-stock alerts, and analyze 
-                profitability—all in real-time, across all your locations.
+
+              <p className="paragraph-lg mb-10 max-w-xl">
+                Complete visibility into your stock. Track every item with serial numbers, scan barcodes
+                with your phone, get low-stock alerts, and analyze profitability in real-time.
               </p>
-              
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Button as={Link} href="/register" color="primary" size="lg" className="font-black" radius="full">
-                  Start 14-Day Free Trial
-                  <ArrowRight size={18} />
+
+              <div className="flex flex-wrap gap-4 mb-10">
+                <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
+                  Start Free Trial
+                  <ArrowRight size={20} />
                 </Button>
-                <Button as={Link} href="#demo" variant="bordered" size="lg" className="font-bold" radius="full">
-                  Watch Demo Video
+                <Button as={Link} href="#features" variant="bordered" size="lg" className="font-black px-10 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                  Explore
                 </Button>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-primary" />
-                  <span className="text-foreground/60">No credit card required</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-primary" />
-                  <span className="text-foreground/60">Setup in 5 minutes</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-primary" />
-                  <span className="text-foreground/60">Free data import</span>
-                </div>
+              <div className="flex flex-wrap gap-8">
+                {['No credit card', '5 min setup', 'Free import'].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Check size={12} className="text-primary" />
+                    </div>
+                    <span className="text-sm font-bold text-foreground/60">{item}</span>
+                  </div>
+                ))}
               </div>
-            </div>
+            </motion.div>
 
-            {/* Stats Card */}
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
-                <Card className="modern-card p-6">
-                  <div className="text-4xl font-black text-primary mb-2">99.9%</div>
-                  <div className="text-sm font-bold text-foreground/50">Inventory Accuracy</div>
-                  <p className="text-xs text-foreground/40 mt-2">Average across our customers after 3 months</p>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="grid grid-cols-2 gap-5"
+            >
+              {stats.map((stat, i) => (
+                <Card key={stat.label} className="modern-card group hover:scale-105 transition-transform duration-500">
+                  <CardBody className="p-8">
+                    <div className="text-4xl mb-4">{stat.icon}</div>
+                    <div className="text-4xl font-black text-primary mb-2">{stat.value}</div>
+                    <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
+                  </CardBody>
                 </Card>
-                <Card className="modern-card p-6">
-                  <div className="text-4xl font-black text-primary mb-2">50%</div>
-                  <div className="text-sm font-bold text-foreground/50">Time Saved</div>
-                  <p className="text-xs text-foreground/40 mt-2">On stock counting and reconciliation</p>
-                </Card>
-                <Card className="modern-card p-6">
-                  <div className="text-4xl font-black text-primary mb-2">&lt;2s</div>
-                  <div className="text-sm font-bold text-foreground/50">Search Speed</div>
-                  <p className="text-xs text-foreground/40 mt-2">Find any product across 10,000+ SKUs</p>
-                </Card>
-                <Card className="modern-card p-6">
-                  <div className="text-4xl font-black text-primary mb-2">₹0</div>
-                  <div className="text-sm font-bold text-foreground/50">Stockout Losses</div>
-                  <p className="text-xs text-foreground/40 mt-2">With automated reorder alerts</p>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Bar */}
-      <section className="py-8 border-y border-foreground/5 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="flex flex-wrap justify-center items-center gap-8 text-foreground/40">
-            <span className="text-sm font-bold">Trusted by 2,000+ Indian retail businesses</span>
-            <Divider orientation="vertical" className="h-6 hidden md:block" />
-            <div className="flex gap-6 text-xs font-medium">
-              <span>Mobile Stores</span>
-              <span>•</span>
-              <span>Pharmacies</span>
-              <span>•</span>
-              <span>Electronics</span>
-              <span>•</span>
-              <span>Fashion</span>
-              <span>•</span>
-              <span>Hardware</span>
-            </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Core Features */}
-      <section className="py-20 lg:py-28">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Core Features</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Everything You Need to Control Your Inventory
+      <section id="features" className="section-padding relative">
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Core Features</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Everything to <span className="text-primary italic">Control</span> Your Inventory
             </h2>
-            <p className="text-foreground/60">
-              From barcode scanning to multi-location management, EaseInventory handles the 
-              complexity so you can focus on selling.
+            <p className="paragraph-lg">
+              From barcode scanning to multi-location management, handle complexity with ease.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {coreFeatures.map((feature) => (
-              <Card key={feature.title} className="modern-card overflow-hidden">
-                <CardBody className="p-8">
-                  <div className="flex gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <feature.icon size={28} className="text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-black mb-2">{feature.title}</h3>
-                      <p className="text-foreground/60 mb-4">{feature.description}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {feature.details.map((detail) => (
-                          <div key={detail} className="flex items-center gap-2 text-sm">
-                            <Check size={14} className="text-primary shrink-0" />
-                            <span className="text-foreground/70">{detail}</span>
-                          </div>
-                        ))}
+            {coreFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card h-full group hover:border-primary/30 transition-all duration-500">
+                  <CardBody className="p-10">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="w-20 h-20 rounded-[28px] bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
+                        {feature.icon}
+                      </div>
+                      <div className="bg-foreground/[0.03] dark:bg-white/5 px-4 py-1.5 rounded-full">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
                       </div>
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
+                    <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-foreground/60 leading-relaxed mb-6 italic">{feature.description}</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {feature.highlights.map((item) => (
+                        <div key={item} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          <span className="text-sm text-foreground/70">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="secondary" variant="flat" className="mb-4">How It Works</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Get Started in 3 Simple Steps
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-secondary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">How It Works</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Get Started in <span className="text-secondary italic">3 Steps</span>
             </h2>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                step: '01',
-                title: 'Import Your Products',
-                description: 'Upload your existing inventory via Excel or add products manually. Our wizard auto-maps columns and validates data.',
-              },
-              {
-                step: '02',
-                title: 'Configure Locations & Stock Levels',
-                description: 'Set up your stores, warehouses, and define minimum stock levels for each product. Enable alerts.',
-              },
-              {
-                step: '03',
-                title: 'Start Tracking',
-                description: 'Scan barcodes, record purchases, process sales. Every movement is tracked automatically in real-time.',
-              },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-black text-primary">{item.step}</span>
-                </div>
-                <h3 className="text-xl font-black mb-3">{item.title}</h3>
-                <p className="text-foreground/60">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Advanced Features */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="warning" variant="flat" className="mb-4">Advanced Features</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Power Features for Serious Retailers
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {advancedFeatures.map((feature) => (
-              <Card key={feature.title} className="modern-card">
-                <CardBody className="p-6">
-                  <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center mb-4">
-                    <feature.icon size={24} className="text-warning" />
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                className="text-center"
+              >
+                <div className="relative inline-block mb-8">
+                  <div className="w-24 h-24 rounded-full bg-secondary/10 flex items-center justify-center text-5xl mx-auto">
+                    {item.icon}
                   </div>
-                  <h3 className="font-black mb-2">{feature.title}</h3>
-                  <p className="text-sm text-foreground/60">{feature.description}</p>
-                </CardBody>
-              </Card>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-black text-sm">
+                    {item.step}
+                  </div>
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-foreground/60 italic">{item.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Use Cases */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="success" variant="flat" className="mb-4">Industry Solutions</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Built for Indian Retail Businesses
-            </h2>
-            <p className="text-foreground/60">
-              Whether you run a mobile shop, pharmacy, or fashion store, EaseInventory adapts to your unique needs.
-            </p>
-          </div>
+      {/* Additional Features */}
+      <section className="section-padding relative">
+        <div className="absolute top-1/3 left-0 w-96 h-96 bg-warning/5 rounded-full blur-[150px] pointer-events-none" />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {useCases.map((useCase) => (
-              <Card key={useCase.title} className="modern-card hover:border-primary/30 transition-colors">
-                <CardBody className="p-6 text-center">
-                  <div className="text-4xl mb-4">{useCase.icon}</div>
-                  <h3 className="font-black mb-2">{useCase.title}</h3>
-                  <p className="text-sm text-foreground/60">{useCase.description}</p>
-                </CardBody>
-              </Card>
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-warning/10 border border-warning/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-warning animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-warning">Advanced</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Power Features for <span className="text-warning italic">Serious</span> Retailers
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {additionalFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+              >
+                <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
+                  <CardBody className="p-8">
+                    <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-black mb-3 uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-foreground/60 italic">{feature.description}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Comparison */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Pricing</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Inventory Features by Plan
-            </h2>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-foreground/10">
-                  <th className="text-left py-4 px-4 font-bold">Feature</th>
-                  <th className="text-center py-4 px-4 font-bold">Starter<br /><span className="text-sm font-normal text-foreground/50">₹999/mo</span></th>
-                  <th className="text-center py-4 px-4 font-bold bg-primary/5">Business<br /><span className="text-sm font-normal text-foreground/50">₹2,499/mo</span></th>
-                  <th className="text-center py-4 px-4 font-bold">Professional<br /><span className="text-sm font-normal text-foreground/50">₹4,999/mo</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                {pricingComparison.map((row) => (
-                  <tr key={row.feature} className="border-b border-foreground/5">
-                    <td className="py-4 px-4 text-foreground/70">{row.feature}</td>
-                    <td className="py-4 px-4 text-center">{row.starter}</td>
-                    <td className="py-4 px-4 text-center bg-primary/5">{row.business}</td>
-                    <td className="py-4 px-4 text-center">{row.professional}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button as={Link} href="/pricing" color="primary" variant="flat" radius="full">
-              View Full Pricing Details
-              <ArrowRight size={16} />
-            </Button>
           </div>
         </div>
       </section>
 
       {/* FAQs */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="default" variant="flat" className="mb-4">FAQs</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Frequently Asked Questions
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-foreground/5 border border-foreground/10 px-4 py-2 rounded-full mb-6">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/50">FAQs</span>
+            </div>
+            <h2 className="heading-lg">
+              Questions? <span className="text-primary italic">Answered.</span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
-            {faqs.map((faq) => (
-              <Card key={faq.question} className="modern-card">
-                <CardBody className="p-6">
-                  <h3 className="font-black mb-3">{faq.question}</h3>
-                  <p className="text-foreground/60">{faq.answer}</p>
-                </CardBody>
-              </Card>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={faq.q}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card">
+                  <CardBody className="p-8">
+                    <h3 className="text-lg font-black mb-3">{faq.q}</h3>
+                    <p className="text-foreground/60 italic leading-relaxed">{faq.a}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20">
-        <div className="container-custom">
-          <Card className="modern-card bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <CardBody className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Take Control of Your Inventory Today
-              </h2>
-              <p className="text-foreground/60 mb-8 max-w-xl mx-auto">
-                Join 2,000+ Indian retailers who've eliminated stockouts, reduced waste, 
-                and increased profits with EaseInventory.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button as={Link} href="/register" color="primary" size="lg" className="font-black" radius="full">
-                  Start Free 14-Day Trial
-                  <ArrowRight size={18} />
-                </Button>
-                <Button as={Link} href="/contact" variant="bordered" size="lg" className="font-bold" radius="full">
-                  Talk to Sales
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+      <section className="section-padding relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
+              <CardBody className="p-12 lg:p-20 text-center relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-6xl mb-8">📦</div>
+                  <h2 className="heading-lg mb-6">
+                    Take Control of Your <span className="text-primary italic">Inventory</span> Today
+                  </h2>
+                  <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
+                    Join thousands of Indian retailers who have eliminated stockouts and increased profits.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
+                      Start Free Trial
+                      <ArrowRight size={20} />
+                    </Button>
+                    <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                      Talk to Sales
+                    </Button>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
     </main>

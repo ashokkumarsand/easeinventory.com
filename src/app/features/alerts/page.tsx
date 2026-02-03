@@ -1,351 +1,364 @@
 'use client';
 
-import { Button, Card, CardBody, Chip } from '@heroui/react';
-import { ArrowRight, Bell, Check, Clock, Mail, MessageCircle, Package, TrendingDown } from 'lucide-react';
+import { Button, Card, CardBody } from '@heroui/react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
 
-const alertTypes = [
+const stats = [
+  { value: '500K+', label: 'Messages Sent', icon: '📨' },
+  { value: '99.5%', label: 'Delivery Rate', icon: '✅' },
+  { value: '<30s', label: 'Response Time', icon: '⚡' },
+  { value: '4.8/5', label: 'Satisfaction', icon: '⭐' },
+];
+
+const coreFeatures = [
   {
-    icon: Package,
+    icon: '📦',
     title: 'Low Stock Alerts',
-    description: 'Get notified when any product falls below minimum stock level. Configure thresholds per product or category.',
-    channels: ['WhatsApp', 'Email', 'Push'],
-    example: '⚠️ Low Stock Alert: iPhone 15 Case (Black) is at 3 units. Min level: 10. Reorder now!',
+    tag: 'Inventory',
+    description: 'Get notified when any product falls below minimum stock level. Configure thresholds per product.',
+    highlights: ['Per-product thresholds', 'WhatsApp/Email/Push', 'Auto reorder drafts', 'Batch notifications'],
   },
   {
-    icon: TrendingDown,
+    icon: '📅',
     title: 'Expiry Alerts',
-    description: 'Notifications 30, 15, and 7 days before product expiry. FIFO reminders to sell older stock first.',
-    channels: ['Email', 'Dashboard'],
-    example: '🔔 Expiry Alert: Batch #1234 of Paracetamol expires in 15 days. 200 units remaining.',
+    tag: 'Compliance',
+    description: 'Notifications 30, 15, and 7 days before product expiry. FIFO reminders for older stock.',
+    highlights: ['Multi-day reminders', 'FIFO/FEFO alerts', 'Batch tracking', 'Dashboard warnings'],
   },
   {
-    icon: MessageCircle,
+    icon: '🔧',
     title: 'Repair Status Updates',
-    description: 'Automatic WhatsApp messages to customers when repair status changes. Quotation approval requests.',
-    channels: ['WhatsApp'],
-    example: '✅ Repair Update: Your iPhone repair is complete! Ready for pickup at Mobile Galaxy, Chennai.',
+    tag: 'Service',
+    description: 'Automatic WhatsApp messages to customers when repair status changes. Quotation approvals.',
+    highlights: ['Status change alerts', 'Quotation sharing', 'Ready for pickup', 'Customer replies'],
   },
   {
-    icon: Clock,
+    icon: '💰',
     title: 'Payment Reminders',
-    description: 'Supplier payment due reminders. Customer credit payment follow-ups. Recurring invoice alerts.',
-    channels: ['WhatsApp', 'Email'],
-    example: '💰 Payment Due: ₹25,000 due to ABC Distributors in 3 days. Clear to maintain credit.',
+    tag: 'Finance',
+    description: 'Supplier payment due reminders. Customer credit follow-ups. Recurring invoice alerts.',
+    highlights: ['Due date alerts', 'Credit reminders', 'Supplier payments', 'Escalation rules'],
   },
 ];
 
-const channelDetails = [
-  {
-    icon: MessageCircle,
-    channel: 'WhatsApp Business',
-    description: 'Official Meta WhatsApp Business API integration. Messages appear from your business name.',
-    features: ['Rich text formatting', 'Media attachments', 'Quick reply buttons', 'Read receipts'],
-    cost: 'Free tier: 200 messages/month. Business: Unlimited.',
-  },
-  {
-    icon: Mail,
-    channel: 'Email',
-    description: 'Transactional emails for detailed reports, daily summaries, and formal notifications.',
-    features: ['HTML-formatted', 'Attachments support', 'Bulk sending', 'Custom templates'],
-    cost: 'Unlimited with all plans.',
-  },
-  {
-    icon: Bell,
-    channel: 'Push Notifications',
-    description: 'Real-time alerts on mobile and desktop. Requires EaseInventory app installation.',
-    features: ['Instant delivery', 'Rich notifications', 'Action buttons', 'Silent mode'],
-    cost: 'Unlimited with all plans.',
-  },
+const howItWorks = [
+  { step: '01', title: 'Set Triggers', description: 'Define what events should trigger notifications—low stock, status changes, due dates.', icon: '⚙️' },
+  { step: '02', title: 'Choose Channels', description: 'Select WhatsApp, Email, or Push notifications. Customize message templates.', icon: '📱' },
+  { step: '03', title: 'Automate', description: 'Notifications sent automatically. Track delivery status and responses in dashboard.', icon: '🚀' },
 ];
 
-const automationRules = [
-  {
-    trigger: 'Stock falls below minimum',
-    action: 'Send WhatsApp to owner + create purchase order draft',
-    configurable: ['Minimum level', 'Recipients', 'Auto-create PO'],
-  },
-  {
-    trigger: 'Repair status changes',
-    action: 'Send WhatsApp to customer with update',
-    configurable: ['Which statuses trigger', 'Message template', 'Include invoice'],
-  },
-  {
-    trigger: 'Daily at 9 AM',
-    action: 'Send business summary email',
-    configurable: ['Time', 'Recipients', 'Metrics to include'],
-  },
-  {
-    trigger: 'Payment due in 3 days',
-    action: 'Send reminder to supplier/customer',
-    configurable: ['Days before due', 'Frequency', 'Escalation'],
-  },
-];
-
-const notificationStats = [
-  { label: 'Messages Sent Monthly', value: '500K+', desc: 'Across all EaseInventory users' },
-  { label: 'Delivery Rate', value: '99.5%', desc: 'WhatsApp and Email combined' },
-  { label: 'Avg Response Time', value: '<30s', desc: 'From trigger to delivery' },
-  { label: 'Customer Satisfaction', value: '4.8/5', desc: 'For repair notifications' },
+const additionalFeatures = [
+  { icon: '💬', title: 'WhatsApp Business API', description: 'Official Meta integration with verified business name.' },
+  { icon: '📧', title: 'Email Notifications', description: 'HTML-formatted emails with attachments and bulk sending.' },
+  { icon: '🔔', title: 'Push Notifications', description: 'Real-time alerts on mobile and desktop devices.' },
+  { icon: '📝', title: 'Custom Templates', description: 'Create templates in English, Hindi, or regional languages.' },
+  { icon: '⚡', title: 'Instant Delivery', description: 'Messages delivered within seconds of trigger event.' },
+  { icon: '📊', title: 'Scheduled Reports', description: 'Daily business summary emails at your preferred time.' },
 ];
 
 const faqs = [
-  {
-    question: 'Is WhatsApp integration official?',
-    answer: "Yes, we use the official WhatsApp Business API by Meta. Messages come from your verified business name. It's not a third-party tool—it's direct integration with Facebook/Meta infrastructure.",
-  },
-  {
-    question: 'Can I customize notification templates?',
-    answer: 'Absolutely. You can customize the message text, add your store name, include specific product details, and even add promotional content. Templates can be in English or Hindi.',
-  },
-  {
-    question: 'Will customers see my business name?',
-    answer: "Yes, when you send WhatsApp messages, customers see your verified business name and logo. You can also display your business description and working hours.",
-  },
-  {
-    question: 'How many notifications can I send?',
-    answer: 'Starter plan: 50 WhatsApp messages/month. Business: 200/month. Professional: Unlimited. Email and push notifications are unlimited on all plans.',
-  },
-  {
-    question: 'Can I send notifications in Hindi?',
-    answer: 'Yes! You can create templates in English, Hindi, or any regional language. EaseInventory supports Unicode, so all Indian languages work.',
-  },
+  { q: 'Is WhatsApp integration official?', a: 'Yes, we use the official WhatsApp Business API by Meta. Messages come from your verified business name.' },
+  { q: 'Can I customize notification templates?', a: 'Absolutely. Customize message text, add your store name, include product details, and even promotional content.' },
+  { q: 'How many notifications can I send?', a: 'Starter: 50 WhatsApp/month. Business: 200/month. Professional: Unlimited. Email and push are unlimited on all plans.' },
+  { q: 'Can I send notifications in Hindi?', a: 'Yes! Create templates in English, Hindi, or any regional language. Full Unicode support.' },
 ];
 
-export default function SmartAlertsPage() {
+export default function AlertsPage() {
   return (
-    <main className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="relative py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-warning/10 via-warning/5 to-transparent" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-warning/10 rounded-full blur-[200px]" />
-        
+    <main className="min-h-screen bg-background overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] pt-32 pb-20 lg:pt-40 lg:pb-32 flex items-center">
+        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-warning/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[150px] pointer-events-none" />
+
         <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-warning/10 border border-warning/20 px-4 py-2 rounded-full mb-6">
-                <Bell size={14} className="text-warning" />
-                <span className="text-xs font-black uppercase tracking-widest text-warning">Automation</span>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-3 bg-warning/10 border border-warning/20 px-5 py-2 rounded-full mb-8">
+                <span className="text-xl">🔔</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-warning">Smart Alerts</span>
               </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 leading-tight">
+
+              <h1 className="heading-lg mb-8">
                 Never Miss<br />
-                <span className="text-warning">What Matters.</span>
+                <span className="text-warning italic">What Matters.</span>
               </h1>
-              
-              <p className="text-lg text-foreground/60 leading-relaxed mb-8 max-w-xl">
-                Automated WhatsApp, Email, and push notifications for low stock, repairs, payments, 
+
+              <p className="paragraph-lg mb-10 max-w-xl">
+                Automated WhatsApp, Email, and push notifications for low stock, repairs, payments,
                 and more. Get the right alert to the right person at the right time.
               </p>
-              
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Button as={Link} href="/register" color="warning" size="lg" className="font-black" radius="full">
-                  Start 14-Day Free Trial
-                  <ArrowRight size={18} />
+
+              <div className="flex flex-wrap gap-4 mb-10">
+                <Button as={Link} href="/register" color="warning" size="lg" className="font-black px-10 h-16 shadow-xl shadow-warning/30 uppercase tracking-widest" radius="full">
+                  Start Free Trial
+                  <ArrowRight size={20} />
                 </Button>
-                <Button as={Link} href="#alerts" variant="bordered" size="lg" className="font-bold" radius="full">
-                  See Alert Types
+                <Button as={Link} href="#features" variant="bordered" size="lg" className="font-black px-10 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                  Explore
                 </Button>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-warning" />
-                  <span className="text-foreground/60">Official WhatsApp API</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-warning" />
-                  <span className="text-foreground/60">Multi-channel</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check size={16} className="text-warning" />
-                  <span className="text-foreground/60">Customizable rules</span>
-                </div>
+              <div className="flex flex-wrap gap-8">
+                {['Official WhatsApp', 'Multi-channel', 'Custom rules'].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-warning/20 flex items-center justify-center">
+                      <Check size={12} className="text-warning" />
+                    </div>
+                    <span className="text-sm font-bold text-foreground/60">{item}</span>
+                  </div>
+                ))}
               </div>
-            </div>
+            </motion.div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              {notificationStats.map((stat) => (
-                <Card key={stat.label} className="modern-card p-6">
-                  <div className="text-3xl font-black text-warning mb-1">{stat.value}</div>
-                  <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
-                  <p className="text-xs text-foreground/40 mt-2">{stat.desc}</p>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="grid grid-cols-2 gap-5"
+            >
+              {stats.map((stat) => (
+                <Card key={stat.label} className="modern-card group hover:scale-105 transition-transform duration-500">
+                  <CardBody className="p-8">
+                    <div className="text-4xl mb-4">{stat.icon}</div>
+                    <div className="text-4xl font-black text-warning mb-2">{stat.value}</div>
+                    <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
+                  </CardBody>
                 </Card>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Alert Types */}
-      <section id="alerts" className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="warning" variant="flat" className="mb-4">Alert Types</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Alerts for Every Business Event
-            </h2>
-          </div>
+      {/* Core Features */}
+      <section id="features" className="section-padding relative">
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-warning/5 rounded-full blur-[150px] pointer-events-none" />
 
-          <div className="space-y-6">
-            {alertTypes.map((alert) => (
-              <Card key={alert.title} className="modern-card overflow-hidden">
-                <CardBody className="p-8">
-                  <div className="grid lg:grid-cols-2 gap-8 items-start">
-                    <div>
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
-                          <alert.icon size={24} className="text-warning" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-black mb-1">{alert.title}</h3>
-                          <div className="flex gap-2">
-                            {alert.channels.map((ch) => (
-                              <Chip key={ch} size="sm" variant="flat" color="default">{ch}</Chip>
-                            ))}
-                          </div>
-                        </div>
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-warning/10 border border-warning/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-warning animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-warning">Core Features</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Alerts for Every <span className="text-warning italic">Business</span> Event
+            </h2>
+            <p className="paragraph-lg">
+              Stay informed about what matters most to your business operations.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {coreFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
+                  <CardBody className="p-10">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="w-20 h-20 rounded-[28px] bg-warning/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
+                        {feature.icon}
                       </div>
-                      <p className="text-foreground/60">{alert.description}</p>
+                      <div className="bg-foreground/[0.03] dark:bg-white/5 px-4 py-1.5 rounded-full">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
+                      </div>
                     </div>
-                    <div className="bg-foreground/[0.02] rounded-xl p-4 border border-foreground/5">
-                      <p className="text-xs font-bold text-foreground/40 mb-2 uppercase">Example Message</p>
-                      <p className="text-sm text-foreground/70 font-mono">{alert.example}</p>
+                    <h3 className="text-2xl font-black mb-4 group-hover:text-warning transition-colors uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-foreground/60 leading-relaxed mb-6 italic">{feature.description}</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {feature.highlights.map((item) => (
+                        <div key={item} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-warning" />
+                          <span className="text-sm text-foreground/70">{item}</span>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Channels */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="primary" variant="flat" className="mb-4">Channels</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Reach People Where They Are
+      {/* How It Works */}
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-secondary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">How It Works</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Set It and <span className="text-secondary italic">Forget It</span>
             </h2>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {channelDetails.map((channel) => (
-              <Card key={channel.channel} className="modern-card h-full">
-                <CardBody className="p-8">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                    <channel.icon size={28} className="text-primary" />
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                className="text-center"
+              >
+                <div className="relative inline-block mb-8">
+                  <div className="w-24 h-24 rounded-full bg-secondary/10 flex items-center justify-center text-5xl mx-auto">
+                    {item.icon}
                   </div>
-                  <h3 className="text-xl font-black mb-2">{channel.channel}</h3>
-                  <p className="text-foreground/60 mb-4">{channel.description}</p>
-                  <div className="space-y-2 mb-4">
-                    {channel.features.map((feature) => (
-                      <div key={feature} className="flex items-center gap-2 text-sm">
-                        <Check size={14} className="text-primary shrink-0" />
-                        <span className="text-foreground/70">{feature}</span>
-                      </div>
-                    ))}
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-black text-sm">
+                    {item.step}
                   </div>
-                  <p className="text-xs text-foreground/40 border-t border-foreground/5 pt-4 mt-auto">
-                    {channel.cost}
-                  </p>
-                </CardBody>
-              </Card>
+                </div>
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-foreground/60 italic">{item.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Automation Rules */}
-      <section className="py-20 bg-foreground/[0.02]">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="secondary" variant="flat" className="mb-4">Automation</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Set It and Forget It
-            </h2>
-            <p className="text-foreground/60">
-              Configure rules once. EaseInventory handles the rest automatically.
-            </p>
-          </div>
+      {/* Additional Features */}
+      <section className="section-padding relative">
+        <div className="absolute top-1/3 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
 
-          <div className="space-y-4 max-w-4xl mx-auto">
-            {automationRules.map((rule) => (
-              <Card key={rule.trigger} className="modern-card">
-                <CardBody className="p-6">
-                  <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex-1 min-w-[200px]">
-                      <p className="text-xs font-bold text-foreground/40 mb-1">WHEN</p>
-                      <p className="font-bold">{rule.trigger}</p>
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-6">
+              <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Channels</span>
+            </div>
+            <h2 className="heading-lg mb-6">
+              Reach People <span className="text-primary italic">Where</span> They Are
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {additionalFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+              >
+                <Card className="modern-card h-full group hover:border-primary/30 transition-all duration-500">
+                  <CardBody className="p-8">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
+                      {feature.icon}
                     </div>
-                    <div className="text-2xl text-foreground/20">→</div>
-                    <div className="flex-1 min-w-[200px]">
-                      <p className="text-xs font-bold text-foreground/40 mb-1">THEN</p>
-                      <p className="font-bold text-primary">{rule.action}</p>
-                    </div>
-                    <div className="flex-1 min-w-[200px]">
-                      <p className="text-xs font-bold text-foreground/40 mb-1">CONFIGURE</p>
-                      <div className="flex flex-wrap gap-1">
-                        {rule.configurable.map((config) => (
-                          <Chip key={config} size="sm" variant="flat">{config}</Chip>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
+                    <h3 className="text-lg font-black mb-3 uppercase tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-foreground/60 italic">{feature.description}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* FAQs */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <Chip color="default" variant="flat" className="mb-4">FAQs</Chip>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Frequently Asked Questions
+      <section className="section-padding bg-foreground/[0.02] relative">
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto mb-20"
+          >
+            <div className="inline-flex items-center gap-3 bg-foreground/5 border border-foreground/10 px-4 py-2 rounded-full mb-6">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/50">FAQs</span>
+            </div>
+            <h2 className="heading-lg">
+              Questions? <span className="text-warning italic">Answered.</span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
-            {faqs.map((faq) => (
-              <Card key={faq.question} className="modern-card">
-                <CardBody className="p-6">
-                  <h3 className="font-black mb-3">{faq.question}</h3>
-                  <p className="text-foreground/60">{faq.answer}</p>
-                </CardBody>
-              </Card>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={faq.q}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="modern-card">
+                  <CardBody className="p-8">
+                    <h3 className="text-lg font-black mb-3">{faq.q}</h3>
+                    <p className="text-foreground/60 italic leading-relaxed">{faq.a}</p>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20">
-        <div className="container-custom">
-          <Card className="modern-card bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20">
-            <CardBody className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Stay Informed, Stay Ahead
-              </h2>
-              <p className="text-foreground/60 mb-8 max-w-xl mx-auto">
-                Set up smart alerts in minutes and never worry about missing important business events.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button as={Link} href="/register" color="warning" size="lg" className="font-black" radius="full">
-                  Start Free 14-Day Trial
-                  <ArrowRight size={18} />
-                </Button>
-                <Button as={Link} href="/contact" variant="bordered" size="lg" className="font-bold" radius="full">
-                  Talk to Sales
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+      <section className="section-padding relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-warning/5 to-transparent pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <Card className="modern-card bg-gradient-to-br from-warning/10 via-warning/5 to-transparent border-warning/20 overflow-hidden">
+              <CardBody className="p-12 lg:p-20 text-center relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-warning/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-6xl mb-8">🔔</div>
+                  <h2 className="heading-lg mb-6">
+                    Stay <span className="text-warning italic">Informed</span>, Stay Ahead
+                  </h2>
+                  <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
+                    Set up smart alerts in minutes and never worry about missing important business events.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4">
+                    <Button as={Link} href="/register" color="warning" size="lg" className="font-black px-12 h-16 shadow-xl shadow-warning/30 uppercase tracking-widest" radius="full">
+                      Start Free Trial
+                      <ArrowRight size={20} />
+                    </Button>
+                    <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
+                      Talk to Sales
+                    </Button>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
     </main>
