@@ -22,9 +22,23 @@ export const WA_TEMPLATES = {
 
 const WHATSAPP_API_BASE = '/api/whatsapp/send';
 
+// Retry configuration
+export const RETRY_CONFIG = {
+    maxRetries: 3,
+    retryDelays: [5 * 60 * 1000, 30 * 60 * 1000, 2 * 60 * 60 * 1000], // 5min, 30min, 2hr
+};
+
+// Message cost in paise (1/100 rupee)
+export const MESSAGE_COSTS = {
+    utility: 35, // ₹0.35 per utility message
+    marketing: 75, // ₹0.75 per marketing message
+    authentication: 25, // ₹0.25 per OTP message
+};
+
 interface SendResult {
   success: boolean;
   messageId?: string;
+  dbMessageId?: string; // ID of the stored message in our DB
   error?: string;
   usage?: {
     sent: number;

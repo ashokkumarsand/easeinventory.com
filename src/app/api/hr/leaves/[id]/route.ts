@@ -40,7 +40,18 @@ export async function PATCH(
         return NextResponse.json({ message: 'Leave request not found' }, { status: 404 });
     }
 
-    // 2. Update leave status
+    // 2. Calculate leave days
+    const calculateLeaveDays = (startDate: Date, endDate: Date): number => {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = Math.abs(end.getTime() - start.getTime());
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    };
+
+    const leaveDays = calculateLeaveDays(leave.startDate, leave.endDate);
+    const year = new Date(leave.startDate).getFullYear();
+
+    // 3. Update leave status
     const updatedLeave = await prisma.leave.update({
       where: { id },
       data: {
@@ -50,13 +61,73 @@ export async function PATCH(
       }
     });
 
-    // 3. If approved, update attendance for those days as ON_LEAVE
-    // This is a simplified version - in a real app, you'd iterate through the date range
-    // For now, we'll just return the updated leave.
+    // 4. If approved, update leave balance
+    if (status === 'APPROVED' && leave.leaveType !== 'UNPAID') {
+      const balanceUpdate: any = {};
+      switch (leave.leaveType) {
+        case 'CASUAL':
+          balanceUpdate.casualUsed = { increment: leaveDays };
+          break;
+        case 'SICK':
+          balanceUpdate.sickUsed = { increment: leaveDays };
+          break;
+        case 'EARNED':
+          balanceUpdate.earnedUsed = { increment: leaveDays };
+          break;
+      }
+
+      // Update or create leave balance
+      await prisma.leaveBalance.upsert({
+        where: {
+          employeeId_year: {
+            employeeId: leave.employeeId,
+            year,
+          },
+        },
+        update: balanceUpdate,
+        create: {
+          employeeId: leave.employeeId,
+          year,
+          casualUsed: leave.leaveType === 'CASUAL' ? leaveDays : 0,
+          sickUsed: leave.leaveType === 'SICK' ? leaveDays : 0,
+          earnedUsed: leave.leaveType === 'EARNED' ? leaveDays : 0,
+        },
+      });
+
+      // 5. Create attendance records for leave days
+      const startDate = new Date(leave.startDate);
+      const endDate = new Date(leave.endDate);
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        try {
+          await prisma.attendance.upsert({
+            where: {
+              employeeId_date: {
+                employeeId: leave.employeeId,
+                date: new Date(d),
+              },
+            },
+            update: {
+              status: 'ON_LEAVE',
+              notes: `${leave.leaveType} leave`,
+            },
+            create: {
+              employeeId: leave.employeeId,
+              date: new Date(d),
+              tenantId,
+              status: 'ON_LEAVE',
+              notes: `${leave.leaveType} leave`,
+            },
+          });
+        } catch {
+          // Ignore duplicate errors
+        }
+      }
+    }
 
     return NextResponse.json({
       message: `Leave request ${status.toLowerCase()}`,
-      leave: updatedLeave
+      leave: updatedLeave,
+      leaveDays,
     });
 
   } catch (error: any) {

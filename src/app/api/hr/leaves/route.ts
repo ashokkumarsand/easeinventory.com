@@ -45,6 +45,14 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// Helper to calculate number of days between two dates
+function calculateLeaveDays(startDate: Date, endDate: Date): number {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffTime = Math.abs(end.getTime() - start.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+}
+
 // POST - Request a leave
 export async function POST(req: NextRequest) {
   try {
@@ -55,15 +63,64 @@ export async function POST(req: NextRequest) {
 
     const tenantId = (session.user as any).tenantId;
     const body = await req.json();
-    const { leaveType, startDate, endDate, reason } = body;
+    const { leaveType, startDate, endDate, reason, employeeId: requestedEmployeeId } = body;
 
-    // Find employee
-    const employee = await prisma.employee.findFirst({
+    // Find employee - either the requester or specified employee (for manager requests)
+    let employee;
+    if (requestedEmployeeId) {
+      // Manager requesting on behalf of employee
+      const role = (session.user as any).role;
+      if (!['OWNER', 'MANAGER', 'SUPER_ADMIN'].includes(role)) {
+        return NextResponse.json({ message: 'Cannot request leave for others' }, { status: 403 });
+      }
+      employee = await prisma.employee.findFirst({
+        where: { id: requestedEmployeeId, tenantId }
+      });
+    } else {
+      employee = await prisma.employee.findFirst({
         where: { email: session.user.email, tenantId }
-    });
+      });
+    }
 
     if (!employee) {
-        return NextResponse.json({ message: 'Employee record not found.' }, { status: 404 });
+      return NextResponse.json({ message: 'Employee record not found.' }, { status: 404 });
+    }
+
+    // Calculate leave days
+    const leaveDays = calculateLeaveDays(new Date(startDate), new Date(endDate));
+    const year = new Date(startDate).getFullYear();
+
+    // Check leave balance for non-UNPAID leaves
+    if (leaveType !== 'UNPAID') {
+      const balance = await prisma.leaveBalance.findUnique({
+        where: {
+          employeeId_year: {
+            employeeId: employee.id,
+            year,
+          },
+        },
+      });
+
+      if (balance) {
+        let available = 0;
+        switch (leaveType) {
+          case 'CASUAL':
+            available = balance.casualTotal - balance.casualUsed;
+            break;
+          case 'SICK':
+            available = balance.sickTotal - balance.sickUsed;
+            break;
+          case 'EARNED':
+            available = balance.earnedTotal - balance.earnedUsed;
+            break;
+        }
+
+        if (leaveDays > available) {
+          return NextResponse.json({
+            message: `Insufficient ${leaveType.toLowerCase()} leave balance. Available: ${available} days, Requested: ${leaveDays} days`,
+          }, { status: 400 });
+        }
+      }
     }
 
     const leave = await prisma.leave.create({
@@ -79,7 +136,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: 'Leave request submitted successfully',
-      leave
+      leave,
+      leaveDays,
     }, { status: 201 });
 
   } catch (error: any) {

@@ -72,6 +72,10 @@ model Tenant {
   refundRequests    RefundRequest[]         @relation("TenantRefunds")
   inventoryRequests InventoryRequest[]      @relation("TenantInventoryRequests")
   securityLogs      SecurityLog[]
+  customRoles       CustomRole[]
+  holidays          Holiday[]
+  whatsappMessages  WhatsAppMessage[]
+  whatsappOptIns    WhatsAppOptIn[]
 
   @@index([slug])
   @@index([customDomain])
@@ -115,8 +119,10 @@ model User {
   tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Role & Permissions
-  role        UserRole @default(STAFF)
-  permissions Json?
+  role         UserRole    @default(STAFF)
+  permissions  Json?
+  customRoleId String?     @map("custom_role_id")
+  customRole   CustomRole? @relation("UserCustomRole", fields: [customRoleId], references: [id])
 
   isActive    Boolean   @default(true) @map("is_active")
   lastLoginAt DateTime? @map("last_login_at")
@@ -145,7 +151,27 @@ model User {
 
   @@unique([email, tenantId])
   @@index([tenantId])
+  @@index([customRoleId])
   @@map("users")
+}
+
+model CustomRole {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String?  @default("#6A3BF6")
+  permissions String[]
+  isDefault   Boolean  @default(false) @map("is_default")
+  tenantId    String   @map("tenant_id")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdById String   @map("created_by_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  users       User[]   @relation("UserCustomRole")
+
+  @@unique([name, tenantId])
+  @@index([tenantId])
+  @@map("custom_roles")
 }
 
 model Account {
@@ -731,9 +757,10 @@ model Employee {
   tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  attendances Attendance[]
-  leaves      Leave[]
-  payslips    Payslip[]
+  attendances   Attendance[]
+  leaves        Leave[]
+  payslips      Payslip[]
+  leaveBalances LeaveBalance[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -836,11 +863,34 @@ model Holiday {
   name       String
   date       DateTime @db.Date
   isOptional Boolean  @default(false) @map("is_optional")
+  tenantId   String?  @map("tenant_id") // Null = global holidays (e.g., national)
+  tenant     Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([date])
+  @@unique([date, tenantId])
+  @@index([tenantId])
   @@map("holidays")
+}
+
+model LeaveBalance {
+  id         String   @id @default(cuid())
+  employeeId String   @map("employee_id")
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  year       Int
+
+  casualTotal  Int @default(12) @map("casual_total")
+  casualUsed   Int @default(0) @map("casual_used")
+  sickTotal    Int @default(12) @map("sick_total")
+  sickUsed     Int @default(0) @map("sick_used")
+  earnedTotal  Int @default(15) @map("earned_total")
+  earnedUsed   Int @default(0) @map("earned_used")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([employeeId, year])
+  @@map("leave_balances")
 }
 
 model Location {
@@ -1094,4 +1144,69 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ==================== WHATSAPP MODELS ====================
+
+model WhatsAppMessage {
+  id            String           @id @default(cuid())
+  tenantId      String           @map("tenant_id")
+  tenant        Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  direction     MessageDirection
+  phone         String
+  messageId     String?          @unique @map("message_id") // WhatsApp message ID
+  templateName  String?          @map("template_name")
+  messageType   String           @map("message_type") // utility, marketing, authentication
+  content       String?          @db.Text
+  status        MessageStatus    @default(PENDING)
+  sentAt        DateTime?        @map("sent_at")
+  deliveredAt   DateTime?        @map("delivered_at")
+  readAt        DateTime?        @map("read_at")
+  failedAt      DateTime?        @map("failed_at")
+  errorMessage  String?          @map("error_message")
+  referenceType String?          @map("reference_type") // invoice, order, repair, etc.
+  referenceId   String?          @map("reference_id")
+  retryCount    Int              @default(0) @map("retry_count")
+  nextRetryAt   DateTime?        @map("next_retry_at")
+  costPaise     Int              @default(0) @map("cost_paise") // Cost in paise (1/100 rupee)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([tenantId])
+  @@index([phone])
+  @@index([status])
+  @@index([referenceType, referenceId])
+  @@map("whatsapp_messages")
+}
+
+model WhatsAppOptIn {
+  id       String   @id @default(cuid())
+  tenantId String   @map("tenant_id")
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  phone    String
+  optedIn  Boolean  @default(true) @map("opted_in")
+  optInAt  DateTime @map("opt_in_at")
+  optOutAt DateTime? @map("opt_out_at")
+  source   String?  // web, invoice, manual, etc.
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([phone, tenantId])
+  @@index([tenantId])
+  @@map("whatsapp_opt_ins")
+}
+
+enum MessageDirection {
+  OUTBOUND
+  INBOUND
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+  RETRY_SCHEDULED
 }

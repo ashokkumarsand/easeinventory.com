@@ -18,6 +18,7 @@ import {
     Calendar,
     ChevronLeft,
     ChevronRight,
+    Download,
     Gift,
     Plus,
     Trash2
@@ -95,7 +96,7 @@ export default function HolidayCalendarPage() {
 
     const handleDeleteHoliday = async (id: string) => {
         if (!confirm('Are you sure you want to delete this holiday?')) return;
-        
+
         try {
             const response = await fetch(`/api/hr/holidays?id=${id}`, {
                 method: 'DELETE'
@@ -105,6 +106,32 @@ export default function HolidayCalendarPage() {
             }
         } catch (error) {
             alert('Error deleting holiday');
+        }
+    };
+
+    const handleImportIndiaHolidays = async () => {
+        if (!confirm(`Import India national and common holidays for ${currentYear}?`)) return;
+
+        setIsLoading(true);
+        try {
+            const response = await fetch('/api/hr/holidays', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ year: currentYear, includeOptional: true }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(`Successfully imported ${data.imported} holidays. ${data.skipped} were skipped (already exist).`);
+                fetchHolidays();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to import holidays');
+            }
+        } catch (error) {
+            alert('Error importing holidays');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -212,12 +239,22 @@ export default function HolidayCalendarPage() {
                     <p className="text-black/40 dark:text-white/40 font-bold ml-1">Manage company holidays and off-days.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button 
-                        color="danger" 
-                        radius="full" 
-                        size="lg" 
-                        className="font-black px-8 shadow-xl shadow-danger/20" 
-                        startContent={<Plus size={20} />} 
+                    <Button
+                        variant="flat"
+                        color="default"
+                        className="font-bold rounded-2xl"
+                        startContent={<Download size={18} />}
+                        onClick={handleImportIndiaHolidays}
+                        isLoading={isLoading}
+                    >
+                        Import India Holidays
+                    </Button>
+                    <Button
+                        color="danger"
+                        radius="full"
+                        size="lg"
+                        className="font-black px-8 shadow-xl shadow-danger/20"
+                        startContent={<Plus size={20} />}
                         onClick={onOpen}
                     >
                         Add Holiday
