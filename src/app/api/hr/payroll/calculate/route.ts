@@ -3,6 +3,22 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * Calculate overtime pay based on hours worked
+ * Formula: (baseSalary / workingDays / standardHours) * overtimeHours * overtimeRate
+ */
+function calculateOvertimePay(
+  baseSalary: number,
+  workingDays: number,
+  standardWorkHours: number,
+  totalOvertimeHours: number,
+  overtimeRate: number
+): number {
+  if (totalOvertimeHours <= 0) return 0;
+  const hourlyRate = baseSalary / workingDays / standardWorkHours;
+  return hourlyRate * totalOvertimeHours * overtimeRate;
+}
+
 // POST - Calculate & Generate Payslips for a month
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const tenantId = (session.user as any).tenantId;
-    const { month, year } = await req.json();
+    const { month, year, includeOvertime = true } = await req.json();
 
     if (!month || !year) {
       return NextResponse.json({ message: 'Month and year are required' }, { status: 400 });
@@ -49,17 +65,39 @@ export async function POST(req: NextRequest) {
         const generatedPayslips = [];
 
         for (const emp of employees) {
-            const presentDays = emp.attendances.filter((a: any) => a.status === 'PRESENT').length;
+            const presentAttendances = emp.attendances.filter((a: any) =>
+              a.status === 'PRESENT' || a.status === 'LATE'
+            );
+            const presentDays = presentAttendances.length;
             const leaveDays = emp.leaves.length; // Simplified: should check exact dates overlapping the month
-            
-            const salaryPerDay = Number(emp.baseSalary) / workingDays;
-            const attendancePay = salaryPerDay * (presentDays + leaveDays); // Paid leaves included
-            
+
+            const baseSalary = Number(emp.baseSalary);
+            const salaryPerDay = baseSalary / workingDays;
+
             // Deductions for absence (simplified)
-            const absentDays = workingDays - (presentDays + leaveDays);
+            const absentDays = Math.max(0, workingDays - (presentDays + leaveDays));
             const deductions = salaryPerDay * absentDays;
 
-            const netSalary = Number(emp.baseSalary) - deductions;
+            // Calculate overtime from attendance records
+            let totalOvertimeHours = 0;
+            if (includeOvertime) {
+              totalOvertimeHours = presentAttendances.reduce((sum: number, a: any) => {
+                return sum + (a.overtimeHours || 0);
+              }, 0);
+            }
+
+            const standardWorkHours = emp.standardWorkHours || 8;
+            const overtimeRate = emp.overtimeRate || 1.5;
+
+            const overtimePay = calculateOvertimePay(
+              baseSalary,
+              workingDays,
+              standardWorkHours,
+              totalOvertimeHours,
+              overtimeRate
+            );
+
+            const netSalary = baseSalary - deductions + overtimePay;
 
             const payslip = await tx.payslip.upsert({
                 where: {
@@ -74,6 +112,9 @@ export async function POST(req: NextRequest) {
                     workingDays,
                     presentDays,
                     leaveDays,
+                    deductions,
+                    overtimeHours: totalOvertimeHours,
+                    overtimePay,
                     netSalary,
                     status: 'GENERATED'
                 },
@@ -86,18 +127,31 @@ export async function POST(req: NextRequest) {
                     workingDays,
                     presentDays,
                     leaveDays,
+                    deductions,
+                    overtimeHours: totalOvertimeHours,
+                    overtimePay,
                     netSalary,
                     status: 'GENERATED'
                 }
             });
-            generatedPayslips.push(payslip);
+            generatedPayslips.push({
+              ...payslip,
+              employeeName: emp.name,
+              employeeId: emp.employeeId,
+            });
         }
         return generatedPayslips;
     });
 
     return NextResponse.json({
         message: `${results.length} payslips generated successfully`,
-        payslips: results
+        payslips: results,
+        summary: {
+          totalEmployees: results.length,
+          totalNetSalary: results.reduce((sum, p) => sum + Number(p.netSalary), 0),
+          totalOvertimePay: results.reduce((sum, p) => sum + Number(p.overtimePay || 0), 0),
+          totalOvertimeHours: results.reduce((sum, p) => sum + Number(p.overtimeHours || 0), 0),
+        }
     });
 
   } catch (error: any) {

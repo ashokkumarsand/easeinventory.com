@@ -30,6 +30,7 @@ import {
   PlusCircle,
   Settings,
   Shield,
+  Tag,
   TrendingUp,
   Truck,
   Users,
@@ -48,6 +49,7 @@ const menuItems = [
   ]},
   { group: 'Operations', items: [
     { label: 'Inventory', icon: Package, href: '/dashboard/inventory' },
+    { label: 'Blanket Discounts', icon: Tag, href: '/dashboard/inventory/discounts' },
     { label: 'Warehouse Transfers', icon: ArrowRightLeft, href: '/dashboard/inventory/transfers' },
     { label: 'Inventory Locations', icon: Building2, href: '/dashboard/inventory/locations' },
     { label: 'Suppliers', icon: Truck, href: '/dashboard/suppliers' },
@@ -58,6 +60,7 @@ const menuItems = [
   { group: 'Team', items: [
     { label: 'Employees', icon: Users, href: '/dashboard/hr' },
     { label: 'Attendance', icon: Fingerprint, href: '/dashboard/attendance' },
+    { label: 'Geo-Fences', icon: Globe, href: '/dashboard/hr/geo-fences' },
     { label: 'Leaves', icon: Calendar, href: '/dashboard/hr/leaves' },
     { label: 'Holidays', icon: Calendar, href: '/dashboard/hr/holidays' },
   ]},

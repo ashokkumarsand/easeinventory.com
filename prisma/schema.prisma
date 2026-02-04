@@ -18,6 +18,11 @@ model Tenant {
   slug         String? @unique // optional subdomain slug
   customDomain String? @unique @map("custom_domain")
 
+  // Domain Verification
+  domainVerificationToken String?   @map("domain_verification_token")
+  domainVerified          Boolean   @default(false) @map("domain_verified")
+  domainVerifiedAt        DateTime? @map("domain_verified_at")
+
   // Branding
   logo         String?
   favicon      String?
@@ -76,6 +81,8 @@ model Tenant {
   holidays          Holiday[]
   whatsappMessages  WhatsAppMessage[]
   whatsappOptIns    WhatsAppOptIn[]
+  blanketDiscounts  BlanketDiscount[]
+  geoFences         GeoFence[]
 
   @@index([slug])
   @@index([customDomain])
@@ -262,6 +269,59 @@ model Category {
   @@unique([slug, tenantId])
   @@index([tenantId])
   @@map("categories")
+}
+
+model BlanketDiscount {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+
+  // Discount configuration
+  discountType  DiscountType @default(PERCENTAGE) @map("discount_type")
+  discountValue Decimal      @map("discount_value") @db.Decimal(12, 2)
+
+  // Scope: what products this applies to
+  scope    DiscountScope @default(ALL)
+  scopeId  String?       @map("scope_id") // categoryId, supplierId, or brand name
+
+  // Qualification rules
+  minQuantity   Int?     @map("min_quantity")
+  minOrderValue Decimal? @map("min_order_value") @db.Decimal(12, 2)
+  maxUsageCount Int?     @map("max_usage_count") // Limit total usage
+  usageCount    Int      @default(0) @map("usage_count")
+
+  // Time bounds
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+
+  // Priority (higher = takes precedence)
+  priority Int @default(0)
+
+  isActive Boolean @default(true) @map("is_active")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdById String   @map("created_by_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([isActive, startDate, endDate])
+  @@map("blanket_discounts")
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum DiscountScope {
+  ALL       // Applies to all products
+  CATEGORY  // Applies to products in a specific category
+  SUPPLIER  // Applies to products from a specific supplier
+  BRAND     // Applies to products of a specific brand
 }
 
 model Product {
@@ -747,7 +807,9 @@ model Employee {
   exitDate    DateTime? @map("exit_date")
 
   // Salary
-  baseSalary Decimal @map("base_salary") @db.Decimal(12, 2)
+  baseSalary        Decimal @map("base_salary") @db.Decimal(12, 2)
+  standardWorkHours Float   @default(8) @map("standard_work_hours") // Hours per day
+  overtimeRate      Float   @default(1.5) @map("overtime_rate") // Multiplier (1.5x, 2x, etc.)
 
   // Documents
   panNumber    String? @map("pan_number")
@@ -783,6 +845,10 @@ model Attendance {
   checkIn  DateTime? @map("check_in")
   checkOut DateTime? @map("check_out")
 
+  // Hours tracking
+  hoursWorked    Float @default(0) @map("hours_worked")
+  overtimeHours  Float @default(0) @map("overtime_hours")
+
   status AttendanceStatus @default(PRESENT)
 
   // Location (optional GPS)
@@ -812,6 +878,32 @@ enum AttendanceStatus {
   LATE
   ON_LEAVE
   HOLIDAY
+}
+
+model GeoFence {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  // Location center
+  latitude  Float
+  longitude Float
+
+  // Radius in meters
+  radius Int @default(100)
+
+  // Settings
+  isActive  Boolean @default(true) @map("is_active")
+  isDefault Boolean @default(false) @map("is_default") // Default fence for all employees
+
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("geo_fences")
 }
 
 model Leave {

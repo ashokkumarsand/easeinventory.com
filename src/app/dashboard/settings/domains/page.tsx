@@ -36,53 +36,111 @@ export default function DomainSettingsPage() {
 
     const fetchSettings = async () => {
         try {
-            const response = await fetch('/api/tenant/settings');
-            const data = await response.json();
-            if (data.tenant?.customDomain) {
-                setDomain(data.tenant.customDomain);
-                setStatus('VERIFIED');
+            // Fetch tenant settings
+            const settingsRes = await fetch('/api/tenant/settings');
+            const settingsData = await settingsRes.json();
+            if (settingsData.tenant?.slug) {
+                setExistingSubdomain(settingsData.tenant.slug);
+                setSubdomain(settingsData.tenant.slug);
             }
-            if (data.tenant?.slug) {
-                setExistingSubdomain(data.tenant.slug);
-                setSubdomain(data.tenant.slug);
-            }
-            setTenantId(data.tenant?.id || null);
-            // Check plan features
-            const settings = data.tenant?.settings || {};
+            setTenantId(settingsData.tenant?.id || null);
+            const settings = settingsData.tenant?.settings || {};
             const planFeatures = settings.planFeatures || {};
             setCustomDomainAllowed(planFeatures.customDomainAllowed === true);
-            setCurrentPlan(data.tenant?.plan || 'FREE');
+            setCurrentPlan(settingsData.tenant?.plan || 'FREE');
+
+            // Fetch domain settings
+            const domainRes = await fetch('/api/domains');
+            if (domainRes.ok) {
+                const domainData = await domainRes.json();
+                if (domainData.domain?.customDomain) {
+                    setDomain(domainData.domain.customDomain);
+                    setVerificationToken(domainData.domain.verificationToken);
+                    if (domainData.domain.verified) {
+                        setStatus('VERIFIED');
+                    } else {
+                        setStatus('PENDING');
+                        setDnsInstructions(domainData.domain.dnsInstructions);
+                    }
+                }
+            }
         } catch (error) {
             console.error('Fetch settings error:', error);
         }
     };
 
-    const handleVerify = async () => {
+    const [verificationToken, setVerificationToken] = useState<string | null>(null);
+    const [dnsInstructions, setDnsInstructions] = useState<any>(null);
+    const [verificationResult, setVerificationResult] = useState<any>(null);
+
+    const handleSetDomain = async () => {
+        if (!domain) return;
         setIsVerifying(true);
         try {
-            // Call DNS verification API
-            const response = await fetch('/api/tenant/verify-domain', {
+            const response = await fetch('/api/domains', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ domain }),
+                body: JSON.stringify({ customDomain: domain }),
             });
 
             const data = await response.json();
 
-            if (response.ok && data.status === 'VERIFIED') {
-                setStatus('VERIFIED');
-            } else if (data.status === 'PENDING' || data.status === 'NOT_FOUND') {
+            if (response.ok) {
+                setVerificationToken(data.domain.verificationToken);
+                setDnsInstructions(data.domain.dnsInstructions);
                 setStatus('PENDING');
-                alert(data.message || 'DNS record not found. Please add the CNAME record and try again.');
+                alert('Domain set! Please add the DNS records below to verify ownership.');
             } else {
-                setStatus('ERROR');
-                alert(data.message || 'Verification failed. Please check DNS records.');
+                alert(data.message || 'Failed to set domain.');
+            }
+        } catch (error) {
+            alert('Network error. Please try again.');
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    const handleVerify = async () => {
+        setIsVerifying(true);
+        setVerificationResult(null);
+        try {
+            const response = await fetch('/api/domains/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            const data = await response.json();
+            setVerificationResult(data.verificationResult);
+
+            if (response.ok && data.verified) {
+                setStatus('VERIFIED');
+                alert('Domain verified successfully!');
+            } else {
+                setStatus('PENDING');
+                alert(data.message || 'Verification pending. Please check DNS records.');
             }
         } catch (error) {
             setStatus('ERROR');
             alert('Network error. Please try again.');
         } finally {
             setIsVerifying(false);
+        }
+    };
+
+    const handleRemoveDomain = async () => {
+        if (!confirm('Are you sure you want to remove this custom domain?')) return;
+        try {
+            const response = await fetch('/api/domains', { method: 'DELETE' });
+            if (response.ok) {
+                setDomain('');
+                setStatus('IDLE');
+                setVerificationToken(null);
+                setDnsInstructions(null);
+                alert('Domain removed successfully.');
+                fetchSettings();
+            }
+        } catch (error) {
+            alert('Failed to remove domain.');
         }
     };
 
@@ -243,27 +301,51 @@ export default function DomainSettingsPage() {
                             </div>
 
                             <div className="flex gap-4">
-                                <Input 
-                                    placeholder="e.g. portal.acme.com" 
+                                <Input
+                                    placeholder="e.g. portal.acme.com"
                                     size="lg"
                                     radius="lg"
                                     value={domain}
                                     onValueChange={setDomain}
                                     classNames={{ inputWrapper: "bg-black/5 h-14" }}
                                     startContent={<Globe size={18} className="opacity-20" />}
-                                    isDisabled={customDomainAllowed === false}
+                                    isDisabled={customDomainAllowed === false || status === 'VERIFIED'}
                                 />
-                                <Button 
-                                    color="primary" 
-                                    size="lg" 
-                                    radius="lg" 
-                                    className="h-14 font-black px-10"
-                                    onClick={handleVerify}
-                                    isLoading={isVerifying}
-                                    isDisabled={customDomainAllowed === false || !domain}
-                                >
-                                    Verify
-                                </Button>
+                                {status === 'IDLE' ? (
+                                    <Button
+                                        color="primary"
+                                        size="lg"
+                                        radius="lg"
+                                        className="h-14 font-black px-10"
+                                        onClick={handleSetDomain}
+                                        isLoading={isVerifying}
+                                        isDisabled={customDomainAllowed === false || !domain}
+                                    >
+                                        Set Domain
+                                    </Button>
+                                ) : status === 'PENDING' ? (
+                                    <Button
+                                        color="secondary"
+                                        size="lg"
+                                        radius="lg"
+                                        className="h-14 font-black px-10"
+                                        onClick={handleVerify}
+                                        isLoading={isVerifying}
+                                    >
+                                        Verify DNS
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        color="danger"
+                                        variant="flat"
+                                        size="lg"
+                                        radius="lg"
+                                        className="h-14 font-black px-10"
+                                        onClick={handleRemoveDomain}
+                                    >
+                                        Remove
+                                    </Button>
+                                )}
                             </div>
 
                             {status === 'VERIFIED' && (
@@ -283,18 +365,57 @@ export default function DomainSettingsPage() {
 
                             <div className="space-y-6">
                                 <h4 className="text-sm font-black uppercase tracking-widest opacity-40">DNS Configuration</h4>
-                                
+
+                                {/* Verification Status */}
+                                {verificationResult && (
+                                    <div className={`p-4 rounded-xl ${verificationResult.txtVerified ? 'bg-success/5 border border-success/20' : 'bg-warning/5 border border-warning/20'}`}>
+                                        <p className="text-xs font-bold">
+                                            TXT Record: <span className={verificationResult.txtVerified ? 'text-success' : 'text-warning'}>{verificationResult.txtVerified ? 'Verified' : 'Not Found'}</span>
+                                            {' | '}
+                                            CNAME Record: <span className={verificationResult.cnameVerified ? 'text-success' : 'text-warning'}>{verificationResult.cnameVerified ? 'Verified' : 'Not Found'}</span>
+                                        </p>
+                                        {verificationResult.errors?.length > 0 && (
+                                            <p className="text-[10px] opacity-60 mt-1">{verificationResult.errors.join(', ')}</p>
+                                        )}
+                                    </div>
+                                )}
+
                                 <div className="space-y-4">
+                                    {/* TXT Record for Verification */}
+                                    {verificationToken && status === 'PENDING' && (
+                                        <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20 space-y-4">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-primary">Step 1: Verification Record</span>
+                                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-lg font-black text-[10px]">TXT</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Host/Name</span>
+                                                <div className="flex items-center gap-2">
+                                                    <code className="text-xs font-bold">_easeinventory-verify</code>
+                                                    <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard('_easeinventory-verify')}><Copy size={12} /></Button>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Value</span>
+                                                <div className="flex items-center gap-2">
+                                                    <code className="text-xs font-bold text-primary break-all max-w-[200px]">{verificationToken}</code>
+                                                    <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard(verificationToken)}><Copy size={12} /></Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* CNAME Record */}
                                     <div className="p-6 rounded-2xl bg-black/[0.03] border border-black/5 space-y-4">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Type</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-30">{verificationToken ? 'Step 2: Routing Record' : 'Type'}</span>
                                             <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-lg font-black text-[10px]">CNAME</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Host/Name</span>
                                             <div className="flex items-center gap-2">
-                                                <code className="text-xs font-bold">inventory</code>
-                                                <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard('inventory')}><Copy size={12} /></Button>
+                                                <code className="text-xs font-bold">{domain ? domain.split('.')[0] : 'inventory'}</code>
+                                                <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard(domain ? domain.split('.')[0] : 'inventory')}><Copy size={12} /></Button>
                                             </div>
                                         </div>
                                         <div className="flex justify-between items-center">
