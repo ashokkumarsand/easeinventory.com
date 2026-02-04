@@ -24,6 +24,7 @@ import {
   Home,
   Mail,
   Menu,
+  MessageSquare,
   Package,
   PlusCircle,
   Settings,
@@ -33,6 +34,7 @@ import {
   Users,
   Wrench
 } from 'lucide-react';
+import AIHelpWidget from '@/components/help/AIHelpWidget';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -289,6 +291,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </main>
+
+      {/* AI Help Widget */}
+      <AIHelpWidget />
     </div>
   );
 }
