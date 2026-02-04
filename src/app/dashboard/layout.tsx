@@ -93,7 +93,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [status, session, pathname, router]);
 
-  if (status === 'loading') {
+  // Show loading state while checking auth or redirecting
+  if (status === 'loading' || status === 'unauthenticated') {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background">
         <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
