@@ -11,7 +11,7 @@ This file tracks unimplemented features, technical debt, and compliance gaps. It
 ## 🏆 Quality Management (ISO 9001)
 - [ ] **Contact Form**: Implement database storage and email notification in `/api/contact`.
 - [x] **Localization**: Moved hardcoded strings to `messages/*.json` in all dashboard pages.
-- [ ] **Error Boundaries**: Add Global Error Boundaries to dashboard sub-routes to prevent full-page crashes.
+- [x] **Error Boundaries**: Add Global Error Boundaries to dashboard sub-routes to prevent full-page crashes.
 
 ## 🛠️ Feature Backlog
 - [ ] **Report Exports**: Implement PDF export for GST reports (currently only JSON).
