@@ -90,3 +90,20 @@ Use `@/*` for imports from `src/` (configured in tsconfig.json).
 
 ### Environment Variables
 See `docs/SCALABILITY_GUIDE.md` for full list. Required: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`.
+
+## Custom Skills
+
+### UI Audit (`/ui-audit`)
+Run a comprehensive UX audit on the application. This skill:
+- Analyzes pages against 8 UX categories (brand compliance, navigation, accessibility, etc.)
+- Generates detailed audit reports with severity ratings
+- Creates prioritized fix plans
+- Produces design system guidelines
+
+**Usage:**
+```
+/ui-audit                    # Full audit with brand guidelines collection
+/ui-audit [page-path]        # Audit specific page
+```
+
+**Skill file:** `.claude/skills/ui-audit.md`

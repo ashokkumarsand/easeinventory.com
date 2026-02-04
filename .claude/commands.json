@@ -1,0 +1,9 @@
+{
+  "commands": [
+    {
+      "name": "ui-audit",
+      "description": "Run a comprehensive UX audit on the application",
+      "skill": "ui-audit.md"
+    }
+  ]
+}
