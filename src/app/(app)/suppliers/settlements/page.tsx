@@ -75,7 +75,7 @@ export default function SettlementsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <Link href="/dashboard/suppliers">
+                        <Link href="/suppliers">
                             <Button isIconOnly variant="light" radius="full" size="sm">
                                 <ArrowLeft size={20} className="opacity-40" />
                             </Button>

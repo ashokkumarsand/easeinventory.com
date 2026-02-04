@@ -281,7 +281,7 @@ export default function DomainSettingsPage() {
                                         radius="lg" 
                                         className="font-black"
                                         as="a"
-                                        href="/dashboard/settings/billing"
+                                        href="/settings/billing"
                                     >
                                         Upgrade to Business
                                     </Button>

@@ -102,7 +102,7 @@ export function LowStockAlerts({ isLoading, limit = 5 }: LowStockAlertsProps) {
           </div>
           <Button
             as={Link}
-            href="/dashboard/inventory?filter=low_stock"
+            href="/inventory?filter=low_stock"
             size="sm"
             variant="flat"
             endContent={<ArrowRight className="w-4 h-4" />}

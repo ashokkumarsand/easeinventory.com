@@ -126,7 +126,7 @@ export default function SuppliersPage() {
                     <p className="text-black/40 dark:text-white/40 font-bold ml-1">Manage supply chain partners and procurement channels.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Link href="/dashboard/suppliers/settlements">
+                    <Link href="/suppliers/settlements">
                         <Button variant="flat" color="success" className="font-bold rounded-2xl" startContent={<Banknote size={18} />}>
                             Settlement Ledger
                         </Button>

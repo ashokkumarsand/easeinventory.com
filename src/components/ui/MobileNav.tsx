@@ -22,16 +22,16 @@ interface NavItem {
 
 const mainItems: NavItem[] = [
   { label: 'Home', href: '/dashboard', icon: Home },
-  { label: 'Inventory', href: '/dashboard/inventory', icon: Package },
-  { label: 'Invoices', href: '/dashboard/invoices', icon: FileText },
-  { label: 'Repairs', href: '/dashboard/repairs', icon: Wrench },
+  { label: 'Inventory', href: '/inventory', icon: Package },
+  { label: 'Invoices', href: '/invoices', icon: FileText },
+  { label: 'Repairs', href: '/repairs', icon: Wrench },
 ];
 
 const moreItems: NavItem[] = [
-  { label: 'Suppliers', href: '/dashboard/suppliers', icon: Package },
-  { label: 'Delivery', href: '/dashboard/delivery', icon: Package },
-  { label: 'HR', href: '/dashboard/hr', icon: Package },
-  { label: 'Settings', href: '/dashboard/settings', icon: Package },
+  { label: 'Suppliers', href: '/suppliers', icon: Package },
+  { label: 'Delivery', href: '/delivery', icon: Package },
+  { label: 'HR', href: '/hr', icon: Package },
+  { label: 'Settings', href: '/settings', icon: Package },
 ];
 
 export default function MobileNav() {

@@ -160,7 +160,7 @@ const Navbar: React.FC = () => {
                   <DropdownItem
                     key="settings"
                     as={Link}
-                    href="/dashboard/settings"
+                    href="/settings"
                     startContent={<Settings className="w-4 h-4" />}
                   >
                     Settings

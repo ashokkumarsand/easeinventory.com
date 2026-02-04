@@ -12,7 +12,7 @@ export default function NotFound() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      window.location.href = `/dashboard/inventory?search=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/inventory?search=${encodeURIComponent(searchQuery)}`;
     }
   };
 
@@ -139,10 +139,10 @@ export default function NotFound() {
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {[
-              { label: 'Inventory', href: '/dashboard/inventory' },
-              { label: 'Repairs', href: '/dashboard/repairs' },
-              { label: 'Invoices', href: '/dashboard/invoices' },
-              { label: 'Settings', href: '/dashboard/settings' },
+              { label: 'Inventory', href: '/inventory' },
+              { label: 'Repairs', href: '/repairs' },
+              { label: 'Invoices', href: '/invoices' },
+              { label: 'Settings', href: '/settings' },
             ].map((link) => (
               <Link
                 key={link.href}

@@ -269,11 +269,11 @@ export function getRecommendedUpgrade(currentPlan: PlanType): PlanType | null {
  * Sidebar menu items that should be gated by plan
  */
 export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
-  '/dashboard/communications': 'whatsapp_messages',
-  '/dashboard/settings/domains': 'custom_domain',
-  '/dashboard/inventory/locations': 'multi_location',
-  '/dashboard/settings/roles': 'custom_roles',
-  '/dashboard/settings/audit': 'audit_trail',
+  '/communications': 'whatsapp_messages',
+  '/settings/domains': 'custom_domain',
+  '/inventory/locations': 'multi_location',
+  '/settings/roles': 'custom_roles',
+  '/settings/audit': 'audit_trail',
 };
 
 /**

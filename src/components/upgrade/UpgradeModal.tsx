@@ -45,7 +45,7 @@ export function UpgradeModal() {
 
   const handleUpgrade = (targetPlan: PlanType) => {
     // In production, this would redirect to Razorpay checkout
-    window.location.href = `/dashboard/settings/billing?plan=${targetPlan}&cycle=${billingCycle}`;
+    window.location.href = `/settings/billing?plan=${targetPlan}&cycle=${billingCycle}`;
     hideUpgradeModal();
   };
 
