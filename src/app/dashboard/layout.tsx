@@ -1,6 +1,5 @@
 'use client';
 
-import AIHelpWidget from '@/components/help/AIHelpWidget';
 import { Logo } from '@/components/icons/Logo';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
@@ -30,7 +29,6 @@ import {
     Menu,
     MessageCircle,
     Package,
-    PlusCircle,
     Settings,
     Shield,
     Tag,
@@ -41,9 +39,16 @@ import {
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+
+// Lazy load AIHelpWidget to prevent blocking navigation
+const AIHelpWidget = dynamic(() => import('@/components/help/AIHelpWidget'), {
+  ssr: false,
+  loading: () => null,
+});
 
 const menuItems = [
   { group: 'Overview', items: [
@@ -84,34 +89,45 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  // Track if initial auth check has been performed
+  const hasCheckedAuth = useRef(false);
 
   // Ensure theme is properly mounted to avoid hydration issues
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Auth check - only run when status changes, not on every pathname change
   useEffect(() => {
+    if (status === 'loading') return;
+
     if (status === 'unauthenticated') {
       router.push('/login');
-    } else if (status === 'authenticated') {
+      return;
+    }
+
+    // Only perform redirect checks once per session, not on every navigation
+    if (status === 'authenticated' && !hasCheckedAuth.current) {
+      hasCheckedAuth.current = true;
       const user = session?.user as any;
-      
+
       // If tenant is still pending approval, redirect to pending-approval page
       // But skip this for SUPER_ADMINs
-      if (user?.role !== 'SUPER_ADMIN' && user?.registrationStatus === 'PENDING' && pathname !== '/pending-approval') {
+      if (user?.role !== 'SUPER_ADMIN' && user?.registrationStatus === 'PENDING') {
         router.push('/pending-approval');
         return;
       }
 
-      if (user?.onboardingStatus === 'PENDING' && pathname !== '/onboarding') {
+      if (user?.onboardingStatus === 'PENDING') {
         router.push('/onboarding');
       }
     }
-  }, [status, session, pathname, router]);
+  }, [status, session, router]);
 
   // Show loading state while checking auth or redirecting
   if (status === 'loading' || status === 'unauthenticated') {
@@ -144,13 +160,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside
         data-sidebar="true"
         data-theme={mounted ? resolvedTheme : 'dark'}
-        className={`fixed lg:relative z-50 h-full border-r transition-all duration-300 ease-in-out ${
-          (mounted ? resolvedTheme : 'dark') === 'dark' 
-            ? 'bg-zinc-900 border-zinc-700' 
-            : 'bg-white border-zinc-200'
-        } ${
+        className={`fixed lg:relative z-50 h-full transition-all duration-300 ease-in-out ${
           isSidebarOpen ? 'w-[280px]' : 'w-[88px]'
         } ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        style={{
+          backgroundColor: mounted ? (resolvedTheme === 'dark' ? '#18181b' : '#ffffff') : '#ffffff',
+          borderRight: mounted
+            ? (resolvedTheme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)')
+            : '1px solid rgba(0, 0, 0, 0.08)'
+        }}
       >
         <div className="flex flex-col h-full overflow-hidden">
           
@@ -199,6 +217,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <Link
                           key={item.label}
                           href={item.href}
+                          prefetch={true}
+                          onClick={() => setIsMobileMenuOpen(false)}
                           className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative ${
                             isActive
                             ? 'bg-primary text-white shadow-md shadow-primary/20'
@@ -224,7 +244,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </ScrollShadow>
 
           {/* User Section (Bottom) */}
-           <div className="p-4 shrink-0 border-t border-zinc-200 dark:border-zinc-700">
+           <div className="p-4 shrink-0 border-t border-black/[0.08] dark:border-white/[0.08]">
              <div className={`p-3 rounded-2xl bg-background transition-all ${!isSidebarOpen && 'p-1 bg-transparent'}`}>
                 <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
                    <Avatar
@@ -262,20 +282,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-grow flex flex-col min-w-0">
         
         {/* Header */}
-        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-white dark:bg-zinc-900 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shrink-0 z-40">
+        <header
+          className="h-20 flex items-center justify-between px-6 lg:px-10 shrink-0 z-40"
+          style={{
+            backgroundColor: mounted ? (resolvedTheme === 'dark' ? '#18181b' : '#ffffff') : '#ffffff',
+            borderBottom: mounted
+              ? (resolvedTheme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)')
+              : '1px solid rgba(0, 0, 0, 0.08)'
+          }}
+        >
            <div className="flex items-center gap-4">
-              <Button 
-                isIconOnly 
-                variant="light" 
-                className="hidden lg:flex" 
+              <Button
+                isIconOnly
+                variant="light"
+                className="hidden lg:flex"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
                 <Menu className="w-5 h-5" />
               </Button>
-              <Button 
-                isIconOnly 
-                variant="light" 
-                className="lg:hidden" 
+              <Button
+                isIconOnly
+                variant="light"
+                className="lg:hidden"
                 onClick={() => setIsMobileMenuOpen(true)}
               >
                 <Menu className="w-5 h-5" />
@@ -291,19 +319,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            </div>
 
            <div className="flex items-center gap-3 md:gap-4">
-              <Button 
-                variant="flat" 
-                color="primary" 
-                className="hidden md:flex font-black shadow-lg shadow-primary/10"
-                startContent={<PlusCircle size={18} />}
-                radius="full"
-              >
-                Quick Action
-              </Button>
-              <div className="w-[1px] h-6 bg-black/10 dark:bg-white/10 hidden md:block mx-1" />
               <ThemeToggle />
               <LocaleSwitcher />
-              <Tooltip content="Notifications" classNames={{ content: "bg-transparent shadow-none text-foreground font-medium text-sm" }}>
+              <Tooltip content="Notifications">
                  <Button isIconOnly variant="light" radius="full" className="relative">
                     <div className="w-2 h-2 bg-danger rounded-full absolute top-2 right-2 border-2 border-white dark:border-zinc-900 animate-pulse" />
                     <Bell size={20} />

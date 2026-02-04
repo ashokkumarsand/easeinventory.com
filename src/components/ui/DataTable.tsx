@@ -146,7 +146,6 @@ export function DataTable<T extends Record<string, any>>({
         loading={isLoading}
         noRowsOverlayComponent={noRowsOverlay}
         loadingOverlayComponent={loadingOverlay}
-        animateRows
         suppressCellFocus
         suppressRowHoverHighlight={false}
         pagination

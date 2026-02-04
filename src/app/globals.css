@@ -257,22 +257,26 @@
   background-color: #18181b !important;
 }
 
-/* Tooltip styling - clean minimal design */
-:root [role="tooltip"] {
-  background-color: transparent !important;
-  color: var(--foreground) !important;
+/* Tooltip styling - HeroUI default style */
+[role="tooltip"],
+[data-slot="content"][class*="tooltip"] {
+  background-color: #18181b !important;
+  color: #fafafa !important;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1) !important;
   font-weight: 500;
   font-family: var(--font-sans);
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  font-size: 12px !important;
 }
 
-/* Tooltip styling - dark */
-.dark [role="tooltip"] {
-  background-color: transparent !important;
-  color: var(--foreground) !important;
-  border: none !important;
-  box-shadow: none !important;
+/* Tooltip styling - dark mode */
+.dark [role="tooltip"],
+.dark [data-slot="content"][class*="tooltip"] {
+  background-color: #fafafa !important;
+  color: #18181b !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2) !important;
 }
 
 [data-slot="base"].bg-content1 {
@@ -589,6 +593,47 @@ section[role="dialog"] {
 .dark .theme-table-wrapper {
   background-color: #18181b !important;
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* HeroUI Table - Force proper theme backgrounds */
+[data-slot="wrapper"],
+[data-slot="base"],
+table,
+.table-wrapper,
+div[class*="Table"] > div {
+  background-color: #ffffff !important;
+}
+
+.dark [data-slot="wrapper"],
+.dark [data-slot="base"],
+.dark table,
+.dark .table-wrapper,
+.dark div[class*="Table"] > div {
+  background-color: #18181b !important;
+}
+
+/* HeroUI Table header */
+thead,
+[data-slot="thead"],
+th {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+.dark thead,
+.dark [data-slot="thead"],
+.dark th {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* HeroUI Table body and rows */
+tbody,
+[data-slot="tbody"],
+tr {
+  background-color: transparent !important;
+}
+
+td {
+  background-color: transparent !important;
 }
 
 /* Theme-aware input */
