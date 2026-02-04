@@ -29,7 +29,9 @@
   --color-dark-bg: #09090b;
   --color-dark-card: #18181b;
 
-  --font-sans: var(--font-montserrat), system-ui, -apple-system, sans-serif;
+  /* Typography - Dual font system */
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: var(--font-montserrat), var(--font-inter), system-ui, sans-serif;
 
   --radius-3xl: 24px;
 }
@@ -66,6 +68,35 @@
     color: var(--foreground);
     @apply min-h-screen overflow-x-hidden antialiased transition-colors duration-300;
   }
+
+  /* Headings use Montserrat for display typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-bold tracking-tight leading-snug;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-bold tracking-tight leading-snug;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl font-semibold tracking-tight;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl font-semibold;
+  }
+
+  h6 {
+    @apply text-base md:text-lg font-semibold;
+  }
 }
 
 /* ==================== COMPONENT CLASSES ==================== */
@@ -79,15 +110,31 @@
   }
 
   .heading-xl {
+    font-family: var(--font-heading);
     @apply text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] transition-colors;
   }
 
   .heading-lg {
+    font-family: var(--font-heading);
     @apply text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[1.0] transition-colors;
+  }
+
+  .heading-md {
+    font-family: var(--font-heading);
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight leading-tight transition-colors;
+  }
+
+  .heading-sm {
+    font-family: var(--font-heading);
+    @apply text-xl md:text-2xl font-bold tracking-tight leading-snug transition-colors;
   }
 
   .paragraph-lg {
     @apply text-lg md:text-xl lg:text-2xl font-medium leading-relaxed opacity-70 transition-opacity;
+  }
+
+  .paragraph-md {
+    @apply text-base md:text-lg font-normal leading-relaxed transition-opacity;
   }
 
   /* Modern Card - consistent for both themes */
@@ -141,15 +188,19 @@
 /* Light theme - explicit input backgrounds */
 :root [data-slot="input-wrapper"],
 :root [data-slot="innerWrapper"] {
-  background-color: #f4f4f5 !important; /* zinc-100 */
-  border-color: #e4e4e7 !important; /* zinc-200 */
+  background-color: #f4f4f5 !important;
+  /* zinc-100 */
+  border-color: #e4e4e7 !important;
+  /* zinc-200 */
 }
 
 /* Dark theme - explicit input backgrounds */
 .dark [data-slot="input-wrapper"],
 .dark [data-slot="innerWrapper"] {
-  background-color: rgba(39, 39, 42, 0.5) !important; /* zinc-800/50 */
-  border-color: #3f3f46 !important; /* zinc-700 */
+  background-color: rgba(39, 39, 42, 0.5) !important;
+  /* zinc-800/50 */
+  border-color: #3f3f46 !important;
+  /* zinc-700 */
 }
 
 /* Light theme - select trigger */
@@ -206,19 +257,22 @@
   background-color: #18181b !important;
 }
 
-/* Tooltip styling - light */
+/* Tooltip styling - clean minimal design */
 :root [role="tooltip"] {
-  background-color: #09090b !important;
-  color: #fafafa !important;
+  background-color: transparent !important;
+  color: var(--foreground) !important;
   border: none !important;
+  box-shadow: none !important;
   font-weight: 500;
+  font-family: var(--font-sans);
 }
 
 /* Tooltip styling - dark */
 .dark [role="tooltip"] {
-  background-color: #fafafa !important;
-  color: #09090b !important;
+  background-color: transparent !important;
+  color: var(--foreground) !important;
   border: none !important;
+  box-shadow: none !important;
 }
 
 [data-slot="base"].bg-content1 {
@@ -226,17 +280,46 @@
   border: 1px solid var(--card-border) !important;
 }
 
-/* Modal content wrapper */
-div[role="dialog"] {
-  background-color: var(--card-bg) !important;
+/* Modal content wrapper - CRITICAL: Force solid backgrounds */
+div[role="dialog"],
+[data-slot="base"][class*="modal"],
+section[role="dialog"] {
+  background-color: #ffffff !important;
   border-radius: 16px !important;
-  border: 1px solid var(--card-border) !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.dark div[role="dialog"],
+.dark [data-slot="base"][class*="modal"],
+.dark section[role="dialog"] {
+  background-color: #18181b !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+/* Modal body and content areas */
+[data-slot="body"],
+[data-slot="header"],
+[data-slot="footer"] {
+  background-color: transparent !important;
+}
+
+/* Card backgrounds - ensure solid */
+.bg-content1,
+[data-slot="base"].bg-content1,
+[class*="Card"][class*="bg-content1"] {
+  background-color: #ffffff !important;
+}
+
+.dark .bg-content1,
+.dark [data-slot="base"].bg-content1,
+.dark [class*="Card"][class*="bg-content1"] {
+  background-color: #18181b !important;
 }
 
 /* Input styling - Light Theme */
 [data-slot="input-wrapper"],
 [data-slot="innerWrapper"],
-[data-slot="base"] > div[class*="bg-default"] {
+[data-slot="base"]>div[class*="bg-default"] {
   background-color: var(--input-bg) !important;
   border: 1px solid var(--input-border) !important;
   border-radius: 12px !important;
@@ -392,6 +475,39 @@ div[role="dialog"] {
   border-color: var(--color-primary) !important;
 }
 
+/* ==================== AG GRID THEMING ==================== */
+.ag-theme-quartz {
+  --ag-background-color: var(--card-bg) !important;
+  --ag-foreground-color: var(--foreground) !important;
+  --ag-border-color: var(--card-border) !important;
+  --ag-header-background-color: var(--input-bg) !important;
+  --ag-header-foreground-color: var(--muted-foreground) !important;
+  --ag-odd-row-background-color: transparent !important;
+  --ag-row-hover-color: var(--input-bg) !important;
+  --ag-selected-row-background-color: rgba(101, 163, 13, 0.1) !important;
+}
+
+.dark .ag-theme-quartz {
+  --ag-background-color: #18181b !important;
+  --ag-foreground-color: #fafafa !important;
+  --ag-border-color: rgba(255, 255, 255, 0.08) !important;
+  --ag-header-background-color: rgba(255, 255, 255, 0.02) !important;
+  --ag-header-foreground-color: rgba(255, 255, 255, 0.5) !important;
+  --ag-row-hover-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* AG Grid cell styling */
+.ag-cell {
+  color: var(--foreground) !important;
+}
+
+.ag-header-cell-text {
+  color: var(--muted-foreground) !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
 /* ==================== SCROLLBAR ==================== */
 ::-webkit-scrollbar {
   width: 8px;
@@ -425,6 +541,15 @@ div[role="dialog"] {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Font utilities */
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  .font-body {
+    font-family: var(--font-sans);
+  }
 }
 
 /* Helper Classes for Theme Visibility */
@@ -437,15 +562,113 @@ div[role="dialog"] {
 }
 
 .bg-card {
-  background-color: var(--card-bg) !important;
+  background-color: #ffffff !important;
+}
+
+.dark .bg-card {
+  background-color: #18181b !important;
+}
+
+/* Theme-aware card utility */
+.theme-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .theme-card {
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Theme-aware table wrapper */
+.theme-table-wrapper {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .theme-table-wrapper {
+  background-color: #18181b !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Theme-aware input */
+.theme-input {
+  background-color: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.dark .theme-input {
+  background-color: rgba(39, 39, 42, 0.5) !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+/* Theme-aware modal */
+.theme-modal {
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+}
+
+.dark .theme-modal {
+  background-color: #18181b !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+/* Dashboard sidebar - ensure solid background */
+[data-sidebar="true"] {
+  background-color: #ffffff !important;
+}
+
+.dark [data-sidebar="true"],
+html.dark [data-sidebar="true"] {
+  background-color: #18181b !important;
+}
+
+/* AI Help Widget and floating cards - ensure solid backgrounds */
+.fixed[class*="shadow-2xl"],
+.fixed>div[class*="shadow-2xl"] {
+  background-color: #ffffff !important;
+}
+
+.dark .fixed[class*="shadow-2xl"],
+.dark .fixed>div[class*="shadow-2xl"] {
+  background-color: #18181b !important;
+}
+
+/* Cards within fixed position elements */
+.fixed [data-slot="base"],
+.fixed .card {
+  background-color: #ffffff !important;
+}
+
+.dark .fixed [data-slot="base"],
+.dark .fixed .card {
+  background-color: #18181b !important;
+}
+
+/* AI Help Widget - ensure solid background */
+[data-help-widget="true"] {
+  background-color: #ffffff !important;
+}
+
+.dark [data-help-widget="true"],
+html.dark [data-help-widget="true"] {
+  background-color: #18181b !important;
 }
 
 .text-muted {
-  color: var(--muted-foreground) !important;
+  color: rgba(9, 9, 11, 0.5) !important;
+}
+
+.dark .text-muted {
+  color: rgba(250, 250, 250, 0.5) !important;
 }
 
 .border-soft {
-  border-color: var(--card-border) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark .border-soft {
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* ==================== MOBILE OPTIMIZATIONS ==================== */
@@ -469,6 +692,7 @@ div[role="dialog"] {
 
 /* Touch-friendly minimum sizes */
 @media (max-width: 768px) {
+
   button,
   a,
   input[type="button"],
@@ -483,7 +707,8 @@ div[role="dialog"] {
   select,
   textarea {
     min-height: 48px;
-    font-size: 16px; /* Prevents iOS zoom on focus */
+    font-size: 16px;
+    /* Prevents iOS zoom on focus */
   }
 
   /* Better tap highlighting */
@@ -527,6 +752,7 @@ div[role="dialog"] {
 
 /* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

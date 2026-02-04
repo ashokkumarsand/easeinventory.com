@@ -1,44 +1,46 @@
 'use client';
 
+import AIHelpWidget from '@/components/help/AIHelpWidget';
 import { Logo } from '@/components/icons/Logo';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import {
-  Avatar,
-  Button,
-  Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  ScrollShadow,
-  Tooltip
+    Avatar,
+    Button,
+    Divider,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    ScrollShadow,
+    Tooltip
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowRightLeft,
-  Building2,
-  Calendar,
-  FileText,
-  Fingerprint,
-  Globe,
-  History,
-  Home,
-  Mail,
-  Menu,
-  MessageCircle,
-  Package,
-  PlusCircle,
-  Settings,
-  Shield,
-  Tag,
-  TrendingUp,
-  Truck,
-  Users,
-  Wrench
+    ArrowRightLeft,
+    Bell,
+    Building2,
+    Calendar,
+    FileText,
+    Fingerprint,
+    Globe,
+    History,
+    Home,
+    Mail,
+    Menu,
+    MessageCircle,
+    Package,
+    PlusCircle,
+    Settings,
+    Shield,
+    Tag,
+    TrendingUp,
+    Truck,
+    Users,
+    Wrench
 } from 'lucide-react';
-import AIHelpWidget from '@/components/help/AIHelpWidget';
-import ThemeToggle from '@/components/ui/ThemeToggle';
 import { signOut, useSession } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -82,8 +84,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  // Ensure theme is properly mounted to avoid hydration issues
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -133,7 +142,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:relative z-50 h-full bg-card border-r border-soft transition-all duration-300 ease-in-out ${
+        data-sidebar="true"
+        data-theme={mounted ? resolvedTheme : 'dark'}
+        className={`fixed lg:relative z-50 h-full border-r transition-all duration-300 ease-in-out ${
+          (mounted ? resolvedTheme : 'dark') === 'dark' 
+            ? 'bg-zinc-900 border-zinc-700' 
+            : 'bg-white border-zinc-200'
+        } ${
           isSidebarOpen ? 'w-[280px]' : 'w-[88px]'
         } ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
@@ -144,10 +159,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
              <Link href="/dashboard" className="flex items-center gap-3">
                <Logo size={isSidebarOpen ? 32 : 36} />
                {isSidebarOpen && (
-                 <motion.span 
+                 <motion.span
                    initial={{ opacity: 0, x: -10 }}
                    animate={{ opacity: 1, x: 0 }}
-                   className="text-lg font-black tracking-tight"
+                   className="text-lg font-black tracking-tight font-heading"
                  >
                    Ease<span className="text-primary italic">Inventory</span>
                  </motion.span>
@@ -209,7 +224,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </ScrollShadow>
 
           {/* User Section (Bottom) */}
-          <div className="p-4 shrink-0 border-t border-soft">
+           <div className="p-4 shrink-0 border-t border-zinc-200 dark:border-zinc-700">
              <div className={`p-3 rounded-2xl bg-background transition-all ${!isSidebarOpen && 'p-1 bg-transparent'}`}>
                 <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
                    <Avatar
@@ -247,7 +262,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-grow flex flex-col min-w-0">
         
         {/* Header */}
-        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-card/80 backdrop-blur-md border-b border-soft shrink-0 z-40">
+        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-white dark:bg-zinc-900 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shrink-0 z-40">
            <div className="flex items-center gap-4">
               <Button 
                 isIconOnly 
@@ -265,7 +280,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               >
                 <Menu className="w-5 h-5" />
               </Button>
-               <h2 className="text-xl font-black tracking-tight flex items-center gap-3">
+               <h2 className="text-xl font-black tracking-tight font-heading flex items-center gap-3">
                  {pathname.split('/').pop()?.charAt(0).toUpperCase()}{pathname.split('/').pop()?.slice(1) || 'Dashboard'}
                  {user?.onboardingStatus === 'UNDER_REVIEW' && (
                    <span className="text-[10px] bg-warning/10 text-warning px-2 py-1 rounded-full border border-warning/20">
@@ -288,10 +303,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="w-[1px] h-6 bg-black/10 dark:bg-white/10 hidden md:block mx-1" />
               <ThemeToggle />
               <LocaleSwitcher />
-              <Tooltip content="Notifications">
+              <Tooltip content="Notifications" classNames={{ content: "bg-transparent shadow-none text-foreground font-medium text-sm" }}>
                  <Button isIconOnly variant="light" radius="full" className="relative">
-                    <div className="w-2 h-2 bg-secondary rounded-full absolute top-2 right-2 border-2 border-white dark:border-black" />
-                    <Calendar size={20} className="opacity-50" />
+                    <div className="w-2 h-2 bg-danger rounded-full absolute top-2 right-2 border-2 border-white dark:border-zinc-900 animate-pulse" />
+                    <Bell size={20} />
                  </Button>
               </Tooltip>
            </div>

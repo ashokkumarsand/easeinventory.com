@@ -8,25 +8,25 @@ import React, { useCallback, useMemo, useRef } from 'react';
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// Custom theme matching our design system
+// Custom theme matching our design system - using CSS variables for theme awareness
 const customTheme = themeQuartz.withParams({
-  accentColor: 'hsl(var(--primary))',
-  backgroundColor: 'transparent',
-  foregroundColor: 'hsl(var(--foreground))',
-  borderColor: 'hsl(var(--foreground) / 0.05)',
-  headerBackgroundColor: 'hsl(var(--foreground) / 0.02)',
-  headerTextColor: 'hsl(var(--foreground) / 0.5)',
+  accentColor: '#65A30D',
+  backgroundColor: 'var(--card-bg)',
+  foregroundColor: 'var(--foreground)',
+  borderColor: 'rgba(0, 0, 0, 0.05)',
+  headerBackgroundColor: 'rgba(0, 0, 0, 0.02)',
+  headerTextColor: 'rgba(0, 0, 0, 0.4)',
   oddRowBackgroundColor: 'transparent',
-  rowHoverColor: 'hsl(var(--foreground) / 0.02)',
-  selectedRowBackgroundColor: 'hsl(var(--primary) / 0.1)',
-  fontFamily: 'var(--font-montserrat), system-ui, sans-serif',
+  rowHoverColor: 'rgba(0, 0, 0, 0.02)',
+  selectedRowBackgroundColor: 'rgba(101, 163, 13, 0.1)',
+  fontFamily: 'var(--font-inter), system-ui, sans-serif',
   fontSize: 14,
   headerFontSize: 10,
   headerFontWeight: 800,
-  cellTextColor: 'hsl(var(--foreground))',
+  cellTextColor: 'var(--foreground)',
   rowBorder: true,
   wrapperBorderRadius: 24,
-  headerColumnResizeHandleColor: 'hsl(var(--primary) / 0.3)',
+  headerColumnResizeHandleColor: 'rgba(101, 163, 13, 0.3)',
 });
 
 interface DataTableProps<T> {
@@ -129,7 +129,7 @@ export function DataTable<T extends Record<string, any>>({
 
   return (
     <div
-      className={`ag-theme-quartz rounded-3xl overflow-hidden border border-foreground/5 bg-background ${className}`}
+      className={`ag-theme-quartz rounded-3xl overflow-hidden theme-table-wrapper ${className}`}
       style={{ height }}
     >
       <AgGridReact

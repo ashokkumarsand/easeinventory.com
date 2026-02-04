@@ -102,15 +102,16 @@ export default function StockFlowChart({ className }: StockFlowChartProps) {
       case 'line':
         return (
           <RechartsLineChart {...commonProps}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-            <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.15} />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="currentColor" opacity={0.6} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 12 }} stroke="currentColor" opacity={0.6} axisLine={false} tickLine={false} />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'var(--background)', 
-                border: '1px solid var(--foreground/10)',
+                backgroundColor: 'rgb(255 255 255 / 0.95)', 
+                border: '1px solid #e4e4e7',
                 borderRadius: '12px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                color: '#09090b'
               }} 
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
@@ -122,15 +123,16 @@ export default function StockFlowChart({ className }: StockFlowChartProps) {
       case 'bar':
         return (
           <BarChart {...commonProps}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-            <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.15} />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="currentColor" opacity={0.6} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 12 }} stroke="currentColor" opacity={0.6} axisLine={false} tickLine={false} />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'var(--background)', 
-                border: '1px solid var(--foreground/10)',
+                backgroundColor: 'rgb(255 255 255 / 0.95)', 
+                border: '1px solid #e4e4e7',
                 borderRadius: '12px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                color: '#09090b'
               }} 
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
@@ -153,15 +155,16 @@ export default function StockFlowChart({ className }: StockFlowChartProps) {
                 <stop offset="95%" stopColor={colors.sales} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-            <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 12, fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.15} />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="currentColor" opacity={0.6} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 12 }} stroke="currentColor" opacity={0.6} axisLine={false} tickLine={false} />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'var(--background)', 
-                border: '1px solid var(--foreground/10)',
+                backgroundColor: 'rgb(255 255 255 / 0.95)', 
+                border: '1px solid #e4e4e7',
                 borderRadius: '12px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                color: '#09090b'
               }} 
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />

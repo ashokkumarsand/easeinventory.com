@@ -1,26 +1,26 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
 import {
-  Button,
-  Card,
-  Input,
-  ScrollShadow,
-  Chip,
-  Avatar,
-  Spinner,
+    Avatar,
+    Button,
+    Card,
+    Chip,
+    Input,
+    ScrollShadow,
+    Spinner,
 } from '@heroui/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  MessageCircle,
-  X,
-  Send,
-  Bot,
-  User,
-  Sparkles,
-  ExternalLink,
-  ChevronDown,
+    Bot,
+    ChevronDown,
+    MessageCircle,
+    Send,
+    Sparkles,
+    User,
+    X
 } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useEffect, useRef, useState } from 'react';
 
 interface Message {
   id: string;
@@ -37,12 +37,15 @@ export default function AIHelpWidget() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Fetch suggestions on mount
   useEffect(() => {
     fetchSuggestions();
+    setMounted(true);
   }, []);
 
   // Scroll to bottom on new messages
@@ -173,11 +176,14 @@ export default function AIHelpWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)]"
           >
-            <Card className="w-full h-full flex flex-col shadow-2xl border border-soft overflow-hidden bg-card">
+            <Card 
+              data-help-widget="true"
+              className="w-full h-full flex flex-col overflow-hidden rounded-3xl border border-white/20 dark:border-zinc-700/50 backdrop-blur-xl bg-white/90 dark:bg-zinc-900/95 shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+            >
               {/* Header */}
-              <div className="p-4 bg-primary text-primary-foreground flex items-center justify-between">
+              <div className="p-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground flex items-center justify-between rounded-t-3xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
                     <Bot size={20} />
                   </div>
                   <div>
@@ -330,7 +336,7 @@ export default function AIHelpWidget() {
               </ScrollShadow>
 
               {/* Input area */}
-              <div className="p-4 border-t border-foreground/10">
+              <div className="p-4 border-t border-zinc-200/50 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-b-3xl">
                 <form onSubmit={handleSubmit} className="flex gap-2">
                   <Input
                     ref={inputRef}
@@ -340,7 +346,7 @@ export default function AIHelpWidget() {
                     size="sm"
                     radius="full"
                     classNames={{
-                      inputWrapper: 'bg-foreground/5 h-10',
+                      inputWrapper: 'bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200/50 dark:border-zinc-700/50 h-10 backdrop-blur-sm',
                     }}
                     disabled={isLoading}
                   />
@@ -350,13 +356,13 @@ export default function AIHelpWidget() {
                     color="primary"
                     radius="full"
                     size="sm"
-                    className="h-10 w-10"
+                    className="h-10 w-10 shadow-md"
                     isDisabled={!input.trim() || isLoading}
                   >
                     <Send size={16} />
                   </Button>
                 </form>
-                <p className="text-[10px] text-foreground/40 text-center mt-2">
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 text-center mt-2">
                   AI can make mistakes. Verify important information.
                 </p>
               </div>

@@ -48,7 +48,9 @@ const config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        heading: ['var(--font-montserrat)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
       },
     },
   },
@@ -58,8 +60,12 @@ const config = {
       themes: {
         light: {
           colors: {
-            background: "#FAF8F3",
-            foreground: "#1A1A1A",
+            background: "#fafafa",
+            foreground: "#09090b",
+            content1: "#ffffff",
+            content2: "#f4f4f5",
+            content3: "#e4e4e7",
+            content4: "#d4d4d8",
             primary: {
               50: '#f7fee7',
               100: '#ecfccb',
@@ -76,6 +82,35 @@ const config = {
             },
             secondary: {
               DEFAULT: '#1E3A8A',
+              foreground: '#FFFFFF',
+            },
+            focus: '#65A30D',
+          },
+        },
+        dark: {
+          colors: {
+            background: "#09090b",
+            foreground: "#fafafa",
+            content1: "#18181b",
+            content2: "#27272a",
+            content3: "#3f3f46",
+            content4: "#52525b",
+            primary: {
+              50: '#1a2e05',
+              100: '#365314',
+              200: '#3f6212',
+              300: '#4d7c0f',
+              400: '#65A30D',
+              500: '#65A30D',
+              600: '#a3e635',
+              700: '#bef264',
+              800: '#d9f99d',
+              900: '#ecfccb',
+              DEFAULT: '#65A30D',
+              foreground: '#000000',
+            },
+            secondary: {
+              DEFAULT: '#3b82f6',
               foreground: '#FFFFFF',
             },
             focus: '#65A30D',

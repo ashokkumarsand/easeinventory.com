@@ -271,7 +271,7 @@ export default function HRDashboardPage() {
                 scrollBehavior="inside"
                 classNames={{
                     backdrop: "bg-black/50 backdrop-blur-sm",
-                    base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+                    base: "theme-modal rounded-2xl",
                     header: "border-b border-zinc-200 dark:border-zinc-800",
                     body: "py-6",
                     footer: "border-t border-zinc-200 dark:border-zinc-800",

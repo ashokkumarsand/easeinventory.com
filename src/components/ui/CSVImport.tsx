@@ -198,7 +198,7 @@ export default function CSVImport({
         size="lg"
         classNames={{
           backdrop: 'bg-black/40 backdrop-blur-md',
-          base: 'bg-background dark:bg-[#111318] border border-foreground/10',
+          base: 'bg-background dark:bg-card border border-foreground/10',
         }}
       >
         <ModalContent>

@@ -152,7 +152,7 @@ export default function LeavesPage() {
                     aria-label="Leave Requests"
                     className="modern-card border-none"
                     classNames={{
-                        wrapper: "p-0 modern-card bg-white dark:bg-[#111318] border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
+                        wrapper: "p-0 modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
                         th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
                         td: "py-6 px-8 font-bold",
                     }}

@@ -119,7 +119,7 @@ const HelpBot: React.FC = () => {
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] bg-background border border-foreground/10 rounded-[1.5rem] shadow-2xl overflow-hidden flex flex-col"
+            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-[1.5rem] shadow-2xl overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-foreground/5 bg-foreground/[0.02]">
@@ -229,7 +229,7 @@ const HelpBot: React.FC = () => {
                       radius="full"
                       size="sm"
                       classNames={{
-                        inputWrapper: 'bg-foreground/5 border-none h-10',
+                        inputWrapper: 'bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 h-10',
                         input: 'font-medium text-sm',
                       }}
                     />

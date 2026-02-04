@@ -318,7 +318,7 @@ export default function RepairCenterPage() {
                     </div>
 
                     {/* Quick Maintenance Panel Hover (Simulated) */}
-                    <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 flex gap-2 z-10">
+                    <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform bg-card border-t border-black/5 dark:border-white/10 flex gap-2 z-10">
                        <Button size="sm" className="flex-1 font-black bg-secondary text-white rounded-xl" onClick={() => handleOpenDetails(ticket)}>View Details</Button>
                        <Button isIconOnly size="sm" variant="flat" className="rounded-xl"><Share2 size={16} /></Button>
                     </div>
@@ -337,7 +337,7 @@ export default function RepairCenterPage() {
         size="2xl"
         classNames={{
             backdrop: "bg-black/50 backdrop-blur-sm",
-            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+            base: "theme-modal rounded-2xl",
             header: "border-b border-zinc-200 dark:border-zinc-800",
             body: "py-6",
             footer: "border-t border-zinc-200 dark:border-zinc-800",
@@ -452,7 +452,7 @@ export default function RepairCenterPage() {
         size="5xl"
         classNames={{
             backdrop: "bg-black/50 backdrop-blur-sm",
-            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden",
+            base: "theme-modal rounded-2xl overflow-hidden",
         }}
       >
         <ModalContent>
@@ -532,7 +532,7 @@ export default function RepairCenterPage() {
                   </div>
 
                   {/* Right Content: Logs & Cost */}
-                  <div className="flex-grow p-8 flex flex-col h-full bg-white dark:bg-zinc-900">
+                  <div className="flex-grow p-8 flex flex-col h-full bg-card">
                      <div className="flex-grow overflow-y-auto pr-4 space-y-8">
                         <section className="space-y-4">
                            <div className="flex items-center justify-between">

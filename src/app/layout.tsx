@@ -1,13 +1,24 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 
+// Inter - Primary font for body text and UI elements
+// Optimized for screen readability, excellent for long-form content
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700', '800'],
+});
+
+// Montserrat - Display font for headings and brand elements
+// Modern geometric sans-serif, great for headlines and emphasis
 const montserrat = Montserrat({
   variable: '--font-montserrat',
   subsets: ['latin'],
   display: 'swap',
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700', '800', '900'],
 });
 
 export const metadata: Metadata = {
@@ -124,7 +135,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className={`${montserrat.variable} font-sans antialiased bg-background text-foreground min-h-screen transition-colors duration-500`}>
+      <body className={`${inter.variable} ${montserrat.variable} font-sans antialiased bg-background text-foreground min-h-screen transition-colors duration-500`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
             {children}

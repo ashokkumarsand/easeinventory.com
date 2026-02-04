@@ -64,7 +64,7 @@ export default function BarcodeScanner({
             size="2xl"
             backdrop="blur"
             classNames={{
-                base: "bg-background border border-foreground/5 dark:bg-[#111318]",
+                base: "bg-background border border-foreground/5 dark:bg-card",
                 header: "border-b border-foreground/5",
             }}
         >

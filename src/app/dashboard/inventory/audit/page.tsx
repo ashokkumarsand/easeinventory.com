@@ -326,7 +326,7 @@ export default function AuditTrailPage() {
                     )
                 }
                 classNames={{
-                    wrapper: "modern-card bg-white dark:bg-[#111318] border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
+                    wrapper: "modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
                     th: "bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6",
                     td: "py-4 px-6 font-bold",
                 }}
