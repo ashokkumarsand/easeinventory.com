@@ -1,8 +1,8 @@
-# EaseInventory - Implementation Roadmap v14
+# EaseInventory - Implementation Roadmap v15
 
-> **Version**: 14.0  
-> **Last Updated**: January 27, 2026  
-> **Status**: Post-MVP Complete
+> **Version**: 15.0
+> **Last Updated**: February 4, 2026
+> **Status**: Production Ready
 
 ---
 
@@ -42,8 +42,12 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 - [x] `usePermissions` hook for UI access control
 - [x] Invite new team members
 
-### Pending
-- [ ] USR-002: Custom role builder with permission matrix
+### Completed (Phase 2 Plan)
+- [x] USR-002: Custom role builder with permission matrix
+  - CustomRole model in Prisma schema
+  - API: `/api/custom-roles` (CRUD)
+  - `check-permission.ts` middleware
+  - `RoleBuilderModal` and `PermissionMatrix` components
 
 ---
 
@@ -74,9 +78,15 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 - [x] Inter-inventory transfers (`/api/inventory/transfers`)
 - [x] Transfer approval workflow
 
+### Completed (Phase 1 Plan)
+- [x] INV-006: Enhanced audit trail UI with filters
+  - API: `/api/security/logs` with filtering & pagination
+  - API: `/api/security/logs/export` for CSV export
+  - `/dashboard/settings/audit` page
+  - `AuditLogTable` and `ActivityFeed` components
+
 ### Pending
 - [ ] INV-004: Inventory-level blanket discount
-- [ ] INV-006: Enhanced audit trail UI with filters
 
 ---
 
@@ -175,8 +185,15 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 - [x] Payslip generation (`Payslip` model)
 - [x] Payment status tracking
 
+### Completed (Phase 3 Plan)
+- [x] HR-004: Holiday calendar management UI
+  - Added tenant-specific holidays support
+  - `LeaveBalance` model for tracking quotas
+  - Leave management page with balances
+  - `LeaveBalanceWidget`, `LeaveRequestModal`, `LeaveApprovalCard` components
+  - India national holidays import
+
 ### Pending
-- [ ] HR-004: Holiday calendar management UI
 - [ ] Overtime calculation enhancement
 
 ---
@@ -212,24 +229,72 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 
 ---
 
-## ⏳ Phase 10: Mobile App (PLANNED)
+## ✅ Phase 10: Mobile App (IN PROGRESS)
 
-### React Native App
-- [ ] MOB-001: Biometric login (FaceID/Fingerprint)
+### React Native App (Expo)
+- [x] MOB-001: Biometric login (FaceID/Fingerprint)
+  - Complete React Native Expo app setup (`/mobile`)
+  - Biometric authentication with expo-local-authentication
+  - Secure token storage with expo-secure-store
+  - Tab navigation: Dashboard, Inventory, Scanner, Settings
+- [x] API: `/api/auth/mobile` for mobile-specific authentication
+- [x] Zustand state management for auth
+- [x] Barcode scanner integration
 - [ ] MOB-002: Geo-fenced attendance
-- [ ] Punch in/out from mobile
-- [ ] Repair ticket creation
-- [ ] Push notifications
+- [ ] Push notifications (FCM/APNS)
 
 ---
 
-## ⏳ Phase 11: Public Business Pages (COMPLETE)
+## ✅ Phase 11: Progressive Web App & AI (COMPLETE)
+
+### PWA Foundation
+- [x] Service Worker with offline caching (`public/sw.js`)
+- [x] Web App Manifest with shortcuts (`public/manifest.json`)
+- [x] Offline fallback page (`/offline`)
+- [x] PWA install prompt component
+- [x] Offline indicator component
+
+### AI Help Bot
+- [x] Claude API integration (`/lib/ai-service.ts`)
+- [x] AI Help Widget on dashboard (`AIHelpWidget` component)
+- [x] EaseInventory context-aware responses
+- [x] Quick suggestions and related topics
+
+### Product Catalog & Barcode
+- [x] `ProductCatalog` model for universal product database
+- [x] Open Food Facts API integration
+- [x] EAN-13 barcode generation
+- [x] API: `/api/barcode/lookup`, `/api/barcode/generate`
+
+### Mobile UI Responsiveness
+- [x] `MobileNav` component
+- [x] `BottomSheet` component
+- [x] `PullToRefresh` component
+- [x] `SwipeableCard` component
+
+### Accessibility (WCAG 2.1 AA)
+- [x] `SkipLink` component
+- [x] `LiveRegion` for screen reader announcements
+- [x] `useFocusTrap` hook for modal accessibility
+- [x] `useReducedMotion` hook for motion preferences
+
+---
+
+## ✅ Phase 12: Public Business Pages (COMPLETE)
 
 ### Tenant Landing Pages
 - [x] Public tenant resolution in root page
 - [x] Business showcase template
 - [x] Service inquiry form
 - [x] Live repair ticket lookup
+
+### WhatsApp Improvements (Phase 4 Plan)
+- [x] `WhatsAppMessage` model for message history tracking
+- [x] `WhatsAppOptIn` model for consent management
+- [x] Message history dashboard at `/dashboard/communications`
+- [x] `MessageHistoryTable` and `WhatsAppWidget` components
+- [x] Retry mechanism with configurable delays
+- [x] Message cost tracking
 
 ---
 
@@ -238,18 +303,19 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 | Phase | Status | Completion |
 |-------|--------|------------|
 | 1. Core Infrastructure | ✅ Complete | 100% |
-| 2. User & Team | ✅ Complete | 95% |
-| 3. Inventory Engine | ✅ Complete | 90% |
+| 2. User & Team | ✅ Complete | 100% |
+| 3. Inventory Engine | ✅ Complete | 95% |
 | 4. Repair & Service | ✅ Complete | 95% |
 | 5. Invoicing & Billing | ✅ Complete | 100% |
 | 6. Delivery Management | ✅ Complete | 80% |
-| 7. HR & Attendance | ✅ Complete | 90% |
+| 7. HR & Attendance | ✅ Complete | 95% |
 | 8. Supplier & Consignment | ✅ Complete | 100% |
 | 9. Infrastructure | ✅ Complete | 85% |
-| 10. Mobile App | ⏳ Planned | 0% |
-| 11. Public Pages | ✅ Complete | 100% |
+| 10. Mobile App | 🔄 In Progress | 60% |
+| 11. PWA & AI | ✅ Complete | 100% |
+| 12. Public Pages | ✅ Complete | 100% |
 
-**Overall Progress**: ~87% Complete
+**Overall Progress**: ~93% Complete
 
 ---
 
