@@ -85,8 +85,12 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
   - `/dashboard/settings/audit` page
   - `AuditLogTable` and `ActivityFeed` components
 
-### Pending
-- [ ] INV-004: Inventory-level blanket discount
+### Completed (Feb 2026)
+- [x] INV-004: Inventory-level blanket discount
+  - `BlanketDiscount` model with scope (ALL, CATEGORY, SUPPLIER, BRAND)
+  - API: `/api/discounts` (CRUD)
+  - Discount calculator utility
+  - `/dashboard/inventory/discounts` management page
 
 ---
 
@@ -193,8 +197,19 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
   - `LeaveBalanceWidget`, `LeaveRequestModal`, `LeaveApprovalCard` components
   - India national holidays import
 
-### Pending
-- [ ] Overtime calculation enhancement
+### Completed (Feb 2026)
+- [x] Overtime calculation enhancement
+  - Added `standardWorkHours` and `overtimeRate` to Employee model
+  - Added `hoursWorked` and `overtimeHours` to Attendance model
+  - Updated payroll calculation to include overtime pay
+  - Auto-calculate hours on check-out
+
+- [x] MOB-002: Geo-fenced attendance
+  - `GeoFence` model with lat/lng and radius
+  - API: `/api/hr/geo-fences` (CRUD)
+  - Haversine distance calculation utility
+  - Validate attendance location against geo-fences
+  - `/dashboard/hr/geo-fences` management page
 
 ---
 
@@ -223,8 +238,15 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 - [x] Domain settings UI
 - [x] SSL via Vercel (automatic)
 
+### Completed (Feb 2026)
+- [x] DOM-001: DNS CNAME verification flow
+  - Domain verification fields on Tenant model
+  - API: `/api/domains` for setting custom domain
+  - API: `/api/domains/verify` for DNS verification
+  - TXT record verification support
+  - Updated domain settings UI with instructions
+
 ### Pending
-- [ ] DOM-001: DNS CNAME verification flow
 - [ ] Cloudflare API integration for advanced DNS
 
 ---
@@ -240,8 +262,12 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 - [x] API: `/api/auth/mobile` for mobile-specific authentication
 - [x] Zustand state management for auth
 - [x] Barcode scanner integration
-- [ ] MOB-002: Geo-fenced attendance
-- [ ] Push notifications (FCM/APNS)
+- [x] MOB-002: Geo-fenced attendance (implemented via web API)
+- [x] Push notifications (FCM/APNS)
+  - Push notification service with FCM support
+  - API: `/api/notifications` for device token management
+  - API: `/api/notifications/send` for broadcasting
+  - Notification templates for common events
 
 ---
 
@@ -304,18 +330,18 @@ EaseInventory is a multi-tenant SaaS platform for Indian retail shops and servic
 |-------|--------|------------|
 | 1. Core Infrastructure | ✅ Complete | 100% |
 | 2. User & Team | ✅ Complete | 100% |
-| 3. Inventory Engine | ✅ Complete | 95% |
+| 3. Inventory Engine | ✅ Complete | 100% |
 | 4. Repair & Service | ✅ Complete | 95% |
 | 5. Invoicing & Billing | ✅ Complete | 100% |
 | 6. Delivery Management | ✅ Complete | 80% |
-| 7. HR & Attendance | ✅ Complete | 95% |
+| 7. HR & Attendance | ✅ Complete | 100% |
 | 8. Supplier & Consignment | ✅ Complete | 100% |
-| 9. Infrastructure | ✅ Complete | 85% |
-| 10. Mobile App | 🔄 In Progress | 60% |
+| 9. Infrastructure | ✅ Complete | 95% |
+| 10. Mobile App | ✅ Complete | 90% |
 | 11. PWA & AI | ✅ Complete | 100% |
 | 12. Public Pages | ✅ Complete | 100% |
 
-**Overall Progress**: ~93% Complete
+**Overall Progress**: ~97% Complete
 
 ---
 
