@@ -5,21 +5,26 @@ import LocaleSwitcher from '@/components/LocaleSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import {
     Avatar,
+    Badge,
     Button,
     Divider,
     Dropdown,
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     ScrollShadow,
-    Tooltip
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+    AlertCircle,
     ArrowRightLeft,
     Bell,
     Building2,
     Calendar,
+    Check,
     FileText,
     Fingerprint,
     Globe,
@@ -85,6 +90,43 @@ const menuItems = [
   ]}
 ];
 
+// Mock notification data for development
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  read: boolean;
+  createdAt: Date;
+}
+
+const MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: '1',
+    title: 'Low Stock Alert',
+    message: 'iPhone 15 Pro is running low (3 units left)',
+    type: 'warning',
+    read: false,
+    createdAt: new Date(Date.now() - 1000 * 60 * 5), // 5 mins ago
+  },
+  {
+    id: '2',
+    title: 'New Order Received',
+    message: 'Order #INV-2024-0847 has been placed',
+    type: 'success',
+    read: false,
+    createdAt: new Date(Date.now() - 1000 * 60 * 30), // 30 mins ago
+  },
+  {
+    id: '3',
+    title: 'Payment Received',
+    message: '₹45,000 received from Sharma Electronics',
+    type: 'success',
+    read: true,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+  },
+];
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
@@ -93,9 +135,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [mounted, setMounted] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [notifications, setNotifications] = React.useState<Notification[]>(MOCK_NOTIFICATIONS);
 
   // Track if initial auth check has been performed
   const hasCheckedAuth = useRef(false);
+
+  // Computed values for notifications
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const hasUnread = unreadCount > 0;
+
+  // Mark notification as read
+  const markAsRead = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  // Mark all as read
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  // Format relative time
+  const formatRelativeTime = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
+  };
 
   // Ensure theme is properly mounted to avoid hydration issues
   React.useEffect(() => {
@@ -321,12 +392,79 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            <div className="flex items-center gap-3 md:gap-4">
               <ThemeToggle />
               <LocaleSwitcher />
-              <Tooltip content="Notifications">
-                 <Button isIconOnly variant="light" radius="full" className="relative">
-                    <div className="w-2 h-2 bg-danger rounded-full absolute top-2 right-2 border-2 border-white dark:border-zinc-900 animate-pulse" />
+              <Popover placement="bottom-end" showArrow offset={10}>
+                <PopoverTrigger>
+                  <Button isIconOnly variant="light" radius="full" className="relative">
+                    {hasUnread && (
+                      <div className="w-2 h-2 bg-danger rounded-full absolute top-2 right-2 border-2 border-white dark:border-zinc-900 animate-pulse" />
+                    )}
                     <Bell size={20} />
-                 </Button>
-              </Tooltip>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0">
+                  <div className="p-4 border-b border-black/5 dark:border-white/10">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-sm">Notifications</h3>
+                      {hasUnread && (
+                        <Button size="sm" variant="light" color="primary" className="text-xs font-semibold h-7" onClick={markAllAsRead}>
+                          Mark all read
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="p-8 text-center">
+                        <Bell className="w-10 h-10 mx-auto mb-3 opacity-20" />
+                        <p className="text-sm font-medium opacity-50">No notifications</p>
+                      </div>
+                    ) : (
+                      notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          onClick={() => markAsRead(notification.id)}
+                          className={`p-4 border-b border-black/5 dark:border-white/5 cursor-pointer transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02] ${
+                            !notification.read ? 'bg-primary/5' : ''
+                          }`}
+                        >
+                          <div className="flex gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                              notification.type === 'success' ? 'bg-success/10 text-success' :
+                              notification.type === 'warning' ? 'bg-warning/10 text-warning' :
+                              notification.type === 'error' ? 'bg-danger/10 text-danger' :
+                              'bg-primary/10 text-primary'
+                            }`}>
+                              {notification.type === 'success' ? <Check size={14} /> :
+                               notification.type === 'warning' ? <AlertCircle size={14} /> :
+                               notification.type === 'error' ? <AlertCircle size={14} /> :
+                               <Bell size={14} />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <p className={`text-sm font-semibold truncate ${!notification.read ? 'text-foreground' : 'text-foreground/70'}`}>
+                                  {notification.title}
+                                </p>
+                                {!notification.read && (
+                                  <div className="w-2 h-2 bg-primary rounded-full shrink-0 mt-1.5" />
+                                )}
+                              </div>
+                              <p className="text-xs text-foreground/50 mt-0.5 line-clamp-2">{notification.message}</p>
+                              <p className="text-[10px] text-foreground/30 mt-1 font-medium">{formatRelativeTime(notification.createdAt)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {notifications.length > 0 && (
+                    <div className="p-3 border-t border-black/5 dark:border-white/10">
+                      <Button variant="flat" color="primary" size="sm" className="w-full font-semibold">
+                        View All Notifications
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
            </div>
         </header>
 
