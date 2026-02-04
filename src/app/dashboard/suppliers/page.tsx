@@ -163,35 +163,35 @@ export default function SuppliersPage() {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="modern-card p-6" radius="lg">
-                    <CardBody className="flex flex-row items-center gap-4">
+                <Card className="bg-card border border-soft p-6" radius="lg">
+                    <CardBody className="flex flex-row items-center gap-4 p-0">
                         <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Building2 size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase opacity-40">Active Partners</p>
+                            <p className="text-[10px] font-black uppercase text-muted">Active Partners</p>
                             <h2 className="text-2xl font-black">{suppliers.length}</h2>
                         </div>
                     </CardBody>
                 </Card>
-                <Card className="modern-card p-6" radius="lg">
-                    <CardBody className="flex flex-row items-center gap-4">
+                <Card className="bg-card border border-soft p-6" radius="lg">
+                    <CardBody className="flex flex-row items-center gap-4 p-0">
                         <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center text-success">
                             <CheckCircle2 size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase opacity-40">GST Verified</p>
+                            <p className="text-[10px] font-black uppercase text-muted">GST Verified</p>
                             <h2 className="text-2xl font-black">{suppliers.filter(s => s.gstNumber).length}</h2>
                         </div>
                     </CardBody>
                 </Card>
-                <Card className="modern-card p-6" radius="lg">
-                    <CardBody className="flex flex-row items-center gap-4">
+                <Card className="bg-card border border-soft p-6" radius="lg">
+                    <CardBody className="flex flex-row items-center gap-4 p-0">
                         <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
                             <Briefcase size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase opacity-40">Consignment Items</p>
+                            <p className="text-[10px] font-black uppercase text-muted">Consignment Items</p>
                             <h2 className="text-2xl font-black">{suppliers.reduce((acc, s) => acc + (s._count?.products || 0), 0)}</h2>
                         </div>
                     </CardBody>
@@ -201,23 +201,25 @@ export default function SuppliersPage() {
             {/* Supplier List Section */}
             <div className="space-y-6">
                 <div className="flex items-center gap-4 max-w-md">
-                    <Input 
-                        placeholder="Search vendors..." 
+                    <Input
+                        placeholder="Search vendors..."
                         labelPlacement="outside"
-                        startContent={<Search size={18} className="opacity-30" />}
+                        startContent={<Search size={18} className="text-muted" />}
                         value={searchTerm}
                         onValueChange={setSearchTerm}
-                        classNames={{ inputWrapper: "bg-black/5 h-12 rounded-2xl" }}
+                        classNames={{
+                            inputWrapper: "h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                        }}
                     />
                 </div>
 
-                <Table 
+                <Table
                     aria-label="Vendor Table"
-                    className="modern-card border-none"
                     classNames={{
-                        wrapper: "p-0 modern-card bg-white dark:bg-[#111318] border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
-                        th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
-                        td: "py-6 px-8 font-bold",
+                        wrapper: "p-0 bg-card border border-soft rounded-2xl overflow-hidden shadow-none",
+                        th: "bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6",
+                        td: "py-5 px-6",
+                        tr: "border-b border-soft last:border-none",
                     }}
                 >
                     <TableHeader>
@@ -230,7 +232,7 @@ export default function SuppliersPage() {
                     </TableHeader>
                     <TableBody>
                         {filteredSuppliers.map((sup) => (
-                            <TableRow key={sup.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                            <TableRow key={sup.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
                                 <TableCell>
                                     <div className="flex items-center gap-4">
                                         <Avatar name={sup.name} radius="lg" className="bg-primary/10 text-primary font-black uppercase" />
@@ -274,106 +276,129 @@ export default function SuppliersPage() {
             </div>
 
             {/* Add Supplier Modal */}
-            <Modal 
-                isOpen={isOpen} 
+            <Modal
+                isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 size="3xl"
-                classNames={{ base: "modern-card p-6" }}
+                scrollBehavior="inside"
+                classNames={{
+                    backdrop: "bg-black/50 backdrop-blur-sm",
+                    base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+                    header: "border-b border-zinc-200 dark:border-zinc-800",
+                    body: "py-6",
+                    footer: "border-t border-zinc-200 dark:border-zinc-800",
+                }}
             >
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-black tracking-tight text-primary">Onboard Supplier</h2>
-                                <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">Partner and Vendor Registration</p>
+                                <h2 className="text-xl font-bold">Onboard Supplier</h2>
+                                <p className="text-sm text-muted font-normal">Partner and Vendor Registration</p>
                             </ModalHeader>
-                            <ModalBody className="py-10 space-y-8">
-                                <div className="grid grid-cols-2 gap-x-8 gap-y-10">
-                                    <Input 
-                                        label="Business Name" 
-                                        placeholder="e.g. Acme Parts Corp" 
+                            <ModalBody className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Input
+                                        label="Business Name"
+                                        placeholder="e.g. Acme Parts Corp"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.name}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, name: val})}
                                     />
-                                    <Input 
-                                        label="GST Number" 
-                                        placeholder="e.g. 07AAAAA0000A1Z5" 
+                                    <Input
+                                        label="GST Number"
+                                        placeholder="e.g. 07AAAAA0000A1Z5"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14 uppercase" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.gstNumber}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, gstNumber: val})}
                                     />
-                                    <Input 
-                                        label="Contact Person" 
-                                        placeholder="Full Name" 
+                                    <Input
+                                        label="Contact Person"
+                                        placeholder="Full Name"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.contactPerson}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, contactPerson: val})}
                                     />
-                                    <Input 
-                                        label="Email Address" 
-                                        placeholder="vendor@example.com" 
+                                    <Input
+                                        label="Email Address"
+                                        placeholder="vendor@example.com"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.email}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, email: val})}
                                     />
-                                    <Input 
-                                        label="Phone Number" 
-                                        placeholder="+91 00000 00000" 
+                                    <Input
+                                        label="Phone Number"
+                                        placeholder="+91 00000 00000"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.phone}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, phone: val})}
                                     />
-                                    <Input 
-                                        label="WhatsApp Number" 
-                                        placeholder="Optional" 
+                                    <Input
+                                        label="WhatsApp Number"
+                                        placeholder="Optional"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.whatsapp}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, whatsapp: val})}
                                     />
-                                    <Input 
-                                        label="City" 
-                                        placeholder="Noida" 
+                                    <Input
+                                        label="City"
+                                        placeholder="Noida"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.city}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, city: val})}
                                     />
-                                    <Input 
-                                        label="State/Region" 
-                                        placeholder="Delhi NCR" 
+                                    <Input
+                                        label="State/Region"
+                                        placeholder="Delhi NCR"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newSupplier.state}
                                         onValueChange={(val) => setNewSupplier({...newSupplier, state: val})}
                                     />
                                 </div>
                             </ModalBody>
-                            <ModalFooter className="border-t border-black/5 pt-6">
-                                <Button variant="light" className="font-bold h-12 px-8" onPress={onClose}>Cancel</Button>
-                                <Button color="primary" className="font-black h-12 px-10 shadow-xl shadow-primary/20" radius="full" onClick={handleAddSupplier} isLoading={isLoading}>
+                            <ModalFooter>
+                                <Button variant="flat" className="font-semibold" onPress={onClose}>Cancel</Button>
+                                <Button color="primary" className="font-semibold" onClick={handleAddSupplier} isLoading={isLoading}>
                                     Register Partner
                                 </Button>
                             </ModalFooter>

@@ -331,21 +331,21 @@ export default function InventoryPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-         <div className="p-6 rounded-[2.5rem] bg-white dark:bg-[#111318] border border-black/5 dark:border-white/5 space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-30">Total Valuation</p>
+         <div className="p-6 rounded-2xl bg-card border border-soft space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Total Valuation</p>
             <div className="flex items-end gap-3">
                <h3 className="text-2xl font-black">₹{products.reduce((acc, p) => acc + (p.cost * p.stock), 0).toLocaleString()}</h3>
                <span className="text-xs font-bold text-success pb-1">Asset Value</span>
             </div>
          </div>
-         <div className="p-6 rounded-[2.5rem] bg-white dark:bg-[#111318] border border-black/5 dark:border-white/5 space-y-2 text-warning">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-30 text-black dark:text-white">Low Stock Alerts</p>
+         <div className="p-6 rounded-2xl bg-card border border-soft space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Low Stock Alerts</p>
             <div className="flex items-end gap-3">
-               <h3 className="text-2xl font-black">4 items</h3>
+               <h3 className="text-2xl font-black text-warning">4 items</h3>
                <span className="text-xs font-bold text-warning pb-1">Under 5 units</span>
             </div>
          </div>
-         <div className="p-6 rounded-[2.5rem] bg-primary text-white space-y-2 shadow-xl shadow-primary/10">
+         <div className="p-6 rounded-2xl bg-primary text-white space-y-2 shadow-xl shadow-primary/10">
             <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Avg. Margin</p>
             <div className="flex items-end gap-3">
                <h3 className="text-2xl font-black">12.4%</h3>
@@ -360,11 +360,11 @@ export default function InventoryPage() {
             isClearable
             classNames={{
               base: "w-full md:max-w-[400px]",
-              inputWrapper: "h-14 bg-white dark:bg-[#111318] border border-black/5 dark:border-white/5 rounded-2xl",
+              inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl",
               input: "text-sm font-bold",
             }}
             placeholder="Search by product name or serial number..."
-            startContent={<Search size={18} className="text-default-400 shrink-0" />}
+            startContent={<Search size={18} className="text-muted shrink-0" />}
             value={filterValue}
             onClear={() => onSearchChange("")}
             onValueChange={onSearchChange}
@@ -398,27 +398,27 @@ export default function InventoryPage() {
       />
 
       {/* Add Product Modal */}
-      <Modal 
-        isOpen={isOpen} 
+      <Modal
+        isOpen={isOpen}
         onOpenChange={onOpenChange}
         scrollBehavior="inside"
         size="2xl"
-        radius="lg"
         classNames={{
-            backdrop: "bg-black/40 backdrop-blur-md",
-            base: "modern-card p-4",
-            header: "border-b border-black/5 dark:border-white/5",
-            footer: "border-t border-black/5 dark:border-white/5",
+            backdrop: "bg-black/50 backdrop-blur-sm",
+            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+            header: "border-b border-zinc-200 dark:border-zinc-800",
+            body: "py-6",
+            footer: "border-t border-zinc-200 dark:border-zinc-800",
         }}
       >
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                 <h2 className="text-2xl font-black tracking-tight">Register New Asset</h2>
-                 <p className="text-xs font-bold opacity-30 uppercase tracking-widest">Enter serial numbers and pricing metrics</p>
+                 <h2 className="text-xl font-bold">Register New Asset</h2>
+                 <p className="text-sm text-muted font-normal">Enter serial numbers and pricing metrics</p>
               </ModalHeader>
-               <ModalBody className="py-8 space-y-8">
+               <ModalBody className="space-y-6">
                 
                 <FormSection title="Product Details" description="Basic product information">
                   <FormRow>
@@ -472,28 +472,28 @@ export default function InventoryPage() {
                   </FormRow>
                 </FormSection>
 
-                <div className="p-6 rounded-2xl bg-warning/5 border border-warning/10">
+                <div className="p-5 rounded-xl bg-warning/5 border border-warning/20">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <h4 className="font-black text-sm text-warning uppercase tracking-widest">Consignment Mode</h4>
-                      <p className="text-[10px] font-bold opacity-40">Stock owned by vendor until sold.</p>
+                      <h4 className="font-bold text-sm text-warning">Consignment Mode</h4>
+                      <p className="text-xs text-muted">Stock owned by vendor until sold.</p>
                     </div>
                     <div className="flex items-center gap-4">
                       {newProduct.isConsignment && (
                         <div className="w-24">
-                          <Input 
-                            label="Our %" 
-                            type="number" 
-                            size="sm" 
+                          <Input
+                            label="Our %"
+                            type="number"
+                            size="sm"
                             variant="bordered"
                             value={newProduct.consignmentCommission.toString()}
                             onValueChange={(val) => setNewProduct({...newProduct, consignmentCommission: parseFloat(val) || 0})}
                           />
                         </div>
                       )}
-                      <Switch 
-                        color="warning" 
-                        isSelected={newProduct.isConsignment} 
+                      <Switch
+                        color="warning"
+                        isSelected={newProduct.isConsignment}
                         onValueChange={(val) => setNewProduct({...newProduct, isConsignment: val})}
                       />
                     </div>
@@ -530,13 +530,13 @@ export default function InventoryPage() {
                     />
                   </FormRow>
 
-                  <div className="p-8 rounded-[2rem] bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between">
+                  <div className="p-6 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Sale Price</p>
-                      <h3 className="text-4xl font-black leading-none">₹{Number(newProduct.sale.toFixed(2)).toLocaleString()}</h3>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted">Sale Price</p>
+                      <h3 className="text-3xl font-black leading-none">₹{Number(newProduct.sale.toFixed(2)).toLocaleString()}</h3>
                     </div>
                     <div className="text-right space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Gross Profit</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted">Gross Profit</p>
                       <h4 className={`text-xl font-black ${(newProduct.sale - newProduct.cost) > 0 ? 'text-success' : 'text-danger'}`}>
                         ₹{(newProduct.sale - newProduct.cost).toLocaleString()}
                       </h4>
@@ -545,12 +545,12 @@ export default function InventoryPage() {
                 </FormSection>
 
               </ModalBody>
-              <ModalFooter className="py-6">
-                <Button variant="light" onPress={onClose} className="font-bold">
+              <ModalFooter>
+                <Button variant="flat" onPress={onClose} className="font-semibold">
                   Cancel
                 </Button>
-                <Button color="primary" radius="full" className="px-10 font-black h-14 shadow-xl shadow-primary/20" onPress={handleAddProduct}>
-                  Commit to Block
+                <Button color="primary" className="font-semibold" onPress={handleAddProduct}>
+                  Add Product
                 </Button>
               </ModalFooter>
             </>

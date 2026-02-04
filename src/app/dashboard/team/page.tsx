@@ -165,9 +165,9 @@ export default function TeamPage() {
            { label: 'Total Personnel', count: team.length, color: 'success' },
            { label: 'Active Sessions', count: team.filter(u => u.isActive).length, color: 'default' },
          ].map((r) => (
-           <div key={r.label} className="p-6 rounded-[2rem] bg-white dark:bg-[#111318] border border-black/5 dark:border-white/5 flex flex-col gap-1 hover:border-primary/10 transition-all cursor-default group">
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-30 group-hover:opacity-100 transition-opacity">{r.label}</span>
-              <h3 className="text-3xl font-black text-dark dark:text-white">{r.count}</h3>
+           <div key={r.label} className="p-6 rounded-xl bg-card border border-soft flex flex-col gap-1 hover:border-primary/20 transition-all cursor-default group">
+              <span className="text-xs font-bold uppercase tracking-wider text-muted group-hover:text-foreground transition-colors">{r.label}</span>
+              <h3 className="text-3xl font-black">{r.count}</h3>
            </div>
          ))}
       </div>
@@ -181,8 +181,8 @@ export default function TeamPage() {
              animate={{ opacity: 1, y: 0 }}
              transition={{ delay: idx * 0.1 }}
            >
-             <Card className="modern-card border-none hover:shadow-2xl transition-shadow duration-500 overflow-visible" radius="lg">
-                <CardBody className="p-8">
+             <Card className="bg-card border border-soft hover:shadow-lg transition-shadow duration-300 overflow-visible" radius="lg">
+                <CardBody className="p-6">
                    <div className="flex justify-between items-start mb-8">
                       <div className="relative">
                          <Badge content="" color={member.isActive ? 'success' : 'danger'} shape="circle" placement="bottom-right" className="border-4 border-white dark:border-black w-5 h-5">
@@ -232,12 +232,12 @@ export default function TeamPage() {
                       <Divider className="opacity-50" />
 
                       <div>
-                         <p className="text-[10px] font-black uppercase tracking-widest opacity-20 mb-3">Module Permissions</p>
+                         <p className="text-xs font-bold uppercase tracking-wider text-muted mb-3">Module Permissions</p>
                          <div className="flex flex-wrap gap-2">
                             {member.permissions.map((p: string) => (
-                               <div key={p} className="p-2 rounded-xl bg-black/[0.03] dark:bg-white/5 border border-black/5 flex items-center gap-2">
+                               <div key={p} className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 flex items-center gap-2">
                                   <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                  <span className="text-[10px] font-black uppercase tracking-tight">{member.role} Full Access</span>
+                                  <span className="text-xs font-bold uppercase">{member.role} Full Access</span>
                                 </div>
                             ))}
                          </div>
@@ -250,55 +250,57 @@ export default function TeamPage() {
       </div>
 
       {/* Permissions Modal */}
-      <Modal 
-        isOpen={isPermOpen} 
+      <Modal
+        isOpen={isPermOpen}
         onOpenChange={onPermOpenChange}
         size="2xl"
-        radius="lg"
         classNames={{
-            backdrop: "bg-black/60 backdrop-blur-md",
-            base: "modern-card p-4",
+            backdrop: "bg-black/50 backdrop-blur-sm",
+            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+            header: "border-b border-zinc-200 dark:border-zinc-800",
+            body: "py-6",
+            footer: "border-t border-zinc-200 dark:border-zinc-800",
         }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 pb-8 border-b border-black/5">
+              <ModalHeader className="flex flex-col gap-1">
                  <div className="flex items-center gap-4">
                     <Avatar src={`https://i.pravatar.cc/150?u=${selectedUser?.email}`} className="w-12 h-12" />
                     <div>
-                      <h2 className="text-2xl font-black tracking-tight">Permission Settings</h2>
-                      <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Configuring Access for {selectedUser?.name}</p>
+                      <h2 className="text-xl font-bold">Permission Settings</h2>
+                      <p className="text-sm text-muted font-normal">Configuring Access for {selectedUser?.name}</p>
                     </div>
                  </div>
               </ModalHeader>
-              <ModalBody className="py-8 space-y-10">
-                
-                <div className="flex items-center justify-between p-6 rounded-[2rem] bg-danger/5 border border-danger/20">
+              <ModalBody className="space-y-6">
+
+                <div className="flex items-center justify-between p-4 rounded-xl bg-danger/5 border border-danger/20">
                    <div className="flex items-center gap-4">
                       <ShieldAlert className="text-danger" size={24} />
                       <div>
-                         <h4 className="font-black text-sm">Administrative Override</h4>
-                         <p className="text-xs opacity-50">Granting full sub-admin rights bypasses modular checks.</p>
+                         <h4 className="font-bold text-sm">Administrative Override</h4>
+                         <p className="text-xs text-muted">Granting full sub-admin rights bypasses modular checks.</p>
                       </div>
                    </div>
                    <Switch color="danger" />
                 </div>
 
                 <div className="space-y-4">
-                   <h4 className="text-[10px] font-black uppercase tracking-widest opacity-30 flex items-center gap-2">
+                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-2">
                        <Lock size={12} /> Granular Module Constraints
                    </h4>
-                   <div className="grid gap-4">
+                   <div className="grid gap-3">
                       {permissionModules.map((mod) => (
-                         <div key={mod.id} className="flex items-center justify-between p-5 rounded-[1.5rem] bg-black/[0.02] dark:bg-white/5 border border-black/[0.05] hover:bg-black/[0.04] transition-colors cursor-pointer group">
+                         <div key={mod.id} className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 hover:border-primary/30 transition-colors cursor-pointer group">
                             <div className="flex items-center gap-4">
-                               <div className="w-12 h-12 rounded-2xl bg-white dark:bg-dark-card shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                                  <mod.icon size={24} strokeWidth={2.5} />
+                               <div className="w-10 h-10 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+                                  <mod.icon size={20} strokeWidth={2.5} />
                                 </div>
                                <div>
-                                  <h5 className="font-black text-sm">{mod.label}</h5>
-                                  <p className="text-[10px] font-medium opacity-40">{mod.desc}</p>
+                                  <h5 className="font-bold text-sm">{mod.label}</h5>
+                                  <p className="text-xs text-muted">{mod.desc}</p>
                                </div>
                             </div>
                             <Checkbox defaultSelected={selectedUser?.permissions.includes(mod.id)} color="primary" />
@@ -308,13 +310,11 @@ export default function TeamPage() {
                 </div>
 
               </ModalBody>
-              <ModalFooter className="border-t border-black/5 pt-6">
-                <Button variant="light" className="font-bold" onPress={onClose}>Discard</Button>
-                <div className="flex-grow flex justify-end">
-                   <Button color="primary" className="px-10 font-black h-14 shadow-xl shadow-primary/20" radius="full" onPress={onClose}>
-                      Save Permissions
-                   </Button>
-                </div>
+              <ModalFooter>
+                <Button variant="flat" className="font-semibold" onPress={onClose}>Discard</Button>
+                <Button color="primary" className="font-semibold" onPress={onClose}>
+                   Save Permissions
+                </Button>
               </ModalFooter>
             </>
           )}
@@ -322,20 +322,26 @@ export default function TeamPage() {
       </Modal>
 
       {/* Invite Member Modal */}
-      <Modal 
-        isOpen={isOpen} 
+      <Modal
+        isOpen={isOpen}
         onOpenChange={onOpenChange}
         size="2xl"
-        radius="lg"
-        classNames={{ base: "modern-card p-4" }}
+        classNames={{
+            backdrop: "bg-black/50 backdrop-blur-sm",
+            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+            header: "border-b border-zinc-200 dark:border-zinc-800",
+            body: "py-6",
+            footer: "border-t border-zinc-200 dark:border-zinc-800",
+        }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>
-                 <h2 className="text-2xl font-black tracking-tight">Invite Team Member</h2>
+              <ModalHeader className="flex flex-col gap-1">
+                 <h2 className="text-xl font-bold">Invite Team Member</h2>
+                 <p className="text-sm text-muted font-normal">Add a new member to your team</p>
               </ModalHeader>
-               <ModalBody className="py-6 space-y-6">
+               <ModalBody className="space-y-6">
                   {/* Profile Image Upload */}
                   <div className="flex items-center gap-6">
                     <div className="relative group">
@@ -364,17 +370,17 @@ export default function TeamPage() {
                   <Divider />
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    <Input label="Full Name" placeholder="e.g. Alex Smith" value={inviteData.name} onValueChange={(val) => setInviteData({...inviteData, name: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
-                    <Input label="Business Email" type="email" placeholder="alex@business.com" value={inviteData.email} onValueChange={(val) => setInviteData({...inviteData, email: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                    <Input label="Full Name" placeholder="e.g. Alex Smith" value={inviteData.name} onValueChange={(val) => setInviteData({...inviteData, name: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} />
+                    <Input label="Business Email" type="email" placeholder="alex@business.com" value={inviteData.email} onValueChange={(val) => setInviteData({...inviteData, email: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} />
                   </div>
                   
-                  <Input label="Mobile Number" placeholder="+91 98XXX XXXXX" value={inviteData.phone} onValueChange={(val) => setInviteData({...inviteData, phone: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} />
+                  <Input label="Mobile Number" placeholder="+91 98XXX XXXXX" value={inviteData.phone} onValueChange={(val) => setInviteData({...inviteData, phone: val})} labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} />
 
                   <Divider />
 
                   {/* Biometric & Access Section */}
                   <div className="space-y-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Access Control</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted">Access Control</p>
                     
                     <div className="grid md:grid-cols-2 gap-4">
                       <Input 
@@ -386,7 +392,7 @@ export default function TeamPage() {
                         size="lg" 
                         radius="lg" 
                         startContent={<CreditCard size={18} className="opacity-30" />}
-                        classNames={{ label: "font-black opacity-40", inputWrapper: "bg-black/5 h-14" }} 
+                        classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} 
                       />
                       
                       <div className="space-y-2">
@@ -408,14 +414,14 @@ export default function TeamPage() {
 
                   {/* Role Selection */}
                   <div className="space-y-3">
-                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Select Role</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted">Select Role</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                        {['ADMIN', 'MANAGER', 'STAFF', 'TECHNICIAN'].map(role => (
-                         <Button 
+                         <Button
                           key={role}
-                          variant={inviteData.role === role ? 'flat' : 'light'} 
+                          variant={inviteData.role === role ? 'flat' : 'light'}
                           color={inviteData.role === role ? 'primary' : 'default'}
-                          className="h-12 font-black rounded-2xl text-xs"
+                          className="font-semibold text-xs"
                           onClick={() => setInviteData({...inviteData, role})}
                          >
                            {role}
@@ -424,9 +430,9 @@ export default function TeamPage() {
                     </div>
                   </div>
               </ModalBody>
-              <ModalFooter className="border-t border-black/5 pt-4">
-                <Button variant="light" className="font-bold" onPress={onClose}>Cancel</Button>
-                <Button color="primary" className="px-8 font-black rounded-full h-12 shadow-lg shadow-primary/20" onClick={handleInvite} isLoading={isLoading}>Send Invite</Button>
+              <ModalFooter>
+                <Button variant="flat" className="font-semibold" onPress={onClose}>Cancel</Button>
+                <Button color="primary" className="font-semibold" onClick={handleInvite} isLoading={isLoading}>Send Invite</Button>
               </ModalFooter>
             </>
           )}

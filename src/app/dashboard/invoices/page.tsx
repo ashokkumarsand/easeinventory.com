@@ -270,40 +270,40 @@ export default function InvoicesPage() {
       </div>
 
       {/* Summary View */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-         <Card className="modern-card bg-black text-white p-6" radius="lg">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         <Card className="bg-zinc-900 dark:bg-zinc-950 text-white p-6 border border-zinc-800" radius="lg">
             <CardBody className="p-0">
-               <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4 text-white">Net Receivables</p>
-               <h3 className="text-4xl font-black mb-6">₹12,48,000</h3>
-               <div className="flex items-center gap-2 text-success font-black text-xs">
+               <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">Net Receivables</p>
+               <h3 className="text-3xl font-black mb-4">₹12,48,000</h3>
+               <div className="flex items-center gap-2 text-success font-bold text-xs">
                   <TrendingUp size={14} /> +14% vs last month
                </div>
             </CardBody>
          </Card>
-         <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+         <Card className="bg-card border border-soft p-6" radius="lg">
             <CardBody className="p-0">
-               <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">Pending Payments</p>
-               <h3 className="text-4xl font-black mb-6 text-danger">₹2,84,200</h3>
-               <p className="text-xs font-bold opacity-40 uppercase tracking-tight">12 Overdue Invoices</p>
+               <p className="text-xs font-bold uppercase tracking-wider text-muted mb-3">Pending Payments</p>
+               <h3 className="text-3xl font-black mb-4 text-danger">₹2,84,200</h3>
+               <p className="text-xs font-bold text-muted">12 Overdue Invoices</p>
             </CardBody>
          </Card>
-         <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+         <Card className="bg-card border border-soft p-6" radius="lg">
             <CardBody className="p-0">
-               <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">Collected Today</p>
-               <h3 className="text-4xl font-black text-success">₹84,500</h3>
-               <p className="text-xs font-bold opacity-40 uppercase tracking-tight">8 Transactions processed</p>
+               <p className="text-xs font-bold uppercase tracking-wider text-muted mb-3">Collected Today</p>
+               <h3 className="text-3xl font-black text-success">₹84,500</h3>
+               <p className="text-xs font-bold text-muted">8 Transactions processed</p>
             </CardBody>
          </Card>
       </div>
 
       {/* Invoice Table */}
-      <Table 
+      <Table
         aria-label="Invoice Table"
-        className="modern-card border-none mt-8"
         classNames={{
-            wrapper: "p-0 modern-card bg-white dark:bg-[#111318] border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
-            th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 first:pl-10 last:pr-10",
-            td: "py-6 px-8 first:pl-10 last:pr-10 font-bold",
+            wrapper: "p-0 bg-card border border-soft rounded-2xl overflow-hidden shadow-none",
+            th: "bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6",
+            td: "py-5 px-6",
+            tr: "border-b border-soft last:border-none",
         }}
       >
         <TableHeader>
@@ -317,7 +317,7 @@ export default function InvoicesPage() {
         </TableHeader>
         <TableBody>
           {invoices.map((inv) => (
-            <TableRow key={inv.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+            <TableRow key={inv.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
               <TableCell>
                  <span className="font-black text-black/40 dark:text-white/40">{inv.invoiceNumber}</span>
               </TableCell>
@@ -395,16 +395,27 @@ export default function InvoicesPage() {
       />
 
       {/* UPI Payment Modal */}
-      <Modal isOpen={paymentModal.isOpen} onOpenChange={paymentModal.onOpenChange} radius="lg">
+      <Modal
+        isOpen={paymentModal.isOpen}
+        onOpenChange={paymentModal.onOpenChange}
+        classNames={{
+            backdrop: "bg-black/50 backdrop-blur-sm",
+            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+            header: "border-b border-zinc-200 dark:border-zinc-800",
+            footer: "border-t border-zinc-200 dark:border-zinc-800",
+        }}
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Collect UPI Payment</ModalHeader>
-              <ModalBody className="flex flex-col items-center py-8">
+              <ModalHeader className="flex flex-col gap-1">
+                <h2 className="text-xl font-bold">Collect UPI Payment</h2>
+              </ModalHeader>
+              <ModalBody className="flex flex-col items-center py-6">
                 {selectedPaymentInvoice && tenantInfo?.upiId ? (
                   <div className="space-y-6 flex flex-col items-center text-center">
-                    <div className="p-4 bg-white rounded-3xl shadow-xl">
-                      <QRCodeSVG 
+                    <div className="p-4 bg-white rounded-2xl shadow-lg">
+                      <QRCodeSVG
                         value={generateUPILink({
                           payeeAddress: tenantInfo.upiId,
                           payeeName: tenantInfo.name,
@@ -418,10 +429,10 @@ export default function InvoicesPage() {
                     </div>
                     <div>
                       <h4 className="text-xl font-black">₹{Number(selectedPaymentInvoice.total).toLocaleString()}</h4>
-                      <p className="text-xs font-bold opacity-40">Scan using GPay, PhonePe, or Paytm</p>
+                      <p className="text-xs text-muted">Scan using GPay, PhonePe, or Paytm</p>
                     </div>
-                    <div className="w-full p-4 bg-black/[0.03] rounded-2xl">
-                      <p className="text-[10px] font-black uppercase opacity-30 mb-1">Payee VPA</p>
+                    <div className="w-full p-4 bg-zinc-100 dark:bg-zinc-800/50 rounded-xl">
+                      <p className="text-xs font-bold uppercase text-muted mb-1">Payee VPA</p>
                       <p className="font-bold">{tenantInfo.upiId}</p>
                     </div>
                   </div>
@@ -432,8 +443,8 @@ export default function InvoicesPage() {
                 )}
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose} className="font-bold">Close</Button>
-                <Button color="primary" className="font-black" onPress={() => {
+                <Button variant="flat" onPress={onClose} className="font-semibold">Close</Button>
+                <Button color="primary" className="font-semibold" onPress={() => {
                   alert('Payment status check starting...');
                   onClose();
                 }}>Verify Payment</Button>
@@ -444,29 +455,27 @@ export default function InvoicesPage() {
       </Modal>
 
       {/* Create Invoice Modal */}
-      <Modal 
-        isOpen={isOpen} 
+      <Modal
+        isOpen={isOpen}
         onOpenChange={onOpenChange}
         scrollBehavior="inside"
         size="4xl"
-        radius="lg"
-        classNames={{ backdrop: "bg-warning/20 backdrop-blur-md", base: "modern-card p-6" }}
+        classNames={{
+            backdrop: "bg-black/50 backdrop-blur-sm",
+            base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+            header: "border-b border-zinc-200 dark:border-zinc-800",
+            body: "py-6",
+            footer: "border-t border-zinc-200 dark:border-zinc-800",
+        }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="border-b border-black/5 pb-6">
-                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-warning/10 text-warning rounded-2xl flex items-center justify-center">
-                       <Plus size={28} />
-                    </div>
-                    <div>
-                       <h2 className="text-2xl font-black tracking-tight">Generate Document</h2>
-                       <p className="text-xs font-bold opacity-30 uppercase tracking-widest">Compliance Ready Billing System</p>
-                    </div>
-                 </div>
+              <ModalHeader className="flex flex-col gap-1">
+                 <h2 className="text-xl font-bold">Generate Invoice</h2>
+                 <p className="text-sm text-muted font-normal">GST Compliance Ready Billing System</p>
               </ModalHeader>
-              <ModalBody className="py-10 space-y-12">
+              <ModalBody className="space-y-8">
                 
                 {/* Header Info */}
                 <div className="grid md:grid-cols-2 gap-10">
@@ -481,7 +490,7 @@ export default function InvoicesPage() {
                         labelPlacement="outside"
                         size="lg"
                         radius="lg"
-                        classNames={{ trigger: "bg-black/5 h-14" }}
+                        classNames={{ trigger: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                       >
                          <SelectItem key="b2c">B2C (Retail Consumer)</SelectItem>
                          <SelectItem key="b2b">B2B (Business / GST Registered)</SelectItem>
@@ -494,7 +503,7 @@ export default function InvoicesPage() {
                         labelPlacement="outside" 
                         size="lg" 
                         radius="lg" 
-                        classNames={{ inputWrapper: "bg-black/5 h-14" }} 
+                        classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} 
                       />
                       <Input 
                         label="Customer Phone" 
@@ -504,7 +513,7 @@ export default function InvoicesPage() {
                         labelPlacement="outside" 
                         size="lg" 
                         radius="lg" 
-                        classNames={{ inputWrapper: "bg-black/5 h-14" }} 
+                        classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} 
                       />
                    </div>
                    <div className="space-y-6">
@@ -513,8 +522,8 @@ export default function InvoicesPage() {
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-warning">Meta Information</h4>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
-                         <Input label="Invoice Date" type="date" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
-                         <Input label="PO Number" placeholder="Optional" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
+                         <Input label="Invoice Date" type="date" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} />
+                         <Input label="PO Number" placeholder="Optional" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} />
                       </div>
                    </div>
                 </div>
@@ -562,7 +571,7 @@ export default function InvoicesPage() {
                                 labelPlacement="outside" 
                                 size="lg" 
                                 radius="lg" 
-                                classNames={{ inputWrapper: "bg-black/5 h-14" }} 
+                                classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} 
                               />
                            </div>
                            <div className="w-56">
@@ -597,7 +606,7 @@ export default function InvoicesPage() {
                                 classNames={{ base: "h-14", listboxWrapper: "max-h-[300px]" }}
                                 inputProps={{
                                     classNames: {
-                                        inputWrapper: "bg-black/5 h-14",
+                                        inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700",
                                     }
                                 }}
                               >
@@ -619,7 +628,7 @@ export default function InvoicesPage() {
                                 labelPlacement="outside" 
                                 size="lg" 
                                 radius="lg" 
-                                classNames={{ inputWrapper: "bg-black/5 h-14" }} 
+                                classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} 
                                 value={item.qty.toString()}
                                 onValueChange={(val) => {
                                     const next = [...items];
@@ -636,7 +645,7 @@ export default function InvoicesPage() {
                                 size="lg" 
                                 radius="lg" 
                                 startContent={<span className="text-xs font-black opacity-30">₹</span>}
-                                classNames={{ inputWrapper: "bg-black/5 h-14" }} 
+                                classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }} 
                                 value={item.price.toString()}
                                 onValueChange={(val) => {
                                     const next = [...items];
@@ -645,9 +654,9 @@ export default function InvoicesPage() {
                                 }}
                               />
                            </div>
-                           <div className="w-40 bg-black/[0.03] h-14 rounded-[1.25rem] flex flex-col justify-center px-6">
-                              <p className="text-[8px] font-black uppercase tracking-widest opacity-30">Subtotal</p>
-                              <p className="text-lg font-black leading-none">₹{(item.qty * item.price).toLocaleString()}</p>
+                           <div className="w-40 bg-zinc-100 dark:bg-zinc-800/50 h-12 rounded-xl flex flex-col justify-center px-4">
+                              <p className="text-[8px] font-bold uppercase tracking-widest text-muted">Subtotal</p>
+                              <p className="text-base font-black leading-none">₹{(item.qty * item.price).toLocaleString()}</p>
                            </div>
                            <Button 
                                isIconOnly 
@@ -675,34 +684,34 @@ export default function InvoicesPage() {
                         <div className="w-1 h-4 bg-warning rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-warning">Terms & Notes</h4>
                       </div>
-                      <Textarea placeholder="Terms of payment, delivery instructions, bank details..." radius="lg" classNames={{ inputWrapper: "bg-black/5 min-h-[140px]" }} />
+                      <Textarea placeholder="Terms of payment, delivery instructions, bank details..." radius="lg" classNames={{ inputWrapper: "bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 min-h-[120px]" }} />
                    </div>
-                   <div className="w-full md:w-[320px] p-8 rounded-[2.5rem] bg-black text-white space-y-6">
-                      <div className="flex justify-between items-center opacity-40">
-                         <p className="text-xs font-bold font-black tracking-widest uppercase">Subtotal</p>
-                         <p className="text-lg font-black font-black tracking-tight">₹{calculateTotal().toLocaleString()}</p>
+                   <div className="w-full md:w-[320px] p-6 rounded-xl bg-zinc-900 dark:bg-zinc-950 text-white border border-zinc-800 space-y-4">
+                      <div className="flex justify-between items-center text-zinc-400">
+                         <p className="text-xs font-bold uppercase">Subtotal</p>
+                         <p className="text-base font-bold">₹{calculateTotal().toLocaleString()}</p>
                       </div>
-                      <div className="flex justify-between items-center opacity-40 pb-6 border-b border-white/10">
-                         <p className="text-xs font-bold font-black tracking-widest uppercase">GST (18%)</p>
-                         <p className="text-lg font-black font-black tracking-tight">₹{(calculateTotal() * 0.18).toLocaleString()}</p>
+                      <div className="flex justify-between items-center text-zinc-400 pb-4 border-b border-zinc-700">
+                         <p className="text-xs font-bold uppercase">GST (18%)</p>
+                         <p className="text-base font-bold">₹{(calculateTotal() * 0.18).toLocaleString()}</p>
                       </div>
                       <div className="flex justify-between items-center pt-2">
-                         <p className="text-sm font-black tracking-widest uppercase text-warning">Grand Total</p>
+                         <p className="text-sm font-bold uppercase text-warning">Grand Total</p>
                          <div className="text-right">
-                           <p className="text-3xl font-black tracking-tight">₹{(calculateTotal() * 1.18).toLocaleString()}</p>
-                           <p className="text-[10px] font-bold opacity-30 uppercase tracking-tighter">Round-off Included</p>
+                           <p className="text-2xl font-black">₹{(calculateTotal() * 1.18).toLocaleString()}</p>
+                           <p className="text-xs text-zinc-500">Round-off Included</p>
                          </div>
                       </div>
                    </div>
                 </div>
 
               </ModalBody>
-              <ModalFooter className="gap-4 pt-4 border-t border-black/5">
-                <Button variant="light" className="font-bold h-14 px-8" onPress={onClose}>Discard Draft</Button>
+              <ModalFooter>
+                <Button variant="flat" className="font-semibold" onPress={onClose}>Discard Draft</Button>
                 <div className="flex-grow flex justify-end gap-3">
-                   <Button variant="flat" className="font-black h-14 px-8 rounded-2xl" startContent={<Printer size={20} />}>Preview</Button>
-                    <Button color="warning" className="w-[240px] font-black h-14 shadow-xl shadow-warning/20 text-white" radius="full" onPress={handleCreateInvoice} isLoading={isLoading} startContent={<Send size={20} />}>
-                       Finalize & Transmit
+                   <Button variant="flat" className="font-semibold" startContent={<Printer size={18} />}>Preview</Button>
+                    <Button color="warning" className="font-semibold text-white" onPress={handleCreateInvoice} isLoading={isLoading} startContent={<Send size={18} />}>
+                       Finalize Invoice
                     </Button>
                  </div>
               </ModalFooter>

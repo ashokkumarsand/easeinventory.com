@@ -137,26 +137,26 @@ export default function HRDashboardPage() {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="modern-card bg-secondary text-white p-6" radius="lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="bg-secondary text-white p-6" radius="lg">
                     <CardBody className="p-0">
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4 text-white">{t('stats.active')}</p>
-                        <h2 className="text-5xl font-black mb-1">{employees.length}</h2>
-                        <p className="text-xs font-bold opacity-60">{t('stats.departments', { count: new Set(employees.map(e => e.department)).size })}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider opacity-60 mb-3">{t('stats.active')}</p>
+                        <h2 className="text-4xl font-bold mb-1">{employees.length}</h2>
+                        <p className="text-sm opacity-70">{t('stats.departments', { count: new Set(employees.map(e => e.department)).size })}</p>
                     </CardBody>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+                <Card className="bg-card border border-soft p-6" radius="lg">
                     <CardBody className="p-0">
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">{t('stats.commitment')}</p>
-                        <h2 className="text-4xl font-black mb-1 text-secondary">₹{totalSalary.toLocaleString()}</h2>
-                        <p className="text-xs font-bold opacity-40 uppercase">{t('stats.salary_base')}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">{t('stats.commitment')}</p>
+                        <h2 className="text-4xl font-bold mb-1 text-secondary">₹{totalSalary.toLocaleString()}</h2>
+                        <p className="text-sm text-muted">{t('stats.salary_base')}</p>
                     </CardBody>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+                <Card className="bg-card border border-soft p-6" radius="lg">
                     <CardBody className="p-0">
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">{t('stats.leaves')}</p>
-                        <h2 className="text-4xl font-black text-danger">2</h2>
-                        <p className="text-xs font-bold opacity-40 uppercase">{t('stats.absence')}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">{t('stats.leaves')}</p>
+                        <h2 className="text-4xl font-bold text-danger">2</h2>
+                        <p className="text-sm text-muted">{t('stats.absence')}</p>
                     </CardBody>
                 </Card>
             </div>
@@ -183,23 +183,25 @@ export default function HRDashboardPage() {
                 >
                     <div className="space-y-6 pt-6">
                         <div className="flex items-center gap-4 max-w-md">
-                            <Input 
-                                placeholder="Search by name or ID..." 
+                            <Input
+                                placeholder="Search by name or ID..."
                                 labelPlacement="outside"
-                                startContent={<Search size={18} className="opacity-30" />}
+                                startContent={<Search size={18} className="text-muted" />}
                                 value={searchTerm}
                                 onValueChange={setSearchTerm}
-                                classNames={{ inputWrapper: "bg-black/5 h-12 rounded-2xl" }}
+                                classNames={{
+                                    inputWrapper: "h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                }}
                             />
                         </div>
 
-                        <Table 
+                        <Table
                             aria-label="Employee Roster"
-                            className="modern-card border-none"
                             classNames={{
-                                wrapper: "p-0 modern-card bg-white dark:bg-[#111318] border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
-                                th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
-                                td: "py-6 px-8 font-bold",
+                                wrapper: "p-0 bg-card border border-soft rounded-2xl overflow-hidden shadow-none",
+                                th: "bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6",
+                                td: "py-5 px-6",
+                                tr: "border-b border-soft last:border-none",
                             }}
                         >
                             <TableHeader>
@@ -212,7 +214,7 @@ export default function HRDashboardPage() {
                             </TableHeader>
                             <TableBody>
                                 {filteredEmployees.map((emp) => (
-                                    <TableRow key={emp.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                                    <TableRow key={emp.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
                                         <TableCell>
                                             <div className="flex items-center gap-4">
                                                 <Avatar name={emp.name} radius="lg" className="bg-secondary/10 text-secondary font-black" />
@@ -262,78 +264,97 @@ export default function HRDashboardPage() {
             </Tabs>
 
             {/* Add Employee Modal */}
-            <Modal 
-                isOpen={isOpen} 
+            <Modal
+                isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 size="3xl"
-                classNames={{ base: "modern-card p-6" }}
+                scrollBehavior="inside"
+                classNames={{
+                    backdrop: "bg-black/50 backdrop-blur-sm",
+                    base: "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl",
+                    header: "border-b border-zinc-200 dark:border-zinc-800",
+                    body: "py-6",
+                    footer: "border-t border-zinc-200 dark:border-zinc-800",
+                }}
             >
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-black tracking-tight">{t('modal.title')}</h2>
-                                <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">{t('modal.subtitle')}</p>
+                                <h2 className="text-xl font-bold">{t('modal.title')}</h2>
+                                <p className="text-sm text-muted font-normal">{t('modal.subtitle')}</p>
                             </ModalHeader>
-                            <ModalBody className="py-10 space-y-8">
-                                <div className="grid grid-cols-2 gap-x-8 gap-y-10">
-                                    <Input 
-                                        label="Full Name" 
-                                        placeholder="e.g. John Doe" 
+                            <ModalBody className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Input
+                                        label="Full Name"
+                                        placeholder="e.g. John Doe"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.name}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, name: val})}
                                     />
-                                    <Input 
-                                        label="Employee ID (Alpha-numeric)" 
-                                        placeholder="e.g. EMP-101" 
+                                    <Input
+                                        label="Employee ID (Alpha-numeric)"
+                                        placeholder="e.g. EMP-101"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.employeeId}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, employeeId: val})}
                                     />
-                                    <Input 
-                                        label="Email Address" 
-                                        placeholder="johndoe@example.com" 
+                                    <Input
+                                        label="Email Address"
+                                        placeholder="johndoe@example.com"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.email}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, email: val})}
                                     />
-                                    <Input 
-                                        label="Phone Number" 
-                                        placeholder="+91 00000 00000" 
+                                    <Input
+                                        label="Phone Number"
+                                        placeholder="+91 00000 00000"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.phone}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, phone: val})}
                                     />
-                                    <Input 
-                                        label="Designation" 
-                                        placeholder="e.g. Senior Technician" 
+                                    <Input
+                                        label="Designation"
+                                        placeholder="e.g. Senior Technician"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.designation}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, designation: val})}
                                     />
-                                    <Select 
-                                        label="Department" 
-                                        placeholder="Select department" 
+                                    <Select
+                                        label="Department"
+                                        placeholder="Select department"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ trigger: "bg-black/5 h-14" }}
+                                        classNames={{
+                                            trigger: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         onSelectionChange={(keys) => setNewEmployee({...newEmployee, department: Array.from(keys)[0] as string})}
                                     >
                                         <SelectItem key="Operations">Operations</SelectItem>
@@ -342,32 +363,36 @@ export default function HRDashboardPage() {
                                         <SelectItem key="Accounting">Accounting & GST</SelectItem>
                                         <SelectItem key="Logistics">Logistics & Delivery</SelectItem>
                                     </Select>
-                                    <Input 
-                                        label="Monthly Base Salary" 
-                                        placeholder="0.00" 
+                                    <Input
+                                        label="Monthly Base Salary"
+                                        placeholder="0.00"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        startContent={<span className="text-xs font-black opacity-30">₹</span>}
-                                        classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                                        startContent={<span className="text-sm text-muted">₹</span>}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.baseSalary}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, baseSalary: val})}
                                     />
-                                    <Input 
-                                        label="Join Date" 
+                                    <Input
+                                        label="Join Date"
                                         type="date"
                                         labelPlacement="outside"
                                         size="lg"
                                         radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14 text-xs" }}
+                                        classNames={{
+                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                        }}
                                         value={newEmployee.joinDate}
                                         onValueChange={(val) => setNewEmployee({...newEmployee, joinDate: val})}
                                     />
                                 </div>
                             </ModalBody>
-                            <ModalFooter className="border-t border-black/5 pt-6">
-                                <Button variant="light" className="font-bold h-12 px-8" onPress={onClose}>{t('modal.cancel')}</Button>
-                                <Button color="secondary" className="font-black h-12 px-10 shadow-xl shadow-secondary/20" radius="full" onClick={handleAddEmployee} isLoading={isLoading}>
+                            <ModalFooter>
+                                <Button variant="flat" className="font-semibold" onPress={onClose}>{t('modal.cancel')}</Button>
+                                <Button color="secondary" className="font-semibold" onClick={handleAddEmployee} isLoading={isLoading}>
                                     {t('modal.confirm')}
                                 </Button>
                             </ModalFooter>

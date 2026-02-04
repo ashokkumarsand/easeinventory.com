@@ -139,7 +139,7 @@ export default function SettingsPage() {
           }
         >
           <div className="mt-8 grid lg:grid-cols-2 gap-8">
-            <Card className="modern-card p-6" radius="lg">
+            <Card className="bg-card border border-soft p-6" radius="lg">
                 <CardBody className="space-y-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-primary rounded-full" />
@@ -149,26 +149,26 @@ export default function SettingsPage() {
                         label="Legal Business Name" 
                         value={tenant.name} 
                         onValueChange={(v) => setTenant({...tenant, name: v})}
-                        labelPlacement="outside" placeholder="Enter business name" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        labelPlacement="outside" placeholder="Enter business name" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                     />
                     <div className="grid grid-cols-2 gap-4">
                         <Input 
                             label="GST Number" 
                             value={tenant.gstNumber || ''} 
                             onValueChange={(v) => setTenant({...tenant, gstNumber: v})}
-                            labelPlacement="outside" placeholder="27XXXXX..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                            labelPlacement="outside" placeholder="27XXXXX..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         />
                          <Input 
                             label="Phone" 
                             value={tenant.phone || ''} 
                             onValueChange={(v) => setTenant({...tenant, phone: v})}
-                            labelPlacement="outside" placeholder="+91..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                            labelPlacement="outside" placeholder="+91..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         />
                     </div>
                 </CardBody>
             </Card>
 
-            <Card className="modern-card p-6" radius="lg">
+            <Card className="bg-card border border-soft p-6" radius="lg">
                 <CardBody className="space-y-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-primary rounded-full" />
@@ -178,26 +178,26 @@ export default function SettingsPage() {
                         label="Address"
                         value={tenant.address || ''}
                         onValueChange={(v) => setTenant({...tenant, address: v})}
-                        labelPlacement="outside" placeholder="Floor, Building, Street" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        labelPlacement="outside" placeholder="Floor, Building, Street" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                     />
                     <div className="grid grid-cols-2 gap-4">
                         <Input
                             label="City"
                             value={tenant.city || ''}
                             onValueChange={(v) => setTenant({...tenant, city: v})}
-                            labelPlacement="outside" placeholder="Mumbai" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                            labelPlacement="outside" placeholder="Mumbai" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         />
                         <Input
                             label="Pincode"
                             value={tenant.pincode || ''}
                             onValueChange={(v) => setTenant({...tenant, pincode: v})}
-                            labelPlacement="outside" placeholder="400001" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                            labelPlacement="outside" placeholder="400001" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         />
                     </div>
                 </CardBody>
             </Card>
 
-            <Card className="modern-card p-6 lg:col-span-2" radius="lg">
+            <Card className="bg-card border border-soft p-6 lg:col-span-2" radius="lg">
                 <CardBody className="space-y-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-warning rounded-full" />
@@ -218,7 +218,7 @@ export default function SettingsPage() {
                                 radius="lg"
                                 startContent={<Coins size={18} className="text-warning" />}
                                 classNames={{
-                                    trigger: "bg-black/5 dark:bg-white/5 h-14",
+                                    trigger: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700",
                                     value: "font-bold"
                                 }}
                             >
@@ -268,7 +268,7 @@ export default function SettingsPage() {
           }
         >
           <div className="mt-8 grid lg:grid-cols-2 gap-8">
-             <Card className="modern-card p-6" radius="lg">
+             <Card className="bg-card border border-soft p-6" radius="lg">
                 <CardBody className="space-y-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-success rounded-full" />
@@ -279,13 +279,13 @@ export default function SettingsPage() {
                         label="Business VPA / UPI ID" 
                         value={tenant.upiId || ''} 
                         onValueChange={(v) => setTenant({...tenant, upiId: v})}
-                        labelPlacement="outside" placeholder="e.g. business@okaxis" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        labelPlacement="outside" placeholder="e.g. business@okaxis" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         startContent={<Globe size={18} className="opacity-20" />}
                     />
                 </CardBody>
             </Card>
 
-            <Card className="modern-card p-6" radius="lg">
+            <Card className="bg-card border border-soft p-6" radius="lg">
                 <CardBody className="space-y-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-success rounded-full" />
@@ -295,20 +295,20 @@ export default function SettingsPage() {
                         label="Bank Name" 
                         value={tenant.bankName || ''} 
                         onValueChange={(v) => setTenant({...tenant, bankName: v})}
-                        labelPlacement="outside" placeholder="HDFC Bank" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                        labelPlacement="outside" placeholder="HDFC Bank" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                     />
                     <div className="grid grid-cols-2 gap-4">
                         <Input 
                             label="Account Number" 
                             value={tenant.accountNumber || ''} 
                             onValueChange={(v) => setTenant({...tenant, accountNumber: v})}
-                            labelPlacement="outside" placeholder="501XXX..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                            labelPlacement="outside" placeholder="501XXX..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         />
                         <Input 
                             label="IFSC Code" 
                             value={tenant.ifscCode || ''} 
                             onValueChange={(v) => setTenant({...tenant, ifscCode: v})}
-                            labelPlacement="outside" placeholder="HDFC000..." size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
+                            labelPlacement="outside" placeholder="HDFC000..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
                         />
                     </div>
                 </CardBody>
@@ -326,28 +326,28 @@ export default function SettingsPage() {
           }
         >
           <div className="mt-8 max-w-2xl">
-            <Card className="modern-card p-8 bg-black text-white" radius="lg">
-                <CardBody className="space-y-8">
+            <Card className="bg-zinc-900 dark:bg-zinc-950 text-white p-6 border border-zinc-800" radius="lg">
+                <CardBody className="space-y-6 p-0">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h3 className="text-2xl font-black mb-1">{t('security_standards')}</h3>
-                            <p className="text-xs font-bold opacity-40 uppercase tracking-widest">{t('protection_subtitle')}</p>
+                            <h3 className="text-xl font-bold mb-1">{t('security_standards')}</h3>
+                            <p className="text-sm text-zinc-400">{t('protection_subtitle')}</p>
                         </div>
-                        <div className="px-3 py-1 bg-success/20 text-success rounded-full border border-success/30 text-[10px] font-black italic">
+                        <div className="px-3 py-1 bg-success/20 text-success rounded-full border border-success/30 text-xs font-bold">
                             ISO 27001 ACTIVE
                         </div>
                     </div>
-                    
-                    <div className="space-y-6">
-                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                            <h5 className="text-sm font-black mb-1">Encryption at Rest</h5>
-                            <p className="text-[10px] opacity-40 font-bold leading-relaxed">
+
+                    <div className="space-y-4">
+                        <div className="p-4 rounded-xl bg-zinc-800/50 border border-zinc-700">
+                            <h5 className="text-sm font-bold mb-1">Encryption at Rest</h5>
+                            <p className="text-xs text-zinc-400 leading-relaxed">
                                 All sensitive credentials (GSP, WhatsApp, SMTP) are encrypted using AES-256-GCM before being persisted to the database.
                             </p>
                         </div>
-                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                            <h5 className="text-sm font-black mb-1">Audit Trail</h5>
-                            <p className="text-[10px] opacity-40 font-bold leading-relaxed">
+                        <div className="p-4 rounded-xl bg-zinc-800/50 border border-zinc-700">
+                            <h5 className="text-sm font-bold mb-1">Audit Trail</h5>
+                            <p className="text-xs text-zinc-400 leading-relaxed">
                                 System tracks all administrative changes to business settings and financial protocols in compliance with quality control guidelines.
                             </p>
                         </div>
