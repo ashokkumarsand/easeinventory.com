@@ -1,3 +1,4 @@
+import { logSecurityAction, SecurityAction } from '@/lib/audit';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { decrypt, encrypt } from '@/lib/security';
@@ -104,6 +105,22 @@ export async function POST(req: NextRequest) {
         accountNumber: accountNumber ? encrypt(accountNumber) : null,
         ifscCode: ifscCode ? encrypt(ifscCode) : null,
         tenantId
+      }
+    });
+
+    // ISO 27001: Audit log supplier creation (no sensitive data in log)
+    await logSecurityAction({
+      tenantId,
+      userId: (session.user as any).id,
+      action: SecurityAction.SUPPLIER_CREATED,
+      resource: `Supplier:${supplier.id}`,
+      details: {
+        name: supplier.name,
+        contactPerson: supplier.contactPerson,
+        email: supplier.email,
+        city: supplier.city,
+        state: supplier.state,
+        hasSensitiveData: !!(phone || gstNumber || panNumber || bankName || accountNumber)
       }
     });
 

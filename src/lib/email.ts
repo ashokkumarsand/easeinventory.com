@@ -99,6 +99,70 @@ const lowStockAlertTemplate = (tenantName: string, items: LowStockItem[], dashbo
 </html>
 `;
 
+// Contact form submission notification template
+const contactFormNotificationTemplate = (submission: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  message: string;
+  plan?: string;
+}) => `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;">
+    <div style="background:linear-gradient(135deg,#6A3BF6 0%,#5025d1 100%);padding:30px 20px;text-align:center;">
+      <h1 style="color:white;margin:0;font-size:24px;">📬 New Contact Form Submission</h1>
+    </div>
+    <div style="padding:30px;background-color:#ffffff;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 0;font-weight:bold;color:#666;width:120px;">Name:</td>
+          <td style="padding:12px 0;color:#333;">${submission.name}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 0;font-weight:bold;color:#666;">Email:</td>
+          <td style="padding:12px 0;"><a href="mailto:${submission.email}" style="color:#6A3BF6;">${submission.email}</a></td>
+        </tr>
+        ${submission.phone ? `
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 0;font-weight:bold;color:#666;">Phone:</td>
+          <td style="padding:12px 0;color:#333;">${submission.phone}</td>
+        </tr>
+        ` : ''}
+        ${submission.company ? `
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 0;font-weight:bold;color:#666;">Company:</td>
+          <td style="padding:12px 0;color:#333;">${submission.company}</td>
+        </tr>
+        ` : ''}
+        ${submission.plan ? `
+        <tr style="border-bottom:1px solid #eee;">
+          <td style="padding:12px 0;font-weight:bold;color:#666;">Interested In:</td>
+          <td style="padding:12px 0;color:#333;"><span style="background:#6A3BF6;color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${submission.plan}</span></td>
+        </tr>
+        ` : ''}
+      </table>
+      <div style="margin-top:20px;padding:20px;background-color:#f8f9fa;border-radius:8px;">
+        <p style="font-weight:bold;color:#666;margin:0 0 10px 0;">Message:</p>
+        <p style="color:#333;margin:0;line-height:1.6;white-space:pre-wrap;">${submission.message}</p>
+      </div>
+      <div style="text-align:center;margin-top:30px;">
+        <a href="mailto:${submission.email}?subject=Re: Your inquiry to EaseInventory" style="background-color:#6A3BF6;color:white;padding:12px 28px;text-decoration:none;border-radius:30px;font-weight:bold;display:inline-block;">
+          Reply to ${submission.name.split(' ')[0]} →
+        </a>
+      </div>
+    </div>
+    <div style="background-color:#f5f5f5;padding:20px;text-align:center;">
+      <p style="font-size:12px;color:#888;margin:0;">Submitted at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
 const releaseEmailTemplate = (userName: string, version: string, features: string[]) => `
 <!DOCTYPE html>
 <html>
@@ -244,6 +308,35 @@ export async function sendReleaseNotification(emails: string[], version: string,
     return true;
   } catch (error) {
     console.error('Failed to send release notification:', error);
+    return false;
+  }
+}
+
+export async function sendContactFormNotification(submission: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  message: string;
+  plan?: string;
+}) {
+  try {
+    const transporter = getTransporter();
+    const html = contactFormNotificationTemplate(submission);
+    const notificationEmail = process.env.CONTACT_NOTIFICATION_EMAIL || process.env.SMTP_USER || 'contact@easeinventory.com';
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || 'EaseInventory <noreply@easeinventory.com>',
+      to: notificationEmail,
+      replyTo: submission.email,
+      subject: `📬 New Contact: ${submission.name}${submission.company ? ` from ${submission.company}` : ''}`,
+      html,
+    });
+
+    console.log(`Contact form notification sent for ${submission.email}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send contact form notification:', error);
     return false;
   }
 }

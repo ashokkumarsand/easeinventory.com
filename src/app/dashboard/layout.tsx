@@ -37,6 +37,7 @@ import {
   Wrench
 } from 'lucide-react';
 import AIHelpWidget from '@/components/help/AIHelpWidget';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -285,6 +286,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 Quick Action
               </Button>
               <div className="w-[1px] h-6 bg-black/10 dark:bg-white/10 hidden md:block mx-1" />
+              <ThemeToggle />
               <LocaleSwitcher />
               <Tooltip content="Notifications">
                  <Button isIconOnly variant="light" radius="full" className="relative">

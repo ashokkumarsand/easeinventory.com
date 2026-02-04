@@ -1,3 +1,4 @@
+import { logSecurityAction, SecurityAction } from '@/lib/audit';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { encrypt } from '@/lib/security';
@@ -42,6 +43,24 @@ export async function PATCH(
       data: updateData
     });
 
+    // ISO 27001: Audit log supplier update (redact sensitive field values)
+    const changedFields = Object.keys(body);
+    const sensitiveFieldsUpdated = sensitiveFields.filter(f => changedFields.includes(f));
+
+    await logSecurityAction({
+      tenantId,
+      userId: (session.user as any).id,
+      action: SecurityAction.SUPPLIER_UPDATED,
+      resource: `Supplier:${id}`,
+      details: {
+        supplierName: supplier.name,
+        changedFields: changedFields.filter(f => !sensitiveFields.includes(f)),
+        sensitiveFieldsUpdated: sensitiveFieldsUpdated.length > 0
+          ? sensitiveFieldsUpdated.map(f => `${f} [REDACTED]`)
+          : []
+      }
+    });
+
     return NextResponse.json({
       message: 'Supplier updated successfully',
       supplier: updated
@@ -82,13 +101,25 @@ export async function DELETE(
 
     // Check if supplier has products linked
     if (supplier._count.products > 0) {
-        return NextResponse.json({ 
-            message: 'Cannot delete supplier with linked products. Reassign products first.' 
+        return NextResponse.json({
+            message: 'Cannot delete supplier with linked products. Reassign products first.'
         }, { status: 400 });
     }
 
     await prisma.supplier.delete({
       where: { id }
+    });
+
+    // ISO 27001: Audit log supplier deletion
+    await logSecurityAction({
+      tenantId,
+      userId: (session.user as any).id,
+      action: SecurityAction.SUPPLIER_DELETED,
+      resource: `Supplier:${id}`,
+      details: {
+        supplierName: supplier.name,
+        deleteType: 'hard_delete'
+      }
     });
 
     return NextResponse.json({ message: 'Supplier deleted successfully' });

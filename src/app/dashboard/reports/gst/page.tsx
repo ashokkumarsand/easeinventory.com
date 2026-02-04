@@ -11,6 +11,7 @@ import {
     CheckCircle2,
     FileJson,
     FileSpreadsheet,
+    FileText,
     TrendingUp
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -41,7 +42,7 @@ export default function GSTReportingPage() {
         try {
             const response = await fetch(`/api/compliance/gst?type=gstr1&month=${month}`);
             const data = await response.json();
-            
+
             const blob = new Blob([JSON.stringify(data.gstr1, null, 2)], { type: 'application/json' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -52,6 +53,25 @@ export default function GSTReportingPage() {
             document.body.removeChild(a);
         } catch (error) {
             alert('Error generating GSTR1');
+        }
+    };
+
+    const downloadPDF = async () => {
+        try {
+            const response = await fetch(`/api/compliance/gst?format=pdf&month=${month}`);
+            if (!response.ok) throw new Error('Failed to generate PDF');
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `GSTR1_${month}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            alert('Error generating PDF report');
         }
     };
 
@@ -150,6 +170,12 @@ export default function GSTReportingPage() {
                             <div className="text-left">
                                 <p className="text-sm">GSTR-1 JSON</p>
                                 <p className="text-[10px] opacity-40">Direct Import to GST Offline Tool</p>
+                            </div>
+                        </Button>
+                        <Button color="secondary" variant="flat" size="lg" className="justify-between font-black h-16" endContent={<FileText size={20} />} onClick={downloadPDF}>
+                            <div className="text-left">
+                                <p className="text-sm">GSTR-1 PDF Report</p>
+                                <p className="text-[10px] opacity-40">Professional summary for records</p>
                             </div>
                         </Button>
                         <Button variant="bordered" size="lg" className="justify-between font-black h-16 text-white border-white/20" endContent={<FileSpreadsheet size={20} />}>

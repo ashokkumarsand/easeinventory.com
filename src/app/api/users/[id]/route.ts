@@ -1,3 +1,4 @@
+import { logSecurityAction, SecurityAction } from '@/lib/audit';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
@@ -80,6 +81,12 @@ export async function PATCH(
       if (typeof isActive === 'boolean') updateData.isActive = isActive;
     }
 
+    // Get existing user for comparison
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+      select: { name: true, role: true, isActive: true }
+    });
+
     const user = await prisma.user.update({
       where: { id, tenantId },
       data: updateData,
@@ -91,6 +98,28 @@ export async function PATCH(
         image: true,
         role: true,
         isActive: true,
+      }
+    });
+
+    // ISO 27001: Audit log user update
+    const changedFields = Object.keys(updateData);
+    await logSecurityAction({
+      tenantId,
+      userId: currentUserId,
+      action: existingUser?.role !== user.role
+        ? SecurityAction.USER_ROLE_CHANGED
+        : SecurityAction.USER_UPDATED,
+      resource: `User:${user.id}`,
+      details: {
+        changedFields,
+        ...(existingUser?.role !== user.role && {
+          previousRole: existingUser?.role,
+          newRole: user.role
+        }),
+        ...(existingUser?.isActive !== user.isActive && {
+          previousStatus: existingUser?.isActive ? 'active' : 'inactive',
+          newStatus: user.isActive ? 'active' : 'inactive'
+        })
       }
     });
 
@@ -121,10 +150,29 @@ export async function DELETE(
       return NextResponse.json({ message: 'Insufficient permissions' }, { status: 403 });
     }
 
+    // Get user info before disabling
+    const userToDelete = await prisma.user.findUnique({
+      where: { id },
+      select: { name: true, email: true }
+    });
+
     // Soft delete - just disable
     await prisma.user.update({
       where: { id, tenantId },
       data: { isActive: false }
+    });
+
+    // ISO 27001: Audit log user deletion (soft delete)
+    await logSecurityAction({
+      tenantId,
+      userId: (session.user as any).id,
+      action: SecurityAction.USER_DELETED,
+      resource: `User:${id}`,
+      details: {
+        deletedUserName: userToDelete?.name,
+        deletedUserEmail: userToDelete?.email,
+        deleteType: 'soft_delete'
+      }
     });
 
     return NextResponse.json({ message: 'User disabled successfully' });

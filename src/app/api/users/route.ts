@@ -1,3 +1,4 @@
+import { logSecurityAction, SecurityAction } from '@/lib/audit';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
@@ -118,6 +119,19 @@ export async function POST(req: NextRequest) {
         phone: true,
         role: true,
         createdAt: true,
+      }
+    });
+
+    // ISO 27001: Audit log user creation
+    await logSecurityAction({
+      tenantId,
+      userId: (session!.user as any).id,
+      action: SecurityAction.USER_CREATED,
+      resource: `User:${user.id}`,
+      details: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
       }
     });
 

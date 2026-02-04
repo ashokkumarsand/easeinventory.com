@@ -1364,3 +1364,41 @@ model DeviceToken {
   @@index([userId])
   @@map("device_tokens")
 }
+
+// ==================== CONTACT FORM SUBMISSIONS ====================
+
+model ContactSubmission {
+  id       String @id @default(cuid())
+  name     String
+  email    String
+  phone    String?
+  company  String?
+  message  String @db.Text
+  plan     String? // Interest in specific plan
+  source   String? // Where they heard about us
+
+  // Status tracking
+  status      ContactStatus @default(NEW)
+  assignedTo  String?       @map("assigned_to")
+  notes       String?       @db.Text
+
+  // Response tracking
+  respondedAt DateTime? @map("responded_at")
+  responseBy  String?   @map("response_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_submissions")
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  RESPONDED
+  CONVERTED
+  CLOSED
+}

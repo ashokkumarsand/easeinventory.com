@@ -1,6 +1,7 @@
 import { authOptions } from '@/lib/auth';
 import { gspClient } from '@/lib/compliance/gsp-client';
 import { GSTEngine } from '@/lib/compliance/gst-engine';
+import { generateGSTReportPDF } from '@/lib/pdf-generator';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,8 +18,9 @@ export async function GET(req: NextRequest) {
 
     const tenantId = (session.user as any).tenantId;
     const searchParams = req.nextUrl.searchParams;
-    const type = searchParams.get('type'); // 'summary' or 'gstr1'
+    const type = searchParams.get('type'); // 'summary', 'gstr1', or 'pdf'
     const month = searchParams.get('month'); // e.g., '2024-01'
+    const format = searchParams.get('format'); // 'json' or 'pdf'
 
     if (!month) {
       return NextResponse.json({ message: 'Month is required (YYYY-MM)' }, { status: 400 });
@@ -27,9 +29,79 @@ export async function GET(req: NextRequest) {
     const startDate = new Date(`${month}-01`);
     const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
 
+    // Get tenant info for PDF
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { name: true, gstNumber: true }
+    });
+
     if (type === 'gstr1') {
       const gstr1 = await GSTEngine.generateGSTR1(tenantId, startDate, endDate);
       return NextResponse.json({ gstr1 });
+    }
+
+    // PDF Export
+    if (format === 'pdf' || type === 'pdf') {
+      const summary = await GSTEngine.getSalesSummary(tenantId, startDate, endDate);
+      const gstr1Data = await GSTEngine.generateGSTR1(tenantId, startDate, endDate);
+
+      // Transform GSTR1 data for PDF - flatten B2B invoices
+      const invoices: Array<{
+        invoiceNumber: string;
+        invoiceDate: string;
+        customerName: string;
+        customerGstin: string;
+        placeOfSupply: string;
+        totalValue: string;
+        taxableValue: string;
+        gstRate: string;
+        cgst: string;
+        sgst: string;
+        igst: string;
+      }> = [];
+
+      // Process B2B invoices (grouped by GSTIN in GSTR1 format)
+      for (const b2bEntry of gstr1Data.b2b || []) {
+        for (const inv of b2bEntry.inv || []) {
+          const totalTax = inv.itms?.reduce((sum: number, itm: any) => sum + (itm.itm_det?.iamt || 0), 0) || 0;
+          const taxableValue = inv.itms?.reduce((sum: number, itm: any) => sum + (itm.itm_det?.txval || 0), 0) || 0;
+          invoices.push({
+            invoiceNumber: inv.inum || 'N/A',
+            invoiceDate: inv.idt || 'N/A',
+            customerName: `GSTIN: ${b2bEntry.ctin}`,
+            customerGstin: b2bEntry.ctin || '',
+            placeOfSupply: inv.pos || 'Unknown',
+            totalValue: String(inv.val || 0),
+            taxableValue: String(taxableValue),
+            gstRate: String(inv.itms?.[0]?.itm_det?.rt || 18),
+            cgst: String(totalTax / 2),
+            sgst: String(totalTax / 2),
+            igst: String(0),
+          });
+        }
+      }
+
+      const pdfBuffer = await generateGSTReportPDF({
+        tenantName: tenant?.name || 'Business',
+        gstin: tenant?.gstNumber || '',
+        month: month,
+        summary: {
+          totalAmount: summary.totalAmount || 0,
+          totalTax: summary.totalTax || 0,
+          totalB2B: summary.totalB2B || 0,
+          totalB2C: summary.totalB2C || 0,
+          invoiceCount: summary.invoiceCount || 0,
+        },
+        invoices,
+      });
+
+      return new NextResponse(new Uint8Array(pdfBuffer), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="GSTR1_${month}.pdf"`,
+        },
+      });
     }
 
     const summary = await GSTEngine.getSalesSummary(tenantId, startDate, endDate);

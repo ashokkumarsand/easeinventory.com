@@ -86,12 +86,53 @@
   .modern-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
-    @apply rounded-[40px] shadow-sm hover:shadow-2xl transition-all duration-700;
+    @apply rounded-[40px] shadow-sm hover:shadow-lg transition-all duration-500;
   }
 
   .glass {
     @apply bg-white/70 dark:bg-dark-bg/60 backdrop-blur-3xl border border-black/10 dark:border-white/10;
   }
+
+  /* Improved form styling */
+  .form-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    @apply rounded-3xl p-6 md:p-8 shadow-sm;
+  }
+
+  /* Better modal backgrounds */
+  .modal-backdrop {
+    @apply bg-black/60 dark:bg-black/80 backdrop-blur-sm;
+  }
+}
+
+/* HeroUI Modal Overrides for proper backgrounds */
+[data-slot="base"][class*="modal"] {
+  background-color: var(--card-bg) !important;
+}
+
+[data-slot="wrapper"][class*="modal"] {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px);
+}
+
+.dark [data-slot="base"][class*="modal"] {
+  background-color: #111318 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Softer borders in both themes */
+.border-soft {
+  @apply border-black/5 dark:border-white/10;
+}
+
+/* Form input improvements */
+[data-slot="input-wrapper"] {
+  border-radius: 12px !important;
+}
+
+[data-slot="trigger"] {
+  border-radius: 12px !important;
 }
 
 @layer utilities {
