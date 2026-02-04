@@ -123,6 +123,11 @@
 
 /* ==================== HEROUI OVERRIDES ==================== */
 
+/*
+ * EXPLICIT THEME OVERRIDES
+ * Using explicit light/dark selectors for guaranteed consistency
+ */
+
 /* Modal styling - comprehensive fix */
 [data-slot="backdrop"] {
   background: rgba(0, 0, 0, 0.6) !important;
@@ -131,6 +136,89 @@
 
 .dark [data-slot="backdrop"] {
   background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Light theme - explicit input backgrounds */
+:root [data-slot="input-wrapper"],
+:root [data-slot="innerWrapper"] {
+  background-color: #f4f4f5 !important; /* zinc-100 */
+  border-color: #e4e4e7 !important; /* zinc-200 */
+}
+
+/* Dark theme - explicit input backgrounds */
+.dark [data-slot="input-wrapper"],
+.dark [data-slot="innerWrapper"] {
+  background-color: rgba(39, 39, 42, 0.5) !important; /* zinc-800/50 */
+  border-color: #3f3f46 !important; /* zinc-700 */
+}
+
+/* Light theme - select trigger */
+:root [data-slot="trigger"] {
+  background-color: #f4f4f5 !important;
+  border-color: #e4e4e7 !important;
+}
+
+/* Dark theme - select trigger */
+.dark [data-slot="trigger"] {
+  background-color: rgba(39, 39, 42, 0.5) !important;
+  border-color: #3f3f46 !important;
+}
+
+/* Light theme - listbox/dropdown */
+:root [data-slot="listbox"],
+:root [data-slot="listboxWrapper"],
+:root [role="listbox"] {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+}
+
+/* Dark theme - listbox/dropdown */
+.dark [data-slot="listbox"],
+.dark [data-slot="listboxWrapper"],
+.dark [role="listbox"] {
+  background-color: #18181b !important;
+  border-color: #3f3f46 !important;
+}
+
+/* Light theme - popover content */
+:root [data-slot="content"][class*="popover"],
+:root [role="dialog"]:not([class*="modal"]) {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+}
+
+/* Dark theme - popover content */
+.dark [data-slot="content"][class*="popover"],
+.dark [role="dialog"]:not([class*="modal"]) {
+  background-color: #18181b !important;
+  border-color: #3f3f46 !important;
+}
+
+/* Light theme - cards */
+:root .bg-content1,
+:root [data-slot="base"].bg-content1 {
+  background-color: #ffffff !important;
+}
+
+/* Dark theme - cards */
+.dark .bg-content1,
+.dark [data-slot="base"].bg-content1 {
+  background-color: #18181b !important;
+}
+
+/* Tooltip styling - light */
+:root [role="tooltip"] {
+  background-color: #09090b !important;
+  color: #fafafa !important;
+  border: none !important;
+  font-weight: 500;
+}
+
+/* Tooltip styling - dark */
+.dark [role="tooltip"] {
+  background-color: #fafafa !important;
+  color: #09090b !important;
+  border: none !important;
 }
 
 [data-slot="base"].bg-content1 {

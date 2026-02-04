@@ -18,7 +18,9 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:studio:local": "DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres prisma studio",
-    "dev:local": "npm run supabase:start && npm run db:push:local && npm run dev"
+    "dev:local": "npm run supabase:start && npm run db:push:local && npm run dev",
+    "test:ui": "npx playwright test",
+    "test:ui:report": "npx playwright show-report tests/ui-audit/report"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",
@@ -54,6 +56,7 @@
     "recharts": "^3.7.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.1",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",

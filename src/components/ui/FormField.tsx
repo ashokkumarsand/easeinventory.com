@@ -6,26 +6,48 @@ import React, { ReactNode } from 'react';
 /**
  * Standardized form input styles
  * Use these classNames objects for consistent styling across all forms
+ * Using explicit light/dark classes for guaranteed theme consistency
  */
 export const formInputStyles = {
   input: {
     base: "w-full",
-    label: "text-xs font-bold uppercase tracking-wider text-foreground/50 pb-1",
-    inputWrapper: "h-14 bg-foreground/5 border border-foreground/5 hover:border-primary/30 focus-within:border-primary/50 transition-colors rounded-xl",
-    input: "text-sm font-medium",
-    errorMessage: "text-xs font-medium",
+    label: "text-xs font-semibold uppercase tracking-wider text-muted pb-1.5",
+    inputWrapper: [
+      "h-14 rounded-xl transition-all duration-200",
+      "bg-zinc-100 dark:bg-zinc-800/50",
+      "border border-zinc-200 dark:border-zinc-700",
+      "hover:border-primary/50 dark:hover:border-primary/50",
+      "focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20",
+      "data-[invalid=true]:border-danger",
+    ].join(" "),
+    input: "text-sm font-medium text-foreground placeholder:text-muted",
+    errorMessage: "text-xs font-medium text-danger",
   },
   select: {
     base: "w-full",
-    label: "text-xs font-bold uppercase tracking-wider text-foreground/50 pb-1",
-    trigger: "h-14 bg-foreground/5 border border-foreground/5 hover:border-primary/30 data-[focus=true]:border-primary/50 transition-colors rounded-xl",
-    value: "text-sm font-medium",
+    label: "text-xs font-semibold uppercase tracking-wider text-muted pb-1.5",
+    trigger: [
+      "h-14 rounded-xl transition-all duration-200",
+      "bg-zinc-100 dark:bg-zinc-800/50",
+      "border border-zinc-200 dark:border-zinc-700",
+      "hover:border-primary/50 dark:hover:border-primary/50",
+      "data-[focus=true]:border-primary data-[focus=true]:ring-2 data-[focus=true]:ring-primary/20",
+    ].join(" "),
+    value: "text-sm font-medium text-foreground",
+    listbox: "bg-card border border-soft rounded-xl",
+    popoverContent: "bg-card border border-soft rounded-xl shadow-xl",
   },
   textarea: {
     base: "w-full",
-    label: "text-xs font-bold uppercase tracking-wider text-foreground/50 pb-1",
-    inputWrapper: "bg-foreground/5 border border-foreground/5 hover:border-primary/30 focus-within:border-primary/50 transition-colors rounded-xl py-3",
-    input: "text-sm font-medium",
+    label: "text-xs font-semibold uppercase tracking-wider text-muted pb-1.5",
+    inputWrapper: [
+      "rounded-xl py-3 transition-all duration-200",
+      "bg-zinc-100 dark:bg-zinc-800/50",
+      "border border-zinc-200 dark:border-zinc-700",
+      "hover:border-primary/50 dark:hover:border-primary/50",
+      "focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20",
+    ].join(" "),
+    input: "text-sm font-medium text-foreground placeholder:text-muted",
   },
 };
 
