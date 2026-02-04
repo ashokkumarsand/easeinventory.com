@@ -7,7 +7,16 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "supabase:reset": "supabase db reset",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "dev:local": "npm run supabase:start && npm run db:push && npm run dev"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",
@@ -51,6 +60,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
     "sharp": "^0.34.5",
+    "supabase": "^2.75.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

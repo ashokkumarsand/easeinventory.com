@@ -58,7 +58,7 @@ export async function isWithinGeoFence(
     return { isValid: true };
   }
 
-  let nearestFence = null;
+  let nearestFence: { id: string; name: string; distance: number; radius: number } | undefined = undefined;
   let minDistance = Infinity;
 
   for (const fence of geoFences) {
