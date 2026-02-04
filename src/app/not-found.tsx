@@ -17,110 +17,70 @@ export default function NotFound() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 text-center overflow-hidden selection:bg-primary selection:text-primary-foreground">
-      {/* Ambient Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-primary/10 blur-[150px] rounded-full"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div 
-          className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] bg-secondary/10 blur-[120px] rounded-full"
-          animate={{
-            x: [0, -40, 0],
-            y: [0, 40, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 overflow-hidden selection:bg-primary selection:text-primary-foreground">
+      {/* Subtle Background Gradient */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-secondary/5 blur-[100px] rounded-full" />
       </div>
 
-      <div className="relative z-10 max-w-2xl mx-auto space-y-12">
-        {/* Animated Logo */}
+      <div className="relative z-10 max-w-lg mx-auto text-center">
+        {/* Logo */}
         <motion.div
-          initial={{ scale: 0.8, opacity: 0, y: -20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "circOut" }}
-          className="relative inline-block"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
         >
-          {/* Glassmorphism card */}
-          <div className="relative bg-background/60 backdrop-blur-2xl border border-foreground/5 p-12 rounded-[3rem] shadow-2xl">
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-[3rem]" />
-            
-            <div className="relative flex flex-col items-center gap-6">
-              {/* Animated Logo */}
-              <motion.div
-                animate={{
-                  y: [0, -8, 0],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <Logo size={72} />
-              </motion.div>
-
-              {/* 404 Text */}
-              <div className="relative">
-                <h1 className="text-[100px] md:text-[140px] font-black leading-none tracking-tighter text-foreground/10">
-                  404
-                </h1>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl md:text-5xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    Not Found
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Link href="/" className="inline-flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Logo size={48} />
+            <span className="text-xl font-black tracking-tight">
+              Ease<span className="text-primary italic">Inventory</span>
+            </span>
+          </Link>
         </motion.div>
 
-        {/* Text Content */}
+        {/* 404 Number */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          className="space-y-4"
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mb-6"
         >
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight">
-            This page doesn&apos;t exist
-          </h2>
-          <p className="text-foreground/40 font-medium max-w-md mx-auto leading-relaxed">
-            The page you&apos;re looking for might have been moved, deleted, or never existed. 
-            Try searching or go back to the dashboard.
+          <span className="text-[120px] sm:text-[160px] font-black leading-none tracking-tighter bg-gradient-to-b from-foreground/20 to-foreground/5 bg-clip-text text-transparent">
+            404
+          </span>
+        </motion.div>
+
+        {/* Message */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-8"
+        >
+          <h1 className="text-2xl sm:text-3xl font-bold mb-3">Page not found</h1>
+          <p className="text-foreground/50 max-w-sm mx-auto">
+            The page you&apos;re looking for doesn&apos;t exist or has been moved to a new location.
           </p>
         </motion.div>
 
-        {/* Search Bar */}
+        {/* Search */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="max-w-md mx-auto"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mb-8"
         >
-          <div className="flex gap-2">
+          <div className="flex gap-2 max-w-md mx-auto">
             <Input
-              placeholder="Search inventory, repairs, invoices..."
+              placeholder="Search inventory, invoices..."
               value={searchQuery}
               onValueChange={setSearchQuery}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               startContent={<Search size={18} className="text-foreground/30" />}
               classNames={{
-                inputWrapper: "bg-foreground/5 border border-foreground/5 h-14 rounded-2xl hover:border-primary/30 transition-colors",
+                inputWrapper: "bg-foreground/5 border border-foreground/10 h-12 rounded-xl hover:border-primary/30 focus-within:border-primary transition-colors",
                 input: "font-medium",
               }}
             />
@@ -129,7 +89,7 @@ export default function NotFound() {
               color="primary"
               size="lg"
               radius="lg"
-              className="h-14 w-14"
+              className="h-12 w-12 shrink-0"
               onClick={handleSearch}
             >
               <Search size={20} />
@@ -141,30 +101,30 @@ export default function NotFound() {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex flex-col sm:flex-row gap-3 justify-center mb-10"
         >
           <Button
             as={Link}
-            href="/"
+            href="/dashboard"
             color="primary"
             size="lg"
-            radius="full"
-            className="font-bold px-8 h-14 shadow-lg shadow-primary/20 min-w-[180px]"
+            radius="lg"
+            className="font-bold px-6"
             startContent={<Home size={18} />}
           >
-            Go Home
+            Go to Dashboard
           </Button>
           <Button
             as={Link}
-            href="/dashboard"
+            href="/"
             variant="bordered"
             size="lg"
-            radius="full"
-            className="font-bold px-8 h-14 border-foreground/10 hover:bg-foreground/5 min-w-[180px]"
+            radius="lg"
+            className="font-bold px-6 border-foreground/10"
             startContent={<ArrowLeft size={18} />}
           >
-            Back to Dashboard
+            Back to Home
           </Button>
         </motion.div>
 
@@ -172,24 +132,22 @@ export default function NotFound() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 1 }}
-          className="pt-8 border-t border-foreground/5"
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <p className="text-xs font-bold text-foreground/30 uppercase tracking-widest mb-4">
-            Popular Pages
+          <p className="text-xs font-semibold text-foreground/30 uppercase tracking-wider mb-3">
+            Quick Links
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2">
             {[
               { label: 'Inventory', href: '/dashboard/inventory' },
               { label: 'Repairs', href: '/dashboard/repairs' },
               { label: 'Invoices', href: '/dashboard/invoices' },
-              { label: 'Team', href: '/dashboard/team' },
               { label: 'Settings', href: '/dashboard/settings' },
             ].map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 rounded-full bg-foreground/5 text-sm font-medium text-foreground/60 hover:text-primary hover:bg-primary/10 transition-colors"
+                className="px-4 py-2 rounded-lg bg-foreground/5 text-sm font-medium text-foreground/60 hover:text-primary hover:bg-primary/10 transition-colors"
               >
                 {link.label}
               </Link>

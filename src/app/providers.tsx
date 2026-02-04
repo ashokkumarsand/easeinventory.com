@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import PWAProvider from '@/components/providers/PWAProvider';
 import { LiveRegionProvider } from '@/components/ui/LiveRegion';
 import SkipLink from '@/components/ui/SkipLink';
+import { PlanProvider } from '@/contexts/PlanContext';
+import { UpgradeModal } from '@/components/upgrade';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,14 +17,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <NextThemesProvider attribute="class" defaultTheme="dark">
         <HeroUIProvider navigate={router.push}>
-          <LiveRegionProvider>
-            <PWAProvider>
-              <SkipLink href="#main-content" />
-              <main id="main-content" tabIndex={-1} className="outline-none">
-                {children}
-              </main>
-            </PWAProvider>
-          </LiveRegionProvider>
+          <PlanProvider>
+            <LiveRegionProvider>
+              <PWAProvider>
+                <SkipLink href="#main-content" />
+                <main id="main-content" tabIndex={-1} className="outline-none">
+                  {children}
+                </main>
+                <UpgradeModal />
+              </PWAProvider>
+            </LiveRegionProvider>
+          </PlanProvider>
         </HeroUIProvider>
       </NextThemesProvider>
     </SessionProvider>

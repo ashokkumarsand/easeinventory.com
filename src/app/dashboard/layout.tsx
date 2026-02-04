@@ -3,6 +3,9 @@
 import { Logo } from '@/components/icons/Logo';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
+import { UpgradeBanner } from '@/components/upgrade';
+import { usePlanFeatures } from '@/hooks/usePlanFeatures';
+import { GATED_MENU_ITEMS, FeatureKey } from '@/lib/plan-features';
 import {
     Avatar,
     Badge,
@@ -16,6 +19,7 @@ import {
     PopoverContent,
     PopoverTrigger,
     ScrollShadow,
+    Tooltip,
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -30,12 +34,14 @@ import {
     Globe,
     History,
     Home,
+    Lock,
     Mail,
     Menu,
     MessageCircle,
     Package,
     Settings,
     Shield,
+    Sparkles,
     Tag,
     TrendingUp,
     Truck,
@@ -136,6 +142,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [notifications, setNotifications] = React.useState<Notification[]>(MOCK_NOTIFICATIONS);
+
+  // Plan-based feature gating
+  const { isMenuItemLocked, getMenuItemFeature, showUpgradeModal, shouldShowUpgradePrompts, getFeatureDetails } = usePlanFeatures();
 
   // Track if initial auth check has been performed
   const hasCheckedAuth = useRef(false);
@@ -284,29 +293,69 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <div className="space-y-1">
                     {group.items.map((item) => {
                       const isActive = pathname === item.href;
-                      return (
+                      const isLocked = isMenuItemLocked(item.href);
+                      const lockedFeature = getMenuItemFeature(item.href);
+                      const featureDetails = lockedFeature ? getFeatureDetails(lockedFeature) : null;
+
+                      const handleClick = (e: React.MouseEvent) => {
+                        if (isLocked && lockedFeature) {
+                          e.preventDefault();
+                          showUpgradeModal(lockedFeature);
+                        } else {
+                          setIsMobileMenuOpen(false);
+                        }
+                      };
+
+                      const menuItemContent = (
                         <Link
                           key={item.label}
-                          href={item.href}
-                          prefetch={true}
-                          onClick={() => setIsMobileMenuOpen(false)}
+                          href={isLocked ? '#' : item.href}
+                          prefetch={!isLocked}
+                          onClick={handleClick}
                           className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative ${
                             isActive
                             ? 'bg-primary text-white shadow-md shadow-primary/20'
+                            : isLocked
+                            ? 'text-muted/50 hover:text-muted cursor-pointer'
                             : 'hover:bg-background text-muted hover:text-foreground'
                           }`}
                         >
-                          <item.icon className={`shrink-0 ${isSidebarOpen ? 'w-5 h-5' : 'w-6 h-6'}`} strokeWidth={2} />
+                          <item.icon className={`shrink-0 ${isSidebarOpen ? 'w-5 h-5' : 'w-6 h-6'} ${isLocked ? 'opacity-50' : ''}`} strokeWidth={2} />
                           {isSidebarOpen && (
-                            <span className="text-sm font-semibold">{item.label}</span>
+                            <>
+                              <span className={`text-sm font-semibold flex-1 ${isLocked ? 'opacity-50' : ''}`}>{item.label}</span>
+                              {isLocked && (
+                                <Lock className="w-3.5 h-3.5 text-warning" />
+                              )}
+                            </>
                           )}
                           {!isSidebarOpen && (
-                            <div className="absolute left-full ml-4 px-3 py-1.5 bg-foreground text-background text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-lg">
+                            <div className="absolute left-full ml-4 px-3 py-1.5 bg-foreground text-background text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-lg flex items-center gap-2">
                               {item.label}
+                              {isLocked && <Lock className="w-3 h-3" />}
                             </div>
                           )}
                         </Link>
                       );
+
+                      if (isLocked && featureDetails && isSidebarOpen) {
+                        return (
+                          <Tooltip
+                            key={item.label}
+                            content={
+                              <div className="p-2 max-w-[200px]">
+                                <p className="font-semibold text-sm">{featureDetails.name}</p>
+                                <p className="text-xs text-foreground/60 mt-1">Requires {featureDetails.minPlan} plan</p>
+                              </div>
+                            }
+                            placement="right"
+                          >
+                            {menuItemContent}
+                          </Tooltip>
+                        );
+                      }
+
+                      return menuItemContent;
                     })}
                   </div>
                 </div>
@@ -471,6 +520,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Scrollable Content */}
         <div className="flex-grow overflow-y-auto overflow-x-hidden">
           <div className="container-custom py-8 lg:py-12 max-w-7xl">
+             {/* Upgrade Banner for FREE/STARTER users */}
+             {shouldShowUpgradePrompts() && pathname === '/dashboard' && (
+               <div className="mb-8">
+                 <UpgradeBanner />
+               </div>
+             )}
              {children}
           </div>
         </div>

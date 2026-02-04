@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { PlanType } from '@/lib/plan-features';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -45,6 +46,8 @@ export const authOptions: NextAuthOptions = {
             role: 'SUPER_ADMIN',
             onboardingStatus: 'COMPLETED',
             registrationStatus: 'APPROVED',
+            plan: 'ENTERPRISE' as PlanType,
+            planExpiresAt: null,
           };
         }
         // --------------------------
@@ -90,6 +93,8 @@ export const authOptions: NextAuthOptions = {
           onboardingStatus: (user.tenant?.settings as any)?.onboardingStatus || 'PENDING',
           registrationStatus: user.tenant?.registrationStatus || 'PENDING',
           customDomain: user.tenant?.customDomain || null,
+          plan: (user.tenant?.plan as PlanType) || 'FREE',
+          planExpiresAt: user.tenant?.planExpiresAt || null,
         };
       },
     }),
@@ -111,11 +116,13 @@ export const authOptions: NextAuthOptions = {
         token.onboardingStatus = (user as any).onboardingStatus;
         token.registrationStatus = (user as any).registrationStatus;
         token.customDomain = (user as any).customDomain;
+        token.plan = (user as any).plan;
+        token.planExpiresAt = (user as any).planExpiresAt;
 
         // Check if internal staff
         const isInternalDomain = user.email?.endsWith('@easeinventory.com');
         const isMasterAdmin = (user as any).role === 'SUPER_ADMIN';
-        
+
         if (isInternalDomain || isMasterAdmin) {
           const staffRecord = await prisma.backofficeStaff.findUnique({
             where: { userId: user.id }
@@ -132,6 +139,8 @@ export const authOptions: NextAuthOptions = {
         token.tenantSlug = session.tenantSlug;
         token.onboardingStatus = session.onboardingStatus;
         token.registrationStatus = session.registrationStatus;
+        if (session.plan) token.plan = session.plan;
+        if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
       }
       return token;
     },
@@ -146,6 +155,8 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).customDomain = token.customDomain;
         (session.user as any).isInternalStaff = token.isInternalStaff;
         (session.user as any).backofficePermissions = token.backofficePermissions;
+        (session.user as any).plan = token.plan;
+        (session.user as any).planExpiresAt = token.planExpiresAt;
       }
       return session;
     },
