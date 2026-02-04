@@ -21,10 +21,11 @@ import {
   FileText,
   Fingerprint,
   Globe,
+  History,
   Home,
   Mail,
   Menu,
-  MessageSquare,
+  MessageCircle,
   Package,
   PlusCircle,
   Settings,
@@ -57,13 +58,19 @@ const menuItems = [
   { group: 'Team', items: [
     { label: 'Employees', icon: Users, href: '/dashboard/hr' },
     { label: 'Attendance', icon: Fingerprint, href: '/dashboard/attendance' },
-    { label: 'Leaves', icon: Calendar, href: '/dashboard/leaves' },
+    { label: 'Leaves', icon: Calendar, href: '/dashboard/hr/leaves' },
+    { label: 'Holidays', icon: Calendar, href: '/dashboard/hr/holidays' },
   ]},
-  { group: 'Support & Settings', items: [
+  { group: 'Communication', items: [
+    { label: 'WhatsApp Messages', icon: MessageCircle, href: '/dashboard/communications' },
     { label: 'Inventory Requests', icon: Package, href: '/dashboard/support/inventory' },
     { label: 'Refund Requests', icon: Mail, href: '/dashboard/support/refunds' },
+  ]},
+  { group: 'Settings', items: [
     { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
+    { label: 'Custom Roles', icon: Shield, href: '/dashboard/settings/roles' },
     { label: 'Custom Domain', icon: Globe, href: '/dashboard/settings/domains' },
+    { label: 'Audit Trail', icon: History, href: '/dashboard/settings/audit' },
   ]}
 ];
 
