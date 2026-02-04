@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import CSVImport from '@/components/ui/CSVImport';
 
 export default function SuppliersPage() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -130,6 +131,30 @@ export default function SuppliersPage() {
                             Settlement Ledger
                         </Button>
                     </Link>
+                    <CSVImport
+                        title="Import Suppliers"
+                        description="Bulk import vendors from CSV file"
+                        templateUrl="/api/suppliers/import"
+                        importUrl="/api/suppliers/import"
+                        onSuccess={fetchSuppliers}
+                        requiredFields={['name']}
+                        fieldMappings={{
+                            'Business Name': 'name',
+                            'Contact Person': 'contactPerson',
+                            'Email': 'email',
+                            'Phone': 'phone',
+                            'WhatsApp': 'whatsapp',
+                            'Address': 'address',
+                            'City': 'city',
+                            'State': 'state',
+                            'Pincode': 'pincode',
+                            'GST Number': 'gstNumber',
+                            'PAN Number': 'panNumber',
+                            'Bank Name': 'bankName',
+                            'Account Number': 'accountNumber',
+                            'IFSC Code': 'ifscCode',
+                        }}
+                    />
                     <Button color="primary" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-primary/20" startContent={<Plus size={20} />} onClick={onOpen}>
                         Add Supplier
                     </Button>

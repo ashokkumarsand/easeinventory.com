@@ -5,16 +5,38 @@ import {
     Card,
     CardBody,
     Input,
+    Select,
+    SelectItem,
     Tab,
     Tabs
 } from '@heroui/react';
 import {
     Building2,
+    Coins,
     CreditCard,
     Globe,
     Save,
     ShieldCheck
 } from 'lucide-react';
+
+// Common currencies for international business
+const CURRENCIES = [
+  { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'GBP', name: 'British Pound', symbol: '£' },
+  { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' },
+  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+  { code: 'CHF', name: 'Swiss Franc', symbol: 'Fr' },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼' },
+  { code: 'BDT', name: 'Bangladeshi Taka', symbol: '৳' },
+  { code: 'NPR', name: 'Nepalese Rupee', symbol: 'रू' },
+  { code: 'LKR', name: 'Sri Lankan Rupee', symbol: 'Rs' },
+  { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM' },
+];
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
@@ -33,6 +55,7 @@ export default function SettingsPage() {
     phone: '',
     email: '',
     website: '',
+    currency: 'INR',
     upiId: '',
     bankName: '',
     accountNumber: '',
@@ -151,25 +174,84 @@ export default function SettingsPage() {
                         <div className="w-1 h-4 bg-primary rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('location')}</h4>
                     </div>
-                    <Input 
-                        label="Address" 
-                        value={tenant.address || ''} 
+                    <Input
+                        label="Address"
+                        value={tenant.address || ''}
                         onValueChange={(v) => setTenant({...tenant, address: v})}
                         labelPlacement="outside" placeholder="Floor, Building, Street" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
                     />
                     <div className="grid grid-cols-2 gap-4">
-                        <Input 
-                            label="City" 
-                            value={tenant.city || ''} 
+                        <Input
+                            label="City"
+                            value={tenant.city || ''}
                             onValueChange={(v) => setTenant({...tenant, city: v})}
                             labelPlacement="outside" placeholder="Mumbai" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
                         />
-                        <Input 
-                            label="Pincode" 
-                            value={tenant.pincode || ''} 
+                        <Input
+                            label="Pincode"
+                            value={tenant.pincode || ''}
                             onValueChange={(v) => setTenant({...tenant, pincode: v})}
                             labelPlacement="outside" placeholder="400001" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }}
                         />
+                    </div>
+                </CardBody>
+            </Card>
+
+            <Card className="modern-card p-6 lg:col-span-2" radius="lg">
+                <CardBody className="space-y-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-4 bg-warning rounded-full" />
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-warning">{t('currency_settings') || 'Currency Settings'}</h4>
+                    </div>
+                    <div className="grid lg:grid-cols-2 gap-6">
+                        <div>
+                            <Select
+                                label="Default Currency"
+                                labelPlacement="outside"
+                                placeholder="Select currency"
+                                selectedKeys={tenant.currency ? [tenant.currency] : ['INR']}
+                                onSelectionChange={(keys) => {
+                                    const selected = Array.from(keys)[0] as string;
+                                    setTenant({...tenant, currency: selected});
+                                }}
+                                size="lg"
+                                radius="lg"
+                                startContent={<Coins size={18} className="text-warning" />}
+                                classNames={{
+                                    trigger: "bg-black/5 dark:bg-white/5 h-14",
+                                    value: "font-bold"
+                                }}
+                            >
+                                {CURRENCIES.map((currency) => (
+                                    <SelectItem key={currency.code} textValue={`${currency.code} - ${currency.name}`}>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-lg font-black w-8">{currency.symbol}</span>
+                                            <div>
+                                                <p className="font-bold">{currency.code}</p>
+                                                <p className="text-xs text-foreground/50">{currency.name}</p>
+                                            </div>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="p-4 rounded-xl bg-warning/10 border border-warning/20">
+                            <p className="text-xs font-bold text-warning mb-1">Currency Impact</p>
+                            <p className="text-[10px] text-foreground/60 leading-relaxed">
+                                This currency will be used as the default for all new invoices and financial reports.
+                                Existing invoices will retain their original currency.
+                            </p>
+                            {tenant.currency && (
+                                <div className="mt-3 flex items-center gap-2">
+                                    <span className="text-2xl font-black text-warning">
+                                        {CURRENCIES.find(c => c.code === tenant.currency)?.symbol || '₹'}
+                                    </span>
+                                    <span className="text-sm font-bold opacity-60">
+                                        {CURRENCIES.find(c => c.code === tenant.currency)?.name || 'Indian Rupee'}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </CardBody>
             </Card>

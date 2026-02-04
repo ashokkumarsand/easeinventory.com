@@ -173,7 +173,7 @@ export default function AIHelpWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)]"
           >
-            <Card className="w-full h-full flex flex-col shadow-2xl border border-primary/20 overflow-hidden bg-background dark:bg-[#111318]">
+            <Card className="w-full h-full flex flex-col shadow-2xl border border-soft overflow-hidden bg-card">
               {/* Header */}
               <div className="p-4 bg-primary text-primary-foreground flex items-center justify-between">
                 <div className="flex items-center gap-3">

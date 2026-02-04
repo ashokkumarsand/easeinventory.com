@@ -308,35 +308,36 @@ export default function DiscountsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+        <Card className="bg-card border border-soft p-6" radius="lg">
           <CardBody className="p-0">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Total Discounts</p>
-            <h2 className="text-4xl font-black text-primary">{discounts.length}</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Total Discounts</p>
+            <h2 className="text-4xl font-bold text-primary">{discounts.length}</h2>
           </CardBody>
         </Card>
-        <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+        <Card className="bg-card border border-soft p-6" radius="lg">
           <CardBody className="p-0">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Active Now</p>
-            <h2 className="text-4xl font-black text-success">{discounts.filter(isDiscountActive).length}</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Active Now</p>
+            <h2 className="text-4xl font-bold text-success">{discounts.filter(isDiscountActive).length}</h2>
           </CardBody>
         </Card>
-        <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
+        <Card className="bg-card border border-soft p-6" radius="lg">
           <CardBody className="p-0">
-            <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Total Usage</p>
-            <h2 className="text-4xl font-black text-warning">{discounts.reduce((sum, d) => sum + d.usageCount, 0)}</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Total Usage</p>
+            <h2 className="text-4xl font-bold text-warning">{discounts.reduce((sum, d) => sum + d.usageCount, 0)}</h2>
           </CardBody>
         </Card>
       </div>
 
       {/* Discounts Table */}
-      <Card className="modern-card" radius="lg">
+      <Card className="bg-card border border-soft overflow-hidden" radius="lg">
         <CardBody className="p-0">
           <Table
             aria-label="Blanket Discounts"
             classNames={{
               wrapper: 'p-0 bg-transparent shadow-none',
-              th: 'bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6',
-              td: 'py-4 px-6',
+              th: 'bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 first:pl-6',
+              td: 'py-4 px-6 first:pl-6',
+              tr: 'border-b border-soft last:border-none hover:bg-card transition-colors',
             }}
           >
             <TableHeader>
@@ -440,156 +441,220 @@ export default function DiscountsPage() {
       </Card>
 
       {/* Create/Edit Modal */}
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="2xl"
+        scrollBehavior="inside"
+        classNames={{
+          backdrop: "bg-black/50 backdrop-blur-sm",
+          base: "bg-card border border-soft rounded-2xl",
+          header: "border-b border-soft",
+          body: "py-6",
+          footer: "border-t border-soft",
+        }}
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="font-black">
-                {editingId ? 'Edit Discount' : 'Create Blanket Discount'}
+              <ModalHeader className="flex flex-col gap-1">
+                <h2 className="text-xl font-bold">
+                  {editingId ? 'Edit Discount' : 'Create Blanket Discount'}
+                </h2>
+                <p className="text-sm text-muted font-normal">
+                  {editingId ? 'Update the discount details below' : 'Set up a new discount rule for your inventory'}
+                </p>
               </ModalHeader>
-              <ModalBody className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Discount Name"
-                    placeholder="e.g., Summer Sale"
-                    value={formData.name}
-                    onValueChange={(v) => setFormData({ ...formData, name: v })}
-                    isRequired
-                  />
-                  <Select
-                    label="Discount Type"
-                    selectedKeys={[formData.discountType]}
-                    onSelectionChange={(keys) => setFormData({ ...formData, discountType: Array.from(keys)[0] as any })}
-                  >
-                    <SelectItem key="PERCENTAGE">Percentage (%)</SelectItem>
-                    <SelectItem key="FIXED">Fixed Amount (₹)</SelectItem>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label={formData.discountType === 'PERCENTAGE' ? 'Discount (%)' : 'Discount (₹)'}
-                    type="number"
-                    placeholder={formData.discountType === 'PERCENTAGE' ? '10' : '100'}
-                    value={formData.discountValue}
-                    onValueChange={(v) => setFormData({ ...formData, discountValue: v })}
-                    isRequired
-                  />
-                  <Input
-                    label="Priority"
-                    type="number"
-                    placeholder="0"
-                    description="Higher priority wins"
-                    value={formData.priority}
-                    onValueChange={(v) => setFormData({ ...formData, priority: v })}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Select
-                    label="Applies To"
-                    selectedKeys={[formData.scope]}
-                    onSelectionChange={(keys) => setFormData({ ...formData, scope: Array.from(keys)[0] as any, scopeId: '' })}
-                  >
-                    {SCOPE_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.key}>{opt.label}</SelectItem>
-                    ))}
-                  </Select>
-
-                  {formData.scope === 'CATEGORY' && (
-                    <Select
-                      label="Select Category"
-                      selectedKeys={formData.scopeId ? [formData.scopeId] : []}
-                      onSelectionChange={(keys) => setFormData({ ...formData, scopeId: Array.from(keys)[0] as string })}
-                    >
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id}>{cat.name}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-
-                  {formData.scope === 'SUPPLIER' && (
-                    <Select
-                      label="Select Supplier"
-                      selectedKeys={formData.scopeId ? [formData.scopeId] : []}
-                      onSelectionChange={(keys) => setFormData({ ...formData, scopeId: Array.from(keys)[0] as string })}
-                    >
-                      {suppliers.map((sup) => (
-                        <SelectItem key={sup.id}>{sup.name}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-
-                  {formData.scope === 'BRAND' && (
+              <ModalBody className="space-y-6">
+                {/* Basic Info Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Basic Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
-                      label="Brand Name"
-                      placeholder="e.g., Samsung"
-                      value={formData.scopeId}
-                      onValueChange={(v) => setFormData({ ...formData, scopeId: v })}
+                      label="Discount Name"
+                      placeholder="e.g., Summer Sale"
+                      labelPlacement="outside"
+                      value={formData.name}
+                      onValueChange={(v) => setFormData({ ...formData, name: v })}
+                      isRequired
                     />
-                  )}
+                    <Select
+                      label="Discount Type"
+                      labelPlacement="outside"
+                      placeholder="Select type"
+                      selectedKeys={[formData.discountType]}
+                      onSelectionChange={(keys) => setFormData({ ...formData, discountType: Array.from(keys)[0] as any })}
+                    >
+                      <SelectItem key="PERCENTAGE">Percentage (%)</SelectItem>
+                      <SelectItem key="FIXED">Fixed Amount (₹)</SelectItem>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label={formData.discountType === 'PERCENTAGE' ? 'Discount Value (%)' : 'Discount Value (₹)'}
+                      type="number"
+                      labelPlacement="outside"
+                      placeholder={formData.discountType === 'PERCENTAGE' ? '10' : '100'}
+                      value={formData.discountValue}
+                      onValueChange={(v) => setFormData({ ...formData, discountValue: v })}
+                      isRequired
+                    />
+                    <Input
+                      label="Priority"
+                      type="number"
+                      labelPlacement="outside"
+                      placeholder="0"
+                      description="Higher priority wins when multiple discounts apply"
+                      value={formData.priority}
+                      onValueChange={(v) => setFormData({ ...formData, priority: v })}
+                    />
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Start Date"
-                    type="date"
-                    value={formData.startDate}
-                    onValueChange={(v) => setFormData({ ...formData, startDate: v })}
-                    isRequired
-                  />
-                  <Input
-                    label="End Date (Optional)"
-                    type="date"
-                    value={formData.endDate}
-                    onValueChange={(v) => setFormData({ ...formData, endDate: v })}
-                  />
+                {/* Scope Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Scope & Targeting</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Select
+                      label="Applies To"
+                      labelPlacement="outside"
+                      placeholder="Select scope"
+                      selectedKeys={[formData.scope]}
+                      onSelectionChange={(keys) => setFormData({ ...formData, scope: Array.from(keys)[0] as any, scopeId: '' })}
+                    >
+                      {SCOPE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.key}>{opt.label}</SelectItem>
+                      ))}
+                    </Select>
+
+                    {formData.scope === 'CATEGORY' && (
+                      <Select
+                        label="Select Category"
+                        labelPlacement="outside"
+                        placeholder="Choose a category"
+                        selectedKeys={formData.scopeId ? [formData.scopeId] : []}
+                        onSelectionChange={(keys) => setFormData({ ...formData, scopeId: Array.from(keys)[0] as string })}
+                      >
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id}>{cat.name}</SelectItem>
+                        ))}
+                      </Select>
+                    )}
+
+                    {formData.scope === 'SUPPLIER' && (
+                      <Select
+                        label="Select Supplier"
+                        labelPlacement="outside"
+                        placeholder="Choose a supplier"
+                        selectedKeys={formData.scopeId ? [formData.scopeId] : []}
+                        onSelectionChange={(keys) => setFormData({ ...formData, scopeId: Array.from(keys)[0] as string })}
+                      >
+                        {suppliers.map((sup) => (
+                          <SelectItem key={sup.id}>{sup.name}</SelectItem>
+                        ))}
+                      </Select>
+                    )}
+
+                    {formData.scope === 'BRAND' && (
+                      <Input
+                        label="Brand Name"
+                        labelPlacement="outside"
+                        placeholder="e.g., Samsung"
+                        value={formData.scopeId}
+                        onValueChange={(v) => setFormData({ ...formData, scopeId: v })}
+                      />
+                    )}
+
+                    {formData.scope === 'ALL' && (
+                      <div className="flex items-end">
+                        <p className="text-sm text-muted pb-2">This discount will apply to all products</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
+                {/* Validity Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Validity Period</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label="Start Date"
+                      type="date"
+                      labelPlacement="outside"
+                      value={formData.startDate}
+                      onValueChange={(v) => setFormData({ ...formData, startDate: v })}
+                      isRequired
+                    />
+                    <Input
+                      label="End Date"
+                      type="date"
+                      labelPlacement="outside"
+                      placeholder="Optional - leave empty for no end date"
+                      value={formData.endDate}
+                      onValueChange={(v) => setFormData({ ...formData, endDate: v })}
+                    />
+                  </div>
+                </div>
+
+                {/* Description */}
                 <Textarea
-                  label="Description (Optional)"
-                  placeholder="Describe this discount..."
+                  label="Description"
+                  labelPlacement="outside"
+                  placeholder="Optional - describe this discount for internal reference..."
                   value={formData.description}
                   onValueChange={(v) => setFormData({ ...formData, description: v })}
+                  minRows={2}
                 />
 
-                <div className="grid grid-cols-3 gap-4">
-                  <Input
-                    label="Min Quantity"
-                    type="number"
-                    placeholder="No minimum"
-                    value={formData.minQuantity}
-                    onValueChange={(v) => setFormData({ ...formData, minQuantity: v })}
-                  />
-                  <Input
-                    label="Min Order Value (₹)"
-                    type="number"
-                    placeholder="No minimum"
-                    value={formData.minOrderValue}
-                    onValueChange={(v) => setFormData({ ...formData, minOrderValue: v })}
-                  />
-                  <Input
-                    label="Max Usage"
-                    type="number"
-                    placeholder="Unlimited"
-                    value={formData.maxUsageCount}
-                    onValueChange={(v) => setFormData({ ...formData, maxUsageCount: v })}
-                  />
+                {/* Conditions Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Conditions (Optional)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Input
+                      label="Min Quantity"
+                      type="number"
+                      labelPlacement="outside"
+                      placeholder="No minimum"
+                      value={formData.minQuantity}
+                      onValueChange={(v) => setFormData({ ...formData, minQuantity: v })}
+                    />
+                    <Input
+                      label="Min Order Value (₹)"
+                      type="number"
+                      labelPlacement="outside"
+                      placeholder="No minimum"
+                      value={formData.minOrderValue}
+                      onValueChange={(v) => setFormData({ ...formData, minOrderValue: v })}
+                    />
+                    <Input
+                      label="Max Usage Count"
+                      type="number"
+                      labelPlacement="outside"
+                      placeholder="Unlimited"
+                      value={formData.maxUsageCount}
+                      onValueChange={(v) => setFormData({ ...formData, maxUsageCount: v })}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* Active Toggle */}
+                <div className="flex items-center justify-between p-4 rounded-xl bg-card border border-soft">
+                  <div>
+                    <p className="font-semibold">Discount Status</p>
+                    <p className="text-sm text-muted">Enable or disable this discount</p>
+                  </div>
                   <Switch
                     isSelected={formData.isActive}
                     onValueChange={(v) => setFormData({ ...formData, isActive: v })}
+                    color="success"
                   />
-                  <span className="text-sm font-bold">Active</span>
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button variant="flat" onPress={onClose}>
+                <Button variant="flat" onPress={onClose} className="font-semibold">
                   Cancel
                 </Button>
-                <Button color="primary" onPress={handleSubmit} isLoading={isSaving}>
+                <Button color="primary" onPress={handleSubmit} isLoading={isSaving} className="font-semibold">
                   {editingId ? 'Update' : 'Create'} Discount
                 </Button>
               </ModalFooter>

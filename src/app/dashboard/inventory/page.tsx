@@ -1,5 +1,6 @@
 'use client';
 
+import CSVImport from '@/components/ui/CSVImport';
 import { DataTable } from '@/components/ui/DataTable';
 import { FormRow, FormSection, StyledInput, StyledSelect } from '@/components/ui/FormField';
 import {
@@ -297,6 +298,28 @@ export default function InventoryPage() {
            <p className="text-black/40 dark:text-white/40 font-bold ml-1">Centralized stock control and pricing intelligence.</p>
         </div>
         <div className="flex items-center gap-3">
+           <CSVImport
+             title="Import Products"
+             description="Bulk import products from CSV file"
+             templateUrl="/api/products/import"
+             importUrl="/api/products/import"
+             onSuccess={fetchProducts}
+             requiredFields={['name']}
+             fieldMappings={{
+               'Product Name': 'name',
+               'SKU': 'sku',
+               'Barcode': 'barcode',
+               'Description': 'description',
+               'Category': 'category',
+               'HSN Code': 'hsnCode',
+               'GST Rate': 'gstRate',
+               'MRP': 'mrp',
+               'Cost Price': 'costPrice',
+               'Sale Price': 'salePrice',
+               'Quantity': 'quantity',
+               'Unit': 'unit',
+             }}
+           />
            <Button variant="flat" color="default" className="font-bold rounded-2xl" startContent={<Download size={18} />}>
               Export
            </Button>

@@ -116,7 +116,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const user = session?.user as any;
 
   return (
-    <div className="flex h-screen bg-[#F8F9FA] dark:bg-[#0A0B0F] transition-colors duration-500 overflow-hidden">
+    <div className="flex h-screen bg-background transition-colors duration-300 overflow-hidden">
       
       {/* Mobile Menu Backdrop */}
       <AnimatePresence>
@@ -132,8 +132,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside 
-        className={`fixed lg:relative z-50 h-full bg-white dark:bg-[#111318] border-r border-black/5 dark:border-white/5 transition-all duration-300 ease-in-out ${
+      <aside
+        className={`fixed lg:relative z-50 h-full bg-card border-r border-soft transition-all duration-300 ease-in-out ${
           isSidebarOpen ? 'w-[280px]' : 'w-[88px]'
         } ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
@@ -171,31 +171,31 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   ]
                 }] : [])
               ].map((group, idx) => (
-                <div key={idx} className="space-y-4">
+                <div key={idx} className="space-y-3">
                   {isSidebarOpen && (
-                    <h4 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/20">
+                    <h4 className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted">
                       {group.group}
                     </h4>
                   )}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     {group.items.map((item) => {
                       const isActive = pathname === item.href;
                       return (
-                        <Link 
-                          key={item.label} 
+                        <Link
+                          key={item.label}
                           href={item.href}
-                          className={`group flex items-center gap-4 px-3 py-2.5 rounded-2xl transition-all relative ${
-                            isActive 
-                            ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                            : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/50 dark:text-white/40 hover:text-black dark:hover:text-white'
+                          className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative ${
+                            isActive
+                            ? 'bg-primary text-white shadow-md shadow-primary/20'
+                            : 'hover:bg-background text-muted hover:text-foreground'
                           }`}
                         >
-                          <item.icon className={`shrink-0 ${isSidebarOpen ? 'w-5 h-5' : 'w-6 h-6'}`} strokeWidth={2.5} />
+                          <item.icon className={`shrink-0 ${isSidebarOpen ? 'w-5 h-5' : 'w-6 h-6'}`} strokeWidth={2} />
                           {isSidebarOpen && (
-                            <span className="text-sm font-bold tracking-tight">{item.label}</span>
+                            <span className="text-sm font-semibold">{item.label}</span>
                           )}
                           {!isSidebarOpen && (
-                            <div className="absolute left-full ml-4 px-3 py-1 bg-dark text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                            <div className="absolute left-full ml-4 px-3 py-1.5 bg-foreground text-background text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-lg">
                               {item.label}
                             </div>
                           )}
@@ -209,19 +209,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </ScrollShadow>
 
           {/* User Section (Bottom) */}
-          <div className="p-4 shrink-0">
-             <div className={`p-4 rounded-3xl bg-black/[0.03] dark:bg-white/5 transition-all ${!isSidebarOpen && 'p-1 bg-transparent'}`}>
-                <div className={`flex items-center gap-4 ${!isSidebarOpen && 'justify-center'}`}>
-                   <Avatar 
+          <div className="p-4 shrink-0 border-t border-soft">
+             <div className={`p-3 rounded-2xl bg-background transition-all ${!isSidebarOpen && 'p-1 bg-transparent'}`}>
+                <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
+                   <Avatar
                     name={user?.name || 'User'}
-                    src={user?.image} 
+                    src={user?.image}
                     size={isSidebarOpen ? 'md' : 'sm'}
-                    className="ring-2 ring-primary ring-offset-2 shrink-0"
+                    className="ring-2 ring-primary ring-offset-2 ring-offset-card shrink-0"
                    />
                    {isSidebarOpen && (
                      <div className="flex-grow min-w-0 pr-2">
-                        <p className="text-sm font-black truncate leading-tight">{user?.name || 'Administrator'}</p>
-                        <p className="text-[10px] font-bold opacity-40 uppercase truncate">{user?.role || 'User'}</p>
+                        <p className="text-sm font-bold truncate leading-tight">{user?.name || 'Administrator'}</p>
+                        <p className="text-xs text-muted truncate">{user?.role || 'User'}</p>
                      </div>
                    )}
                    {isSidebarOpen && (
@@ -247,7 +247,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-grow flex flex-col min-w-0">
         
         {/* Header */}
-        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-white/40 dark:bg-dark-bg/20 backdrop-blur-md border-b border-black/5 dark:border-white/5 shrink-0 z-40">
+        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-card/80 backdrop-blur-md border-b border-soft shrink-0 z-40">
            <div className="flex items-center gap-4">
               <Button 
                 isIconOnly 

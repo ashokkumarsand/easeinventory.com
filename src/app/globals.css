@@ -26,8 +26,8 @@
   --color-warning: #f5a524;
   --color-danger: #f31260;
 
-  --color-dark-bg: #030407;
-  --color-dark-card: #0D0E12;
+  --color-dark-bg: #09090b;
+  --color-dark-card: #18181b;
 
   --font-sans: var(--font-montserrat), system-ui, -apple-system, sans-serif;
 
@@ -36,19 +36,25 @@
 
 @layer base {
   :root {
-    --background: #FAF8F3;
-    --foreground: #1A1A1A;
-    --card-bg: #FFFFFF;
-    --card-border: rgba(0, 0, 0, 0.05);
-    --muted-foreground: rgba(26, 26, 26, 0.6);
+    --background: #fafafa;
+    --foreground: #09090b;
+    --card-bg: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.08);
+    --muted-foreground: rgba(9, 9, 11, 0.5);
+    --input-bg: rgba(0, 0, 0, 0.04);
+    --input-border: rgba(0, 0, 0, 0.1);
+    --input-focus: rgba(101, 163, 13, 0.2);
   }
 
   .dark {
-    --background: #030407;
-    --foreground: #FAF8F3;
-    --card-bg: #0D0E12;
-    --card-border: rgba(255, 255, 255, 0.05);
-    --muted-foreground: rgba(250, 248, 243, 0.6);
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card-bg: #18181b;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --muted-foreground: rgba(250, 250, 250, 0.5);
+    --input-bg: rgba(255, 255, 255, 0.06);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus: rgba(101, 163, 13, 0.3);
   }
 
   html {
@@ -58,10 +64,11 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    @apply min-h-screen overflow-x-hidden antialiased transition-colors duration-500;
+    @apply min-h-screen overflow-x-hidden antialiased transition-colors duration-300;
   }
 }
 
+/* ==================== COMPONENT CLASSES ==================== */
 @layer components {
   .section-padding {
     @apply py-24 lg:py-40;
@@ -83,58 +90,240 @@
     @apply text-lg md:text-xl lg:text-2xl font-medium leading-relaxed opacity-70 transition-opacity;
   }
 
+  /* Modern Card - consistent for both themes */
   .modern-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
-    @apply rounded-[40px] shadow-sm hover:shadow-lg transition-all duration-500;
+    @apply rounded-2xl shadow-sm transition-all duration-300;
   }
 
+  .modern-card:hover {
+    @apply shadow-md;
+  }
+
+  /* Glass effect */
   .glass {
-    @apply bg-white/70 dark:bg-dark-bg/60 backdrop-blur-3xl border border-black/10 dark:border-white/10;
+    @apply backdrop-blur-xl;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
-  /* Improved form styling */
+  .dark .glass {
+    background: rgba(24, 24, 27, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Form card styling */
   .form-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
-    @apply rounded-3xl p-6 md:p-8 shadow-sm;
-  }
-
-  /* Better modal backgrounds */
-  .modal-backdrop {
-    @apply bg-black/60 dark:bg-black/80 backdrop-blur-sm;
+    @apply rounded-2xl p-6 md:p-8 shadow-sm;
   }
 }
 
-/* HeroUI Modal Overrides for proper backgrounds */
-[data-slot="base"][class*="modal"] {
+/* ==================== HEROUI OVERRIDES ==================== */
+
+/* Modal styling - comprehensive fix */
+[data-slot="backdrop"] {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.dark [data-slot="backdrop"] {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-slot="base"].bg-content1 {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+/* Modal content wrapper */
+div[role="dialog"] {
+  background-color: var(--card-bg) !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+/* Input styling - Light Theme */
+[data-slot="input-wrapper"],
+[data-slot="innerWrapper"],
+[data-slot="base"] > div[class*="bg-default"] {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-slot="input-wrapper"]:hover,
+[data-slot="innerWrapper"]:hover {
+  border-color: var(--color-primary) !important;
+}
+
+[data-slot="input-wrapper"]:focus-within,
+[data-slot="innerWrapper"]:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px var(--input-focus) !important;
+}
+
+/* Input text color */
+[data-slot="input"] {
+  color: var(--foreground) !important;
+}
+
+[data-slot="input"]::placeholder {
+  color: var(--muted-foreground) !important;
+}
+
+/* Labels styling */
+[data-slot="label"] {
+  color: var(--foreground) !important;
+  font-weight: 600 !important;
+  font-size: 0.8125rem !important;
+}
+
+[data-slot="description"] {
+  color: var(--muted-foreground) !important;
+}
+
+/* Select/Dropdown trigger */
+[data-slot="trigger"] {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 12px !important;
+}
+
+[data-slot="trigger"]:hover {
+  border-color: var(--color-primary) !important;
+}
+
+[data-slot="trigger"][data-open="true"],
+[data-slot="trigger"]:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px var(--input-focus) !important;
+}
+
+/* Select value text */
+[data-slot="value"] {
+  color: var(--foreground) !important;
+}
+
+/* Dropdown listbox */
+[data-slot="listbox"] {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 12px !important;
+}
+
+[data-slot="listboxWrapper"] {
   background-color: var(--card-bg) !important;
 }
 
-[data-slot="wrapper"][class*="modal"] {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  backdrop-filter: blur(4px);
+/* Dropdown items */
+[role="option"] {
+  color: var(--foreground) !important;
 }
 
-.dark [data-slot="base"][class*="modal"] {
-  background-color: #111318 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+[role="option"]:hover,
+[role="option"][data-hover="true"] {
+  background-color: var(--input-bg) !important;
 }
 
-/* Softer borders in both themes */
-.border-soft {
-  @apply border-black/5 dark:border-white/10;
+[role="option"][data-selected="true"],
+[role="option"][aria-selected="true"] {
+  background-color: rgba(101, 163, 13, 0.15) !important;
+  color: var(--color-primary) !important;
 }
 
-/* Form input improvements */
-[data-slot="input-wrapper"] {
-  border-radius: 12px !important;
+/* Textarea styling */
+[data-slot="input"][data-slot="input"]:is(textarea) {
+  background-color: transparent !important;
 }
 
-[data-slot="trigger"] {
-  border-radius: 12px !important;
+/* Card overrides */
+.bg-content1 {
+  background-color: var(--card-bg) !important;
 }
 
+/* Table styling */
+[data-slot="wrapper"].bg-content1 {
+  background-color: var(--card-bg) !important;
+}
+
+[data-slot="th"] {
+  background-color: var(--input-bg) !important;
+  color: var(--muted-foreground) !important;
+}
+
+[data-slot="td"] {
+  color: var(--foreground) !important;
+  border-color: var(--card-border) !important;
+}
+
+[data-slot="tr"]:hover {
+  background-color: var(--input-bg) !important;
+}
+
+/* Chip styling */
+[data-slot="base"].bg-default {
+  background-color: var(--input-bg) !important;
+  color: var(--foreground) !important;
+}
+
+/* Switch styling */
+[data-slot="wrapper"][data-selected="false"] {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+}
+
+/* Tab styling */
+[data-slot="tabList"] {
+  background-color: transparent !important;
+}
+
+[data-slot="tab"] {
+  color: var(--muted-foreground) !important;
+}
+
+[data-slot="tab"][data-selected="true"] {
+  color: var(--color-primary) !important;
+}
+
+[data-slot="cursor"] {
+  background-color: var(--color-primary) !important;
+}
+
+/* Progress bar */
+[data-slot="track"] {
+  background-color: var(--input-bg) !important;
+}
+
+/* Spinner */
+[data-slot="circle1"],
+[data-slot="circle2"] {
+  border-color: var(--color-primary) !important;
+}
+
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(101, 163, 13, 0.5);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(101, 163, 13, 0.7);
+}
+
+/* ==================== UTILITY CLASSES ==================== */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -150,20 +339,6 @@
   }
 }
 
-/* Scrollbar Premium */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #65A30D;
-  border-radius: 10px;
-}
-
 /* Helper Classes for Theme Visibility */
 .text-foreground {
   color: var(--foreground) !important;
@@ -173,9 +348,18 @@
   background-color: var(--background) !important;
 }
 
+.bg-card {
+  background-color: var(--card-bg) !important;
+}
+
 .text-muted {
   color: var(--muted-foreground) !important;
 }
+
+.border-soft {
+  border-color: var(--card-border) !important;
+}
+
 /* ==================== MOBILE OPTIMIZATIONS ==================== */
 
 /* Safe area insets for iOS notch/home indicator */
@@ -197,7 +381,7 @@
 
 /* Touch-friendly minimum sizes */
 @media (max-width: 768px) {
-  button, 
+  button,
   a,
   input[type="button"],
   input[type="submit"],
@@ -246,8 +430,12 @@
 }
 
 .mobile-card-list-item {
-  @apply p-4 rounded-2xl bg-white dark:bg-dark-card border border-black/5 dark:border-white/5;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  @apply p-4 rounded-2xl;
 }
+
+/* ==================== ACCESSIBILITY ==================== */
 
 /* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
@@ -264,16 +452,13 @@
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
-    --card-border: rgba(0, 0, 0, 0.2);
+    --card-border: rgba(0, 0, 0, 0.3);
+    --input-border: rgba(0, 0, 0, 0.3);
   }
 
   .dark {
-    --card-border: rgba(255, 255, 255, 0.2);
-  }
-
-  button,
-  a {
-    border: 2px solid currentColor;
+    --card-border: rgba(255, 255, 255, 0.3);
+    --input-border: rgba(255, 255, 255, 0.3);
   }
 }
 

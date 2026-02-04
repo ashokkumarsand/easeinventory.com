@@ -15,6 +15,6 @@ This file tracks unimplemented features, technical debt, and compliance gaps. It
 
 ## 🛠️ Feature Backlog
 - [x] **Report Exports**: Implement PDF export for GST reports (currently only JSON).
-- [ ] **Bulk Uploads**: Add CSV import for Products and Suppliers.
+- [x] **Bulk Uploads**: Add CSV import for Products and Suppliers.
 - [ ] **WhatsApp Templates**: Get official Meta approval for `invoice_sent` and `payment_reminder` templates.
-- [ ] **Multi-Currency UI**: Add currency picker to Settings UI (Logic is in DB but UI needs toggle).
+- [x] **Multi-Currency UI**: Add currency picker to Settings UI (Logic is in DB but UI needs toggle).

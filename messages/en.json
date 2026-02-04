@@ -29,6 +29,7 @@
     },
     "identity": "Identity",
     "location": "Location",
+    "currency_settings": "Currency Settings",
     "upi": "UPI Integration (India)",
     "banking": "Banking Details",
     "upi_helper": "Dynamic UPI QR codes will be generated using this ID for instant settlement.",
