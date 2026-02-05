@@ -11,28 +11,23 @@ import {
   Mail,
   MessageSquare,
   Phone,
-  Send,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 const contactMethods = [
   {
     icon: Mail,
-    label: 'Sales Inquiries',
+    label: 'Sales Inquiry',
     value: 'sales@easeinventory.com',
     href: 'mailto:sales@easeinventory.com',
     description: 'For pricing and demos',
-    color: 'from-primary/20 to-primary/5',
-    iconColor: 'text-primary',
   },
   {
     icon: Phone,
-    label: 'Phone Support',
+    label: 'General Support',
     value: '+91 94114 36666',
     href: 'tel:+919411436666',
     description: 'Mon-Sat, 9am-6pm IST',
-    color: 'from-blue-500/20 to-blue-500/5',
-    iconColor: 'text-blue-500',
   },
   {
     icon: MessageSquare,
@@ -40,8 +35,6 @@ const contactMethods = [
     value: 'Chat with us',
     href: 'https://wa.me/919411436666',
     description: 'Quick responses',
-    color: 'from-green-500/20 to-green-500/5',
-    iconColor: 'text-green-500',
   },
 ];
 
@@ -60,33 +53,24 @@ const ContactForm: React.FC = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
+        if (entry.isIntersecting) setIsVisible(true);
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       if (!response.ok) throw new Error('Submission failed');
-
       setIsSent(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
@@ -104,11 +88,6 @@ const ContactForm: React.FC = () => {
       className="section-padding relative overflow-hidden"
       aria-labelledby="contact-heading"
     >
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/5 rounded-full blur-[200px]" />
-      </div>
-
       <div className="container-custom relative z-10">
         {/* Section Header */}
         <div
@@ -117,24 +96,26 @@ const ContactForm: React.FC = () => {
           }`}
         >
           <div className="glass-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
-            <Send className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-foreground/80">Get in Touch</span>
+            <span className="w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
+            <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">
+              Get Integrated
+            </span>
           </div>
           <h2
             id="contact-heading"
-            className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 max-w-[800px] mx-auto"
           >
-            Let&apos;s start a
-            <span className="gradient-text block">conversation</span>
+            Ready to
+            <span className="gradient-text block">Transform?</span>
           </h2>
-          <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
-            Have questions about EaseInventory? Our team is ready to help you find
-            the perfect solution for your business.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Whether you have a specific question or want a custom walkthrough,
+            our specialists are ready to help you scale.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 max-w-6xl mx-auto">
-          {/* Contact Methods */}
+          {/* Left: Contact Methods */}
           <div
             className={`lg:col-span-2 space-y-4 transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -148,19 +129,17 @@ const ContactForm: React.FC = () => {
                   href={method.href}
                   target={method.href.startsWith('http') ? '_blank' : undefined}
                   rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="glass-card p-5 rounded-2xl flex items-start gap-4 group hover:scale-[1.02] transition-all"
+                  className="feature-card !p-5 flex items-start gap-4 group"
                 >
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${method.color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}
-                  >
-                    <Icon className={`w-5 h-5 ${method.iconColor}`} />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <Icon className="w-5 h-5 text-primary group-hover:text-primary-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-foreground/50 mb-1">{method.label}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{method.label}</p>
                     <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
                       {method.value}
                     </p>
-                    <p className="text-xs text-foreground/40">{method.description}</p>
+                    <p className="text-xs text-muted-foreground">{method.description}</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all mt-1" />
                 </a>
@@ -168,40 +147,36 @@ const ContactForm: React.FC = () => {
             })}
 
             {/* Office Card */}
-            <div className="glass-card p-5 rounded-2xl">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-orange-500" />
+            <div className="feature-card !p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-primary" />
                 </div>
-                <p className="font-semibold text-foreground">India Headquarters</p>
+                <p className="font-bold text-foreground">India Headquarters</p>
               </div>
-              <p className="text-sm text-foreground/60 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 EaseInventory Technologies Pvt. Ltd.
                 <br />
-                Business Hub, Sector 62
-                <br />
-                Noida, UP 201301
+                GH2, Mahalunge, Pune 411045
               </p>
             </div>
           </div>
 
-          {/* Contact Form */}
+          {/* Right: Form */}
           <div
             className={`lg:col-span-3 transition-all duration-700 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            <div className="glass-card p-6 sm:p-8 rounded-2xl">
+            <div className="feature-card !p-6 sm:!p-8">
               {isSent ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-16 h-16 bg-green-500/20 border border-green-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-8 h-8 text-green-500" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-foreground">
-                    Message Sent!
-                  </h3>
-                  <p className="text-foreground/60 mb-6">
-                    We&apos;ll get back to you within 24 hours.
+                  <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
+                  <p className="text-muted-foreground mb-6">
+                    We&apos;ll get back to you within 2 hours.
                   </p>
                   <Button
                     variant="outline"
@@ -215,10 +190,7 @@ const ContactForm: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
-                      <label
-                        htmlFor="name"
-                        className="text-sm font-medium text-foreground/70"
-                      >
+                      <label htmlFor="name" className="text-sm font-medium text-foreground/70">
                         Full Name
                       </label>
                       <Input
@@ -226,17 +198,12 @@ const ContactForm: React.FC = () => {
                         placeholder="John Doe"
                         required
                         value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
-                        className="h-12 bg-foreground/5 border-foreground/10 focus:border-primary rounded-xl"
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="h-12 glass-input"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label
-                        htmlFor="email"
-                        className="text-sm font-medium text-foreground/70"
-                      >
+                      <label htmlFor="email" className="text-sm font-medium text-foreground/70">
                         Work Email
                       </label>
                       <Input
@@ -245,19 +212,14 @@ const ContactForm: React.FC = () => {
                         placeholder="john@company.com"
                         required
                         value={formData.email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, email: e.target.value })
-                        }
-                        className="h-12 bg-foreground/5 border-foreground/10 focus:border-primary rounded-xl"
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="h-12 glass-input"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label
-                      htmlFor="subject"
-                      className="text-sm font-medium text-foreground/70"
-                    >
+                    <label htmlFor="subject" className="text-sm font-medium text-foreground/70">
                       Subject
                     </label>
                     <Input
@@ -265,19 +227,14 @@ const ContactForm: React.FC = () => {
                       placeholder="How can we help?"
                       required
                       value={formData.subject}
-                      onChange={(e) =>
-                        setFormData({ ...formData, subject: e.target.value })
-                      }
-                      className="h-12 bg-foreground/5 border-foreground/10 focus:border-primary rounded-xl"
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="h-12 glass-input"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label
-                      htmlFor="message"
-                      className="text-sm font-medium text-foreground/70"
-                    >
-                      Message
+                    <label htmlFor="message" className="text-sm font-medium text-foreground/70">
+                      Your Message
                     </label>
                     <Textarea
                       id="message"
@@ -285,33 +242,31 @@ const ContactForm: React.FC = () => {
                       required
                       rows={4}
                       value={formData.message}
-                      onChange={(e) =>
-                        setFormData({ ...formData, message: e.target.value })
-                      }
-                      className="bg-foreground/5 border-foreground/10 focus:border-primary rounded-xl resize-none"
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="glass-input resize-none"
                     />
                   </div>
 
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full btn-glow font-semibold h-12 rounded-xl"
+                    className="w-full btn-glow font-semibold h-12 rounded-xl uppercase tracking-wider text-sm"
                   >
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Sending...
+                        Processing...
                       </>
                     ) : (
                       <>
-                        Send Message
+                        Process Inquiry
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </>
                     )}
                   </Button>
 
-                  <p className="text-xs text-center text-foreground/40">
-                    We typically respond within 2-4 hours during business hours
+                  <p className="text-xs text-center text-muted-foreground">
+                    Response time: under 2 hours during business hours
                   </p>
                 </form>
               )}
