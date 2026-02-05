@@ -39,7 +39,15 @@ model Tenant {
   phone        String?
   email        String?
   website      String?
+
+  // Currency (legacy field for backwards compatibility)
   currency     String       @default("INR")
+  // Default currency reference
+  defaultCurrencyId String?   @map("default_currency_id")
+  defaultCurrency   Currency? @relation("TenantCurrency", fields: [defaultCurrencyId], references: [id])
+  // Allowed currencies for this tenant (JSON array of currency codes, e.g., ["INR", "USD"])
+  // If empty or null, only the default currency is allowed
+  allowedCurrencies Json?    @map("allowed_currencies") @db.JsonB
 
   // Payment Details (India)
   upiId         String? @map("upi_id")
@@ -62,6 +70,7 @@ model Tenant {
   // Relations
   users             User[]
   products          Product[]
+  productLots       ProductLot[]
   categories        Category[]
   suppliers         Supplier[]
   customers         Customer[]
@@ -83,6 +92,7 @@ model Tenant {
   whatsappOptIns    WhatsAppOptIn[]
   blanketDiscounts  BlanketDiscount[]
   geoFences         GeoFence[]
+  markets           Market[]
 
   @@index([slug])
   @@index([customDomain])
@@ -108,6 +118,100 @@ enum TenantStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ==================== CURRENCY & MARKET MODELS ====================
+
+// Supported currencies with exchange rates
+model Currency {
+  id        String   @id @default(cuid())
+  code      String   @unique // ISO 4217 code (USD, EUR, INR, etc.)
+  name      String   // US Dollar, Euro, Indian Rupee
+  symbol    String   // $, €, ₹
+
+  // Exchange rate relative to base currency (USD)
+  exchangeRate  Decimal  @default(1) @map("exchange_rate") @db.Decimal(18, 8)
+
+  // Formatting
+  decimalPlaces Int     @default(2) @map("decimal_places")
+  symbolPosition String @default("before") @map("symbol_position") // before, after
+  thousandsSeparator String @default(",") @map("thousands_separator")
+  decimalSeparator   String @default(".") @map("decimal_separator")
+
+  isActive  Boolean  @default(true) @map("is_active")
+  isBase    Boolean  @default(false) @map("is_base") // Base currency for exchange rates
+
+  // Relations
+  markets       Market[]
+  productPrices ProductPrice[]
+  tenants       Tenant[]       @relation("TenantCurrency")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@map("currencies")
+}
+
+// Market/Region for multi-currency pricing
+model Market {
+  id           String   @id @default(cuid())
+  name         String   // US Market, EU Market, India
+  code         String   @unique // US, EU, IN
+  countryCodes String[] @map("country_codes") // ISO country codes
+
+  // Default currency for this market
+  currencyId   String   @map("currency_id")
+  currency     Currency @relation(fields: [currencyId], references: [id])
+
+  // Tax rate for this market
+  taxRate      Decimal  @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  taxName      String?  @map("tax_name") // GST, VAT, Sales Tax
+
+  isActive     Boolean  @default(true) @map("is_active")
+
+  // Multi-tenant
+  tenantId     String   @map("tenant_id")
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  productPrices ProductPrice[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("markets")
+}
+
+// Multi-currency product pricing
+model ProductPrice {
+  id        String  @id @default(cuid())
+
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Market/Region (optional - for region-specific pricing)
+  marketId  String? @map("market_id")
+  market    Market? @relation(fields: [marketId], references: [id])
+
+  // Currency
+  currencyId String   @map("currency_id")
+  currency   Currency @relation(fields: [currencyId], references: [id])
+
+  // Prices (stored as integers in smallest unit - cents/paise)
+  costPrice     Int      @map("cost_price") // Cost in smallest currency unit
+  sellingPrice  Int      @map("selling_price")
+  compareAtPrice Int?    @map("compare_at_price") // Original/MRP price for showing discount
+
+  isActive  Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, currencyId, marketId])
+  @@index([productId])
+  @@index([currencyId])
+  @@map("product_prices")
 }
 
 // ==================== USER & AUTH MODELS ====================
@@ -385,11 +489,62 @@ model Product {
   stockAtLocations StockAtLocation[]
   transferItems    StockTransferItem[]
 
+  // Lots/Batches
+  lots ProductLot[]
+
+  // Multi-currency pricing
+  prices ProductPrice[]
+
   @@unique([slug, tenantId])
   @@index([tenantId])
   @@index([serialNumber])
   @@index([barcode])
   @@map("products")
+}
+
+// Product Lot/Batch for tracking inventory batches
+model ProductLot {
+  id        String  @id @default(cuid())
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Lot identification
+  lotNumber   String  @map("lot_number") // User-defined lot/batch number
+  batchNumber String? @map("batch_number") // Optional secondary identifier
+
+  // Quantity
+  quantity         Int @default(0) // Current quantity in this lot
+  initialQuantity  Int @map("initial_quantity") // Original quantity when lot was created
+
+  // Pricing per lot (allows different costs per batch)
+  costPrice Decimal @map("cost_price") @db.Decimal(12, 2)
+
+  // Dates
+  manufacturingDate DateTime? @map("manufacturing_date")
+  expiryDate        DateTime? @map("expiry_date")
+  purchaseDate      DateTime  @default(now()) @map("purchase_date")
+
+  // Supplier (can be different per lot)
+  supplierId String?   @map("supplier_id")
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Status
+  isActive Boolean @default(true) @map("is_active")
+  notes    String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, lotNumber])
+  @@index([tenantId])
+  @@index([productId])
+  @@index([expiryDate])
+  @@index([lotNumber])
+  @@map("product_lots")
 }
 
 model ConsignmentSettlement {
@@ -452,6 +607,7 @@ model Supplier {
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   products       Product[]
+  productLots    ProductLot[]
   stockMovements StockMovement[]
   settlements    ConsignmentSettlement[]
 

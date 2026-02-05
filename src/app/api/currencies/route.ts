@@ -27,13 +27,15 @@ const DEFAULT_CURRENCIES = [
   { code: 'RUB', name: 'Russian Ruble', symbol: '₽', exchangeRate: 89.50, decimalPlaces: 2, symbolPosition: 'after' },
 ];
 
-// GET - List all currencies
+// GET - List all currencies (includes tenant's allowed currencies)
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const tenantId = (session.user as any)?.tenantId;
 
     try {
       // Get currencies from database
@@ -70,12 +72,42 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      return NextResponse.json({ currencies });
+      // Get tenant's allowed currencies and default currency
+      let allowedCurrencies: string[] = [];
+      let tenantCurrency: string | null = null;
+
+      if (tenantId) {
+        const tenant = await prisma.tenant.findUnique({
+          where: { id: tenantId },
+          select: { currency: true, allowedCurrencies: true }
+        });
+
+        if (tenant) {
+          tenantCurrency = tenant.currency;
+          // Parse allowedCurrencies (stored as JSON array)
+          if (tenant.allowedCurrencies && Array.isArray(tenant.allowedCurrencies)) {
+            allowedCurrencies = tenant.allowedCurrencies as string[];
+          } else if (tenant.currency) {
+            // Fallback: if no allowed currencies set, use default currency only
+            allowedCurrencies = [tenant.currency];
+          }
+        }
+      }
+
+      return NextResponse.json({
+        currencies,
+        allowedCurrencies,
+        tenantCurrency
+      });
     } catch (dbError: any) {
       // If table doesn't exist (P2021), return default currencies
       if (dbError?.code === 'P2021') {
         console.warn('Currency table does not exist, returning defaults');
-        return NextResponse.json({ currencies: DEFAULT_CURRENCIES });
+        return NextResponse.json({
+          currencies: DEFAULT_CURRENCIES,
+          allowedCurrencies: [],
+          tenantCurrency: null
+        });
       }
       throw dbError;
     }

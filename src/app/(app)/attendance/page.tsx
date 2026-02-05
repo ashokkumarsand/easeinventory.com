@@ -92,9 +92,9 @@ export default function AttendancePage() {
                     <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                         <Fingerprint size={22} strokeWidth={2.5} />
                     </div>
-                    <h1 className="text-3xl font-black tracking-tight text-primary">Punch Station</h1>
+                    <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Punch Station</h1>
                 </div>
-                <p className="text-black/40 dark:text-white/40 font-bold ml-1">Digital time tracking with geolocation verification.</p>
+                <p className="text-foreground/50 font-bold ml-1">Digital time tracking with geolocation verification.</p>
             </div>
 
             <div className="grid lg:grid-cols-1 gap-8">

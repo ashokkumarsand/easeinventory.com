@@ -169,14 +169,14 @@ export default function LeaveManagementPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
+                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <FileText size={22} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight text-secondary">
+                        <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">
                             Leave Management
                         </h1>
                     </div>
-                    <p className="text-black/40 dark:text-white/40 font-bold ml-1">
+                    <p className="text-foreground/50 font-bold ml-1">
                         Request and manage team leave applications
                     </p>
                 </div>

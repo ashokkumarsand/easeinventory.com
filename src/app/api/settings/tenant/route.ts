@@ -54,19 +54,20 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     
     // Whitelist updateable fields
-    const { 
-        name, 
-        businessType, 
-        gstNumber, 
-        address, 
-        city, 
-        state, 
-        pincode, 
-        country, 
-        phone, 
-        email, 
-        website, 
+    const {
+        name,
+        businessType,
+        gstNumber,
+        address,
+        city,
+        state,
+        pincode,
+        country,
+        phone,
+        email,
+        website,
         currency,
+        allowedCurrencies,
         upiId,
         bankName,
         accountNumber,
@@ -89,6 +90,10 @@ export async function PATCH(req: NextRequest) {
         email,
         website,
         currency,
+        // Save allowed currencies, ensuring default is always included
+        allowedCurrencies: allowedCurrencies && Array.isArray(allowedCurrencies)
+          ? (allowedCurrencies.includes(currency) ? allowedCurrencies : [...allowedCurrencies, currency])
+          : (currency ? [currency] : ['INR']),
         upiId: upiId ? encrypt(upiId) : null,
         bankName: bankName ? encrypt(bankName) : null,
         accountNumber: accountNumber ? encrypt(accountNumber) : null,

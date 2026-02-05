@@ -1,5 +1,6 @@
 'use client';
 
+import WaveBackground from '@/components/landing/WaveBackground';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
@@ -55,8 +56,11 @@ const BetaGallery: React.FC = () => {
   };
 
   return (
-    <section className="py-20 md:py-32 border-t border-white/5">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-20 md:py-32 relative overflow-hidden">
+      {/* Wave Background with fade */}
+      <WaveBackground variant="testimonials" fadeTop fadeBottom />
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -67,10 +71,10 @@ const BetaGallery: React.FC = () => {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-4 block">
             Sneak Peek
           </span>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">
-            Beta <span className="text-primary italic">Snapshots</span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 font-heading">
+            Beta <span className="text-primary">Snapshots</span>
           </h2>
-          <p className="text-lg md:text-xl font-bold text-white/40 max-w-2xl mx-auto italic">
+          <p className="text-lg md:text-xl text-white/40 max-w-2xl mx-auto">
             Get an exclusive look at what&apos;s coming. Clean, powerful, and built for speed.
           </p>
         </motion.div>
@@ -83,7 +87,12 @@ const BetaGallery: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="relative aspect-[16/10] rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/10 bg-white/[0.02]"
+            className="relative aspect-[16/10] rounded-[2rem] md:rounded-[3rem] overflow-hidden"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.3)',
+            }}
           >
             {imageErrors[currentIndex] ? (
               // Fallback gradient when image doesn't exist
@@ -125,13 +134,23 @@ const BetaGallery: React.FC = () => {
           {/* Navigation Arrows */}
           <button
             onClick={handlePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all duration-300"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all duration-300"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 20px rgba(0, 0, 0, 0.4)',
+            }}
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all duration-300"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all duration-300"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 20px rgba(0, 0, 0, 0.4)',
+            }}
           >
             <ChevronRight size={24} />
           </button>

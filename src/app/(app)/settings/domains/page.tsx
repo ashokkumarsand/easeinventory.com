@@ -179,9 +179,9 @@ export default function DomainSettingsPage() {
                     <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                         <Globe size={22} strokeWidth={2.5} />
                     </div>
-                    <h1 className="text-3xl font-black tracking-tight text-primary">Branding & Domains</h1>
+                    <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Branding & Domains</h1>
                 </div>
-                <p className="text-black/40 dark:text-white/40 font-bold ml-1">Manage how clients access your portal via subdomains or custom URLs.</p>
+                <p className="text-foreground/50 font-bold ml-1">Manage how clients access your portal via subdomains or custom URLs.</p>
             </div>
 
             {/* EaseInventory Subdomain */}
@@ -248,9 +248,9 @@ export default function DomainSettingsPage() {
                     <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                         <Globe size={22} strokeWidth={2.5} />
                     </div>
-                    <h1 className="text-3xl font-black tracking-tight text-primary">White-Label Domains</h1>
+                    <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">White-Label Domains</h1>
                 </div>
-                <p className="text-black/40 dark:text-white/40 font-bold ml-1">Connect your own domain name to brand your business portal.</p>
+                <p className="text-foreground/50 font-bold ml-1">Connect your own domain name to brand your business portal.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">

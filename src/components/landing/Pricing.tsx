@@ -1,11 +1,19 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { motion } from 'framer-motion';
+import { ArrowRight, Check, Crown, Sparkles, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
+// Plan order for comparison
+const PLAN_ORDER = ['FREE', 'STARTER', 'BUSINESS', 'ENTERPRISE'] as const;
+type PlanName = typeof PLAN_ORDER[number];
+
+function getPlanIndex(planName: string): number {
+  const normalized = planName.toUpperCase();
+  return PLAN_ORDER.indexOf(normalized as PlanName);
+}
 
 const plans = [
   {
@@ -15,12 +23,14 @@ const plans = [
     yearlyPrice: 0,
     period: 'forever',
     features: [
-      'Up to 100 products',
-      '1 user',
-      '1 location',
-      'Basic inventory tracking',
-      'Simple invoicing',
-      'Email support',
+      { text: 'Up to 100 products', included: true },
+      { text: '1 user', included: true },
+      { text: '1 location', included: true },
+      { text: 'Basic inventory tracking', included: true },
+      { text: 'Simple invoicing', included: true },
+      { text: 'Email support', included: true },
+      { text: 'WhatsApp notifications', included: false },
+      { text: 'Custom domain', included: false },
     ],
     cta: 'Get Started Free',
     popular: false,
@@ -29,15 +39,17 @@ const plans = [
     name: 'Starter',
     description: 'For growing businesses',
     monthlyPrice: 999,
-    yearlyPrice: 833, // ₹9,990/year = ₹833/month
+    yearlyPrice: 799,
     period: '/mo',
     features: [
-      'Up to 500 products',
-      '5 users',
-      'WhatsApp notifications',
-      'Bulk import/export',
-      'Basic reports',
-      'Chat support',
+      { text: 'Up to 500 products', included: true },
+      { text: '5 users', included: true },
+      { text: '2 locations', included: true },
+      { text: 'WhatsApp notifications', included: true },
+      { text: 'Bulk import/export', included: true },
+      { text: 'Basic reports', included: true },
+      { text: 'Chat support', included: true },
+      { text: 'Custom domain', included: false },
     ],
     cta: 'Start Growing',
     popular: false,
@@ -46,15 +58,17 @@ const plans = [
     name: 'Business',
     description: 'For established businesses',
     monthlyPrice: 2499,
-    yearlyPrice: 2083, // ₹24,990/year = ₹2,083/month
+    yearlyPrice: 1999,
     period: '/mo',
     features: [
-      'Unlimited products',
-      '20 users',
-      '5 locations',
-      'Custom domain',
-      'Advanced analytics',
-      'Priority support',
+      { text: 'Unlimited products', included: true },
+      { text: '20 users', included: true },
+      { text: '5 locations', included: true },
+      { text: 'Custom domain', included: true },
+      { text: 'Advanced analytics', included: true },
+      { text: 'Priority support', included: true },
+      { text: 'API access', included: true },
+      { text: 'White label', included: false },
     ],
     cta: 'Scale Up',
     popular: true,
@@ -63,15 +77,17 @@ const plans = [
     name: 'Enterprise',
     description: 'For large organizations',
     monthlyPrice: 4999,
-    yearlyPrice: 4166, // ₹49,990/year = ₹4,166/month
+    yearlyPrice: 3999,
     period: '/mo',
     features: [
-      'Unlimited users',
-      'Unlimited locations',
-      'API access',
-      'White label',
-      'SSO integration',
-      'Dedicated account manager',
+      { text: 'Unlimited users', included: true },
+      { text: 'Unlimited locations', included: true },
+      { text: 'Full API access', included: true },
+      { text: 'White label', included: true },
+      { text: 'SSO integration', included: true },
+      { text: 'Dedicated manager', included: true },
+      { text: 'Custom integrations', included: true },
+      { text: 'SLA guarantee', included: true },
     ],
     cta: 'Contact Sales',
     popular: false,
@@ -79,140 +95,258 @@ const plans = [
 ];
 
 const Pricing: React.FC = () => {
-  const [billingCycle, setBillingCycle] = useState('monthly');
-  const [selectedPlan, setSelectedPlan] = useState('Business');
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const { data: session, status } = useSession();
+
+  const user = session?.user as any;
+  const userPlan = user?.plan || 'FREE';
+  const userRole = user?.role;
+  const isSuperAdmin = userRole === 'SUPER_ADMIN';
+  const isEnterprise = userPlan === 'ENTERPRISE';
+  const isAuthenticated = status === 'authenticated';
+
+  // Get user's current plan index for comparison
+  const userPlanIndex = getPlanIndex(userPlan);
+
+  // Helper to get CTA text and variant based on plan comparison
+  const getPlanCTA = (planName: string) => {
+    if (isSuperAdmin) {
+      return { text: 'Full Access', variant: 'secondary' as const, disabled: true };
+    }
+
+    const planIndex = getPlanIndex(planName);
+
+    if (!isAuthenticated) {
+      return { text: planName === 'Free' ? 'Get Started Free' : `Start with ${planName}`, variant: 'default' as const, disabled: false };
+    }
+
+    if (planIndex === userPlanIndex) {
+      return { text: 'Current Plan', variant: 'secondary' as const, disabled: true };
+    }
+
+    if (planIndex > userPlanIndex) {
+      return { text: 'Upgrade', variant: 'default' as const, disabled: false };
+    }
+
+    return { text: 'Switch Plan', variant: 'outline' as const, disabled: false };
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="pricing" className="section-padding bg-background relative overflow-hidden">
+    <section
+      id="pricing"
+      ref={sectionRef}
+      className="section-padding relative overflow-hidden"
+      aria-labelledby="pricing-heading"
+    >
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 right-[-20%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <div className="container-custom relative z-10">
-        
-        <div className="text-center max-w-4xl mx-auto mb-20 lg:mb-32">
-           <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-8 w-fit">
-              <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">The Momentum Engine</span>
-           </div>
-           <h2 className="heading-lg mb-8">
-             Select Your <span className="text-primary italic">Growth Trajectory.</span>
-           </h2>
-           
-            <div className="flex flex-col items-center gap-6 mt-10 w-full mx-auto">
-               <Tabs value={billingCycle} onValueChange={setBillingCycle} className="overflow-hidden">
-                 <TabsList className="bg-muted p-1 gap-0 border border-border overflow-hidden rounded-full">
-                   <TabsTrigger
-                     value="monthly"
-                     className="h-10 px-6 font-black text-[10px] md:text-xs tracking-widest uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-primary data-[state=active]:text-primary dark:data-[state=active]:text-white data-[state=active]:shadow-lg rounded-full"
-                   >
-                     Monthly
-                   </TabsTrigger>
-                   <TabsTrigger
-                     value="yearly"
-                     className="h-10 px-6 font-black text-[10px] md:text-xs tracking-widest uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-primary data-[state=active]:text-primary dark:data-[state=active]:text-white data-[state=active]:shadow-lg rounded-full"
-                   >
-                     <div className="flex items-center justify-center gap-2 w-full">
-                        <span>Yearly</span>
-                        <div className="relative flex items-center">
-                          <div className="absolute inset-0 bg-green-500 blur-md opacity-40 animate-pulse rounded-full" />
-                          <div className="relative bg-green-500 text-white text-[8px] px-2 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap leading-none">
-                            Save 17%
-                          </div>
-                        </div>
-                     </div>
-                   </TabsTrigger>
-                 </TabsList>
-               </Tabs>
-               <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 text-primary">
-                  Billed annually
-               </p>
-            </div>
+        {/* Section Header */}
+        <div
+          className={`text-center max-w-3xl mx-auto mb-12 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="glass-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-foreground/80">
+              Simple Pricing
+            </span>
+          </div>
+          <h2
+            id="pricing-heading"
+            className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6"
+          >
+            Choose your
+            <span className="gradient-text block">growth plan</span>
+          </h2>
+          <p className="text-lg text-foreground/60 max-w-2xl mx-auto mb-8">
+            Start free and scale as you grow. All plans include core features with no
+            hidden fees.
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="inline-flex items-center gap-1 p-1 rounded-full bg-foreground/5 border border-foreground/10">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                billingCycle === 'monthly'
+                  ? 'bg-primary text-primary-foreground shadow-lg'
+                  : 'text-foreground/60 hover:text-foreground'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
+                billingCycle === 'yearly'
+                  ? 'bg-primary text-primary-foreground shadow-lg'
+                  : 'text-foreground/60 hover:text-foreground'
+              }`}
+            >
+              Yearly
+              <span className="px-2 py-0.5 rounded-full bg-orange-500 text-white text-xs font-bold shadow-sm">
+                -20%
+              </span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 max-w-[95rem] mx-auto pt-16 pb-12 -mx-6 px-6 md:mx-auto md:px-0">
-          {plans.map((plan, index) => {
-            const isSelected = selectedPlan === plan.name;
-            const isPopular = plan.popular;
+        {/* Pricing Cards */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
+          {plans.map((plan, index) => (
+            <div
+              key={plan.name}
+              className={`relative transition-all duration-700 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: `${index * 100}ms` }}
+            >
+              {/* Popular badge */}
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                  <span className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-lg shadow-primary/30">
+                    Most Popular
+                  </span>
+                </div>
+              )}
 
-            return (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative flex flex-col overflow-visible shrink-0 snap-center w-[85vw] md:w-auto cursor-pointer ${isSelected ? 'z-30' : 'z-10'}`}
-                onClick={() => setSelectedPlan(plan.name)}
+              <div
+                className={`pricing-card h-full flex flex-col ${
+                  plan.popular ? 'pricing-card-recommended' : ''
+                }`}
               >
-                <Card
-                  className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full rounded-xl ${
-                    isSelected
-                      ? '!bg-background border-primary shadow-2xl shadow-primary/20 translate-y-[-16px]'
-                      : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10 opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <CardContent className="p-8 flex flex-col h-full relative overflow-visible">
-                    {isPopular && (
-                      <div className="absolute -top-10 left-0 w-full flex justify-center z-50 pointer-events-none">
-                        <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border border-white/20 whitespace-nowrap">
-                          Recommended
-                        </div>
-                      </div>
+                {/* Plan header */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-foreground mb-1">
+                    {plan.name}
+                  </h3>
+                  <p className="text-sm text-foreground/50">{plan.description}</p>
+                </div>
+
+                {/* Price */}
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-foreground">
+                      {plan.monthlyPrice === 0
+                        ? 'Free'
+                        : `₹${billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}`}
+                    </span>
+                    {plan.monthlyPrice !== 0 && (
+                      <span className="text-sm text-foreground/50">{plan.period}</span>
                     )}
+                  </div>
+                  {plan.monthlyPrice !== 0 && billingCycle === 'yearly' && (
+                    <p className="text-xs text-foreground/40 mt-1">
+                      Billed annually
+                    </p>
+                  )}
+                </div>
 
-                    <div className="mb-6 text-center sm:text-left mt-4">
-                      <h3 className={`text-lg font-black mb-2 uppercase tracking-tighter ${isSelected ? 'text-primary' : 'text-foreground'}`}>
-                        {plan.name}
-                      </h3>
-                      <p className={`text-xs font-bold opacity-60 leading-relaxed italic h-10 ${isSelected ? 'text-foreground' : 'text-foreground/80'}`}>
-                        {plan.description}
-                      </p>
-                    </div>
-
-                    <div className="flex items-baseline justify-center sm:justify-start gap-1 mb-8">
-                      <span className={`text-4xl font-black tracking-tighter ${isSelected ? 'text-foreground' : 'text-foreground/80'}`}>
-                        {typeof plan.monthlyPrice === 'number'
-                          ? `₹${billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}`
-                          : plan.monthlyPrice
-                        }
-                      </span>
-                      <span className="text-xs font-black opacity-30 text-foreground uppercase tracking-widest">
-                        {plan.period}
-                      </span>
-                    </div>
-
-                    <ul className="space-y-4 mb-8 flex-1">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className={`flex items-start gap-3 text-xs font-bold ${isSelected ? 'text-foreground' : 'text-foreground/90'}`}>
-                          <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${feature.startsWith('No ') ? 'bg-destructive/10' : 'bg-primary/10'}`}>
-                             <span className={`text-[8px] ${feature.startsWith('No ') ? 'text-destructive' : 'text-primary'}`}>
-                               {feature.startsWith('No ') ? '✕' : '✦'}
-                             </span>
-                          </div>
-                          <span className={`leading-snug ${feature.startsWith('No ') ? 'opacity-40 line-through' : ''}`}>
-                            {feature.replace('No ', '')}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      asChild
-                      variant={isSelected ? 'default' : 'outline'}
-                      className={`w-full font-black h-12 text-xs uppercase tracking-[0.2em] shadow-lg rounded-full ${
-                        isSelected
-                          ? 'shadow-primary/30'
-                          : 'border-foreground/10 text-foreground hover:bg-foreground/5'
+                {/* Features */}
+                <ul className="space-y-3 mb-8 flex-1">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature.text}
+                      className={`flex items-start gap-3 text-sm ${
+                        feature.included
+                          ? 'text-foreground/80'
+                          : 'text-foreground/30'
                       }`}
-                      size="lg"
                     >
-                      <Link href="/register">
-                        {plan.cta}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
+                      {feature.included ? (
+                        <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                      ) : (
+                        <X className="w-4 h-4 text-foreground/20 mt-0.5 shrink-0" />
+                      )}
+                      <span className={feature.included ? '' : 'line-through'}>
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA */}
+                {(() => {
+                  const ctaInfo = getPlanCTA(plan.name);
+                  const isCurrentPlan = ctaInfo.text === 'Current Plan';
+                  const planIndex = getPlanIndex(plan.name);
+                  const isUserPlan = planIndex === userPlanIndex && isAuthenticated;
+
+                  return (
+                    <>
+                      {isUserPlan && (
+                        <div className="flex items-center justify-center gap-2 mb-3 text-primary">
+                          <Crown className="w-4 h-4" />
+                          <span className="text-xs font-bold uppercase tracking-wider">Your Plan</span>
+                        </div>
+                      )}
+                      <Button
+                        asChild={!ctaInfo.disabled}
+                        variant={isCurrentPlan ? 'secondary' : (plan.popular ? 'default' : ctaInfo.variant)}
+                        disabled={ctaInfo.disabled}
+                        className={`w-full font-semibold h-12 rounded-xl ${
+                          plan.popular && !isCurrentPlan
+                            ? 'btn-glow'
+                            : isCurrentPlan
+                            ? 'bg-primary/10 text-primary cursor-default'
+                            : 'border-foreground/10 hover:bg-foreground/5'
+                        }`}
+                      >
+                        {ctaInfo.disabled ? (
+                          <span className="flex items-center justify-center gap-2">
+                            {ctaInfo.text}
+                          </span>
+                        ) : (
+                          <Link href="/register" className="flex items-center justify-center gap-2">
+                            {ctaInfo.text}
+                            <ArrowRight className="w-4 h-4" />
+                          </Link>
+                        )}
+                      </Button>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          ))}
         </div>
+
+        {/* Bottom note */}
+        <p
+          className={`text-center text-sm text-foreground/50 mt-12 transition-all duration-700 delay-500 ${
+            isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          All prices in INR. GST extra where applicable. Need a custom plan?{' '}
+          <Link href="/contact" className="text-primary hover:underline">
+            Contact us
+          </Link>
+        </p>
       </div>
     </section>
   );

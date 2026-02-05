@@ -14,16 +14,35 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Building2, Check, Crown, Loader2, Zap } from 'lucide-react';
+import { Building2, Check, Coins, Crown, Globe, Loader2, Zap } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const businessTypes = [
   { label: 'Retail Shop', value: 'SHOP' },
   { label: 'Service Center', value: 'SERVICE_CENTER' },
   { label: 'Wholesale / Distributor', value: 'DISTRIBUTOR' },
   { label: 'Company / Enterprise', value: 'COMPANY' },
+];
+
+// Common currencies with geo mapping
+const currencies = [
+  { code: 'INR', name: 'Indian Rupee', symbol: '₹', countries: ['IN'] },
+  { code: 'USD', name: 'US Dollar', symbol: '$', countries: ['US'] },
+  { code: 'EUR', name: 'Euro', symbol: '€', countries: ['DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'PT', 'IE', 'FI'] },
+  { code: 'GBP', name: 'British Pound', symbol: '£', countries: ['GB'] },
+  { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ', countries: ['AE'] },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: 'ر.س', countries: ['SA'] },
+  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', countries: ['SG'] },
+  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', countries: ['AU'] },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', countries: ['CA'] },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', countries: ['JP'] },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', countries: ['CN'] },
+  { code: 'BDT', name: 'Bangladeshi Taka', symbol: '৳', countries: ['BD'] },
+  { code: 'NPR', name: 'Nepalese Rupee', symbol: 'रू', countries: ['NP'] },
+  { code: 'LKR', name: 'Sri Lankan Rupee', symbol: 'Rs', countries: ['LK'] },
+  { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM', countries: ['MY'] },
 ];
 
 const plans = [
@@ -59,6 +78,7 @@ const plans = [
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     brandName: '',
     workspaceName: '',
@@ -68,12 +88,38 @@ export default function RegisterPage() {
     phone: '',
     businessType: '',
     gstin: '',
+    currency: 'INR',
     selectedPlan: 'business',
     billingCycle: 'monthly' as 'monthly' | 'annual',
     agreeToTerms: false,
     otp: ''
   });
   const slugCheckTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  // Geo-detect currency on mount
+  useEffect(() => {
+    const detectCurrency = async () => {
+      try {
+        // Use a free geo-IP service
+        const response = await fetch('https://ipapi.co/json/');
+        if (response.ok) {
+          const data = await response.json();
+          const countryCode = data.country_code;
+          setDetectedCountry(countryCode);
+
+          // Find matching currency
+          const matchedCurrency = currencies.find(c => c.countries.includes(countryCode));
+          if (matchedCurrency) {
+            setFormData(prev => ({ ...prev, currency: matchedCurrency.code }));
+          }
+        }
+      } catch (error) {
+        // Silently fail - default to INR
+        console.log('Could not detect location, defaulting to INR');
+      }
+    };
+    detectCurrency();
+  }, []);
 
   const handleSlugChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     // No longer used in first step, but keeping function for future use in settings
@@ -105,6 +151,7 @@ export default function RegisterPage() {
           phone: formData.phone,
           businessType: formData.businessType || 'SHOP',
           gstin: formData.gstin || null,
+          currency: formData.currency,
           selectedPlan: formData.selectedPlan,
           billingCycle: formData.billingCycle,
         }),
@@ -257,6 +304,45 @@ export default function RegisterPage() {
                             ))}
                           </SelectContent>
                         </Select>
+                      </div>
+
+                      {/* Default Currency Selection */}
+                      <div className="space-y-1">
+                        <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">
+                          Default Currency
+                          {detectedCountry && (
+                            <span className="text-primary ml-2 normal-case">
+                              <Globe className="inline w-3 h-3 mr-1" />
+                              Auto-detected
+                            </span>
+                          )}
+                        </label>
+                        <Select
+                          value={formData.currency}
+                          onValueChange={(value) => setFormData({...formData, currency: value})}
+                        >
+                          <SelectTrigger className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold">
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem
+                                key={currency.code}
+                                value={currency.code}
+                                className="font-bold text-foreground py-3"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className="text-lg font-black w-8">{currency.symbol}</span>
+                                  <span>{currency.code}</span>
+                                  <span className="text-foreground/40">- {currency.name}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-[10px] text-foreground/30 ml-1 mt-1">
+                          This will be your default currency for invoices and reports
+                        </p>
                       </div>
 
                       {/* GST Number - New Field */}

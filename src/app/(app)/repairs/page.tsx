@@ -213,7 +213,7 @@ export default function RepairCenterPage() {
              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <Wrench size={22} strokeWidth={2.5} aria-hidden="true" />
              </div>
-             <h1 className="text-3xl font-black tracking-tight">Service Center</h1>
+             <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Service Center</h1>
            </div>
            <p className="text-foreground/40 font-bold ml-1">Live tracking of device lifecycle and technician efficiency.</p>
         </div>

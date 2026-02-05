@@ -117,7 +117,7 @@ export default function SuppliersPage() {
                         <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Truck size={22} strokeWidth={2.5} aria-hidden="true" />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight">Vendor Directory</h1>
+                        <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Vendor Directory</h1>
                     </div>
                     <p className="text-foreground/40 font-bold ml-1">Manage supply chain partners and procurement channels.</p>
                 </div>

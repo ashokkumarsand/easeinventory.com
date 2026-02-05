@@ -157,9 +157,9 @@ export default function AuditTrailPage() {
                         <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Shield size={22} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight text-primary">Audit Trail</h1>
+                        <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Audit Trail</h1>
                     </div>
-                    <p className="text-black/40 dark:text-white/40 font-bold ml-1">
+                    <p className="text-foreground/50 font-bold ml-1">
                         Track all security-relevant actions in your workspace
                     </p>
                 </div>

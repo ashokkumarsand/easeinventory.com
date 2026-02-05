@@ -7,13 +7,19 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
 import {
+    AlertTriangle,
     ArrowDownRight,
+    ArrowRight,
     ArrowUpRight,
+    FileText,
     Package,
+    Plus,
+    ShoppingCart,
     TrendingUp,
     Users,
     Wrench
 } from 'lucide-react';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 // Color class mappings to avoid Tailwind purging dynamic classes
@@ -140,13 +146,13 @@ export default function OverviewPage() {
          ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-6">
          {/* Main Activity Chart Area */}
          <Card className="col-span-2 modern-card p-4 rounded-lg">
-            <CardContent className="space-y-6 p-4">
+            <CardContent className="p-4">
                <StockFlowChart />
 
-               <div className="grid grid-cols-3 gap-6 pt-4 border-t border-black/5 dark:border-white/5">
+               <div className="grid grid-cols-3 gap-6 pt-4 mt-2 border-t border-black/5 dark:border-white/5">
                    {[
                      { label: 'Purchase In', val: '1,240', color: 'primary' },
                      { label: 'Sales Out', val: '842', color: 'success' },
@@ -227,6 +233,137 @@ export default function OverviewPage() {
                </CardContent>
             </Card>
          </div>
+      </div>
+
+      {/* Additional Dashboard Sections */}
+      <div className="grid lg:grid-cols-3 gap-6">
+         {/* Low Stock Alerts */}
+         <Card className="modern-card p-4 rounded-lg">
+            <CardContent className="p-0">
+               <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <AlertTriangle size={20} />
+                     </div>
+                     <h3 className="text-lg font-black tracking-tight">Low Stock Alerts</h3>
+                  </div>
+                  <Badge variant="secondary" className="bg-warning/10 text-warning font-bold">
+                     5 items
+                  </Badge>
+               </div>
+
+               <div className="space-y-3">
+                  {[
+                     { name: 'iPhone 15 Pro Max', sku: 'IPH-15PM-256', qty: 3, minQty: 10 },
+                     { name: 'Samsung S24 Ultra', sku: 'SAM-S24U-512', qty: 2, minQty: 8 },
+                     { name: 'MacBook Air M3', sku: 'MAC-AIR-M3', qty: 1, minQty: 5 },
+                  ].map((item) => (
+                     <div key={item.sku} className="flex items-center justify-between p-3 rounded-xl bg-warning/5 border border-warning/10">
+                        <div className="flex-1 min-w-0">
+                           <p className="font-bold text-sm truncate">{item.name}</p>
+                           <p className="text-[10px] uppercase tracking-wider opacity-40">{item.sku}</p>
+                        </div>
+                        <div className="text-right">
+                           <p className="text-lg font-black text-warning">{item.qty}</p>
+                           <p className="text-[10px] opacity-40">min: {item.minQty}</p>
+                        </div>
+                     </div>
+                  ))}
+               </div>
+
+               <Button variant="outline" className="w-full mt-4 font-bold" asChild>
+                  <Link href="/inventory?filter=low-stock">
+                     View All Low Stock
+                     <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+               </Button>
+            </CardContent>
+         </Card>
+
+         {/* Recent Invoices */}
+         <Card className="modern-card p-4 rounded-lg">
+            <CardContent className="p-0">
+               <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <FileText size={20} />
+                     </div>
+                     <h3 className="text-lg font-black tracking-tight">Recent Invoices</h3>
+                  </div>
+                  <Badge variant="secondary" className="bg-primary/10 text-primary font-bold">
+                     Today
+                  </Badge>
+               </div>
+
+               <div className="space-y-3">
+                  {[
+                     { id: 'INV-2024-0847', customer: 'Sharma Electronics', amount: '₹45,000', status: 'Paid' },
+                     { id: 'INV-2024-0846', customer: 'Tech Hub Store', amount: '₹28,500', status: 'Pending' },
+                     { id: 'INV-2024-0845', customer: 'Mobile World', amount: '₹62,000', status: 'Paid' },
+                  ].map((invoice) => (
+                     <div key={invoice.id} className="flex items-center justify-between p-3 rounded-xl bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-colors cursor-pointer">
+                        <div className="flex-1 min-w-0">
+                           <p className="font-bold text-sm">{invoice.id}</p>
+                           <p className="text-xs opacity-50 truncate">{invoice.customer}</p>
+                        </div>
+                        <div className="text-right">
+                           <p className="font-black">{invoice.amount}</p>
+                           <Badge
+                              variant="secondary"
+                              className={`text-[10px] ${invoice.status === 'Paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}
+                           >
+                              {invoice.status}
+                           </Badge>
+                        </div>
+                     </div>
+                  ))}
+               </div>
+
+               <Button variant="outline" className="w-full mt-4 font-bold" asChild>
+                  <Link href="/invoices">
+                     View All Invoices
+                     <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+               </Button>
+            </CardContent>
+         </Card>
+
+         {/* Quick Actions */}
+         <Card className="modern-card p-4 rounded-lg">
+            <CardContent className="p-0">
+               <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                     <Plus size={20} />
+                  </div>
+                  <h3 className="text-lg font-black tracking-tight">Quick Actions</h3>
+               </div>
+
+               <div className="grid grid-cols-2 gap-3">
+                  {[
+                     { label: 'Add Product', icon: Package, href: '/inventory?action=add', color: 'primary' },
+                     { label: 'New Invoice', icon: FileText, href: '/invoices?action=new', color: 'success' },
+                     { label: 'New Repair', icon: Wrench, href: '/repairs?action=new', color: 'secondary' },
+                     { label: 'Record Sale', icon: ShoppingCart, href: '/invoices?action=sale', color: 'warning' },
+                  ].map((action) => (
+                     <Link
+                        key={action.label}
+                        href={action.href}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl bg-${action.color}/5 hover:bg-${action.color}/10 border border-${action.color}/10 hover:border-${action.color}/20 transition-all group h-24`}
+                     >
+                        <action.icon className={`w-6 h-6 mb-2 text-${action.color} group-hover:scale-110 transition-transform`} />
+                        <span className="text-xs font-bold text-center">{action.label}</span>
+                     </Link>
+                  ))}
+               </div>
+
+               <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/10">
+                  <p className="text-xs font-bold mb-2">Pro Tip</p>
+                  <p className="text-[11px] opacity-60 leading-relaxed">
+                     Use keyboard shortcuts for faster navigation. Press <kbd className="px-1.5 py-0.5 bg-foreground/10 rounded text-[10px] font-mono">⌘K</kbd> to open command palette.
+                  </p>
+               </div>
+            </CardContent>
+         </Card>
       </div>
     </div>
   );

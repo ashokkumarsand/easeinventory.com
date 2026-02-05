@@ -2,213 +2,290 @@
 
 import { Logo } from '@/components/icons/Logo';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, CheckCircle2, Play, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
-const bannerSlides = [
-  {
-    title: 'Inventory',
-    highlight: 'Velocity',
-    subtitle: 'Simplified scaling',
-    description: 'Defy the weight of stock. Manage pricing and automate alerts with zero-friction protocols.',
-    icon: '📦',
-    color: 'from-primary/20 to-transparent',
-  },
-  {
-    title: 'Operational',
-    highlight: 'Lifting',
-    subtitle: 'Customer Joy, Realtime',
-    description: 'WhatsApp alerts and high-precision status tracking. Remove the burden of service management in minutes.',
-    icon: '🔧',
-    color: 'from-secondary/20 to-transparent',
-  },
-  {
-    title: 'Precision',
-    highlight: 'Invoicing',
-    subtitle: 'Compliance Made Easy',
-    description: 'Generate high-precision bills, manage receipts, and stay tax compliant with one weightless dashboard.',
-    icon: '📄',
-    color: 'from-orange-500/10 to-transparent',
-  },
+const stats = [
+  { value: '10K+', label: 'Active Businesses' },
+  { value: '50L+', label: 'Products Tracked' },
+  { value: '99.9%', label: 'Uptime SLA' },
+];
+
+const features = [
+  'Multi-location inventory',
+  'GST-compliant invoicing',
+  'Real-time analytics',
 ];
 
 const Hero: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    setMounted(true);
   }, []);
 
   return (
-    <section className="relative min-h-[90vh] pt-32 pb-20 lg:pt-40 lg:pb-32 flex flex-col justify-center overflow-hidden bg-background">
-      {/* Dynamic Background Orbs */}
-      <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] animate-drift pointer-events-none" />
-      <div className="absolute bottom-[0%] left-[-10%] w-[700px] h-[700px] bg-secondary/10 rounded-full blur-[180px] animate-drift delay-1000 pointer-events-none" />
-      
-      <div className="container-custom relative z-10">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* Left: Content */}
-          <div className="lg:col-span-7 text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="flex justify-center lg:justify-start"
-            >
-              <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-5 py-2 rounded-full mb-8 shadow-sm">
-                 <span className="text-xl">🇮🇳</span>
-                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary leading-none">Made for India</span>
-              </div>
-            </motion.div>
+    <section
+      id="hero"
+      className="relative min-h-screen pt-28 pb-20 lg:pt-36 lg:pb-32 flex flex-col justify-center overflow-hidden"
+      aria-label="Hero section"
+    >
+      {/* Gradient Mesh Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {/* Primary gradient orb */}
+        <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/15 rounded-full blur-[150px] animate-float" />
+        {/* Secondary gradient orb */}
+        <div className="absolute bottom-[-20%] left-[-15%] w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-[180px] animate-float animation-delay-2000" />
+        {/* Accent gradient */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px]" />
+        {/* Grid pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '64px 64px',
+          }}
+        />
+      </div>
 
-            <div className="relative min-h-[320px] md:min-h-[420px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlide}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="w-full"
-                >
-                  <h1 className="text-4xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.95] tracking-tighter text-foreground uppercase">
-                    {bannerSlides[currentSlide].title}{' '}
-                    <span className="text-primary italic block md:inline">
-                      {bannerSlides[currentSlide].highlight}
-                    </span>
-                    <br />
-                    <span className="text-foreground/30 text-2xl md:text-5xl lg:text-6xl font-black tracking-tighter mt-2 block">
-                      {bannerSlides[currentSlide].subtitle}
-                    </span>
-                  </h1>
-                  <p className="text-base md:text-xl text-foreground/60 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-10 font-medium italic">
-                    {bannerSlides[currentSlide].description}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
+      <div className="container-custom relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left: Content */}
+          <div className="text-center lg:text-left order-2 lg:order-1">
+            {/* Combined Badge */}
+            <div
+              className={`inline-flex items-center gap-2.5 glass-badge px-4 py-2.5 rounded-full mb-8 transition-all duration-700 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              <span className="text-lg">🇮🇳</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                Made for India
+              </span>
+              <span className="w-1 h-1 rounded-full bg-foreground/30" />
+              <span className="text-xs font-semibold text-foreground/70">
+                Trusted by 10,000+ Indian businesses
+              </span>
             </div>
 
-            {/* CTA's */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start mt-8">
+            {/* Headline */}
+            <h1
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6 transition-all duration-700 delay-100 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              <span className="text-foreground">Inventory</span>
+              <br />
+              <span className="gradient-text">Made Simple</span>
+            </h1>
+
+            {/* Subheadline */}
+            <p
+              className={`text-lg sm:text-xl text-foreground/60 max-w-xl mx-auto lg:mx-0 leading-relaxed mb-8 transition-all duration-700 delay-200 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              The all-in-one platform for Indian retailers and repair shops.
+              Manage stock, repairs, and invoices with{' '}
+              <span className="text-foreground font-medium">GST compliance built-in</span>.
+            </p>
+
+            {/* Feature Pills */}
+            <div
+              className={`flex flex-wrap justify-center lg:justify-start gap-3 mb-10 transition-all duration-700 delay-300 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              {features.map((feature) => (
+                <div
+                  key={feature}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-sm font-medium text-foreground/80"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  {feature}
+                </div>
+              ))}
+            </div>
+
+            {/* CTAs */}
+            <div
+              className={`flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start mb-12 transition-all duration-700 delay-400 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
               <Button
                 asChild
                 size="lg"
-                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl shadow-2xl shadow-primary/40 uppercase tracking-widest w-full sm:w-auto min-w-[200px] rounded-full"
+                className="btn-glow font-semibold h-14 px-8 text-base rounded-xl w-full sm:w-auto"
               >
-                <Link href="/register">Start Trial</Link>
+                <Link href="/register" className="flex items-center gap-2">
+                  Start Free Trial
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 size="lg"
-                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl border-foreground/10 text-foreground uppercase tracking-widest hover:bg-foreground/5 w-full sm:w-auto min-w-[200px] rounded-full"
+                className="font-semibold h-14 px-8 text-base rounded-xl border-foreground/10 hover:bg-foreground/5 w-full sm:w-auto"
               >
-                <Link href="#demo">View Demo</Link>
+                <Link href="#demo" className="flex items-center gap-2">
+                  <Play className="w-4 h-4" />
+                  Watch Demo
+                </Link>
               </Button>
             </div>
 
-            {/* Dots */}
-            <div className="flex gap-4 mt-16 justify-center lg:justify-start">
-              {bannerSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-2 transition-all duration-700 rounded-full ${
-                    index === currentSlide ? 'w-16 bg-primary' : 'w-4 bg-foreground/10 hover:bg-foreground/30'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
+            {/* Stats */}
+            <div
+              className={`flex flex-wrap justify-center lg:justify-start gap-8 pt-8 border-t border-foreground/10 transition-all duration-700 delay-500 ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              {stats.map((stat) => (
+                <div key={stat.label} className="text-center lg:text-left">
+                  <p className="text-2xl sm:text-3xl font-black text-foreground">
+                    {stat.value}
+                  </p>
+                  <p className="text-xs font-medium text-foreground/50 uppercase tracking-wider">
+                    {stat.label}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
 
           {/* Right: Dashboard Mockup */}
-          <div className="lg:col-span-5 relative group mt-12 lg:mt-0 perspective-1000">
-            <motion.div
-              initial={{ rotateY: -5, opacity: 0 }}
-              animate={{ rotateY: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 1 }}
-              className="transform-gpu"
-            >
-              <div className="relative rounded-[40px] p-2 bg-gradient-to-br from-primary/30 to-secondary/30 shadow-2xl overflow-visible">
-                <div className="bg-card rounded-[34px] p-6 shadow-inner border border-foreground/5 overflow-hidden min-h-[400px]">
-                  
+          <div
+            className={`order-1 lg:order-2 transition-all duration-1000 delay-300 ${
+              mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
+            }`}
+          >
+            <div className="relative px-4 py-8 lg:px-0 lg:py-0">
+              {/* Glow effect behind mockup */}
+              <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full scale-75" aria-hidden="true" />
+
+              {/* Main mockup card */}
+              <div className="glass-card relative p-1 rounded-3xl">
+                {/* Gradient border effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-blue-500/20 rounded-3xl pointer-events-none" />
+
+                {/* Inner content */}
+                <div className="relative bg-background-secondary/80 backdrop-blur-xl rounded-[22px] p-6 min-h-[420px] overflow-visible">
                   {/* Dashboard Header */}
-                  <div className="flex justify-between items-center mb-10">
+                  <div className="flex justify-between items-center mb-8">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                         <Logo size={24} />
+                      <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Logo size={24} />
                       </div>
                       <div>
-                        <p className="text-sm font-bold opacity-80 text-foreground">yourshop.easeinventory.com</p>
-                        <p className="text-[10px] uppercase tracking-widest opacity-40 text-foreground font-black">Connected</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          yourshop.easeinventory.com
+                        </p>
+                        <p className="text-xs text-foreground/50">Dashboard</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                       <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="text-xs text-foreground/50">Live</span>
                     </div>
                   </div>
 
-                   {/* Stat Grid */}
-                   <div className="grid grid-cols-2 gap-4 mb-8">
-                      <Card className="bg-primary/5 border-none shadow-none rounded-lg">
-                         <CardContent className="p-4">
-                            <p className="text-[10px] font-black opacity-40 uppercase mb-2 text-foreground tracking-widest">Products</p>
-                            <p className="text-2xl font-black text-foreground">2,482</p>
-                            <div className="h-1 w-10 bg-primary mt-3 rounded-full" />
-                         </CardContent>
-                      </Card>
-                      <Card className="bg-secondary/5 border-none shadow-none rounded-lg">
-                        <CardContent className="p-4">
-                           <p className="text-[10px] font-black opacity-40 uppercase mb-2 text-foreground tracking-widest">Stock Value</p>
-                           <p className="text-2xl font-black text-foreground">₹14.2L</p>
-                           <div className="h-1 w-10 bg-secondary mt-3 rounded-full" />
-                        </CardContent>
-                     </Card>
-                  </div>
-
-                  {/* List Item Mockup */}
-                  <div className="space-y-4">
-                     {[1, 2, 3].map((i) => (
-                       <div key={i} className="flex items-center gap-4 p-3 rounded-2xl bg-foreground/5 hover:bg-foreground/[0.08] transition-colors">
-                          <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-lg shadow-sm">
-                             {i === 1 ? '📦' : i === 2 ? '🔧' : '📱'}
-                          </div>
-                          <div className="flex-1">
-                             <div className="h-2 w-24 bg-foreground/10 rounded-full mb-2" />
-                             <div className="h-1.5 w-16 bg-foreground/5 rounded-full" />
-                          </div>
-                          <div className={`h-6 w-12 rounded-full opacity-20 ${i === 1 ? 'bg-primary' : 'bg-secondary'}`} />
-                       </div>
-                     ))}
-                  </div>
-
-                  {/* Floating Notification */}
-                  <div className="absolute bottom-6 right-6 z-20">
-                     <motion.div 
-                       initial={{ y: 20, opacity: 0 }}
-                       animate={{ y: 0, opacity: 1 }}
-                       transition={{ delay: 1, duration: 0.5 }}
-                       className="bg-foreground text-background p-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-foreground/5"
-                     >
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">📈</div>
-                        <div>
-                           <p className="text-[10px] uppercase font-black opacity-60 tracking-widest">Revenue</p>
-                           <p className="text-lg font-black">+42%</p>
+                  {/* Revenue Today - Highlighted Card */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/20 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                          <span className="text-lg">📈</span>
                         </div>
-                     </motion.div>
+                        <div>
+                          <p className="text-xs text-foreground/50">Revenue Today</p>
+                          <p className="text-xl font-black text-foreground">₹1.2L</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm text-primary font-bold">+18%</span>
+                        <p className="text-[10px] text-foreground/40">vs yesterday</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
 
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="glass-card p-3 rounded-xl">
+                      <p className="text-[10px] font-medium text-foreground/50 mb-1">
+                        Total Products
+                      </p>
+                      <p className="text-lg font-black text-foreground">2,482</p>
+                      <span className="text-[10px] text-primary font-medium">+12%</span>
+                    </div>
+                    <div className="glass-card p-3 rounded-xl">
+                      <p className="text-[10px] font-medium text-foreground/50 mb-1">
+                        Stock Value
+                      </p>
+                      <p className="text-lg font-black text-foreground">₹14.2L</p>
+                      <span className="text-[10px] text-primary font-medium">+8%</span>
+                    </div>
+                  </div>
+
+                  {/* Recent Activity */}
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-3">
+                      Recent Activity
+                    </p>
+                    {[
+                      {
+                        icon: '📦',
+                        title: 'iPhone 15 Pro Max',
+                        subtitle: 'Stock updated',
+                        badge: '+5',
+                        badgeColor: 'bg-primary/20 text-primary',
+                      },
+                      {
+                        icon: '🔧',
+                        title: 'MacBook Repair #1042',
+                        subtitle: 'Completed',
+                        badge: 'Done',
+                        badgeColor: 'bg-green-500/20 text-green-500',
+                      },
+                      {
+                        icon: '📄',
+                        title: 'Invoice #INV-2024-156',
+                        subtitle: 'Generated',
+                        badge: '₹24K',
+                        badgeColor: 'bg-blue-500/20 text-blue-500',
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-foreground/[0.03] hover:bg-foreground/[0.05] transition-colors"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-lg">
+                          {item.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {item.title}
+                          </p>
+                          <p className="text-xs text-foreground/50">{item.subtitle}</p>
+                        </div>
+                        <span
+                          className={`px-2 py-1 rounded-md text-xs font-semibold ${item.badgeColor}`}
+                        >
+                          {item.badge}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </section>

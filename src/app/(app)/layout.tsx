@@ -300,7 +300,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               ].map((group, idx) => (
                 <div key={idx} className="space-y-3">
                   {isSidebarOpen && (
-                    <h4 className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted">
+                    <h4 className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
                       {group.group}
                     </h4>
                   )}
@@ -329,10 +329,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           onClick={handleClick}
                           className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative ${
                             isActive
-                            ? 'bg-primary text-white shadow-md shadow-primary/20'
+                            ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
                             : isLocked
-                            ? 'text-muted/50 hover:text-muted cursor-pointer'
-                            : 'hover:bg-background text-muted hover:text-foreground'
+                            ? 'text-muted-foreground/50 hover:text-muted-foreground cursor-pointer'
+                            : 'hover:bg-accent text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           <item.icon className={`shrink-0 ${isSidebarOpen ? 'w-5 h-5' : 'w-6 h-6'} ${isLocked ? 'opacity-50' : ''}`} strokeWidth={2} />

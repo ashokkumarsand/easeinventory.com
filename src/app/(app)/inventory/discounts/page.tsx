@@ -283,13 +283,13 @@ export default function DiscountsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
-              <Tag size={22} strokeWidth={2.5} />
+          <div className="flex items-center gap-4 mb-2">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <Tag size={24} strokeWidth={2.5} />
             </div>
-            <h1 className="text-3xl font-black tracking-tight">Blanket Discounts</h1>
+            <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Blanket Discounts</h1>
           </div>
-          <p className="text-black/40 dark:text-white/40 font-bold ml-1">
+          <p className="text-foreground/50 font-medium ml-16">
             Create and manage inventory-wide discounts
           </p>
         </div>
@@ -307,40 +307,40 @@ export default function DiscountsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-card border border-soft p-6 rounded-lg">
+        <Card className="bg-card border border-foreground/10 p-6 rounded-lg">
           <CardContent className="p-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Total Discounts</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground/50 mb-2">Total Discounts</p>
             <h2 className="text-4xl font-bold text-primary">{discounts.length}</h2>
           </CardContent>
         </Card>
-        <Card className="bg-card border border-soft p-6 rounded-lg">
+        <Card className="bg-card border border-foreground/10 p-6 rounded-lg">
           <CardContent className="p-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Active Now</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground/50 mb-2">Active Now</p>
             <h2 className="text-4xl font-bold text-success">{discounts.filter(isDiscountActive).length}</h2>
           </CardContent>
         </Card>
-        <Card className="bg-card border border-soft p-6 rounded-lg">
+        <Card className="bg-card border border-foreground/10 p-6 rounded-lg">
           <CardContent className="p-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Total Usage</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground/50 mb-2">Total Usage</p>
             <h2 className="text-4xl font-bold text-warning">{discounts.reduce((sum, d) => sum + d.usageCount, 0)}</h2>
           </CardContent>
         </Card>
       </div>
 
       {/* Discounts Table */}
-      <Card className="bg-card border border-soft overflow-hidden rounded-lg">
+      <Card className="bg-card border border-foreground/10 overflow-hidden rounded-lg">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-soft">
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">DISCOUNT</th>
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">TYPE</th>
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">SCOPE</th>
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">VALIDITY</th>
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">USAGE</th>
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">STATUS</th>
-                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6 text-left">ACTIONS</th>
+                <tr className="border-b border-foreground/10">
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">DISCOUNT</th>
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">TYPE</th>
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">SCOPE</th>
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">VALIDITY</th>
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">USAGE</th>
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">STATUS</th>
+                  <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-foreground/50 px-6 text-left">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -352,13 +352,13 @@ export default function DiscountsPage() {
                   </tr>
                 ) : discounts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={7} className="py-8 text-center text-foreground/50-foreground">
                       No discounts created yet
                     </td>
                   </tr>
                 ) : (
                   discounts.map((discount) => (
-                    <tr key={discount.id} className="border-b border-soft last:border-none hover:bg-card transition-colors">
+                    <tr key={discount.id} className="border-b border-foreground/10 last:border-none hover:bg-card transition-colors">
                       <td className="py-4 px-6">
                         <div>
                           <p className="font-bold">{discount.name}</p>
@@ -443,12 +443,12 @@ export default function DiscountsPage() {
 
       {/* Create/Edit Modal */}
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-soft rounded-2xl">
-          <DialogHeader className="border-b border-soft pb-4">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-foreground/10 rounded-2xl">
+          <DialogHeader className="border-b border-foreground/10 pb-4">
             <DialogTitle className="text-xl font-bold">
               {editingId ? 'Edit Discount' : 'Create Blanket Discount'}
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted">
+            <DialogDescription className="text-sm text-foreground/50">
               {editingId ? 'Update the discount details below' : 'Set up a new discount rule for your inventory'}
             </DialogDescription>
           </DialogHeader>
@@ -456,7 +456,7 @@ export default function DiscountsPage() {
           <div className="space-y-6 py-4">
             {/* Basic Info Section */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Basic Information</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-foreground/50">Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Discount Name *</Label>
@@ -500,14 +500,14 @@ export default function DiscountsPage() {
                     value={formData.priority}
                     onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                   />
-                  <p className="text-xs text-muted-foreground">Higher priority wins when multiple discounts apply</p>
+                  <p className="text-xs text-foreground/50-foreground">Higher priority wins when multiple discounts apply</p>
                 </div>
               </div>
             </div>
 
             {/* Scope Section */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Scope & Targeting</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-foreground/50">Scope & Targeting</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Applies To</Label>
@@ -577,7 +577,7 @@ export default function DiscountsPage() {
 
                 {formData.scope === 'ALL' && (
                   <div className="flex items-end">
-                    <p className="text-sm text-muted pb-2">This discount will apply to all products</p>
+                    <p className="text-sm text-foreground/50 pb-2">This discount will apply to all products</p>
                   </div>
                 )}
               </div>
@@ -585,7 +585,7 @@ export default function DiscountsPage() {
 
             {/* Validity Section */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Validity Period</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-foreground/50">Validity Period</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Start Date *</Label>
@@ -620,7 +620,7 @@ export default function DiscountsPage() {
 
             {/* Conditions Section */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Conditions (Optional)</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-foreground/50">Conditions (Optional)</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Min Quantity</Label>
@@ -653,10 +653,10 @@ export default function DiscountsPage() {
             </div>
 
             {/* Active Toggle */}
-            <div className="flex items-center justify-between p-4 rounded-xl bg-card border border-soft">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-card border border-foreground/10">
               <div>
                 <p className="font-semibold">Discount Status</p>
-                <p className="text-sm text-muted">Enable or disable this discount</p>
+                <p className="text-sm text-foreground/50">Enable or disable this discount</p>
               </div>
               <Switch
                 checked={formData.isActive}
@@ -666,7 +666,7 @@ export default function DiscountsPage() {
             </div>
           </div>
 
-          <DialogFooter className="border-t border-soft pt-4">
+          <DialogFooter className="border-t border-foreground/10 pt-4">
             <Button variant="secondary" onClick={onClose} className="font-semibold">
               Cancel
             </Button>

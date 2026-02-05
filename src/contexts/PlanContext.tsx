@@ -21,6 +21,10 @@ interface PlanContextValue {
   isUpgradeModalOpen: boolean;
   currentFeature: FeatureKey | null;
   recommendedPlan: PlanType | null;
+  isSuperAdmin: boolean;
+  isEnterprise: boolean;
+  shouldShowUpgrade: boolean;
+  userRole: string | null;
 }
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -34,6 +38,13 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const plan: PlanType = user?.plan || 'FREE';
   const planExpiresAt = user?.planExpiresAt ? new Date(user.planExpiresAt) : null;
   const isLoading = status === 'loading';
+  const userRole = user?.role || null;
+
+  // Check if user is super admin or has enterprise plan
+  const isSuperAdmin = userRole === 'SUPER_ADMIN';
+  const isEnterprise = plan === 'ENTERPRISE';
+  // Don't show upgrade UI for super admins or enterprise users
+  const shouldShowUpgrade = !isSuperAdmin && !isEnterprise;
 
   const hasFeature = useCallback(
     (feature: FeatureKey): boolean => {
@@ -79,6 +90,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       isUpgradeModalOpen,
       currentFeature,
       recommendedPlan,
+      isSuperAdmin,
+      isEnterprise,
+      shouldShowUpgrade,
+      userRole,
     }),
     [
       plan,
@@ -91,6 +106,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       isUpgradeModalOpen,
       currentFeature,
       recommendedPlan,
+      isSuperAdmin,
+      isEnterprise,
+      shouldShowUpgrade,
+      userRole,
     ]
   );
 

@@ -107,9 +107,9 @@ export default function TransfersPage() {
                         <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <ArrowRightLeft size={22} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight text-primary">Warehouse Transfers</h1>
+                        <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Warehouse Transfers</h1>
                     </div>
-                    <p className="text-black/40 dark:text-white/40 font-bold ml-1">Move inventory between stores and regional warehouses.</p>
+                    <p className="text-foreground/50 font-bold ml-1">Move inventory between stores and regional warehouses.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button className="font-black px-8 shadow-xl shadow-primary/20 rounded-full" size="lg" onClick={onOpen}>
@@ -123,7 +123,7 @@ export default function TransfersPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Card className="modern-card p-6 rounded-lg">
                     <CardContent className="flex flex-row items-center gap-4 p-0">
-                        <div className="w-12 h-12 rounded-2xl bg-warning/10 flex items-center justify-center text-warning">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Clock size={24} />
                         </div>
                         <div>
@@ -145,7 +145,7 @@ export default function TransfersPage() {
                 </Card>
                 <Card className="modern-card p-6 rounded-lg">
                     <CardContent className="flex flex-row items-center gap-4 p-0">
-                        <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center text-success">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <CheckCircle2 size={24} />
                         </div>
                         <div>

@@ -264,12 +264,12 @@ export default function InvoicesPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
            <div className="flex items-center gap-3 mb-2">
-             <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-600">
+             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <FileText size={22} strokeWidth={2.5} />
              </div>
-             <h1 className="text-3xl font-black tracking-tight text-yellow-600">Financial Terminal</h1>
+             <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Financial Terminal</h1>
            </div>
-           <p className="text-black/40 dark:text-white/40 font-bold ml-1">GST compliant invoicing and enterprise payment tracking.</p>
+           <p className="text-foreground/50 font-bold ml-1">GST compliant invoicing and enterprise payment tracking.</p>
         </div>
         <div className="flex items-center gap-3">
             <Button variant="outline" className="font-bold rounded-2xl" onClick={exportToGSTR1}>
@@ -328,7 +328,7 @@ export default function InvoicesPage() {
             {invoices.map((inv) => (
               <tr key={inv.id} className="border-b border-border last:border-none hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
                 <td className="py-5 px-6">
-                   <span className="font-black text-black/40 dark:text-white/40">{inv.invoiceNumber}</span>
+                   <span className="font-black text-foreground/50">{inv.invoiceNumber}</span>
                 </td>
                 <td className="py-5 px-6">
                    <div className="flex flex-col">

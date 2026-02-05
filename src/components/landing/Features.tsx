@@ -1,125 +1,202 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
+import {
+  ArrowRight,
+  BarChart3,
+  Bell,
+  FileText,
+  Globe,
+  Package,
+  Users,
+  Wrench,
+} from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const features = [
   {
-    title: 'Precision Inventory',
-    description: 'Track every single unit with serial numbers. Manage cost vs sale prices with automated profit analysis.',
-    icon: '📦',
-    tag: 'Advanced',
+    title: 'Smart Inventory',
+    description:
+      'Track every unit with serial numbers, manage cost vs sale prices, and get automated profit analysis.',
+    icon: Package,
+    tag: 'Core',
     href: '/features/inventory',
+    color: 'from-primary/20 to-primary/5',
+    iconColor: 'text-primary',
   },
   {
-    title: 'Repair Logistics',
-    icon: '🔧',
-    description: 'Ticketing system with technician benchmarks, photo attachments, and lifecycle tracking.',
+    title: 'Repair Management',
+    description:
+      'Complete ticketing system with technician assignment, photo attachments, and lifecycle tracking.',
+    icon: Wrench,
     tag: 'Service',
     href: '/features/repairs',
+    color: 'from-blue-500/20 to-blue-500/5',
+    iconColor: 'text-blue-500',
   },
   {
-    title: 'Instant GST Bills',
-    icon: '📄',
-    description: 'Complaint invoicing in seconds. Supporting HSN codes, multiple tax rates, and digital payments.',
+    title: 'GST Invoicing',
+    description:
+      'Generate compliant invoices in seconds with HSN codes, multiple tax rates, and e-invoicing.',
+    icon: FileText,
     tag: 'Compliance',
     href: '/features/billing',
+    color: 'from-orange-500/20 to-orange-500/5',
+    iconColor: 'text-orange-500',
   },
   {
     title: 'Smart Alerts',
-    icon: '🔔',
-    description: 'Auto-notifications for low stock, repair completion via WhatsApp, and urgent supplier dues.',
+    description:
+      'Auto-notifications for low stock, repair completion via WhatsApp, and payment reminders.',
+    icon: Bell,
     tag: 'Automation',
     href: '/features/alerts',
+    color: 'from-purple-500/20 to-purple-500/5',
+    iconColor: 'text-purple-500',
   },
   {
-    title: 'Subdomain Hosting',
-    icon: '🌐',
-    description: 'Your business, your home. Claim your unique .easeinventory.com link with custom branding.',
-    tag: 'Identity',
+    title: 'Custom Subdomain',
+    description:
+      'Get your unique yourshop.easeinventory.com link with custom branding and public catalog.',
+    icon: Globe,
+    tag: 'Branding',
     href: '/features/subdomain',
+    color: 'from-cyan-500/20 to-cyan-500/5',
+    iconColor: 'text-cyan-500',
   },
   {
-    title: 'Staff Management',
-    icon: '👥',
-    description: 'Track attendance, calculate performance-based payroll, and manage roles securely.',
+    title: 'Team Management',
+    description:
+      'Track attendance, calculate payroll, assign roles, and manage permissions securely.',
+    icon: Users,
     tag: 'HR',
     href: '/features/staff',
+    color: 'from-pink-500/20 to-pink-500/5',
+    iconColor: 'text-pink-500',
   },
 ];
 
 const Features: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="features" className="section-padding bg-background relative overflow-hidden">
-      {/* Subtle Background Glow */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
-      
+    <section
+      id="features"
+      ref={sectionRef}
+      className="section-padding relative overflow-hidden"
+      aria-labelledby="features-heading"
+    >
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-1/3 left-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-[-10%] w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <div className="container-custom relative z-10">
-        <div className="text-center max-w-4xl mx-auto mb-24 lg:mb-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-6"
+        {/* Section Header */}
+        <div
+          className={`text-center max-w-3xl mx-auto mb-16 lg:mb-20 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="glass-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
+            <BarChart3 className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-foreground/80">
+              Powerful Features
+            </span>
+          </div>
+          <h2
+            id="features-heading"
+            className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6"
           >
-            <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full w-fit">
-               <div className="w-2 h-2 bg-primary animate-pulse rounded-full" />
-               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">Precision Stack</span>
-            </div>
-            <h2 className="heading-lg">
-              Engineered to manage <br />
-              <span className="text-primary italic">Absolute Zero</span> chaos.
-            </h2>
-            <p className="paragraph-lg italic">
-              We combined inventory, repairs, and accounting into one fluid interface 
-              designed for the speed of modern Indian retail.
-            </p>
-          </motion.div>
+            Everything you need to
+            <span className="gradient-text block">manage your business</span>
+          </h2>
+          <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+            We combined inventory, repairs, and accounting into one fluid interface
+            designed for the speed of modern Indian retail.
+          </p>
         </div>
 
-        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 -mx-6 px-6 md:mx-auto md:px-0 pb-8 md:pb-0">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
-            >
-              <Link href={feature.href} className="block h-full">
-                <Card
-                  className="modern-card group h-full hover:border-primary/30 transition-all duration-700 overflow-visible cursor-pointer rounded-lg"
-                >
-                  <CardContent className="p-10 lg:p-12 flex flex-col items-start text-left h-full">
-                    <div className="flex justify-between items-start w-full mb-12">
-                      <div className="w-20 h-20 rounded-[32px] bg-primary/5 dark:bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-all duration-500 shadow-sm border border-primary/5">
-                        {feature.icon}
-                      </div>
-                      <div className="bg-foreground/[0.03] dark:bg-white/5 px-4 py-1.5 rounded-full border border-foreground/[0.05] dark:border-white/10">
-                         <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{feature.tag}</span>
-                      </div>
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <Link
+                key={feature.title}
+                href={feature.href}
+                className={`group block transition-all duration-700 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                <article className="feature-card h-full">
+                  {/* Header with icon and tag */}
+                  <div className="flex justify-between items-start mb-6">
+                    <div
+                      className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <Icon className={`w-6 h-6 ${feature.iconColor}`} />
                     </div>
-                    <h3 className="text-2xl md:text-3xl font-black mb-6 group-hover:text-primary transition-colors text-foreground uppercase tracking-tight">
-                      {feature.title}
-                    </h3>
-                    <p className="text-foreground/60 leading-relaxed text-sm md:text-lg font-medium italic mb-8 flex-1">
-                      {feature.description}
-                    </p>
+                    <span className="px-3 py-1 rounded-full bg-foreground/[0.03] border border-foreground/5 text-xs font-medium text-foreground/50">
+                      {feature.tag}
+                    </span>
+                  </div>
 
-                    <div className="mt-auto pt-6 flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-4 transition-all">
-                      Learn More
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
-                  </CardContent>
-                </Card>
+                  {/* Content */}
+                  <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-foreground/60 text-sm leading-relaxed mb-6 flex-1">
+                    {feature.description}
+                  </p>
+
+                  {/* CTA */}
+                  <div className="flex items-center gap-2 text-primary text-sm font-semibold group-hover:gap-3 transition-all">
+                    Learn more
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </article>
               </Link>
-            </motion.div>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* Bottom CTA */}
+        <div
+          className={`text-center mt-16 transition-all duration-700 delay-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <p className="text-foreground/50 mb-4">
+            And much more including analytics, reports, and integrations
+          </p>
+          <Link
+            href="/features"
+            className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+          >
+            View all features
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>
@@ -127,4 +204,3 @@ const Features: React.FC = () => {
 };
 
 export default Features;
-

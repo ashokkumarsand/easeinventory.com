@@ -74,9 +74,9 @@ export default function DeliveryPage() {
              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <Truck size={22} strokeWidth={2.5} />
              </div>
-             <h1 className="text-3xl font-black tracking-tight">{t('title')}</h1>
+             <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">{t('title')}</h1>
            </div>
-           <p className="text-black/40 dark:text-white/40 font-bold ml-1">{t('subtitle')}</p>
+           <p className="text-foreground/50 font-bold ml-1">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
            <Button className="font-black px-8 shadow-xl shadow-primary/20 rounded-full" size="lg" onClick={onOpen}>

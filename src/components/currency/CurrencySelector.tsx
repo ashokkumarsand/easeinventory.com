@@ -16,7 +16,15 @@ export function CurrencySelector({
   showRefresh = false,
   className = '',
 }: CurrencySelectorProps) {
-  const { currencies, currentCurrency, setCurrency, refreshRates, isLoading } = useCurrency();
+  const { allowedCurrencies, currentCurrency, setCurrency, refreshRates, isLoading, showCurrencySelector } = useCurrency();
+
+  // Don't render if only one currency is allowed
+  if (!showCurrencySelector) {
+    return null;
+  }
+
+  // Use allowed currencies instead of all currencies
+  const currencies = allowedCurrencies;
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -81,7 +89,7 @@ export function CurrencySelector({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="absolute top-full right-0 mt-1 w-40 bg-content1 border border-divider rounded-lg shadow-lg overflow-hidden z-50"
+              className="absolute top-full right-0 mt-1 w-40 bg-background/80 backdrop-blur-xl border border-foreground/10 rounded-lg shadow-lg overflow-hidden z-50"
             >
               {currencies.map(currency => (
                 <button
@@ -122,9 +130,9 @@ export function CurrencySelector({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute top-full right-0 mt-2 w-56 bg-content1 border border-divider rounded-xl shadow-xl overflow-hidden z-50"
+              className="absolute top-full right-0 mt-2 w-56 bg-background/80 backdrop-blur-xl border border-foreground/10 rounded-xl shadow-xl overflow-hidden z-50"
             >
-              <div className="p-2 border-b border-divider">
+              <div className="p-2 border-b border-foreground/10">
                 <input
                   ref={inputRef}
                   type="text"
@@ -167,7 +175,7 @@ export function CurrencySelector({
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
-        className="flex items-center gap-3 px-4 py-2.5 bg-content1 border border-divider hover:border-foreground/20 rounded-xl transition-all"
+        className="flex items-center gap-3 px-4 py-2.5 bg-foreground/5 backdrop-blur-sm border border-foreground/10 hover:border-foreground/20 rounded-xl transition-all"
       >
         <Globe2 className="w-5 h-5 text-foreground/50" />
         <div className="text-left">
@@ -187,10 +195,10 @@ export function CurrencySelector({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-full left-0 mt-2 w-80 bg-content1 border border-divider rounded-2xl shadow-2xl overflow-hidden z-50"
+            className="absolute top-full left-0 mt-2 w-80 bg-background/80 backdrop-blur-xl border border-foreground/10 rounded-2xl shadow-2xl overflow-hidden z-50"
           >
             {/* Header with search */}
-            <div className="p-3 border-b border-divider bg-foreground/[0.02]">
+            <div className="p-3 border-b border-foreground/10 bg-foreground/[0.02]">
               <input
                 ref={inputRef}
                 type="text"
@@ -247,7 +255,7 @@ export function CurrencySelector({
 
             {/* Footer with refresh */}
             {showRefresh && (
-              <div className="p-3 border-t border-divider bg-foreground/[0.02]">
+              <div className="p-3 border-t border-foreground/10 bg-foreground/[0.02]">
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}

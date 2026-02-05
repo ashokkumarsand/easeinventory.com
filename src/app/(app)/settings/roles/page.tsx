@@ -242,12 +242,12 @@ export default function RolesManagementPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-2xl bg-warning/10 flex items-center justify-center text-warning">
+                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Shield size={22} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight text-warning">{t('title')}</h1>
+                        <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">{t('title')}</h1>
                     </div>
-                    <p className="text-black/40 dark:text-white/40 font-bold ml-1">{t('subtitle')}</p>
+                    <p className="text-foreground/50 font-bold ml-1">{t('subtitle')}</p>
                 </div>
                 <Button
                     className="font-black px-8 shadow-xl shadow-warning/20 rounded-full bg-warning text-warning-foreground hover:bg-warning/90"
@@ -504,7 +504,7 @@ export default function RolesManagementPage() {
                     </DialogHeader>
                     <div className="p-8">
                         <Tabs defaultValue={modules[0]?.key} className="w-full">
-                            <TabsList className="w-full justify-start border-b border-soft rounded-none bg-transparent h-auto p-0 mb-6">
+                            <TabsList className="w-full justify-start border-b border-foreground/10 rounded-none bg-transparent h-auto p-0 mb-6">
                                 {modules.map(module => {
                                     const Icon = ICON_MAP[module.icon] || Package;
                                     return (

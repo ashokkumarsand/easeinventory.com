@@ -232,12 +232,12 @@ export default function HolidayCalendarPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-2xl bg-danger/10 flex items-center justify-center text-danger">
+                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Calendar size={22} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight text-danger">Holiday Calendar</h1>
+                        <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Holiday Calendar</h1>
                     </div>
-                    <p className="text-black/40 dark:text-white/40 font-bold ml-1">Manage company holidays and off-days.</p>
+                    <p className="text-foreground/50 font-bold ml-1">Manage company holidays and off-days.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button

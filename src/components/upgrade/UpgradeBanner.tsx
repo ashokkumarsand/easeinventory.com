@@ -12,11 +12,11 @@ interface UpgradeBannerProps {
 }
 
 export function UpgradeBanner({ variant = 'default', dismissible = true }: UpgradeBannerProps) {
-  const { plan, showUpgradeModal, recommendedPlan } = usePlan();
+  const { plan, showUpgradeModal, recommendedPlan, shouldShowUpgrade } = usePlan();
   const [isDismissed, setIsDismissed] = useState(false);
 
-  // Don't show for premium plans
-  if (plan === 'BUSINESS' || plan === 'ENTERPRISE' || isDismissed) {
+  // Don't show for super admins, enterprise users, or if dismissed
+  if (!shouldShowUpgrade || isDismissed) {
     return null;
   }
 
@@ -121,10 +121,10 @@ export function UpgradeBanner({ variant = 'default', dismissible = true }: Upgra
  * Small upgrade CTA button for navbar
  */
 export function UpgradeCTA() {
-  const { plan, showUpgradeModal } = usePlan();
+  const { showUpgradeModal, shouldShowUpgrade } = usePlan();
 
-  // Don't show for premium plans
-  if (plan === 'BUSINESS' || plan === 'ENTERPRISE') {
+  // Don't show for super admins or enterprise users
+  if (!shouldShowUpgrade) {
     return null;
   }
 

@@ -1,84 +1,127 @@
+'use client';
+
 import { Logo } from '@/components/icons/Logo';
+import WaveBackground from '@/components/landing/WaveBackground';
+import { Github, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
 const footerLinks = {
   product: [
-    { label: 'Capabilities', href: '/#features' },
-    { label: 'Investment', href: '/#pricing' },
+    { label: 'Features', href: '/#features' },
+    { label: 'Pricing', href: '/#pricing' },
     { label: 'Integrations', href: '/integrations' },
     { label: 'Changelog', href: '/changelog' },
   ],
   company: [
-    { label: 'Our Mission', href: '/about' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Careers', href: '/careers' },
     { label: 'Press Kit', href: '/press' },
-    { label: 'Contact Experts', href: '/#contact' },
+    { label: 'Contact', href: '/contact' },
   ],
-  support: [
-    { label: 'Knowledge Base', href: '/help' },
-    { label: 'API Reference', href: '/api-docs' },
+  resources: [
+    { label: 'Help Center', href: '/help' },
+    { label: 'API Docs', href: '/api-docs' },
     { label: 'System Status', href: '/status' },
+    { label: 'Blog', href: '/blog' },
   ],
   legal: [
-    { label: 'Privacy Protocol', href: '/privacy' },
-    { label: 'Terms of Growth', href: '/terms' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Cookie Policy', href: '/cookies' },
+    { label: 'Refund Policy', href: '/refund' },
   ],
 };
 
 const socialLinks = [
-  {
-    label: 'X (Twitter)',
-    href: '#',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm1.161 17.52h1.833L7.045 4.126H5.078z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'LinkedIn',
-    href: '#',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-      </svg>
-    ),
-  },
+  { label: 'Twitter', href: 'https://twitter.com/easeinventory', icon: Twitter },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/easeinventory', icon: Linkedin },
+  { label: 'GitHub', href: 'https://github.com/easeinventory', icon: Github },
 ];
 
 const Footer: React.FC = () => {
   return (
-    <footer className="!bg-background border-t border-foreground/5 !text-foreground pt-32 pb-16">
-      <div className="container-custom">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-12 gap-y-20 mb-32">
+    <footer className="relative overflow-hidden w-full">
+      {/* Wave Background */}
+      <WaveBackground variant="minimal" fadeTop />
+
+      <div className="container-custom relative z-10 pt-16 pb-8">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-12 pb-12 border-b border-foreground/5">
           {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-10">
-            <Link href="/" className="inline-flex items-center gap-4 group">
-              <div className="p-3 bg-foreground/5 rounded-2xl group-hover:bg-primary/20 transition-colors">
-                <Logo size={40} />
+          <div className="col-span-2 md:col-span-3 lg:col-span-2 space-y-6">
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="p-2.5 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
+                <Logo size={28} />
               </div>
-              <span className="text-3xl font-black tracking-tighter uppercase text-foreground">
-                <span className="italic">Ease</span><span className="text-primary italic">Inventory</span>
+              <span className="text-xl font-black tracking-tight">
+                <span className="italic text-foreground">Ease</span>
+                <span className="text-primary italic">Inventory</span>
               </span>
             </Link>
-            <p className="text-foreground/60 text-xl font-medium leading-relaxed max-w-sm italic">
-              Empowering India&apos;s retail revolution with the world&apos;s most precise inventory & service engine.
+            <p className="text-foreground/60 text-sm leading-relaxed max-w-xs">
+              Empowering India&apos;s retail revolution with modern inventory
+              management, GST invoicing, and repair tracking.
             </p>
-            <div className="flex flex-col gap-6 pt-4 border-l-2 border-primary/20 pl-6">
-                <div>
-                   <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary mb-2 block">Connect directly</span>
-                   <a href="mailto:contact@easeinventory.com" className="text-lg font-bold hover:text-primary transition-colors block text-foreground/90">contact@easeinventory.com</a>
-                </div>
+
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <a
+                href="mailto:contact@easeinventory.com"
+                className="flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                contact@easeinventory.com
+              </a>
+              <a
+                href="tel:+919411436666"
+                className="flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                +91 94114 36666
+              </a>
+              <p className="flex items-start gap-2 text-sm text-foreground/60">
+                <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
+                <span>New Delhi, India</span>
+              </p>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-foreground/50 hover:text-primary transition-all dark:hover:shadow-[0_0_20px_rgba(132,204,22,0.15)]"
+                    style={{
+                      background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                    }}
+                    aria-label={social.label}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <div className="space-y-8">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 px-3 py-1 border border-foreground/10 rounded-full inline-block">Product</h4>
-            <ul className="space-y-4">
+          {/* Links Columns */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold text-foreground/40 uppercase tracking-wider">
+              Product
+            </h4>
+            <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-foreground/50 hover:text-primary transition-colors font-bold text-base hover:translate-x-2 inline-block duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-foreground/60 hover:text-primary transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -86,12 +129,17 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="space-y-8">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 px-3 py-1 border border-foreground/10 rounded-full inline-block">Company</h4>
-            <ul className="space-y-4">
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold text-foreground/40 uppercase tracking-wider">
+              Company
+            </h4>
+            <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-foreground/50 hover:text-primary transition-colors font-bold text-base hover:translate-x-2 inline-block duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-foreground/60 hover:text-primary transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -99,12 +147,17 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="space-y-8">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 px-3 py-1 border border-foreground/10 rounded-full inline-block">Resources</h4>
-            <ul className="space-y-4">
-              {footerLinks.support.map((link) => (
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold text-foreground/40 uppercase tracking-wider">
+              Resources
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.resources.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-foreground/50 hover:text-primary transition-colors font-bold text-base hover:translate-x-2 inline-block duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-foreground/60 hover:text-primary transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -112,12 +165,17 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="space-y-8">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 px-3 py-1 border border-foreground/10 rounded-full inline-block">Legal</h4>
-            <ul className="space-y-4">
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold text-foreground/40 uppercase tracking-wider">
+              Legal
+            </h4>
+            <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-foreground/50 hover:text-primary transition-colors font-bold text-base hover:translate-x-2 inline-block duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-foreground/60 hover:text-primary transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -127,33 +185,19 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between pt-16 border-t border-foreground/10 gap-10">
-          <div className="flex flex-col items-center md:items-start gap-3">
-             <div className="flex items-center gap-4">
-                <span className="text-foreground/40 text-xs font-black uppercase tracking-widest">
-                   © 2026 EaseInventory Technologies Private Limited.
-                </span>
-                <div className="w-1 h-1 bg-primary rounded-full" />
-                <span className="text-foreground/60 text-xs font-black italic">Made with 🇮🇳 pride.</span>
-             </div>
-              <p className="text-foreground/15 text-[10px] font-medium tracking-tight">
-                All rights reserved. Secure Cloud Hosting by AWS Mumbai (ap-south-1).
-              </p>
-              <p className="text-foreground/20 text-[9px] font-medium leading-relaxed max-w-2xl text-center md:text-left">
-                Disclaimer: &quot;Antigravity&quot; is a metaphorical brand concept representing operational efficiency and cloud velocity. EaseInventory does not claim to alter physical laws or provide literal levitation capabilities.
-              </p>
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-foreground/40">
+            <span>© 2026 EaseInventory Technologies Pvt. Ltd.</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="flex items-center gap-1">
+              Made with <span className="text-red-500">❤</span> in India 🇮🇳
+            </span>
           </div>
-          <div className="flex gap-8">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                className="text-foreground/20 hover:text-primary transition-all duration-500 hover:scale-125"
-                aria-label={social.label}
-              >
-                {social.icon}
-              </a>
-            ))}
+          <div className="flex items-center gap-4 text-xs text-foreground/40">
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              All systems operational
+            </span>
           </div>
         </div>
       </div>

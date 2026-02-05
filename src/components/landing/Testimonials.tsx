@@ -1,92 +1,170 @@
 'use client';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
-import React from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Quote, Star, Users } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const testimonials = [
   {
     rating: 5,
-    text: (
-      <>
-        Switched from a legacy ERP and never looked back. The speed of <span className='italic'>Ease</span><span className='text-primary italic'>Inventory</span> is just incredible for our busy retail counters.
-      </>
-    ),
-    author: 'Rajesh K.',
-    role: 'Mobility Solutions, Pune',
+    text: "Switched from a legacy ERP and never looked back. The speed of EaseInventory is incredible for our busy retail counters.",
+    author: 'Rajesh Kumar',
+    role: 'Owner, Mobility Solutions',
+    location: 'Pune',
     initials: 'RK',
+    image: null,
   },
   {
     rating: 5,
     text: "Managing repair tickets used to be a nightmare. Now, customers get auto-updates and my technicians are 30% more productive.",
-    author: 'Sunita M.',
-    role: 'Alpha Fixit, Delhi',
+    author: 'Sunita Mehta',
+    role: 'Founder, Alpha Fixit',
+    location: 'Delhi',
     initials: 'SM',
+    image: null,
   },
   {
     rating: 5,
     text: "The multi-tenant subdomain feature allowed me to set up 5 franchise locations in one day. Phenomenal scalability.",
     author: 'Arjun Singh',
-    role: 'Singla Electronics Chain',
+    role: 'Director, Singla Electronics',
+    location: 'Mumbai',
     initials: 'AS',
+    image: null,
   },
 ];
 
+const stats = [
+  { value: '10,000+', label: 'Active Businesses' },
+  { value: '4.9/5', label: 'Average Rating' },
+  { value: '50L+', label: 'Products Managed' },
+];
+
 const Testimonials: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="testimonials" className="section-padding bg-background relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+    <section
+      id="testimonials"
+      ref={sectionRef}
+      className="section-padding relative overflow-hidden"
+      aria-labelledby="testimonials-heading"
+    >
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-[150px]" />
+      </div>
 
       <div className="container-custom relative z-10">
-        <div className="text-center max-w-4xl mx-auto mb-20 lg:mb-32">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="flex flex-col items-center gap-6"
+        {/* Section Header */}
+        <div
+          className={`text-center max-w-3xl mx-auto mb-16 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="glass-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
+            <Users className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-foreground/80">
+              Customer Stories
+            </span>
+          </div>
+          <h2
+            id="testimonials-heading"
+            className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6"
           >
-             <div className="inline-flex items-center gap-3 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full w-fit">
-                <span className="text-xl">🏆</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary whitespace-nowrap leading-relaxed pt-0.5">Success Chronicles</span>
-             </div>
-             <h2 className="heading-lg">Voices of <span className="text-primary italic">Market Leaders.</span></h2>
-          </motion.div>
+            Loved by businesses
+            <span className="gradient-text block">across India</span>
+          </h2>
+          <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+            See what our customers have to say about their experience with
+            EaseInventory.
+          </p>
         </div>
 
-        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-3 gap-8 -mx-6 px-6 md:mx-auto md:px-0 pb-8 md:pb-0">
-          {testimonials.map((t, index) => (
-            <motion.div
-              key={t.author}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
+        {/* Stats */}
+        <div
+          className={`grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto mb-16 transition-all duration-700 delay-100 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          {stats.map((stat) => (
+            <div key={stat.label} className="text-center">
+              <p className="text-2xl sm:text-3xl font-black text-foreground">
+                {stat.value}
+              </p>
+              <p className="text-xs sm:text-sm text-foreground/50">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Testimonials Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={testimonial.author}
+              className={`glass-card p-6 rounded-2xl transition-all duration-700 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: `${(index + 2) * 100}ms` }}
             >
-              <Card className="modern-card p-4 h-full bg-card hover:border-primary/30 rounded-lg">
-                <CardContent className="p-8 flex flex-col h-full">
-                  <div className="flex gap-1 mb-10">
-                    {[1, 2, 3, 4, 5].map(i => <span key={i} className="text-primary text-xl font-black">★</span>)}
-                  </div>
+              {/* Quote icon */}
+              <div className="mb-4">
+                <Quote className="w-8 h-8 text-primary/30" />
+              </div>
 
-                  <blockquote className="text-lg font-medium leading-relaxed mb-12 opacity-80 italic flex-1">
-                    &quot;{t.text}&quot;
-                  </blockquote>
+              {/* Rating */}
+              <div className="flex gap-1 mb-4">
+                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className="w-4 h-4 fill-primary text-primary"
+                  />
+                ))}
+              </div>
 
-                  <div className="flex items-center gap-5 pt-8 border-t border-foreground/5 mt-auto">
-                    <Avatar className="w-14 h-14 bg-foreground/10">
-                       <AvatarFallback className="text-foreground font-black text-lg">{t.initials}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h4 className="font-black text-lg leading-none mb-2 text-foreground uppercase tracking-tight">{t.author}</h4>
-                      <p className="text-[10px] font-black opacity-40 uppercase tracking-widest text-foreground">{t.role}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+              {/* Quote */}
+              <blockquote className="text-foreground/80 leading-relaxed mb-6">
+                &quot;{testimonial.text}&quot;
+              </blockquote>
+
+              {/* Author */}
+              <div className="flex items-center gap-3 pt-4 border-t border-foreground/5">
+                <Avatar className="w-10 h-10">
+                  {testimonial.image && (
+                    <AvatarImage src={testimonial.image} alt={testimonial.author} />
+                  )}
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                    {testimonial.initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">
+                    {testimonial.author}
+                  </p>
+                  <p className="text-xs text-foreground/50">
+                    {testimonial.role}, {testimonial.location}
+                  </p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>

@@ -525,7 +525,7 @@ export default function InventoryPage() {
              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <Package size={22} strokeWidth={2.5} aria-hidden="true" />
              </div>
-             <h1 className="text-3xl font-black tracking-tight">Inventory Engine</h1>
+             <h1 className="text-3xl lg:text-4xl font-black tracking-tight font-heading">Inventory Engine</h1>
            </div>
            <p className="text-foreground/40 font-bold ml-1">Centralized stock control and pricing intelligence.</p>
         </div>

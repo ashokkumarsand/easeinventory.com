@@ -21,18 +21,19 @@ function isValidSlug(slug: string): boolean {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { 
+    const {
       brandName,      // Required: Display name for the business
       ownerName,      // Required: Primary contact person
       email,          // Required: For login and notifications
       password,       // Required
       phone,          // Required: For OTP and WhatsApp
       workspaceName,  // Optional: URL slug (subdomain)
-      logo,           
-      businessType,   
-      gstin,          
-      selectedPlan,   
-      billingCycle    
+      logo,
+      businessType,
+      gstin,
+      currency,       // Default currency code (e.g., 'INR', 'USD')
+      selectedPlan,
+      billingCycle
     } = body;
 
     // Validation
@@ -116,6 +117,9 @@ export async function POST(req: Request) {
 
     // Atomic transaction to create Tenant and User
     const result = await prisma.$transaction(async (tx) => {
+      // Default currency for tenant
+      const tenantCurrency = currency || 'INR';
+
       const tenant = await tx.tenant.create({
         data: {
           name: brandName,
@@ -125,6 +129,10 @@ export async function POST(req: Request) {
           email: email,
           phone: phone ? encrypt(phone) : null,
           gstNumber: gstin ? encrypt(gstin) : null,
+          currency: tenantCurrency,
+          // Initialize allowed currencies with just the default currency
+          // Tenant can add more in settings later
+          allowedCurrencies: [tenantCurrency],
           plan: initialPlan,
           settings: {
             logoInitials: logoInitials,
