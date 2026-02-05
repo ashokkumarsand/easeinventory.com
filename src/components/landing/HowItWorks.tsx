@@ -34,27 +34,32 @@ const steps = [
   },
 ];
 
-// Animated progress line that connects the steps
+// Animated progress line that spans full width
 const ProgressLine = ({ isInView }: { isInView: boolean }) => (
-  <div className="absolute top-[60px] left-0 right-0 h-1 hidden lg:block">
-    <div className="relative h-full max-w-4xl mx-auto px-20">
-      {/* Background track */}
-      <div className="absolute inset-0 rounded-full bg-foreground/5" />
-      {/* Animated fill */}
-      <motion.div
-        className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary via-blue-500 to-orange-500"
-        initial={{ width: '0%' }}
-        animate={{ width: isInView ? '100%' : '0%' }}
-        transition={{ duration: 1.5, delay: 0.3, ease: 'easeOut' }}
-      />
-      {/* Glow effect */}
-      <motion.div
-        className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary via-blue-500 to-orange-500 blur-sm opacity-50"
-        initial={{ width: '0%' }}
-        animate={{ width: isInView ? '100%' : '0%' }}
-        transition={{ duration: 1.5, delay: 0.3, ease: 'easeOut' }}
-      />
-    </div>
+  <div className="absolute top-[50px] left-0 right-0 h-[2px] hidden lg:block overflow-hidden">
+    {/* Background track - full width */}
+    <div className="absolute inset-0 bg-foreground/5" />
+    {/* Animated fill - full width */}
+    <motion.div
+      className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-blue-500 to-orange-500"
+      initial={{ width: '0%' }}
+      animate={{ width: isInView ? '100%' : '0%' }}
+      transition={{ duration: 2, delay: 0.3, ease: 'easeOut' }}
+    />
+    {/* Glow effect */}
+    <motion.div
+      className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-blue-500 to-orange-500 blur-md opacity-60"
+      initial={{ width: '0%' }}
+      animate={{ width: isInView ? '100%' : '0%' }}
+      transition={{ duration: 2, delay: 0.3, ease: 'easeOut' }}
+    />
+    {/* Moving light particle */}
+    <motion.div
+      className="absolute top-1/2 -translate-y-1/2 w-20 h-4 bg-white/80 blur-md rounded-full"
+      initial={{ left: '-10%', opacity: 0 }}
+      animate={isInView ? { left: '110%', opacity: [0, 1, 1, 0] } : { left: '-10%', opacity: 0 }}
+      transition={{ duration: 2, delay: 0.3, ease: 'easeOut' }}
+    />
   </div>
 );
 
@@ -75,7 +80,7 @@ const StepCard = ({
       transition={{ duration: 0.6, delay: step.delay + 0.5 }}
       className="relative flex flex-col items-center"
     >
-      {/* Animated number circle */}
+      {/* Animated icon circle */}
       <motion.div
         className="relative z-10 mb-6"
         initial={{ scale: 0 }}
@@ -89,55 +94,63 @@ const StepCard = ({
       >
         {/* Outer glow ring */}
         <motion.div
-          className={`absolute inset-0 rounded-full bg-gradient-to-r ${step.gradient} blur-lg opacity-40`}
+          className={`absolute inset-0 rounded-full bg-gradient-to-r ${step.gradient} blur-xl opacity-40`}
           animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.4, 0.6, 0.4],
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{
-            duration: 2,
+            duration: 3,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: step.delay,
           }}
         />
-        {/* Main circle */}
+        {/* Main circle - icon only */}
         <div
-          className={`relative w-[120px] h-[120px] rounded-full bg-gradient-to-br ${step.gradient} p-[3px]`}
+          className={`relative w-[100px] h-[100px] rounded-full bg-gradient-to-br ${step.gradient} p-[3px]`}
         >
           <div
-            className="w-full h-full rounded-full flex flex-col items-center justify-center"
+            className="w-full h-full rounded-full flex items-center justify-center"
             style={{
               background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%)',
             }}
           >
-            <Icon className="w-8 h-8 text-foreground/80 mb-1" />
-            <span className="text-2xl font-black text-foreground">{step.number}</span>
+            <Icon className="w-10 h-10 text-foreground/80" />
           </div>
         </div>
         {/* Checkmark indicator */}
         <motion.div
-          className="absolute -right-1 -top-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center"
+          className="absolute -right-1 -top-1 w-7 h-7 rounded-full bg-primary flex items-center justify-center"
           initial={{ scale: 0, opacity: 0 }}
           animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
           transition={{ delay: step.delay + 0.8, type: 'spring' }}
         >
-          <CheckCircle className="w-5 h-5 text-primary-foreground" />
+          <CheckCircle className="w-4 h-4 text-primary-foreground" />
         </motion.div>
       </motion.div>
 
-      {/* Content card with fixed height */}
-      <div
-        className="text-center w-full max-w-xs h-[140px] flex flex-col justify-start"
-      >
+      {/* Content with number below title */}
+      <div className="text-center w-full max-w-xs flex flex-col items-center">
         <motion.h3
-          className="text-xl font-bold mb-2 font-heading"
+          className="text-xl font-bold mb-1 font-heading"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: step.delay + 0.6 }}
         >
           {step.title}
         </motion.h3>
+
+        {/* Step number badge below title */}
+        <motion.div
+          className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${step.gradient} mb-3`}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+          transition={{ delay: step.delay + 0.65 }}
+        >
+          <span className="text-sm font-black text-white">{step.number}</span>
+        </motion.div>
+
         <motion.p
           className="text-sm text-foreground/50 leading-relaxed"
           initial={{ opacity: 0 }}
@@ -204,12 +217,12 @@ const HowItWorks: React.FC = () => {
         </motion.div>
 
         {/* Steps with Progress Line */}
-        <div className="relative max-w-5xl mx-auto">
-          {/* Progress line */}
+        <div className="relative">
+          {/* Progress line - full width */}
           <ProgressLine isInView={isInView} />
 
           {/* Steps grid */}
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-16">
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
             {steps.map((step) => (
               <StepCard key={step.number} step={step} isInView={isInView} />
             ))}
