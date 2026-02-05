@@ -71,8 +71,8 @@ const HowItWorks: React.FC = () => {
 
         {/* Horizontal Stepper */}
         <div className="relative max-w-5xl mx-auto">
-          {/* Connecting line — desktop only */}
-          <div className="absolute top-[36px] left-[16.67%] right-[16.67%] h-px hidden lg:block" aria-hidden="true">
+          {/* Connecting line — visible when steps are in a row */}
+          <div className="absolute top-[36px] left-[16.67%] right-[16.67%] h-px hidden md:block" aria-hidden="true">
             <div className="w-full h-full bg-foreground/5" />
             <motion.div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-cyan-400"

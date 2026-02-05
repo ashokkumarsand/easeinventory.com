@@ -9,6 +9,7 @@ import {
   Users,
   Wrench,
 } from 'lucide-react';
+import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 
 const features = [
@@ -17,36 +18,42 @@ const features = [
     description:
       'Track every unit with serial numbers. Automated cost vs sale price profit analysis.',
     icon: PackageSearch,
+    href: '/register',
   },
   {
     title: 'Repair Logistics',
     description:
       'Ticketing with technician benchmarks, photo attachments, and lifecycle tracking.',
     icon: Wrench,
+    href: '/register',
   },
   {
     title: 'Instant GST Bills',
     description:
       'Compliant invoicing in seconds. HSN codes, multiple tax rates, digital payments.',
     icon: FileText,
+    href: '/register',
   },
   {
     title: 'Smart Alerts',
     description:
       'Auto-notifications for low stock, repair completion via WhatsApp, urgent supplier dues.',
     icon: Bell,
+    href: '/register',
   },
   {
     title: 'Subdomain Hosting',
     description:
       'Claim your unique .easeinventory.com link with custom branding.',
     icon: Globe,
+    href: '/register',
   },
   {
     title: 'Staff Management',
     description:
       'Attendance tracking, performance-based payroll, and secure role management.',
     icon: Users,
+    href: '/register',
   },
 ];
 
@@ -109,32 +116,35 @@ const Features: React.FC = () => {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <article
+              <Link
                 key={feature.title}
-                className={`feature-card group transition-all duration-700 ${
+                href={feature.href}
+                className={`feature-card group transition-all duration-700 block no-underline ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}
                 style={{ transitionDelay: `${index * 80}ms` }}
               >
-                {/* Icon */}
-                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-                  <Icon className="w-5 h-5" />
-                </div>
+                <article>
+                  {/* Icon */}
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <Icon className="w-5 h-5" />
+                  </div>
 
-                {/* Content */}
-                <h3 className="text-lg font-bold mb-2 text-foreground">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  {feature.description}
-                </p>
+                  {/* Content */}
+                  <h3 className="text-lg font-bold mb-2 text-foreground">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                    {feature.description}
+                  </p>
 
-                {/* Learn More arrow */}
-                <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all duration-300">
-                  Learn more
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </article>
+                  {/* Learn More arrow */}
+                  <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all duration-300">
+                    Learn more
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </article>
+              </Link>
             );
           })}
         </div>

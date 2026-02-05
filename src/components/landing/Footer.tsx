@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-primary bg-foreground/[0.03] border border-foreground/5 hover:border-primary/20 transition-all"
+                  className="w-11 h-11 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-primary bg-foreground/[0.03] border border-foreground/5 hover:border-primary/20 transition-all"
                   aria-label={social.label}
                 >
                   <Icon className="w-4 h-4" />

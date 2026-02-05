@@ -79,7 +79,7 @@ const Testimonials: React.FC = () => {
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
             <article
               key={testimonial.author}
@@ -97,9 +97,9 @@ const Testimonials: React.FC = () => {
               </span>
 
               {/* Rating */}
-              <div className="flex gap-1 mb-5 relative">
+              <div className="flex gap-1 mb-5 relative" role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-amber-300 text-amber-300" />
+                  <Star key={i} className="w-4 h-4 fill-amber-300 text-amber-300" aria-hidden="true" />
                 ))}
               </div>
 

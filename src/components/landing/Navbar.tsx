@@ -284,6 +284,9 @@ const Navbar: React.FC = () => {
             ? 'opacity-100 pointer-events-auto'
             : 'opacity-0 pointer-events-none'
         }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
       >
         {/* Backdrop */}
         <div

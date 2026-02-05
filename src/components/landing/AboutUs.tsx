@@ -1,7 +1,7 @@
 'use client';
 
 import { Lock, TrendingUp, Zap } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 function useCountUp(end: number, duration: number, start: boolean) {
   const [value, setValue] = useState(0);
@@ -156,7 +156,14 @@ const AboutUs: React.FC = () => {
                         {efficiencyValue}%
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-foreground/5 rounded-full overflow-hidden">
+                    <div
+                      className="w-full h-2 bg-foreground/5 rounded-full overflow-hidden"
+                      role="progressbar"
+                      aria-valuenow={efficiencyValue}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label="Deployment Efficiency"
+                    >
                       <div
                         className="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full transition-all duration-1500 ease-out"
                         style={{

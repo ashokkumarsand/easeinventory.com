@@ -28,7 +28,7 @@ const CTA: React.FC = () => {
     >
       <div className="max-w-[900px] mx-auto relative z-10">
         <div
-          className={`relative rounded-3xl p-12 sm:p-16 lg:p-20 text-center overflow-hidden transition-all duration-700 ${
+          className={`relative rounded-3xl p-8 sm:p-12 lg:p-20 text-center overflow-hidden transition-all duration-700 ${
             isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
           }`}
           style={{

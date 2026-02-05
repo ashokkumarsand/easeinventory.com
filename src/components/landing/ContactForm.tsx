@@ -49,6 +49,7 @@ const ContactForm: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -64,6 +65,7 @@ const ContactForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage('');
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -75,7 +77,7 @@ const ContactForm: React.FC = () => {
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
       console.error(error);
-      alert('Failed to send message. Please try again.');
+      setErrorMessage('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -187,7 +189,16 @@ const ContactForm: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5" aria-describedby={errorMessage ? 'contact-form-error' : undefined}>
+                  {errorMessage && (
+                    <div
+                      id="contact-form-error"
+                      role="alert"
+                      className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium"
+                    >
+                      {errorMessage}
+                    </div>
+                  )}
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
                       <label htmlFor="name" className="text-sm font-medium text-foreground/70">

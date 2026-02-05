@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <div
-            className={`inline-flex items-center gap-2.5 glass-badge px-4 py-2.5 rounded-full mb-8 transition-all duration-700 ${
+            className={`inline-flex items-center gap-2.5 glass-badge px-4 py-2.5 rounded-full mb-8 transition-all duration-700 flex-wrap justify-center ${
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
@@ -55,8 +55,8 @@ const Hero: React.FC = () => {
             <span className="text-xs font-bold uppercase tracking-wider text-primary">
               Made for India
             </span>
-            <span className="w-1 h-1 rounded-full bg-foreground/30" aria-hidden="true" />
-            <span className="text-xs font-semibold text-foreground/70">
+            <span className="w-1 h-1 rounded-full bg-foreground/30 hidden sm:block" aria-hidden="true" />
+            <span className="text-xs font-semibold text-foreground/70 hidden sm:inline">
               Trusted by 10,000+ Indian businesses
             </span>
           </div>

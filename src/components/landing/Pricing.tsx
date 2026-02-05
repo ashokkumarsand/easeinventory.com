@@ -166,9 +166,15 @@ const Pricing: React.FC = () => {
           </h2>
 
           {/* Billing Toggle */}
-          <div className="inline-flex items-center gap-1 p-1 rounded-full bg-foreground/5 border border-foreground/10">
+          <div
+            className="inline-flex items-center gap-1 p-1 rounded-full bg-foreground/5 border border-foreground/10"
+            role="radiogroup"
+            aria-label="Billing cycle"
+          >
             <button
               onClick={() => setBillingCycle('monthly')}
+              role="radio"
+              aria-checked={billingCycle === 'monthly'}
               className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                 billingCycle === 'monthly'
                   ? 'bg-primary text-primary-foreground shadow-lg'
@@ -179,6 +185,8 @@ const Pricing: React.FC = () => {
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
+              role="radio"
+              aria-checked={billingCycle === 'yearly'}
               className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
                 billingCycle === 'yearly'
                   ? 'bg-primary text-primary-foreground shadow-lg'
@@ -200,7 +208,7 @@ const Pricing: React.FC = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 lg:px-4">
           {plans.map((plan, index) => {
             const ctaInfo = getPlanCTA(plan.name);
             const isCurrentPlan = ctaInfo.text === 'Current Plan';
