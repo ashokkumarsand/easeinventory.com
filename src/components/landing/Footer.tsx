@@ -82,7 +82,7 @@ const Footer: React.FC = () => {
               </a>
               <p className="flex items-start gap-2 text-sm text-foreground/60">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>New Delhi, India</span>
+                <span>GH2, Mahalunge, Pune 411045</span>
               </p>
             </div>
 
