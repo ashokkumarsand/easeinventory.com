@@ -130,26 +130,26 @@ const StepCard = ({
         </motion.div>
       </motion.div>
 
-      {/* Content with number below title */}
+      {/* Content with number above title */}
       <div className="text-center w-full max-w-xs flex flex-col items-center">
+        {/* Step number badge above title */}
+        <motion.div
+          className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${step.gradient} mb-2`}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+          transition={{ delay: step.delay + 0.55 }}
+        >
+          <span className="text-sm font-black text-white">{step.number}</span>
+        </motion.div>
+
         <motion.h3
-          className="text-xl font-bold mb-1 font-heading"
+          className="text-xl font-bold mb-2 font-heading"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: step.delay + 0.6 }}
         >
           {step.title}
         </motion.h3>
-
-        {/* Step number badge below title */}
-        <motion.div
-          className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${step.gradient} mb-3`}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
-          transition={{ delay: step.delay + 0.65 }}
-        >
-          <span className="text-sm font-black text-white">{step.number}</span>
-        </motion.div>
 
         <motion.p
           className="text-sm text-foreground/50 leading-relaxed"
