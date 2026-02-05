@@ -1,35 +1,40 @@
 'use client';
 
-import { CheckCircle2, Rocket, Target, Zap } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import { Lock, TrendingUp, Zap } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-const values = [
-  {
-    icon: Target,
-    title: 'Mission-Driven',
-    description: 'Built specifically for Indian retail businesses with local compliance and language support.',
-  },
-  {
-    icon: Zap,
-    title: 'Lightning Fast',
-    description: 'Optimized infrastructure hosted in Mumbai for sub-100ms response times.',
-  },
-  {
-    icon: Rocket,
-    title: 'Scale Ready',
-    description: 'From single shops to franchise chains, grow without changing systems.',
-  },
-];
+function useCountUp(end: number, duration: number, start: boolean) {
+  const [value, setValue] = useState(0);
 
-const stats = [
-  { value: '99.9%', label: 'Uptime SLA' },
-  { value: '<100ms', label: 'Response Time' },
-  { value: '24/7', label: 'Support' },
-];
+  useEffect(() => {
+    if (!start) return;
+    let startTime: number | null = null;
+    let raf: number;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * end));
+      if (progress < 1) {
+        raf = requestAnimationFrame(step);
+      }
+    };
+
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [end, duration, start]);
+
+  return value;
+}
 
 const AboutUs: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const uptimeValue = useCountUp(999, 1500, isVisible);
+  const efficiencyValue = useCountUp(94, 1200, isVisible);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -38,7 +43,7 @@ const AboutUs: React.FC = () => {
           setIsVisible(true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
 
     if (sectionRef.current) {
@@ -55,109 +60,110 @@ const AboutUs: React.FC = () => {
       className="section-padding relative overflow-hidden"
       aria-labelledby="about-heading"
     >
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute top-0 right-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-[-10%] w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px]" />
-      </div>
-
       <div className="container-custom relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left: Content */}
+        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
+          {/* Left: Content (60%) */}
           <div
-            className={`transition-all duration-700 ${
+            className={`lg:col-span-3 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
             <div className="glass-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span className="text-xs font-semibold text-foreground/80">Our Mission</span>
+              <span className="w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
+              <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">
+                The Antigravity Mission
+              </span>
             </div>
 
             <h2
               id="about-heading"
-              className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 max-w-[600px]"
             >
-              Built for
-              <span className="gradient-text block">Indian businesses</span>
+              WE DON&apos;T
+              <br />
+              JUST MANAGE.
+              <br />
+              <span className="gradient-text">WE LIFT.</span>
             </h2>
 
-            <p className="text-lg text-foreground/60 leading-relaxed mb-8">
-              We understand the unique challenges of running a retail or service business
-              in India. That&apos;s why we built EaseInventory with GST compliance,
-              multi-language support, and local payment integrations from day one.
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
+              Gravity is the enemy of progress. In business, it looks like slow data,
+              heavy logistics, and the friction of outdated ERPs that drag your growth down.
             </p>
-
-            {/* Values */}
-            <div className="space-y-4 mb-8">
-              {values.map((value) => {
-                const Icon = value.icon;
-                return (
-                  <div
-                    key={value.title}
-                    className="flex items-start gap-4 p-4 rounded-2xl bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-colors"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1">{value.title}</h3>
-                      <p className="text-sm text-foreground/60">{value.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-foreground/5">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <p className="text-2xl font-black text-primary">{stat.value}</p>
-                  <p className="text-xs text-foreground/50">{stat.label}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Right: Visual */}
+          {/* Right: Floating Stats Card (40%) */}
           <div
-            className={`transition-all duration-700 delay-200 ${
+            className={`lg:col-span-2 transition-all duration-700 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
             }`}
           >
             <div className="relative">
-              {/* Glow effect */}
+              {/* Glow */}
               <div className="absolute inset-0 bg-primary/10 blur-[60px] rounded-full scale-75" aria-hidden="true" />
 
-              {/* Main visual container */}
-              <div className="glass-card relative p-8 rounded-3xl">
-                {/* Abstract visual */}
-                <div className="aspect-square bg-gradient-to-br from-primary/10 via-transparent to-blue-500/10 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  {/* Animated rocket */}
-                  <div className="animate-float">
-                    <Rocket className="w-24 h-24 text-primary/30" />
-                  </div>
-
-                  {/* Decorative circles */}
-                  <div className="absolute inset-8 border-2 border-dashed border-foreground/5 rounded-full" />
-                  <div className="absolute inset-16 border-2 border-dashed border-primary/10 rounded-full" />
-
-                  {/* Glowing center */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 bg-primary/20 blur-[60px] rounded-full animate-pulse" />
-                  </div>
-                </div>
-
-                {/* Floating stat card */}
-                <div className="absolute -bottom-4 -right-4 sm:bottom-4 sm:right-4 glass-card p-4 rounded-2xl shadow-2xl">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
+              {/* Stats Card */}
+              <div className="feature-card relative p-8 animate-float">
+                <div className="space-y-6">
+                  {/* Stat 1 */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                       <Zap className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-foreground/50">Uptime</p>
-                      <p className="text-xl font-black text-foreground">99.9%</p>
+                      <p className="text-2xl font-black text-foreground">
+                        {(uptimeValue / 10).toFixed(1)}%
+                      </p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Uptime Guarantee
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Stat 2 */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-cyan-500" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-black text-foreground">Zero</p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Lag Infrastructure
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Stat 3 */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                      <Lock className="w-5 h-5 text-amber-500" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-black text-foreground">Total</p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Operational Freedom
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Separator */}
+                  <div className="border-t border-foreground/5 pt-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Deployment Efficiency
+                      </span>
+                      <span className="text-sm font-black text-primary">
+                        {efficiencyValue}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-foreground/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full transition-all duration-1500 ease-out"
+                        style={{
+                          width: isVisible ? '94%' : '0%',
+                          transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
