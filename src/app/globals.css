@@ -135,8 +135,8 @@
     --primary-foreground: 0 0% 100%;
 
     /* Secondary - Brand Orange/Amber #F59E0B (brighter in dark) */
-    --secondary: 38 92% 55%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 38 92% 50%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
