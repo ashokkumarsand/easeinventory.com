@@ -38,26 +38,26 @@
 ## Current Session — Landing Page Complete Redesign (2026-02-06)
 
 ### Phase 1: Foundation
-- [ ] T1: Theme system — CSS custom properties for dark/light, glassmorphic variables
-- [ ] T2: Global styles — typography scale, animation utilities, accessibility (skip-nav, reduced-motion, focus rings)
+- [x] T1: Theme system — already in place from prior work | 2026-02-06
+- [x] T2: Global styles — already in place (skip-nav, reduced-motion, focus rings) | 2026-02-06
 
 ### Phase 2: Section-by-Section Redesign
-- [ ] T3: Navbar — auth-aware, glassmorphic, sticky, scroll-spy, mobile hamburger
-- [ ] T4: Hero — ambient bg effects, gradient text, centered layout, badge, CTAs, logo cloud
-- [ ] T5: Features ("Precision Stack") — 3x2 glassmorphic cards, Lucide icons, hover glow
-- [ ] T6: Mission ("Antigravity Mission") — split layout, floating stats card, count-up animation
-- [ ] T7: HowItWorks ("Operational Protocols") — horizontal stepper, connecting lines, step cards
-- [ ] T8: Pricing ("Momentum Engine") — 4-tier glassmorphic, monthly/yearly toggle, recommended highlight
-- [ ] T9: Testimonials ("Success Chronicles") — glassmorphic cards, stars, decorative quotes
-- [ ] T10: Contact/CTA — split layout (info + form), glassmorphic inputs
-- [ ] T11: FAQ ("Intelligence Hub") — accordion with smooth animations, contact footer
-- [ ] T12: Footer — restructured links, social icons, glassmorphic badges
-- [ ] T13: Final CTA Banner — gradient glassmorphic banner above footer
+- [x] T3: Navbar — already matches spec (auth-aware, glassmorphic, scroll-spy) | 2026-02-06
+- [x] T4: Hero — centered layout, ambient effects, gradient text, logo cloud | commit: 05c295a8
+- [x] T5: Features ("Precision Stack") — 3x2 glassmorphic cards, Lucide icons | commit: 98ec6870
+- [x] T6: Mission ("Antigravity Mission") — split layout, floating stats, count-up | commit: a24d34a9
+- [x] T7: HowItWorks ("Operational Protocols") — horizontal stepper | commit: b8fe2dcc
+- [x] T8: Pricing ("Momentum Engine") — recommended card glow, yearly default | commit: c893cb15
+- [x] T9: Testimonials ("Success Chronicles") — decorative quotes, amber stars | commit: b3073aa2
+- [x] T10: Contact/CTA — glassmorphic inputs, "Get Integrated" copy | commit: a2829185
+- [x] T11: FAQ ("Intelligence Hub") — centered accordion, "Still stuck?" footer | commit: 9122cb7b
+- [x] T12: Footer — restructured links, glassmorphic badges | commit: f13f45b2
+- [x] T13: CTA Banner — gradient glassmorphic banner | commit: f13f45b2
+- [x] T14: Skip-to-content link + main landmark | commit: 3ecb3766
 
-### Phase 3: Polish
-- [ ] T14: Scroll animations — Intersection Observer, stagger, micro-interactions
+### Phase 3: Polish (Remaining)
 - [ ] T15: Responsive testing & fixes — mobile, tablet, desktop
-- [ ] T16: Accessibility audit — WCAG 2.1 AA, contrast, keyboard nav, ARIA
+- [ ] T16: Final accessibility audit — WCAG 2.1 AA contrast, keyboard nav
 
 ---
 
