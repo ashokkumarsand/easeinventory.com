@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
@@ -90,11 +90,10 @@ const Features: React.FC = () => {
               className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
             >
               <Link href={feature.href} className="block h-full">
-                <Card 
-                  className="modern-card group h-full hover:border-primary/30 transition-all duration-700 overflow-visible cursor-pointer"
-                  radius="lg"
+                <Card
+                  className="modern-card group h-full hover:border-primary/30 transition-all duration-700 overflow-visible cursor-pointer rounded-lg"
                 >
-                  <CardBody className="p-10 lg:p-12 flex flex-col items-start text-left h-full">
+                  <CardContent className="p-10 lg:p-12 flex flex-col items-start text-left h-full">
                     <div className="flex justify-between items-start w-full mb-12">
                       <div className="w-20 h-20 rounded-[32px] bg-primary/5 dark:bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-all duration-500 shadow-sm border border-primary/5">
                         {feature.icon}
@@ -109,14 +108,14 @@ const Features: React.FC = () => {
                     <p className="text-foreground/60 leading-relaxed text-sm md:text-lg font-medium italic mb-8 flex-1">
                       {feature.description}
                     </p>
-                    
+
                     <div className="mt-auto pt-6 flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em] group-hover:gap-4 transition-all">
-                      Learn More 
+                      Learn More
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </Link>
             </motion.div>

@@ -1,20 +1,23 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-    Button,
-    Card,
-    CardBody,
-    Input,
     Select,
+    SelectContent,
     SelectItem,
-    Tab,
-    Tabs
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Building2,
     Coins,
     CreditCard,
     Globe,
+    Loader2,
     Save,
     ShieldCheck
 } from 'lucide-react';
@@ -106,133 +109,161 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-black tracking-tight">{t('title')}</h1>
           <p className="text-black/40 dark:text-white/40 font-bold">{t('subtitle')}</p>
         </div>
-        <Button 
-          color="primary" 
-          radius="full" 
-          size="lg" 
-          className="font-black px-8" 
-          startContent={<Save size={20} />}
+        <Button
+          className="font-black px-8 rounded-full"
+          size="lg"
           onClick={handleSave}
-          isLoading={isSaving}
+          disabled={isSaving}
         >
+          {isSaving ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <Save className="h-5 w-5 mr-2" />}
           {t('save')}
         </Button>
       </div>
 
-      <Tabs 
-        aria-label="Settings categories" 
-        variant="underlined" 
-        classNames={{
-            tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-            cursor: "w-full bg-primary",
-            tab: "max-w-fit px-0 h-12",
-            tabContent: "group-data-[selected=true]:text-primary font-black uppercase text-[10px] tracking-widest"
-        }}
+      <Tabs
+        defaultValue="business"
+        className="w-full"
       >
-        <Tab
-          key="business"
-          title={
+        <TabsList className="gap-6 w-full relative rounded-none p-0 border-b border-divider bg-transparent h-auto">
+          <TabsTrigger
+            value="business"
+            className="max-w-fit px-0 h-12 data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none"
+          >
             <div className="flex items-center space-x-2">
               <Building2 size={18} />
               <span>{t('tabs.business')}</span>
             </div>
-          }
-        >
+          </TabsTrigger>
+          <TabsTrigger
+            value="payments"
+            className="max-w-fit px-0 h-12 data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none"
+          >
+            <div className="flex items-center space-x-2">
+              <CreditCard size={18} />
+              <span>{t('tabs.payments')}</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger
+            value="security"
+            className="max-w-fit px-0 h-12 data-[state=active]:text-primary font-black uppercase text-[10px] tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none"
+          >
+            <div className="flex items-center space-x-2">
+              <ShieldCheck size={18} />
+              <span>{t('tabs.security')}</span>
+            </div>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="business">
           <div className="mt-8 grid lg:grid-cols-2 gap-8">
-            <Card className="bg-card border border-soft p-6" radius="lg">
-                <CardBody className="space-y-6">
+            <Card className="bg-card border border-soft p-6 rounded-lg">
+                <CardContent className="space-y-6 p-0">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-primary rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('identity')}</h4>
                     </div>
-                    <Input 
-                        label="Legal Business Name" 
-                        value={tenant.name} 
-                        onValueChange={(v) => setTenant({...tenant, name: v})}
-                        labelPlacement="outside" placeholder="Enter business name" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input 
-                            label="GST Number" 
-                            value={tenant.gstNumber || ''} 
-                            onValueChange={(v) => setTenant({...tenant, gstNumber: v})}
-                            labelPlacement="outside" placeholder="27XXXXX..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                        />
-                         <Input 
-                            label="Phone" 
-                            value={tenant.phone || ''} 
-                            onValueChange={(v) => setTenant({...tenant, phone: v})}
-                            labelPlacement="outside" placeholder="+91..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
+                    <div className="space-y-2">
+                        <Label>Legal Business Name</Label>
+                        <Input
+                            value={tenant.name}
+                            onChange={(e) => setTenant({...tenant, name: e.target.value})}
+                            placeholder="Enter business name"
+                            className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
                         />
                     </div>
-                </CardBody>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>GST Number</Label>
+                            <Input
+                                value={tenant.gstNumber || ''}
+                                onChange={(e) => setTenant({...tenant, gstNumber: e.target.value})}
+                                placeholder="27XXXXX..."
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Phone</Label>
+                            <Input
+                                value={tenant.phone || ''}
+                                onChange={(e) => setTenant({...tenant, phone: e.target.value})}
+                                placeholder="+91..."
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                            />
+                        </div>
+                    </div>
+                </CardContent>
             </Card>
 
-            <Card className="bg-card border border-soft p-6" radius="lg">
-                <CardBody className="space-y-6">
+            <Card className="bg-card border border-soft p-6 rounded-lg">
+                <CardContent className="space-y-6 p-0">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-primary rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('location')}</h4>
                     </div>
-                    <Input
-                        label="Address"
-                        value={tenant.address || ''}
-                        onValueChange={(v) => setTenant({...tenant, address: v})}
-                        labelPlacement="outside" placeholder="Floor, Building, Street" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>Address</Label>
                         <Input
-                            label="City"
-                            value={tenant.city || ''}
-                            onValueChange={(v) => setTenant({...tenant, city: v})}
-                            labelPlacement="outside" placeholder="Mumbai" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                        />
-                        <Input
-                            label="Pincode"
-                            value={tenant.pincode || ''}
-                            onValueChange={(v) => setTenant({...tenant, pincode: v})}
-                            labelPlacement="outside" placeholder="400001" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
+                            value={tenant.address || ''}
+                            onChange={(e) => setTenant({...tenant, address: e.target.value})}
+                            placeholder="Floor, Building, Street"
+                            className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
                         />
                     </div>
-                </CardBody>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>City</Label>
+                            <Input
+                                value={tenant.city || ''}
+                                onChange={(e) => setTenant({...tenant, city: e.target.value})}
+                                placeholder="Mumbai"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Pincode</Label>
+                            <Input
+                                value={tenant.pincode || ''}
+                                onChange={(e) => setTenant({...tenant, pincode: e.target.value})}
+                                placeholder="400001"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                            />
+                        </div>
+                    </div>
+                </CardContent>
             </Card>
 
-            <Card className="bg-card border border-soft p-6 lg:col-span-2" radius="lg">
-                <CardBody className="space-y-6">
+            <Card className="bg-card border border-soft p-6 lg:col-span-2 rounded-lg">
+                <CardContent className="space-y-6 p-0">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-warning rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-warning">{t('currency_settings') || 'Currency Settings'}</h4>
                     </div>
                     <div className="grid lg:grid-cols-2 gap-6">
-                        <div>
+                        <div className="space-y-2">
+                            <Label>Default Currency</Label>
                             <Select
-                                label="Default Currency"
-                                labelPlacement="outside"
-                                placeholder="Select currency"
-                                selectedKeys={tenant.currency ? [tenant.currency] : ['INR']}
-                                onSelectionChange={(keys) => {
-                                    const selected = Array.from(keys)[0] as string;
-                                    setTenant({...tenant, currency: selected});
-                                }}
-                                size="lg"
-                                radius="lg"
-                                startContent={<Coins size={18} className="text-warning" />}
-                                classNames={{
-                                    trigger: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700",
-                                    value: "font-bold"
-                                }}
+                                value={tenant.currency || 'INR'}
+                                onValueChange={(value) => setTenant({...tenant, currency: value})}
                             >
-                                {CURRENCIES.map((currency) => (
-                                    <SelectItem key={currency.code} textValue={`${currency.code} - ${currency.name}`}>
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-lg font-black w-8">{currency.symbol}</span>
-                                            <div>
-                                                <p className="font-bold">{currency.code}</p>
-                                                <p className="text-xs text-foreground/50">{currency.name}</p>
+                                <SelectTrigger className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                                    <div className="flex items-center gap-2">
+                                        <Coins size={18} className="text-warning" />
+                                        <SelectValue placeholder="Select currency" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {CURRENCIES.map((currency) => (
+                                        <SelectItem key={currency.code} value={currency.code}>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-lg font-black w-8">{currency.symbol}</span>
+                                                <div>
+                                                    <p className="font-bold">{currency.code}</p>
+                                                    <p className="text-xs text-foreground/50">{currency.name}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </SelectItem>
-                                ))}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
                             </Select>
                         </div>
                         <div className="p-4 rounded-xl bg-warning/10 border border-warning/20">
@@ -253,81 +284,79 @@ export default function SettingsPage() {
                             )}
                         </div>
                     </div>
-                </CardBody>
+                </CardContent>
             </Card>
           </div>
-        </Tab>
+        </TabsContent>
 
-        <Tab
-          key="payments"
-          title={
-            <div className="flex items-center space-x-2">
-              <CreditCard size={18} />
-              <span>{t('tabs.payments')}</span>
-            </div>
-          }
-        >
+        <TabsContent value="payments">
           <div className="mt-8 grid lg:grid-cols-2 gap-8">
-             <Card className="bg-card border border-soft p-6" radius="lg">
-                <CardBody className="space-y-6">
+             <Card className="bg-card border border-soft p-6 rounded-lg">
+                <CardContent className="space-y-6 p-0">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-success rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-success">{t('upi')}</h4>
                     </div>
                     <p className="text-xs font-bold opacity-40">{t('upi_helper')}</p>
-                    <Input 
-                        label="Business VPA / UPI ID" 
-                        value={tenant.upiId || ''} 
-                        onValueChange={(v) => setTenant({...tenant, upiId: v})}
-                        labelPlacement="outside" placeholder="e.g. business@okaxis" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                        startContent={<Globe size={18} className="opacity-20" />}
-                    />
-                </CardBody>
+                    <div className="space-y-2">
+                        <Label>Business VPA / UPI ID</Label>
+                        <div className="relative">
+                            <Globe size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-20" />
+                            <Input
+                                value={tenant.upiId || ''}
+                                onChange={(e) => setTenant({...tenant, upiId: e.target.value})}
+                                placeholder="e.g. business@okaxis"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg pl-10"
+                            />
+                        </div>
+                    </div>
+                </CardContent>
             </Card>
 
-            <Card className="bg-card border border-soft p-6" radius="lg">
-                <CardBody className="space-y-6">
+            <Card className="bg-card border border-soft p-6 rounded-lg">
+                <CardContent className="space-y-6 p-0">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 bg-success rounded-full" />
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-success">{t('banking')}</h4>
                     </div>
-                    <Input 
-                        label="Bank Name" 
-                        value={tenant.bankName || ''} 
-                        onValueChange={(v) => setTenant({...tenant, bankName: v})}
-                        labelPlacement="outside" placeholder="HDFC Bank" size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input 
-                            label="Account Number" 
-                            value={tenant.accountNumber || ''} 
-                            onValueChange={(v) => setTenant({...tenant, accountNumber: v})}
-                            labelPlacement="outside" placeholder="501XXX..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
-                        />
-                        <Input 
-                            label="IFSC Code" 
-                            value={tenant.ifscCode || ''} 
-                            onValueChange={(v) => setTenant({...tenant, ifscCode: v})}
-                            labelPlacement="outside" placeholder="HDFC000..." size="lg" radius="lg" classNames={{ inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700" }}
+                    <div className="space-y-2">
+                        <Label>Bank Name</Label>
+                        <Input
+                            value={tenant.bankName || ''}
+                            onChange={(e) => setTenant({...tenant, bankName: e.target.value})}
+                            placeholder="HDFC Bank"
+                            className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
                         />
                     </div>
-                </CardBody>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>Account Number</Label>
+                            <Input
+                                value={tenant.accountNumber || ''}
+                                onChange={(e) => setTenant({...tenant, accountNumber: e.target.value})}
+                                placeholder="501XXX..."
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>IFSC Code</Label>
+                            <Input
+                                value={tenant.ifscCode || ''}
+                                onChange={(e) => setTenant({...tenant, ifscCode: e.target.value})}
+                                placeholder="HDFC000..."
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                            />
+                        </div>
+                    </div>
+                </CardContent>
             </Card>
           </div>
-        </Tab>
+        </TabsContent>
 
-        <Tab
-          key="security"
-          title={
-            <div className="flex items-center space-x-2">
-              <ShieldCheck size={18} />
-              <span>{t('tabs.security')}</span>
-            </div>
-          }
-        >
+        <TabsContent value="security">
           <div className="mt-8 max-w-2xl">
-            <Card className="bg-zinc-900 dark:bg-zinc-950 text-white p-6 border border-zinc-800" radius="lg">
-                <CardBody className="space-y-6 p-0">
+            <Card className="bg-zinc-900 dark:bg-zinc-950 text-white p-6 border border-zinc-800 rounded-lg">
+                <CardContent className="space-y-6 p-0">
                     <div className="flex justify-between items-start">
                         <div>
                             <h3 className="text-xl font-bold mb-1">{t('security_standards')}</h3>
@@ -352,10 +381,10 @@ export default function SettingsPage() {
                             </p>
                         </div>
                     </div>
-                </CardBody>
+                </CardContent>
             </Card>
           </div>
-        </Tab>
+        </TabsContent>
       </Tabs>
     </div>
   );

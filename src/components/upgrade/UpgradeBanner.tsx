@@ -1,8 +1,8 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { usePlan } from '@/contexts/PlanContext';
 import { PLAN_DETAILS, formatPrice } from '@/lib/plan-features';
-import { Button } from '@heroui/react';
 import { ArrowRight, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -34,8 +34,7 @@ export function UpgradeBanner({ variant = 'default', dismissible = true }: Upgra
         </div>
         <Button
           size="sm"
-          color="primary"
-          variant="flat"
+          variant="secondary"
           className="font-bold"
           onClick={() => showUpgradeModal()}
         >
@@ -59,7 +58,6 @@ export function UpgradeBanner({ variant = 'default', dismissible = true }: Upgra
         </p>
         <Button
           size="sm"
-          color="primary"
           className="w-full font-bold"
           onClick={() => showUpgradeModal()}
         >
@@ -98,18 +96,16 @@ export function UpgradeBanner({ variant = 'default', dismissible = true }: Upgra
 
         <div className="flex items-center gap-2">
           <Button
-            color="primary"
             className="font-bold"
-            endContent={<ArrowRight className="w-4 h-4" />}
             onClick={() => showUpgradeModal()}
           >
             Upgrade Now
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           {dismissible && (
             <Button
-              isIconOnly
-              variant="light"
-              size="sm"
+              variant="ghost"
+              size="icon"
               onClick={() => setIsDismissed(true)}
             >
               <X className="w-4 h-4" />
@@ -135,12 +131,11 @@ export function UpgradeCTA() {
   return (
     <Button
       size="sm"
-      color="warning"
-      variant="flat"
-      className="font-bold"
-      startContent={<Sparkles className="w-3.5 h-3.5" />}
+      variant="secondary"
+      className="font-bold bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20"
       onClick={() => showUpgradeModal()}
     >
+      <Sparkles className="w-3.5 h-3.5 mr-2" />
       Upgrade
     </Button>
   );

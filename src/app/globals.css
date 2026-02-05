@@ -1,8 +1,17 @@
 @import "tailwindcss";
-@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: #65A30D;
+  /* Brand Colors */
+  --color-brand-green: #65A30D;
+  --color-brand-blue: #1E3A8A;
+  --color-brand-cyan: #0EA5E9;
+  --color-brand-amber: #F59E0B;
+
+  /* Primary Green Palette */
   --color-primary-50: #f7fee7;
   --color-primary-100: #ecfccb;
   --color-primary-200: #d9f99d;
@@ -14,20 +23,22 @@
   --color-primary-800: #365314;
   --color-primary-900: #1a2e05;
 
-  --color-secondary: #1E3A8A;
+  /* Secondary Blue Palette */
   --color-secondary-50: #eff6ff;
   --color-secondary-100: #dbeafe;
   --color-secondary-200: #bfdbfe;
   --color-secondary-300: #93c5fd;
   --color-secondary-400: #60a5fa;
   --color-secondary-500: #1E3A8A;
+  --color-secondary-600: #2563eb;
+  --color-secondary-700: #1d4ed8;
+  --color-secondary-800: #1e40af;
+  --color-secondary-900: #1e3a8a;
 
+  /* Status Colors */
   --color-success: #17c964;
   --color-warning: #f5a524;
   --color-danger: #f31260;
-
-  --color-dark-bg: #09090b;
-  --color-dark-card: #18181b;
 
   /* Typography - Dual font system */
   --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -36,27 +47,126 @@
   --radius-3xl: 24px;
 }
 
+/* ==================== SHADCN THEME VARIABLES ==================== */
 @layer base {
   :root {
-    --background: #fafafa;
-    --foreground: #09090b;
+    /* Radius */
+    --radius: 0.625rem;
+
+    /* Light Theme - Brand Matched */
+    --background: 0 0% 98%;
+    --foreground: 240 10% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+
+    /* Primary - Brand Green #65A30D */
+    --primary: 84 85% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Brand Blue #1E3A8A */
+    --secondary: 224 65% 33%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 84 85% 95%;
+    --accent-foreground: 84 85% 25%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 84 85% 35%;
+
+    /* Charts - Brand Colors */
+    --chart-1: 84 85% 35%;
+    --chart-2: 224 65% 33%;
+    --chart-3: 199 89% 48%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 84 81% 44%;
+
+    /* Sidebar */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 240 10% 4%;
+    --sidebar-primary: 84 85% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 84 85% 95%;
+    --sidebar-accent-foreground: 84 85% 25%;
+    --sidebar-border: 240 6% 90%;
+    --sidebar-ring: 84 85% 35%;
+
+    /* Legacy variables for existing components */
     --card-bg: #ffffff;
     --card-border: rgba(0, 0, 0, 0.08);
-    --muted-foreground: rgba(9, 9, 11, 0.5);
     --input-bg: rgba(0, 0, 0, 0.04);
     --input-border: rgba(0, 0, 0, 0.1);
     --input-focus: rgba(101, 163, 13, 0.2);
   }
 
   .dark {
-    --background: #09090b;
-    --foreground: #fafafa;
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 6% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 6% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary - Brand Green (stays vibrant in dark) */
+    --primary: 84 85% 35%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Secondary - Lighter Blue for dark mode */
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 84 50% 15%;
+    --accent-foreground: 84 85% 65%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 84 85% 45%;
+
+    /* Charts - Brighter for dark mode */
+    --chart-1: 84 85% 45%;
+    --chart-2: 217 91% 60%;
+    --chart-3: 199 89% 58%;
+    --chart-4: 38 92% 60%;
+    --chart-5: 84 81% 54%;
+
+    /* Sidebar */
+    --sidebar: 240 6% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 84 85% 45%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 84 50% 15%;
+    --sidebar-accent-foreground: 84 85% 65%;
+    --sidebar-border: 240 4% 16%;
+    --sidebar-ring: 84 85% 45%;
+
+    /* Legacy variables */
     --card-bg: #18181b;
     --card-border: rgba(255, 255, 255, 0.08);
-    --muted-foreground: rgba(250, 250, 250, 0.5);
     --input-bg: rgba(255, 255, 255, 0.06);
     --input-border: rgba(255, 255, 255, 0.1);
     --input-focus: rgba(101, 163, 13, 0.3);
+  }
+
+  * {
+    @apply border-border outline-ring/50;
   }
 
   html {
@@ -64,9 +174,7 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    @apply min-h-screen overflow-x-hidden antialiased transition-colors duration-300;
+    @apply bg-background text-foreground min-h-screen overflow-x-hidden antialiased transition-colors duration-300;
   }
 
   /* Headings use Montserrat for display typography */
@@ -97,6 +205,48 @@
   h6 {
     @apply text-base md:text-lg font-semibold;
   }
+}
+
+/* ==================== SHADCN THEME INLINE MAPPINGS ==================== */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
 }
 
 /* ==================== COMPONENT CLASSES ==================== */
@@ -139,9 +289,7 @@
 
   /* Modern Card - consistent for both themes */
   .modern-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    @apply rounded-2xl shadow-sm transition-all duration-300;
+    @apply bg-card border border-border rounded-2xl shadow-sm transition-all duration-300;
   }
 
   .modern-card:hover {
@@ -150,366 +298,52 @@
 
   /* Glass effect */
   .glass {
-    @apply backdrop-blur-xl;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    @apply backdrop-blur-xl bg-white/70 border border-black/8;
   }
 
   .dark .glass {
-    background: rgba(24, 24, 27, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    @apply bg-zinc-900/80 border-white/8;
   }
 
   /* Form card styling */
   .form-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    @apply rounded-2xl p-6 md:p-8 shadow-sm;
+    @apply bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm;
   }
-}
-
-/* ==================== HEROUI OVERRIDES ==================== */
-
-/*
- * EXPLICIT THEME OVERRIDES
- * Using explicit light/dark selectors for guaranteed consistency
- */
-
-/* Modal styling - comprehensive fix */
-[data-slot="backdrop"] {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-.dark [data-slot="backdrop"] {
-  background: rgba(0, 0, 0, 0.8) !important;
-}
-
-/* Light theme - explicit input backgrounds */
-:root [data-slot="input-wrapper"],
-:root [data-slot="innerWrapper"] {
-  background-color: #f4f4f5 !important;
-  /* zinc-100 */
-  border-color: #e4e4e7 !important;
-  /* zinc-200 */
-}
-
-/* Dark theme - explicit input backgrounds */
-.dark [data-slot="input-wrapper"],
-.dark [data-slot="innerWrapper"] {
-  background-color: rgba(39, 39, 42, 0.5) !important;
-  /* zinc-800/50 */
-  border-color: #3f3f46 !important;
-  /* zinc-700 */
-}
-
-/* Light theme - select trigger */
-:root [data-slot="trigger"] {
-  background-color: #f4f4f5 !important;
-  border-color: #e4e4e7 !important;
-}
-
-/* Dark theme - select trigger */
-.dark [data-slot="trigger"] {
-  background-color: rgba(39, 39, 42, 0.5) !important;
-  border-color: #3f3f46 !important;
-}
-
-/* Light theme - listbox/dropdown */
-:root [data-slot="listbox"],
-:root [data-slot="listboxWrapper"],
-:root [role="listbox"] {
-  background-color: #ffffff !important;
-  border-color: #e4e4e7 !important;
-}
-
-/* Dark theme - listbox/dropdown */
-.dark [data-slot="listbox"],
-.dark [data-slot="listboxWrapper"],
-.dark [role="listbox"] {
-  background-color: #18181b !important;
-  border-color: #3f3f46 !important;
-}
-
-/* Light theme - popover content */
-:root [data-slot="content"][class*="popover"],
-:root [role="dialog"]:not([class*="modal"]) {
-  background-color: #ffffff !important;
-  border-color: #e4e4e7 !important;
-}
-
-/* Dark theme - popover content */
-.dark [data-slot="content"][class*="popover"],
-.dark [role="dialog"]:not([class*="modal"]) {
-  background-color: #18181b !important;
-  border-color: #3f3f46 !important;
-}
-
-/* Light theme - cards */
-:root .bg-content1,
-:root [data-slot="base"].bg-content1 {
-  background-color: #ffffff !important;
-}
-
-/* Dark theme - cards */
-.dark .bg-content1,
-.dark [data-slot="base"].bg-content1 {
-  background-color: #18181b !important;
-}
-
-/* Tooltip styling - HeroUI default style */
-[role="tooltip"],
-[data-slot="content"][class*="tooltip"] {
-  background-color: #18181b !important;
-  color: #fafafa !important;
-  border: none !important;
-  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1) !important;
-  font-weight: 500;
-  font-family: var(--font-sans);
-  border-radius: 8px !important;
-  padding: 6px 10px !important;
-  font-size: 12px !important;
-}
-
-/* Tooltip styling - dark mode */
-.dark [role="tooltip"],
-.dark [data-slot="content"][class*="tooltip"] {
-  background-color: #fafafa !important;
-  color: #18181b !important;
-  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2) !important;
-}
-
-[data-slot="base"].bg-content1 {
-  background-color: var(--card-bg) !important;
-  border: 1px solid var(--card-border) !important;
-}
-
-/* Modal content wrapper - CRITICAL: Force solid backgrounds */
-div[role="dialog"],
-[data-slot="base"][class*="modal"],
-section[role="dialog"] {
-  background-color: #ffffff !important;
-  border-radius: 16px !important;
-  border: 1px solid #e4e4e7 !important;
-}
-
-.dark div[role="dialog"],
-.dark [data-slot="base"][class*="modal"],
-.dark section[role="dialog"] {
-  background-color: #18181b !important;
-  border: 1px solid #3f3f46 !important;
-}
-
-/* Modal body and content areas */
-[data-slot="body"],
-[data-slot="header"],
-[data-slot="footer"] {
-  background-color: transparent !important;
-}
-
-/* Card backgrounds - ensure solid */
-.bg-content1,
-[data-slot="base"].bg-content1,
-[class*="Card"][class*="bg-content1"] {
-  background-color: #ffffff !important;
-}
-
-.dark .bg-content1,
-.dark [data-slot="base"].bg-content1,
-.dark [class*="Card"][class*="bg-content1"] {
-  background-color: #18181b !important;
-}
-
-/* Input styling - Light Theme */
-[data-slot="input-wrapper"],
-[data-slot="innerWrapper"],
-[data-slot="base"]>div[class*="bg-default"] {
-  background-color: var(--input-bg) !important;
-  border: 1px solid var(--input-border) !important;
-  border-radius: 12px !important;
-  transition: all 0.2s ease !important;
-}
-
-[data-slot="input-wrapper"]:hover,
-[data-slot="innerWrapper"]:hover {
-  border-color: var(--color-primary) !important;
-}
-
-[data-slot="input-wrapper"]:focus-within,
-[data-slot="innerWrapper"]:focus-within {
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px var(--input-focus) !important;
-}
-
-/* Input text color */
-[data-slot="input"] {
-  color: var(--foreground) !important;
-}
-
-[data-slot="input"]::placeholder {
-  color: var(--muted-foreground) !important;
-}
-
-/* Labels styling */
-[data-slot="label"] {
-  color: var(--foreground) !important;
-  font-weight: 600 !important;
-  font-size: 0.8125rem !important;
-}
-
-[data-slot="description"] {
-  color: var(--muted-foreground) !important;
-}
-
-/* Select/Dropdown trigger */
-[data-slot="trigger"] {
-  background-color: var(--input-bg) !important;
-  border: 1px solid var(--input-border) !important;
-  border-radius: 12px !important;
-}
-
-[data-slot="trigger"]:hover {
-  border-color: var(--color-primary) !important;
-}
-
-[data-slot="trigger"][data-open="true"],
-[data-slot="trigger"]:focus {
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px var(--input-focus) !important;
-}
-
-/* Select value text */
-[data-slot="value"] {
-  color: var(--foreground) !important;
-}
-
-/* Dropdown listbox */
-[data-slot="listbox"] {
-  background-color: var(--card-bg) !important;
-  border: 1px solid var(--card-border) !important;
-  border-radius: 12px !important;
-}
-
-[data-slot="listboxWrapper"] {
-  background-color: var(--card-bg) !important;
-}
-
-/* Dropdown items */
-[role="option"] {
-  color: var(--foreground) !important;
-}
-
-[role="option"]:hover,
-[role="option"][data-hover="true"] {
-  background-color: var(--input-bg) !important;
-}
-
-[role="option"][data-selected="true"],
-[role="option"][aria-selected="true"] {
-  background-color: rgba(101, 163, 13, 0.15) !important;
-  color: var(--color-primary) !important;
-}
-
-/* Textarea styling */
-[data-slot="input"][data-slot="input"]:is(textarea) {
-  background-color: transparent !important;
-}
-
-/* Card overrides */
-.bg-content1 {
-  background-color: var(--card-bg) !important;
-}
-
-/* Table styling */
-[data-slot="wrapper"].bg-content1 {
-  background-color: var(--card-bg) !important;
-}
-
-[data-slot="th"] {
-  background-color: var(--input-bg) !important;
-  color: var(--muted-foreground) !important;
-}
-
-[data-slot="td"] {
-  color: var(--foreground) !important;
-  border-color: var(--card-border) !important;
-}
-
-[data-slot="tr"]:hover {
-  background-color: var(--input-bg) !important;
-}
-
-/* Chip styling */
-[data-slot="base"].bg-default {
-  background-color: var(--input-bg) !important;
-  color: var(--foreground) !important;
-}
-
-/* Switch styling */
-[data-slot="wrapper"][data-selected="false"] {
-  background-color: var(--input-bg) !important;
-  border: 1px solid var(--input-border) !important;
-}
-
-/* Tab styling */
-[data-slot="tabList"] {
-  background-color: transparent !important;
-}
-
-[data-slot="tab"] {
-  color: var(--muted-foreground) !important;
-}
-
-[data-slot="tab"][data-selected="true"] {
-  color: var(--color-primary) !important;
-}
-
-[data-slot="cursor"] {
-  background-color: var(--color-primary) !important;
-}
-
-/* Progress bar */
-[data-slot="track"] {
-  background-color: var(--input-bg) !important;
-}
-
-/* Spinner */
-[data-slot="circle1"],
-[data-slot="circle2"] {
-  border-color: var(--color-primary) !important;
 }
 
 /* ==================== AG GRID THEMING ==================== */
 .ag-theme-quartz {
-  --ag-background-color: var(--card-bg) !important;
-  --ag-foreground-color: var(--foreground) !important;
-  --ag-border-color: var(--card-border) !important;
-  --ag-header-background-color: var(--input-bg) !important;
-  --ag-header-foreground-color: var(--muted-foreground) !important;
+  --ag-background-color: hsl(var(--card)) !important;
+  --ag-foreground-color: hsl(var(--foreground)) !important;
+  --ag-border-color: hsl(var(--border)) !important;
+  --ag-header-background-color: hsl(var(--muted)) !important;
+  --ag-header-foreground-color: hsl(var(--muted-foreground)) !important;
   --ag-odd-row-background-color: transparent !important;
-  --ag-row-hover-color: var(--input-bg) !important;
-  --ag-selected-row-background-color: rgba(101, 163, 13, 0.1) !important;
+  --ag-row-hover-color: hsl(var(--muted)) !important;
+  --ag-selected-row-background-color: hsl(var(--accent)) !important;
 }
 
-.dark .ag-theme-quartz {
-  --ag-background-color: #18181b !important;
-  --ag-foreground-color: #fafafa !important;
-  --ag-border-color: rgba(255, 255, 255, 0.08) !important;
-  --ag-header-background-color: rgba(255, 255, 255, 0.02) !important;
-  --ag-header-foreground-color: rgba(255, 255, 255, 0.5) !important;
-  --ag-row-hover-color: rgba(255, 255, 255, 0.02) !important;
-}
-
-/* AG Grid cell styling */
 .ag-cell {
-  color: var(--foreground) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .ag-header-cell-text {
-  color: var(--muted-foreground) !important;
+  color: hsl(var(--muted-foreground)) !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
+}
+
+/* AG Grid overlay - ensure clickable buttons */
+.ag-overlay,
+.ag-overlay-wrapper,
+.ag-overlay-no-rows-wrapper,
+.ag-overlay-loading-wrapper {
+  pointer-events: auto !important;
+}
+
+.ag-overlay-no-rows-center {
+  pointer-events: auto !important;
 }
 
 /* ==================== SCROLLBAR ==================== */
@@ -523,12 +357,12 @@ section[role="dialog"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(101, 163, 13, 0.5);
+  background: hsl(var(--primary) / 0.5);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(101, 163, 13, 0.7);
+  background: hsl(var(--primary) / 0.7);
 }
 
 /* ==================== UTILITY CLASSES ==================== */
@@ -556,164 +390,13 @@ section[role="dialog"] {
   }
 }
 
-/* Helper Classes for Theme Visibility */
-.text-foreground {
-  color: var(--foreground) !important;
-}
-
-.bg-background {
-  background-color: var(--background) !important;
-}
-
-.bg-card {
-  background-color: #ffffff !important;
-}
-
-.dark .bg-card {
-  background-color: #18181b !important;
-}
-
-/* Theme-aware card utility */
-.theme-card {
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.dark .theme-card {
-  background-color: #18181b;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Theme-aware table wrapper */
-.theme-table-wrapper {
-  background-color: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.dark .theme-table-wrapper {
-  background-color: #18181b !important;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* HeroUI Table - Force proper theme backgrounds */
-[data-slot="wrapper"],
-[data-slot="base"],
-table,
-.table-wrapper,
-div[class*="Table"] > div {
-  background-color: #ffffff !important;
-}
-
-.dark [data-slot="wrapper"],
-.dark [data-slot="base"],
-.dark table,
-.dark .table-wrapper,
-.dark div[class*="Table"] > div {
-  background-color: #18181b !important;
-}
-
-/* HeroUI Table header */
-thead,
-[data-slot="thead"],
-th {
-  background-color: rgba(0, 0, 0, 0.02) !important;
-}
-
-.dark thead,
-.dark [data-slot="thead"],
-.dark th {
-  background-color: rgba(255, 255, 255, 0.02) !important;
-}
-
-/* HeroUI Table body and rows */
-tbody,
-[data-slot="tbody"],
-tr {
-  background-color: transparent !important;
-}
-
-td {
-  background-color: transparent !important;
-}
-
-/* Theme-aware input */
-.theme-input {
-  background-color: #f4f4f5 !important;
-  border: 1px solid #e4e4e7 !important;
-}
-
-.dark .theme-input {
-  background-color: rgba(39, 39, 42, 0.5) !important;
-  border: 1px solid #3f3f46 !important;
-}
-
-/* Theme-aware modal */
-.theme-modal {
-  background-color: #ffffff !important;
-  border: 1px solid #e4e4e7 !important;
-}
-
-.dark .theme-modal {
-  background-color: #18181b !important;
-  border: 1px solid #3f3f46 !important;
-}
-
-/* Dashboard sidebar - ensure solid background */
-[data-sidebar="true"] {
-  background-color: #ffffff !important;
-}
-
-.dark [data-sidebar="true"],
-html.dark [data-sidebar="true"] {
-  background-color: #18181b !important;
-}
-
-/* AI Help Widget and floating cards - ensure solid backgrounds */
-.fixed[class*="shadow-2xl"],
-.fixed>div[class*="shadow-2xl"] {
-  background-color: #ffffff !important;
-}
-
-.dark .fixed[class*="shadow-2xl"],
-.dark .fixed>div[class*="shadow-2xl"] {
-  background-color: #18181b !important;
-}
-
-/* Cards within fixed position elements */
-.fixed [data-slot="base"],
-.fixed .card {
-  background-color: #ffffff !important;
-}
-
-.dark .fixed [data-slot="base"],
-.dark .fixed .card {
-  background-color: #18181b !important;
-}
-
-/* AI Help Widget - ensure solid background */
-[data-help-widget="true"] {
-  background-color: #ffffff !important;
-}
-
-.dark [data-help-widget="true"],
-html.dark [data-help-widget="true"] {
-  background-color: #18181b !important;
-}
-
+/* Theme-aware utilities */
 .text-muted {
-  color: rgba(9, 9, 11, 0.5) !important;
-}
-
-.dark .text-muted {
-  color: rgba(250, 250, 250, 0.5) !important;
+  @apply text-muted-foreground;
 }
 
 .border-soft {
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-.dark .border-soft {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  @apply border-border;
 }
 
 /* ==================== MOBILE OPTIMIZATIONS ==================== */
@@ -737,7 +420,6 @@ html.dark [data-help-widget="true"] {
 
 /* Touch-friendly minimum sizes */
 @media (max-width: 768px) {
-
   button,
   a,
   input[type="button"],
@@ -753,12 +435,11 @@ html.dark [data-help-widget="true"] {
   textarea {
     min-height: 48px;
     font-size: 16px;
-    /* Prevents iOS zoom on focus */
   }
 
   /* Better tap highlighting */
   * {
-    -webkit-tap-highlight-color: rgba(101, 163, 13, 0.1);
+    -webkit-tap-highlight-color: hsl(var(--primary) / 0.1);
   }
 
   /* Prevent text selection on interactive elements */
@@ -788,16 +469,38 @@ html.dark [data-help-widget="true"] {
 }
 
 .mobile-card-list-item {
-  background-color: var(--card-bg);
-  border: 1px solid var(--card-border);
-  @apply p-4 rounded-2xl;
+  @apply bg-card border border-border p-4 rounded-2xl;
+}
+
+/* ==================== SKELETON LOADERS ==================== */
+
+/* Premium shimmer animation for skeleton loaders */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--muted-foreground) / 0.08) 20%,
+    hsl(var(--muted-foreground) / 0.12) 50%,
+    hsl(var(--muted-foreground) / 0.08) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
 
 /* ==================== ACCESSIBILITY ==================== */
 
 /* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -811,13 +514,13 @@ html.dark [data-help-widget="true"] {
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
-    --card-border: rgba(0, 0, 0, 0.3);
-    --input-border: rgba(0, 0, 0, 0.3);
+    --border: 240 10% 70%;
+    --input: 240 10% 70%;
   }
 
   .dark {
-    --card-border: rgba(255, 255, 255, 0.3);
-    --input-border: rgba(255, 255, 255, 0.3);
+    --border: 240 10% 40%;
+    --input: 240 10% 40%;
   }
 }
 
@@ -865,8 +568,7 @@ html.dark [data-help-widget="true"] {
 
 /* Focus visible styles for keyboard navigation */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  @apply outline-2 outline-ring outline-offset-2;
 }
 
 /* Remove focus outline for mouse users */

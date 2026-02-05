@@ -1,12 +1,10 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import {
-    Button,
-    Card,
-    CardBody,
-    Input
-} from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -39,9 +37,9 @@ export default function OnboardingPage() {
 
     try {
       // In a real app, you would upload files to R2/S3 first
-      // For MVP, we'll simulate file URLs or use base64 if small, 
+      // For MVP, we'll simulate file URLs or use base64 if small,
       // but the API expects URLs. Let's simulate for now.
-      
+
       const response = await fetch('/api/onboarding', {
         method: 'POST',
         headers: {
@@ -72,7 +70,7 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 md:p-12 relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
-      
+
       <div className="w-full max-w-2xl relative z-10">
         <div className="flex flex-col items-center mb-10">
           <Logo size={48} />
@@ -80,8 +78,8 @@ export default function OnboardingPage() {
           <p className="text-foreground/50 font-medium">Complete your verification to access full enterprise features.</p>
         </div>
 
-        <Card className="modern-card p-6 md:p-10 border-none shadow-2xl bg-card" radius="lg">
-          <CardBody>
+        <Card className="modern-card p-6 md:p-10 border-none shadow-2xl bg-card rounded-lg">
+          <CardContent className="p-0">
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-4">
                 <div className="space-y-1">
@@ -90,12 +88,7 @@ export default function OnboardingPage() {
                     placeholder="27AAAAA0000A1Z5"
                     value={formData.gstNumber}
                     onChange={(e) => setFormData({...formData, gstNumber: e.target.value})}
-                    size="lg"
-                    radius="lg"
-                    classNames={{
-                      inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                      input: "text-sm font-bold"
-                    }}
+                    className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold rounded-lg"
                   />
                 </div>
 
@@ -103,9 +96,9 @@ export default function OnboardingPage() {
                   <div className="space-y-1">
                     <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Shop Front/Proof</label>
                     <div className="relative group">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
+                      <input
+                        type="file"
+                        accept="image/*"
                         required
                         onChange={(e) => handleFileChange(e, 'shopProof')}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -122,9 +115,9 @@ export default function OnboardingPage() {
                   <div className="space-y-1">
                     <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Identity Proof (Aadhar/PAN)</label>
                     <div className="relative group">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
+                      <input
+                        type="file"
+                        accept="image/*"
                         required
                         onChange={(e) => handleFileChange(e, 'idProof')}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -142,9 +135,9 @@ export default function OnboardingPage() {
                 <div className="space-y-1">
                   <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Business License (Optional)</label>
                   <div className="relative group">
-                    <input 
-                      type="file" 
-                      accept="image/*,.pdf" 
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
                       onChange={(e) => handleFileChange(e, 'businessLicense')}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
@@ -158,14 +151,12 @@ export default function OnboardingPage() {
               </div>
 
               <div className="pt-4">
-                <Button 
-                  color="primary" 
-                  size="lg"
+                <Button
                   type="submit"
-                  isLoading={isLoading}
-                  className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest" 
-                  radius="full"
+                  disabled={isLoading}
+                  className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest rounded-full"
                 >
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Submit for Verification
                 </Button>
                 <p className="text-center mt-6 text-[10px] font-black uppercase tracking-widest opacity-30">
@@ -173,7 +164,7 @@ export default function OnboardingPage() {
                 </p>
               </div>
             </form>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     </div>

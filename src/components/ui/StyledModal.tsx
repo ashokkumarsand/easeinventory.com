@@ -1,94 +1,119 @@
 'use client';
 
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  ModalProps,
-} from '@heroui/react';
-import { X } from 'lucide-react';
 import { ReactNode } from 'react';
+import { X, Loader2 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-interface StyledModalProps extends Omit<ModalProps, 'children'> {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  footer?: ReactNode;
+interface StyledModalProps {
+  /** Whether the modal is open */
+  isOpen: boolean;
+  /** Callback when modal should close */
   onClose: () => void;
+  /** Callback when open state changes */
+  onOpenChange?: (open: boolean) => void;
+  /** Modal title */
+  title: string;
+  /** Optional subtitle/description */
+  subtitle?: string;
+  /** Modal content */
+  children: ReactNode;
+  /** Optional footer content */
+  footer?: ReactNode;
+  /** Whether to show close button */
   showCloseButton?: boolean;
+  /** Modal size */
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full';
+  /** Additional class names for the content */
+  className?: string;
 }
+
+const sizeClasses = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
+  '3xl': 'max-w-3xl',
+  '4xl': 'max-w-4xl',
+  '5xl': 'max-w-5xl',
+  full: 'max-w-[95vw]',
+};
 
 /**
  * StyledModal
  * A consistent modal component with proper theming for light/dark modes
  */
 export default function StyledModal({
+  isOpen,
+  onClose,
+  onOpenChange,
   title,
   subtitle,
   children,
   footer,
-  onClose,
   showCloseButton = true,
   size = 'lg',
-  ...modalProps
+  className,
 }: StyledModalProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+    onOpenChange?.(open);
+  };
+
   return (
-    <Modal
-      size={size}
-      scrollBehavior="inside"
-      classNames={{
-        backdrop: 'bg-black/50 dark:bg-black/70 backdrop-blur-sm',
-        base: [
-          'theme-modal',
-          'rounded-2xl shadow-2xl',
-          'max-h-[90vh]',
-        ].join(' '),
-        header: 'border-b border-black/5 dark:border-white/10 px-6 py-4',
-        body: 'px-6 py-6',
-        footer: 'border-t border-black/5 dark:border-white/10 px-6 py-4',
-        closeButton: [
-          'top-4 right-4',
-          'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-          'rounded-lg transition-colors',
-        ].join(' '),
-      }}
-      onClose={onClose}
-      {...modalProps}
-    >
-      <ModalContent>
-        {(onCloseInternal) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-foreground">{title}</h2>
-                  {subtitle && (
-                    <p className="text-sm text-muted font-normal mt-1">{subtitle}</p>
-                  )}
-                </div>
-                {showCloseButton && (
-                  <Button
-                    isIconOnly
-                    variant="light"
-                    size="sm"
-                    className="text-muted hover:text-foreground"
-                    onPress={onCloseInternal}
-                  >
-                    <X size={18} />
-                  </Button>
-                )}
-              </div>
-            </ModalHeader>
-            <ModalBody>{children}</ModalBody>
-            {footer && <ModalFooter>{footer}</ModalFooter>}
-          </>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className={cn(
+          'rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden',
+          sizeClasses[size],
+          className
         )}
-      </ModalContent>
-    </Modal>
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader className="border-b border-border px-6 py-4 -mx-6 -mt-6 mb-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
+              {subtitle && (
+                <DialogDescription className="text-sm text-muted-foreground mt-1">
+                  {subtitle}
+                </DialogDescription>
+              )}
+            </div>
+            {showCloseButton && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+                onClick={onClose}
+              >
+                <X size={18} />
+                <span className="sr-only">Close</span>
+              </Button>
+            )}
+          </div>
+        </DialogHeader>
+
+        <div className="overflow-y-auto px-6 py-6 -mx-6">{children}</div>
+
+        {footer && (
+          <DialogFooter className="border-t border-border px-6 py-4 -mx-6 -mb-6 mt-0">
+            {footer}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -106,8 +131,8 @@ export function ModalSection({
   className?: string;
 }) {
   return (
-    <div className={`space-y-4 ${className}`}>
-      <h3 className="text-xs font-bold uppercase tracking-wider text-muted">
+    <div className={cn('space-y-4', className)}>
+      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
         {title}
       </h3>
       {children}
@@ -126,7 +151,7 @@ export function ModalActions({
   confirmLabel = 'Confirm',
   isLoading = false,
   isDisabled = false,
-  confirmColor = 'primary',
+  confirmVariant = 'default',
 }: {
   onCancel: () => void;
   onConfirm: () => void;
@@ -134,24 +159,20 @@ export function ModalActions({
   confirmLabel?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
-  confirmColor?: 'primary' | 'success' | 'warning' | 'danger';
+  confirmVariant?: 'default' | 'destructive' | 'secondary';
 }) {
   return (
     <div className="flex items-center gap-3 justify-end">
-      <Button
-        variant="flat"
-        onPress={onCancel}
-        className="font-semibold"
-      >
+      <Button variant="outline" onClick={onCancel} className="font-semibold">
         {cancelLabel}
       </Button>
       <Button
-        color={confirmColor}
-        onPress={onConfirm}
-        isLoading={isLoading}
-        isDisabled={isDisabled}
+        variant={confirmVariant}
+        onClick={onConfirm}
+        disabled={isLoading || isDisabled}
         className="font-semibold"
       >
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {confirmLabel}
       </Button>
     </div>

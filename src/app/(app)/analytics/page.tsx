@@ -12,7 +12,9 @@ import {
 import { usePlanFeatures } from '@/hooks/usePlanFeatures';
 import { usePermissions } from '@/hooks/usePermissions';
 import { ANALYTICS_WIDGETS, PlanType, PLAN_HIERARCHY } from '@/lib/plan-features';
-import { Card, CardBody, Chip, Skeleton } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart3, Lock, Sparkles } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -23,9 +25,9 @@ const RevenueChart = dynamic(
     ssr: false,
     loading: () => (
       <Card className="border border-foreground/5">
-        <CardBody className="p-6">
+        <CardContent className="p-6">
           <Skeleton className="h-[350px] rounded-xl" />
-        </CardBody>
+        </CardContent>
       </Card>
     ),
   }
@@ -37,9 +39,9 @@ const SalesByCategory = dynamic(
     ssr: false,
     loading: () => (
       <Card className="border border-foreground/5">
-        <CardBody className="p-6">
+        <CardContent className="p-6">
           <Skeleton className="h-[350px] rounded-xl" />
-        </CardBody>
+        </CardContent>
       </Card>
     ),
   }
@@ -65,15 +67,15 @@ function WidgetWrapper({
   if (!isAvailable && widgetInfo) {
     return (
       <Card className="border border-foreground/5 relative overflow-hidden">
-        <CardBody className="p-6">
+        <CardContent className="p-6">
           {/* Blurred preview */}
           <div className="opacity-30 blur-sm pointer-events-none">{children}</div>
 
           {/* Lock overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm" role="alert" aria-label={`${widgetInfo.name} requires ${widgetInfo.minPlan} plan`}>
             <div className="text-center p-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                <Lock className="w-5 h-5 text-primary" />
+                <Lock className="w-5 h-5 text-primary" aria-hidden="true" />
               </div>
               <p className="font-bold text-sm mb-1">{widgetInfo.name}</p>
               <p className="text-xs text-foreground/50 mb-3">
@@ -82,13 +84,14 @@ function WidgetWrapper({
               <button
                 onClick={onUpgradeClick}
                 className="text-xs font-bold text-primary hover:underline flex items-center gap-1 mx-auto"
+                aria-label={`Upgrade to ${widgetInfo.minPlan} plan to unlock ${widgetInfo.name}`}
               >
-                <Sparkles className="w-3 h-3" />
+                <Sparkles className="w-3 h-3" aria-hidden="true" />
                 Upgrade Now
               </button>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -103,9 +106,9 @@ export default function AnalyticsPage() {
   // Check if user has permission to view analytics
   if (!canViewAnalytics) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-        <div className="w-16 h-16 rounded-2xl bg-danger/10 flex items-center justify-center mb-4">
-          <Lock className="w-8 h-8 text-danger" />
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center" role="alert">
+        <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
+          <Lock className="w-8 h-8 text-destructive" aria-hidden="true" />
         </div>
         <h2 className="text-2xl font-bold mb-2">Access Restricted</h2>
         <p className="text-foreground/50 max-w-md">
@@ -117,6 +120,12 @@ export default function AnalyticsPage() {
 
   const handleUpgradeClick = () => showUpgradeModal();
 
+  const getBadgeVariant = (planType: string) => {
+    if (planType === 'ENTERPRISE') return 'default';
+    if (planType === 'BUSINESS') return 'secondary';
+    return 'outline';
+  };
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -124,7 +133,7 @@ export default function AnalyticsPage() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-primary" />
+              <BarChart3 className="w-5 h-5 text-primary" aria-hidden="true" />
             </div>
             <h1 className="text-2xl font-black tracking-tight">Analytics</h1>
           </div>
@@ -132,13 +141,14 @@ export default function AnalyticsPage() {
             Track your business performance and make data-driven decisions
           </p>
         </div>
-        <Chip
-          color={plan === 'ENTERPRISE' ? 'warning' : plan === 'BUSINESS' ? 'secondary' : 'default'}
-          variant="flat"
-          startContent={<Sparkles className="w-3 h-3" />}
+        <Badge
+          variant={getBadgeVariant(plan)}
+          className="flex items-center gap-1"
+          aria-label={`Current plan: ${plan}`}
         >
+          <Sparkles className="w-3 h-3" aria-hidden="true" />
           {plan} Plan
-        </Chip>
+        </Badge>
       </div>
 
       {/* Stats Overview - Available to all */}

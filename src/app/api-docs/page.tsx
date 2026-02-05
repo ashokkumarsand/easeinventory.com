@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight, Copy } from 'lucide-react';
 import Link from 'next/link';
@@ -102,15 +103,15 @@ export default function ApiDocsPage() {
 
               {/* Base URL */}
               <Card className="modern-card max-w-2xl mx-auto">
-                <CardBody className="p-6 flex items-center justify-between">
+                <CardContent className="p-6 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-black text-foreground/40 uppercase tracking-widest mb-2">Base URL</p>
                     <code className="text-lg font-mono text-secondary">https://api.easeinventory.com/v1</code>
                   </div>
-                  <Button isIconOnly variant="flat" className="text-foreground/40">
+                  <Button size="icon" variant="ghost" className="text-foreground/40">
                     <Copy size={20} />
                   </Button>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>
@@ -129,13 +130,13 @@ export default function ApiDocsPage() {
                   transition={{ delay: index * 0.08 }}
                 >
                   <Card className="modern-card h-full group hover:border-secondary/30 transition-all duration-500">
-                    <CardBody className="p-6 flex items-start gap-4">
+                    <CardContent className="p-6 flex items-start gap-4">
                       <div className="text-3xl">{feature.icon}</div>
                       <div>
                         <h3 className="font-black mb-1">{feature.title}</h3>
                         <p className="text-sm text-foreground/60 italic">{feature.description}</p>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -173,7 +174,7 @@ export default function ApiDocsPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card overflow-hidden">
-                    <CardBody className="p-0">
+                    <CardContent className="p-0">
                       <div className="p-6 border-b border-foreground/5 flex items-center gap-4">
                         <div className="text-3xl">{category.icon}</div>
                         <h3 className="text-xl font-black uppercase tracking-tight">{category.category}</h3>
@@ -189,7 +190,7 @@ export default function ApiDocsPage() {
                           </div>
                         ))}
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -212,10 +213,10 @@ export default function ApiDocsPage() {
             </motion.div>
 
             <Card className="modern-card max-w-4xl mx-auto overflow-hidden">
-              <CardBody className="p-0">
+              <CardContent className="p-0">
                 <div className="p-4 border-b border-foreground/5 flex items-center justify-between">
                   <span className="text-sm font-black">JavaScript / Node.js</span>
-                  <Button isIconOnly variant="flat" size="sm" className="text-foreground/40">
+                  <Button size="icon" variant="ghost" className="text-foreground/40 h-8 w-8">
                     <Copy size={16} />
                   </Button>
                 </div>
@@ -231,7 +232,7 @@ export default function ApiDocsPage() {
 const products = await response.json();
 console.log(products);`}</code>
                 </pre>
-              </CardBody>
+              </CardContent>
             </Card>
           </div>
         </section>
@@ -247,7 +248,7 @@ console.log(products);`}</code>
               viewport={{ once: true }}
             >
               <Card className="modern-card bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent border-secondary/20 overflow-hidden">
-                <CardBody className="p-12 lg:p-20 text-center relative">
+                <CardContent className="p-12 lg:p-20 text-center relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-[100px] pointer-events-none" />
                   <div className="relative z-10">
                     <div className="text-6xl mb-8">🔑</div>
@@ -258,16 +259,20 @@ console.log(products);`}</code>
                       Get your API keys from the dashboard and start building.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                      <Button as={Link} href="/register" color="secondary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-secondary/30 uppercase tracking-widest" radius="full">
-                        Get API Keys
-                        <ArrowRight size={20} />
+                      <Button asChild size="lg" className="font-black px-12 h-16 shadow-xl shadow-secondary/30 uppercase tracking-widest rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                        <Link href="/register">
+                          Get API Keys
+                          <ArrowRight size={20} className="ml-2" />
+                        </Link>
                       </Button>
-                      <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
-                        Contact Support
+                      <Button asChild variant="outline" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10 rounded-full">
+                        <Link href="/#contact">
+                          Contact Support
+                        </Link>
                       </Button>
                     </div>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>

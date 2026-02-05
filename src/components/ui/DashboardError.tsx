@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -27,18 +27,18 @@ export default function DashboardError({
     <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
       <div className="max-w-md w-full text-center space-y-6">
         {/* Error Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-danger/10 flex items-center justify-center">
-          <AlertTriangle className="w-8 h-8 text-danger" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
+          <AlertTriangle className="w-8 h-8 text-destructive" />
         </div>
 
         {/* Error Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-foreground">{title}</h2>
-          <p className="text-default-500">
+          <p className="text-muted-foreground">
             {error.message || 'An unexpected error occurred. Please try again.'}
           </p>
           {error.digest && (
-            <p className="text-xs text-default-400 font-mono">
+            <p className="text-xs text-muted-foreground font-mono">
               Error ID: {error.digest}
             </p>
           )}
@@ -47,29 +47,28 @@ export default function DashboardError({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
-            color="primary"
-            variant="solid"
-            startContent={<RefreshCw className="w-4 h-4" />}
             onClick={reset}
             className="font-semibold"
           >
+            <RefreshCw className="w-4 h-4 mr-2" />
             Try Again
           </Button>
           {showHomeButton && (
             <Button
-              as={Link}
-              href="/dashboard"
-              variant="flat"
-              startContent={<Home className="w-4 h-4" />}
+              variant="secondary"
+              asChild
               className="font-semibold"
             >
-              Back to Dashboard
+              <Link href="/dashboard">
+                <Home className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Link>
             </Button>
           )}
         </div>
 
         {/* Help Text */}
-        <p className="text-sm text-default-400">
+        <p className="text-sm text-muted-foreground">
           If this problem persists, please contact support.
         </p>
       </div>

@@ -1,17 +1,20 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-    Button,
-    Card,
-    CardBody,
-    DateRangePicker,
-    Input,
     Select,
+    SelectContent,
     SelectItem,
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Download,
     FileSearch,
+    Loader2,
     RefreshCw,
     Search,
     Shield,
@@ -162,23 +165,21 @@ export default function AuditTrailPage() {
                 </div>
                 <div className="flex items-center gap-3">
                     <Button
-                        variant="flat"
-                        color="default"
+                        variant="secondary"
                         className="font-bold rounded-2xl"
-                        startContent={<RefreshCw size={18} />}
                         onClick={() => fetchLogs()}
-                        isLoading={isLoading}
+                        disabled={isLoading}
                     >
+                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw size={18} className="mr-2" />}
                         Refresh
                     </Button>
                     <Button
-                        variant="flat"
-                        color="primary"
-                        className="font-bold rounded-2xl"
-                        startContent={<Download size={18} />}
+                        variant="secondary"
+                        className="font-bold rounded-2xl bg-primary/10 text-primary hover:bg-primary/20"
                         onClick={handleExport}
-                        isLoading={isExporting}
+                        disabled={isExporting}
                     >
+                        {isExporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Download size={18} className="mr-2" />}
                         Export CSV
                     </Button>
                 </div>
@@ -186,35 +187,35 @@ export default function AuditTrailPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="modern-card bg-primary text-white p-6" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card bg-primary text-white p-6 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 text-white">
                             Total Events
                         </p>
                         <h2 className="text-4xl font-black">{totalLogCount.toLocaleString()}</h2>
                         <p className="text-xs font-bold opacity-60">All time</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">
                             Actions Tracked
                         </p>
                         <h2 className="text-4xl font-black text-primary">{availableActions.length}</h2>
                         <p className="text-xs font-bold opacity-40">Unique types</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">
                             Active Users
                         </p>
                         <h2 className="text-4xl font-black text-secondary">{availableUsers.length}</h2>
                         <p className="text-xs font-bold opacity-40">With activity</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">
                             Current View
                         </p>
@@ -222,7 +223,7 @@ export default function AuditTrailPage() {
                         <p className="text-xs font-bold opacity-40">
                             {hasActiveFilters ? 'Filtered results' : 'This page'}
                         </p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             </div>
 
@@ -230,59 +231,68 @@ export default function AuditTrailPage() {
                 {/* Main Content */}
                 <div className="lg:col-span-8 space-y-6">
                     {/* Filters */}
-                    <Card className="modern-card p-6" radius="lg">
-                        <CardBody className="p-0 space-y-4">
+                    <Card className="modern-card p-6 rounded-lg">
+                        <CardContent className="p-0 space-y-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <FileSearch size={18} className="text-primary" />
                                 <h3 className="text-sm font-black uppercase tracking-widest">Filters</h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <Input
-                                    placeholder="Search logs..."
-                                    startContent={<Search size={16} className="opacity-30" />}
-                                    value={searchTerm}
-                                    onValueChange={setSearchTerm}
-                                    classNames={{ inputWrapper: 'bg-black/5 h-12 rounded-2xl' }}
-                                />
+                                <div className="relative">
+                                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30" />
+                                    <Input
+                                        placeholder="Search logs..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="bg-black/5 h-12 rounded-2xl pl-10"
+                                    />
+                                </div>
 
                                 <Select
-                                    placeholder="All actions"
-                                    selectedKeys={actionFilter ? [actionFilter] : []}
-                                    onSelectionChange={(keys) => setActionFilter(Array.from(keys)[0] as string || '')}
-                                    classNames={{ trigger: 'bg-black/5 h-12 rounded-2xl' }}
+                                    value={actionFilter || 'all'}
+                                    onValueChange={(value) => setActionFilter(value === 'all' ? '' : value)}
                                 >
-                                    {availableActions.map((action) => (
-                                        <SelectItem key={action}>
-                                            {action.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ')}
-                                        </SelectItem>
-                                    ))}
+                                    <SelectTrigger className="bg-black/5 h-12 rounded-2xl">
+                                        <SelectValue placeholder="All actions" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All actions</SelectItem>
+                                        {availableActions.map((action) => (
+                                            <SelectItem key={action} value={action}>
+                                                {action.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ')}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
                                 </Select>
 
                                 <Select
-                                    placeholder="All users"
-                                    selectedKeys={userFilter ? [userFilter] : []}
-                                    onSelectionChange={(keys) => setUserFilter(Array.from(keys)[0] as string || '')}
-                                    classNames={{ trigger: 'bg-black/5 h-12 rounded-2xl' }}
+                                    value={userFilter || 'all'}
+                                    onValueChange={(value) => setUserFilter(value === 'all' ? '' : value)}
                                 >
-                                    {availableUsers.map((user) => (
-                                        <SelectItem key={user.id}>
-                                            {user.name || user.email || 'Unknown'}
-                                        </SelectItem>
-                                    ))}
+                                    <SelectTrigger className="bg-black/5 h-12 rounded-2xl">
+                                        <SelectValue placeholder="All users" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All users</SelectItem>
+                                        {availableUsers.map((user) => (
+                                            <SelectItem key={user.id} value={user.id}>
+                                                {user.name || user.email || 'Unknown'}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
                                 </Select>
 
                                 <Button
-                                    variant="flat"
-                                    color="danger"
-                                    className="h-12 rounded-2xl font-bold"
+                                    variant="secondary"
+                                    className="h-12 rounded-2xl font-bold bg-destructive/10 text-destructive hover:bg-destructive/20"
                                     onClick={handleClearFilters}
-                                    isDisabled={!hasActiveFilters && !searchTerm}
+                                    disabled={!hasActiveFilters && !searchTerm}
                                 >
                                     Clear Filters
                                 </Button>
                             </div>
-                        </CardBody>
+                        </CardContent>
                     </Card>
 
                     {/* Log Table */}

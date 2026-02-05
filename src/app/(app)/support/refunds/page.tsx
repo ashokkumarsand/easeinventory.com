@@ -1,19 +1,12 @@
 'use client';
 
-import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Textarea
-} from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { Mail, Plus } from "lucide-react";
 import { useEffect, useState } from 'react';
 
@@ -68,100 +61,112 @@ export default function RefundRequestsClientPage() {
                     <h2 className="text-2xl font-black tracking-tight">Refund Inquiries</h2>
                     <p className="text-foreground/60 font-medium">Submit and track refund requests for your subscription or purchases</p>
                 </div>
-                <Button 
-                    color="primary" 
-                    className="font-black px-8 shadow-xl shadow-primary/20" 
-                    startContent={<Plus size={18} />}
-                    onPress={() => setShowCreate(true)}
+                <Button
+                    variant="default"
+                    className="font-black px-8 shadow-xl shadow-primary/20"
+                    onClick={() => setShowCreate(true)}
                 >
+                    <Plus size={18} />
                     New Inquiry
                 </Button>
             </div>
 
             {showCreate && (
-                <Card className="modern-card border-none shadow-2xl bg-danger/5">
-                    <CardBody className="p-8 space-y-6">
+                <Card className="modern-card border-none shadow-2xl bg-destructive/5">
+                    <CardContent className="p-8 space-y-6">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-xl font-black text-danger">New Refund Request</h3>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Input 
-                                label="Refund Amount" 
-                                placeholder="e.g. 5000" 
-                                type="number"
-                                value={newRefund.amount}
-                                onValueChange={(val) => setNewRefund({...newRefund, amount: val})}
-                                labelPlacement="outside"
-                                size="lg"
-                                radius="lg"
-                                startContent={<span className="text-sm">₹</span>}
-                            />
-                            <Input 
-                                label="Invoice Number (Optional)" 
-                                placeholder="INV-2024-001" 
-                                value={newRefund.invoiceId}
-                                onValueChange={(val) => setNewRefund({...newRefund, invoiceId: val})}
-                                labelPlacement="outside"
-                                size="lg"
-                                radius="lg"
-                            />
+                            <h3 className="text-xl font-black text-destructive">New Refund Request</h3>
                         </div>
 
-                        <Textarea 
-                            label="Reason for Refund" 
-                            placeholder="Please explain the reason for your refund request..."
-                            value={newRefund.reason}
-                            onValueChange={(val) => setNewRefund({...newRefund, reason: val})}
-                            labelPlacement="outside"
-                            size="lg"
-                            radius="lg"
-                            minRows={4}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="refund-amount">Refund Amount</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₹</span>
+                                    <Input
+                                        id="refund-amount"
+                                        placeholder="e.g. 5000"
+                                        type="number"
+                                        value={newRefund.amount}
+                                        onChange={(e) => setNewRefund({...newRefund, amount: e.target.value})}
+                                        className="h-12 rounded-lg pl-8"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="invoice-id">Invoice Number (Optional)</Label>
+                                <Input
+                                    id="invoice-id"
+                                    placeholder="INV-2024-001"
+                                    value={newRefund.invoiceId}
+                                    onChange={(e) => setNewRefund({...newRefund, invoiceId: e.target.value})}
+                                    className="h-12 rounded-lg"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="refund-reason">Reason for Refund</Label>
+                            <Textarea
+                                id="refund-reason"
+                                placeholder="Please explain the reason for your refund request..."
+                                value={newRefund.reason}
+                                onChange={(e) => setNewRefund({...newRefund, reason: e.target.value})}
+                                className="rounded-lg min-h-[120px]"
+                            />
+                        </div>
 
                         <div className="flex justify-end gap-3 mt-4">
-                            <Button variant="flat" onPress={() => setShowCreate(false)}>Cancel</Button>
-                            <Button color="danger" className="font-black px-10" onPress={handleCreate}>
+                            <Button variant="secondary" onClick={() => setShowCreate(false)}>Cancel</Button>
+                            <Button variant="destructive" className="font-black px-10" onClick={handleCreate}>
                                 Submit Inquiry
                             </Button>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             )}
 
-            <Table aria-label="Refund history">
+            <Table>
                 <TableHeader>
-                    <TableColumn>REQUEST ID</TableColumn>
-                    <TableColumn>AMOUNT</TableColumn>
-                    <TableColumn>STATUS</TableColumn>
-                    <TableColumn>SUBMITTED</TableColumn>
-                    <TableColumn align="center">ACTIONS</TableColumn>
+                    <TableRow>
+                        <TableHead>REQUEST ID</TableHead>
+                        <TableHead>AMOUNT</TableHead>
+                        <TableHead>STATUS</TableHead>
+                        <TableHead>SUBMITTED</TableHead>
+                        <TableHead className="text-center">ACTIONS</TableHead>
+                    </TableRow>
                 </TableHeader>
-                <TableBody 
-                    emptyContent={isLoading ? "Loading..." : "No requests yet."}
-                    items={refunds}
-                >
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            <TableCell><span className="font-bold text-xs opacity-40 uppercase tracking-tighter">#{item.id.slice(-6)}</span></TableCell>
-                            <TableCell><span className="font-black text-danger">₹{parseFloat(item.amount).toLocaleString()}</span></TableCell>
-                            <TableCell>
-                                <Chip 
-                                    color={item.status === 'COMPLETED' ? 'success' : item.status === 'REJECTED' ? 'danger' : 'warning'} 
-                                    size="sm" 
-                                    variant="flat"
-                                    className="font-bold uppercase text-[10px]"
-                                >
-                                    {item.status}
-                                </Chip>
-                            </TableCell>
-                            <TableCell><span className="text-sm opacity-60">{new Date(item.createdAt).toLocaleDateString()}</span></TableCell>
-                            <TableCell>
-                                <div className="flex justify-center">
-                                    <Button size="sm" variant="flat" startContent={<Mail size={14} />}>View Responses</Button>
-                                </div>
+                <TableBody>
+                    {refunds.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                {isLoading ? "Loading..." : "No requests yet."}
                             </TableCell>
                         </TableRow>
+                    ) : (
+                        refunds.map((item) => (
+                            <TableRow key={item.id}>
+                                <TableCell><span className="font-bold text-xs opacity-40 uppercase tracking-tighter">#{item.id.slice(-6)}</span></TableCell>
+                                <TableCell><span className="font-black text-destructive">₹{parseFloat(item.amount).toLocaleString()}</span></TableCell>
+                                <TableCell>
+                                    <Badge
+                                        variant={item.status === 'COMPLETED' ? 'default' : item.status === 'REJECTED' ? 'destructive' : 'secondary'}
+                                        className="font-bold uppercase text-[10px]"
+                                    >
+                                        {item.status}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell><span className="text-sm opacity-60">{new Date(item.createdAt).toLocaleDateString()}</span></TableCell>
+                                <TableCell>
+                                    <div className="flex justify-center">
+                                        <Button size="sm" variant="secondary">
+                                            <Mail size={14} />
+                                            View Responses
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
                     )}
                 </TableBody>
             </Table>

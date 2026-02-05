@@ -1,7 +1,7 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { LucideIcon, Package } from 'lucide-react';
 import React from 'react';
@@ -101,10 +101,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           className="mt-6"
         >
           <Button
-            color="primary"
-            radius="full"
-            size="lg"
-            className="font-bold px-8"
+            className="font-bold px-8 rounded-full"
             onClick={onAction}
           >
             {actionLabel}

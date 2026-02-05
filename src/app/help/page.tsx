@@ -1,7 +1,7 @@
 'use client';
 
 import Footer from '@/components/landing/Footer';
-import { Chip } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
 import {
     ArrowRight,
     BarChart3,
@@ -156,13 +156,13 @@ export default function HelpPage() {
           <div className="flex flex-wrap justify-center gap-4">
             {quickLinks.map((link) => (
               <Link key={link.label} href={link.href}>
-                <Chip
-                  startContent={<link.icon size={14} />}
-                  variant="flat"
-                  className="font-bold text-sm cursor-pointer hover:bg-primary/20 transition-colors px-4 py-2"
+                <Badge
+                  variant="secondary"
+                  className="font-bold text-sm cursor-pointer hover:bg-primary/20 transition-colors px-4 py-2 gap-2"
                 >
+                  <link.icon size={14} />
                   {link.label}
-                </Chip>
+                </Badge>
               </Link>
             ))}
           </div>

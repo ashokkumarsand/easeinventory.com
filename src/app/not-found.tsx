@@ -1,7 +1,8 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button, Input } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Home, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -73,23 +74,19 @@ export default function NotFound() {
           className="mb-8"
         >
           <div className="flex gap-2 max-w-md mx-auto">
-            <Input
-              placeholder="Search inventory, invoices..."
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              startContent={<Search size={18} className="text-foreground/30" />}
-              classNames={{
-                inputWrapper: "bg-foreground/5 border border-foreground/10 h-12 rounded-xl hover:border-primary/30 focus-within:border-primary transition-colors",
-                input: "font-medium",
-              }}
-            />
+            <div className="relative flex-1">
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30" />
+              <Input
+                placeholder="Search inventory, invoices..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="pl-10 h-12 bg-foreground/5 border-foreground/10 rounded-xl hover:border-primary/30 focus:border-primary font-medium"
+              />
+            </div>
             <Button
-              isIconOnly
-              color="primary"
-              size="lg"
-              radius="lg"
-              className="h-12 w-12 shrink-0"
+              size="icon"
+              className="h-12 w-12 shrink-0 rounded-lg"
               onClick={handleSearch}
             >
               <Search size={20} />
@@ -105,26 +102,25 @@ export default function NotFound() {
           className="flex flex-col sm:flex-row gap-3 justify-center mb-10"
         >
           <Button
-            as={Link}
-            href="/dashboard"
-            color="primary"
+            asChild
             size="lg"
-            radius="lg"
-            className="font-bold px-6"
-            startContent={<Home size={18} />}
+            className="font-bold px-6 rounded-lg"
           >
-            Go to Dashboard
+            <Link href="/dashboard">
+              <Home size={18} className="mr-2" />
+              Go to Dashboard
+            </Link>
           </Button>
           <Button
-            as={Link}
-            href="/"
-            variant="bordered"
+            asChild
+            variant="outline"
             size="lg"
-            radius="lg"
-            className="font-bold px-6 border-foreground/10"
-            startContent={<ArrowLeft size={18} />}
+            className="font-bold px-6 rounded-lg border-foreground/10"
           >
-            Back to Home
+            <Link href="/">
+              <ArrowLeft size={18} className="mr-2" />
+              Back to Home
+            </Link>
           </Button>
         </motion.div>
 

@@ -1,24 +1,17 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    useDisclosure
-} from '@heroui/react';
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import {
     ArrowRightLeft,
     Box,
@@ -95,13 +88,13 @@ export default function TransfersPage() {
         }
     };
 
-    const getStatusColor = (status: string) => {
+    const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
         switch (status) {
-            case 'COMPLETED': return 'success';
-            case 'IN_TRANSIT': return 'primary';
-            case 'CANCELLED': return 'danger';
-            case 'PENDING': return 'warning';
-            default: return 'default';
+            case 'COMPLETED': return 'default';
+            case 'IN_TRANSIT': return 'secondary';
+            case 'CANCELLED': return 'destructive';
+            case 'PENDING': return 'outline';
+            default: return 'secondary';
         }
     };
 
@@ -119,7 +112,8 @@ export default function TransfersPage() {
                     <p className="text-black/40 dark:text-white/40 font-bold ml-1">Move inventory between stores and regional warehouses.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button color="primary" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-primary/20" startContent={<Plus size={20} />} onClick={onOpen}>
+                    <Button className="font-black px-8 shadow-xl shadow-primary/20 rounded-full" size="lg" onClick={onOpen}>
+                        <Plus size={20} />
                         New Transfer
                     </Button>
                 </div>
@@ -127,8 +121,8 @@ export default function TransfersPage() {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="modern-card p-6" radius="lg">
-                    <CardBody className="flex flex-row items-center gap-4">
+                <Card className="modern-card p-6 rounded-lg">
+                    <CardContent className="flex flex-row items-center gap-4 p-0">
                         <div className="w-12 h-12 rounded-2xl bg-warning/10 flex items-center justify-center text-warning">
                             <Clock size={24} />
                         </div>
@@ -136,10 +130,10 @@ export default function TransfersPage() {
                             <p className="text-[10px] font-black uppercase opacity-40">Pending Approval</p>
                             <h2 className="text-2xl font-black">{transfers.filter(t => t.status === 'PENDING').length}</h2>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6" radius="lg">
-                    <CardBody className="flex flex-row items-center gap-4">
+                <Card className="modern-card p-6 rounded-lg">
+                    <CardContent className="flex flex-row items-center gap-4 p-0">
                         <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                             <Truck size={24} />
                         </div>
@@ -147,10 +141,10 @@ export default function TransfersPage() {
                             <p className="text-[10px] font-black uppercase opacity-40">In Transit</p>
                             <h2 className="text-2xl font-black">{transfers.filter(t => t.status === 'IN_TRANSIT').length}</h2>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6" radius="lg">
-                    <CardBody className="flex flex-row items-center gap-4">
+                <Card className="modern-card p-6 rounded-lg">
+                    <CardContent className="flex flex-row items-center gap-4 p-0">
                         <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center text-success">
                             <CheckCircle2 size={24} />
                         </div>
@@ -158,140 +152,133 @@ export default function TransfersPage() {
                             <p className="text-[10px] font-black uppercase opacity-40">Fulfilled</p>
                             <h2 className="text-2xl font-black">{transfers.filter(t => t.status === 'COMPLETED').length}</h2>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             </div>
 
             {/* Transfers Table */}
             <div className="space-y-6">
                 <div className="flex items-center gap-4 max-w-md">
-                    <Input 
-                        placeholder="Search transfers..." 
-                        labelPlacement="outside"
-                        startContent={<Search size={18} className="opacity-30" />}
-                        value={searchTerm}
-                        onValueChange={setSearchTerm}
-                        classNames={{ inputWrapper: "bg-black/5 h-12 rounded-2xl" }}
-                    />
+                    <div className="relative flex-1">
+                        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30" />
+                        <Input
+                            placeholder="Search transfers..."
+                            className="bg-black/5 h-12 rounded-2xl pl-10"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                 </div>
 
-                <Table 
-                    aria-label="Transfers Table"
-                    className="modern-card border-none"
-                    classNames={{
-                        wrapper: "p-0 modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
-                        th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
-                        td: "py-6 px-8 font-bold",
-                    }}
-                >
-                    <TableHeader>
-                        <TableColumn>REFERENCE</TableColumn>
-                        <TableColumn>MOVEMENT</TableColumn>
-                        <TableColumn>ITEMS</TableColumn>
-                        <TableColumn>STATUS</TableColumn>
-                        <TableColumn>INITIATED</TableColumn>
-                        <TableColumn align="center">ACTIONS</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {transfers.map((trf) => (
-                            <TableRow key={trf.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
-                                <TableCell>
-                                    <span className="font-black text-primary tracking-tight">{trf.transferNumber}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex flex-col items-end">
-                                            <span className="text-xs font-black">{trf.sourceLocation?.name}</span>
-                                            <span className="text-[8px] opacity-30 uppercase font-black tracking-widest leading-none">Source</span>
-                                        </div>
-                                        <ArrowRightLeft size={14} className="opacity-20" />
-                                        <div className="flex flex-col items-start">
-                                            <span className="text-xs font-black">{trf.destLocation?.name}</span>
-                                            <span className="text-[8px] opacity-30 uppercase font-black tracking-widest leading-none">Target</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip variant="flat" size="sm" className="font-black text-[10px]">
-                                        {trf.items.length} Product(s)
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip variant="flat" size="sm" color={getStatusColor(trf.status) as any} className="font-black text-[10px] uppercase">
-                                        {trf.status}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span className="text-xs font-black">{new Date(trf.createdAt).toLocaleDateString()}</span>
-                                        <span className="text-[10px] opacity-30 uppercase font-bold">{new Date(trf.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col items-center gap-2 justify-center">
-                                        {trf.status === 'PENDING' && (
-                                            <div className="flex items-center gap-2">
-                                                <Button size="sm" color="primary" radius="full" className="font-black text-[10px] px-4" onClick={() => handleAction(trf.id, 'IN_TRANSIT')}>Dispatch</Button>
-                                                <Button isIconOnly size="sm" variant="light" color="danger" radius="full" onClick={() => handleAction(trf.id, 'CANCELLED')}><Box className="rotate-45" size={14} /></Button>
+                <div className="modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-black/[0.02] dark:bg-white/[0.02]">
+                                <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">REFERENCE</th>
+                                <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">MOVEMENT</th>
+                                <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">ITEMS</th>
+                                <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">STATUS</th>
+                                <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">INITIATED</th>
+                                <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-center">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {transfers.map((trf) => (
+                                <tr key={trf.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                                    <td className="py-6 px-8 font-bold">
+                                        <span className="font-black text-primary tracking-tight">{trf.transferNumber}</span>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-xs font-black">{trf.sourceLocation?.name}</span>
+                                                <span className="text-[8px] opacity-30 uppercase font-black tracking-widest leading-none">Source</span>
                                             </div>
-                                        )}
-                                        {trf.status === 'IN_TRANSIT' && (
-                                            <div className="flex flex-col gap-2">
-                                                <Button size="sm" color="success" radius="full" className="font-black text-[10px] px-4 text-white" onClick={() => handleAction(trf.id, 'COMPLETED')}>Acknowledge Receipt</Button>
-                                                {!trf.ewayBillNumber && (
-                                                    <Button 
-                                                        size="sm" 
-                                                        variant="flat" 
-                                                        color="secondary" 
-                                                        radius="full" 
-                                                        className="font-black text-[9px] px-3 h-7"
-                                                        startContent={<Truck size={12} />}
-                                                        onClick={async () => {
-                                                            const res = await fetch('/api/compliance/gst', {
-                                                                method: 'POST',
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({ action: 'E_WAY_BILL', targetId: trf.id })
-                                                            });
-                                                            if (res.ok) fetchTransfers();
-                                                        }}
-                                                    >
-                                                        Generate EWB
-                                                    </Button>
-                                                )}
+                                            <ArrowRightLeft size={14} className="opacity-20" />
+                                            <div className="flex flex-col items-start">
+                                                <span className="text-xs font-black">{trf.destLocation?.name}</span>
+                                                <span className="text-[8px] opacity-30 uppercase font-black tracking-widest leading-none">Target</span>
                                             </div>
-                                        )}
-                                        {trf.ewayBillNumber && (
-                                            <Chip variant="dot" color="success" size="sm" className="font-black text-[8px] h-5">
-                                                EWB: {trf.ewayBillNumber}
-                                            </Chip>
-                                        )}
-                                        {trf.status === 'COMPLETED' && (
-                                            <CheckCircle2 size={18} className="text-success opacity-50" />
-                                        )}
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                        </div>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <Badge variant="secondary" className="font-black text-[10px]">
+                                            {trf.items.length} Product(s)
+                                        </Badge>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <Badge variant={getStatusVariant(trf.status)} className="font-black text-[10px] uppercase">
+                                            {trf.status}
+                                        </Badge>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-black">{new Date(trf.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-[10px] opacity-30 uppercase font-bold">{new Date(trf.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <div className="flex flex-col items-center gap-2 justify-center">
+                                            {trf.status === 'PENDING' && (
+                                                <div className="flex items-center gap-2">
+                                                    <Button size="sm" className="font-black text-[10px] px-4 rounded-full" onClick={() => handleAction(trf.id, 'IN_TRANSIT')}>Dispatch</Button>
+                                                    <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-destructive" onClick={() => handleAction(trf.id, 'CANCELLED')}><Box className="rotate-45" size={14} /></Button>
+                                                </div>
+                                            )}
+                                            {trf.status === 'IN_TRANSIT' && (
+                                                <div className="flex flex-col gap-2">
+                                                    <Button size="sm" className="font-black text-[10px] px-4 rounded-full bg-success hover:bg-success/90 text-white" onClick={() => handleAction(trf.id, 'COMPLETED')}>Acknowledge Receipt</Button>
+                                                    {!trf.ewayBillNumber && (
+                                                        <Button
+                                                            size="sm"
+                                                            variant="secondary"
+                                                            className="font-black text-[9px] px-3 h-7 rounded-full"
+                                                            onClick={async () => {
+                                                                const res = await fetch('/api/compliance/gst', {
+                                                                    method: 'POST',
+                                                                    headers: { 'Content-Type': 'application/json' },
+                                                                    body: JSON.stringify({ action: 'E_WAY_BILL', targetId: trf.id })
+                                                                });
+                                                                if (res.ok) fetchTransfers();
+                                                            }}
+                                                        >
+                                                            <Truck size={12} />
+                                                            Generate EWB
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {trf.ewayBillNumber && (
+                                                <Badge variant="outline" className="font-black text-[8px] h-5 bg-success/10 text-success border-success/20">
+                                                    EWB: {trf.ewayBillNumber}
+                                                </Badge>
+                                            )}
+                                            {trf.status === 'COMPLETED' && (
+                                                <CheckCircle2 size={18} className="text-success opacity-50" />
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Modal - Placeholder for Add Transfer (will implement full form if needed) */}
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader>Initiate Inventory Movement</ModalHeader>
-                            <ModalBody>
-                                <p className="text-sm opacity-50 font-bold">Transfer logic with multi-point verification coming soon.</p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button onPress={onClose}>Close</Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <Dialog open={isOpen} onOpenChange={onOpenChange}>
+                <DialogContent className="sm:max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle>Initiate Inventory Movement</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <p className="text-sm opacity-50 font-bold">Transfer logic with multi-point verification coming soon.</p>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => onOpenChange(false)}>Close</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

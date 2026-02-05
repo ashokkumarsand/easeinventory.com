@@ -1,16 +1,7 @@
 'use client';
 
-import {
-    Card,
-    CardBody,
-    Chip,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import {
     Award,
@@ -66,7 +57,7 @@ export default function AttendancePage() {
     const handlePunch = async () => {
         setIsLoading(true);
         const type = (currentAttendance && currentAttendance.checkIn && !currentAttendance.checkOut) ? 'OUT' : 'IN';
-        
+
         try {
             const response = await fetch('/api/hr/attendance', {
                 method: 'POST',
@@ -108,8 +99,8 @@ export default function AttendancePage() {
 
             <div className="grid lg:grid-cols-1 gap-8">
                 {/* Punching System Card */}
-                <Card className="modern-card bg-primary p-6 lg:p-14 shadow-2xl shadow-primary/20 text-white relative overflow-hidden" radius="lg">
-                    <CardBody className="p-0 relative z-10">
+                <Card className="bg-primary p-6 lg:p-14 shadow-2xl shadow-primary/20 text-white relative overflow-hidden rounded-lg">
+                    <CardContent className="p-0 relative z-10">
                         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
                             <div className="text-center md:text-left space-y-2">
                                 <p className="text-sm font-black uppercase tracking-[0.3em] opacity-60">System Time</p>
@@ -118,7 +109,7 @@ export default function AttendancePage() {
                                 </h2>
                                 <p className="text-xl font-bold opacity-80">{time.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                             </div>
-                            
+
                             <div className="flex flex-col items-center gap-8">
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
@@ -126,21 +117,21 @@ export default function AttendancePage() {
                                     onClick={handlePunch}
                                     disabled={isLoading || (currentAttendance?.checkIn && currentAttendance?.checkOut)}
                                     className={`w-40 h-40 rounded-full flex flex-col items-center justify-center gap-2 border-4 transition-all shadow-xl ${
-                                        isPunchedIn 
-                                        ? 'bg-danger/20 border-danger hover:bg-danger/30 shadow-danger/20' 
+                                        isPunchedIn
+                                        ? 'bg-destructive/20 border-destructive hover:bg-destructive/30 shadow-destructive/20'
                                         : 'bg-white/20 border-white hover:bg-white/30 shadow-white/20'
                                     } ${(currentAttendance?.checkIn && currentAttendance?.checkOut) ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                                 >
                                     <Fingerprint size={48} />
                                     <span className="text-xs font-black uppercase tracking-widest">
-                                        {isLoading ? 'Processing...' : 
+                                        {isLoading ? 'Processing...' :
                                          (currentAttendance?.checkIn && currentAttendance?.checkOut) ? 'Shift Ended' :
                                          isPunchedIn ? 'Punch Out' : 'Punch In'}
                                     </span>
                                 </motion.button>
-                                
+
                                 <div className="flex items-center gap-2 text-sm font-bold px-6 py-3 bg-black/20 rounded-full border border-white/10">
-                                    <MapPin size={16} className={location.lat ? "text-success" : "text-white/50"} />
+                                    <MapPin size={16} className={location.lat ? "text-green-400" : "text-white/50"} />
                                     {location.lat ? `Verified: ${location.lat.toFixed(4)}, ${location.lng?.toFixed(4)}` : "Acquiring Position..."}
                                 </div>
                             </div>
@@ -161,7 +152,7 @@ export default function AttendancePage() {
                                 </div>
                             ))}
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
 
                 {/* Recent History Table */}
@@ -171,50 +162,42 @@ export default function AttendancePage() {
                         <h3 className="text-xl font-black tracking-tight text-secondary">My Attendance Logs</h3>
                     </div>
 
-                    <Table 
-                        aria-label="Attendance History"
-                        className="modern-card border-none shadow-none"
-                        classNames={{
-                            wrapper: "p-0 modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden",
-                            th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
-                            td: "py-6 px-8 font-bold",
-                        }}
-                    >
-                        <TableHeader>
-                            <TableColumn>DATE</TableColumn>
-                            <TableColumn>PUNCH IN</TableColumn>
-                            <TableColumn>PUNCH OUT</TableColumn>
-                            <TableColumn>TOTAL HOURS</TableColumn>
-                            <TableColumn>STATUS</TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                            {attendances.length > 0 ? attendances.map((att: any) => (
-                                <TableRow key={att.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
-                                    <TableCell className="text-xs font-black opacity-40 italic">{new Date(att.date).toLocaleDateString()}</TableCell>
-                                    <TableCell>{att.checkIn ? new Date(att.checkIn).toLocaleTimeString() : '--'}</TableCell>
-                                    <TableCell>{att.checkOut ? new Date(att.checkOut).toLocaleTimeString() : '--'}</TableCell>
-                                    <TableCell>
-                                        {att.checkIn && att.checkOut ? 
-                                            `${Math.round((new Date(att.checkOut).getTime() - new Date(att.checkIn).getTime()) / (1000 * 60 * 60))}h ${Math.round(((new Date(att.checkOut).getTime() - new Date(att.checkIn).getTime()) / (1000 * 60)) % 60)}m` 
-                                            : '--'}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Chip variant="flat" size="sm" color={att.status === 'PRESENT' ? 'success' : 'warning'} className="font-black text-[10px] uppercase">
-                                            {att.status}
-                                        </Chip>
-                                    </TableCell>
-                                </TableRow>
-                            )) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="text-center py-10 opacity-30">No attendance logs found</TableCell>
-                                    <TableCell className="hidden">--</TableCell>
-                                    <TableCell className="hidden">--</TableCell>
-                                    <TableCell className="hidden">--</TableCell>
-                                    <TableCell className="hidden">--</TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                    <div className="bg-card border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-black/5 dark:border-white/10">
+                                    <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">DATE</th>
+                                    <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">PUNCH IN</th>
+                                    <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">PUNCH OUT</th>
+                                    <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">TOTAL HOURS</th>
+                                    <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {attendances.length > 0 ? attendances.map((att: any) => (
+                                    <tr key={att.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                                        <td className="py-6 px-8 font-bold text-xs font-black opacity-40 italic">{new Date(att.date).toLocaleDateString()}</td>
+                                        <td className="py-6 px-8 font-bold">{att.checkIn ? new Date(att.checkIn).toLocaleTimeString() : '--'}</td>
+                                        <td className="py-6 px-8 font-bold">{att.checkOut ? new Date(att.checkOut).toLocaleTimeString() : '--'}</td>
+                                        <td className="py-6 px-8 font-bold">
+                                            {att.checkIn && att.checkOut ?
+                                                `${Math.round((new Date(att.checkOut).getTime() - new Date(att.checkIn).getTime()) / (1000 * 60 * 60))}h ${Math.round(((new Date(att.checkOut).getTime() - new Date(att.checkIn).getTime()) / (1000 * 60)) % 60)}m`
+                                                : '--'}
+                                        </td>
+                                        <td className="py-6 px-8 font-bold">
+                                            <Badge variant={att.status === 'PRESENT' ? 'default' : 'secondary'} className="font-black text-[10px] uppercase">
+                                                {att.status}
+                                            </Badge>
+                                        </td>
+                                    </tr>
+                                )) : (
+                                    <tr>
+                                        <td colSpan={5} className="text-center py-10 opacity-30">No attendance logs found</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

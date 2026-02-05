@@ -1,6 +1,17 @@
 'use client';
 
-import { Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import { AlertTriangle, Calendar, ChevronDown, Clock, Package, Plus, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -60,17 +71,17 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
   };
 
   const getExpiryStatus = (daysToExpiry: number) => {
-    if (daysToExpiry < 0) return { color: 'danger', label: 'Expired', urgency: 'critical' };
-    if (daysToExpiry <= 30) return { color: 'danger', label: 'Expiring Soon', urgency: 'high' };
-    if (daysToExpiry <= 90) return { color: 'warning', label: 'Monitor', urgency: 'medium' };
-    return { color: 'success', label: 'Good', urgency: 'low' };
+    if (daysToExpiry < 0) return { color: 'destructive' as const, label: 'Expired', urgency: 'critical' };
+    if (daysToExpiry <= 30) return { color: 'destructive' as const, label: 'Expiring Soon', urgency: 'high' };
+    if (daysToExpiry <= 90) return { color: 'secondary' as const, label: 'Monitor', urgency: 'medium' };
+    return { color: 'default' as const, label: 'Good', urgency: 'low' };
   };
 
   const filteredBatches = batches
     .filter(batch => {
       const matchesSearch = batch.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         batch.batchNumber.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       if (filterExpiry === 'expiring') return matchesSearch && batch.daysToExpiry > 0 && batch.daysToExpiry <= 90;
       if (filterExpiry === 'expired') return matchesSearch && batch.daysToExpiry < 0;
       return matchesSearch;
@@ -94,12 +105,11 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
             <p className="text-xs text-foreground/40 font-medium">FIFO/FEFO inventory management</p>
           </div>
         </div>
-        <Button 
-          color="warning" 
-          className="font-black"
-          onPress={() => setShowAddModal(true)}
-          startContent={<Plus size={16} />}
+        <Button
+          className="font-black bg-warning text-warning-foreground hover:bg-warning/90"
+          onClick={() => setShowAddModal(true)}
         >
+          <Plus size={16} className="mr-2" />
           Add Batch
         </Button>
       </div>
@@ -115,30 +125,31 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
           <p className="text-2xl font-black text-warning">{stats.expiring}</p>
           <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider">Expiring Soon</p>
         </div>
-        <div className="p-4 bg-danger/5 border border-danger/10 rounded-xl text-center cursor-pointer hover:border-danger/30 transition-colors"
+        <div className="p-4 bg-destructive/5 border border-destructive/10 rounded-xl text-center cursor-pointer hover:border-destructive/30 transition-colors"
              onClick={() => setFilterExpiry(filterExpiry === 'expired' ? 'all' : 'expired')}>
-          <p className="text-2xl font-black text-danger">{stats.expired}</p>
+          <p className="text-2xl font-black text-destructive">{stats.expired}</p>
           <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider">Expired</p>
         </div>
       </div>
 
       {/* Search & Filters */}
       <div className="flex gap-3 mb-4">
-        <Input
-          placeholder="Search batches..."
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          startContent={<Search size={16} className="text-foreground/40" />}
-          classNames={{ inputWrapper: 'bg-foreground/5 h-10' }}
-          className="flex-1"
-        />
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+          <Input
+            placeholder="Search batches..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-foreground/5 h-10 pl-10"
+          />
+        </div>
         <Button
-          variant="flat"
+          variant="secondary"
           size="sm"
           className="font-bold"
-          endContent={<ChevronDown size={14} />}
         >
           {filterExpiry === 'all' ? 'All Batches' : filterExpiry === 'expiring' ? 'Expiring' : 'Expired'}
+          <ChevronDown size={14} className="ml-2" />
         </Button>
       </div>
 
@@ -162,9 +173,9 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
               <div
                 key={batch.id}
                 className={`p-4 rounded-xl border transition-colors ${
-                  batch.daysToExpiry < 0 
-                    ? 'bg-danger/5 border-danger/20' 
-                    : batch.daysToExpiry <= 30 
+                  batch.daysToExpiry < 0
+                    ? 'bg-destructive/5 border-destructive/20'
+                    : batch.daysToExpiry <= 30
                     ? 'bg-warning/5 border-warning/20'
                     : 'bg-foreground/[0.02] border-foreground/5'
                 }`}
@@ -173,20 +184,18 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
                   <div>
                     <h4 className="font-black text-sm">{batch.productName}</h4>
                     <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider">
-                      {batch.sku} • Batch: {batch.batchNumber}
+                      {batch.sku} - Batch: {batch.batchNumber}
                     </p>
                   </div>
-                  <Chip 
-                    color={status.color as 'danger' | 'warning' | 'success'}
-                    variant="flat"
-                    size="sm"
+                  <Badge
+                    variant={status.color}
                     className="font-black text-[10px] uppercase"
-                    startContent={batch.daysToExpiry <= 30 ? <AlertTriangle size={10} /> : null}
                   >
+                    {batch.daysToExpiry <= 30 && <AlertTriangle size={10} className="mr-1" />}
                     {status.label}
-                  </Chip>
+                  </Badge>
                 </div>
-                
+
                 <div className="flex items-center gap-6 text-xs">
                   <div className="flex items-center gap-1.5">
                     <Package size={12} className="text-foreground/40" />
@@ -197,19 +206,17 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
                     <span className="font-medium text-foreground/60">Exp: {batch.expiryDate}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Clock size={12} className={batch.daysToExpiry < 0 ? 'text-danger' : 'text-foreground/40'} />
-                    <span className={`font-bold ${batch.daysToExpiry < 0 ? 'text-danger' : ''}`}>
+                    <Clock size={12} className={batch.daysToExpiry < 0 ? 'text-destructive' : 'text-foreground/40'} />
+                    <span className={`font-bold ${batch.daysToExpiry < 0 ? 'text-destructive' : ''}`}>
                       {batch.daysToExpiry < 0 ? `${Math.abs(batch.daysToExpiry)} days ago` : `${batch.daysToExpiry} days left`}
                     </span>
                   </div>
                 </div>
 
                 {batch.daysToExpiry > 0 && batch.daysToExpiry <= 90 && (
-                  <Progress 
-                    value={Math.max(0, 100 - (batch.daysToExpiry / 90) * 100)} 
-                    color={batch.daysToExpiry <= 30 ? 'danger' : 'warning'}
-                    size="sm"
-                    className="mt-3"
+                  <Progress
+                    value={Math.max(0, 100 - (batch.daysToExpiry / 90) * 100)}
+                    className={`mt-3 h-1.5 ${batch.daysToExpiry <= 30 ? '[&>div]:bg-destructive' : '[&>div]:bg-warning'}`}
                   />
                 )}
               </div>
@@ -219,32 +226,50 @@ export default function BatchExpiryTracker({ className }: BatchExpiryTrackerProp
       )}
 
       {/* Add Batch Modal */}
-      <Modal isOpen={showAddModal} onOpenChange={setShowAddModal} radius="lg">
-        <ModalContent>
-          <ModalHeader>
-            <div className="flex items-center gap-3">
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <DialogContent className="rounded-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
               <Package size={20} className="text-warning" />
               <span className="font-black">Add New Batch</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Product</Label>
+              <Input placeholder="Search for product..." />
             </div>
-          </ModalHeader>
-          <ModalBody className="space-y-4">
-            <Input label="Product" placeholder="Search for product..." labelPlacement="outside" />
-            <Input label="Batch Number" placeholder="e.g., BD-2024-001" labelPlacement="outside" />
+            <div className="space-y-2">
+              <Label>Batch Number</Label>
+              <Input placeholder="e.g., BD-2024-001" />
+            </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Quantity" type="number" placeholder="0" labelPlacement="outside" />
-              <Input label="Location" placeholder="Main Store" labelPlacement="outside" />
+              <div className="space-y-2">
+                <Label>Quantity</Label>
+                <Input type="number" placeholder="0" />
+              </div>
+              <div className="space-y-2">
+                <Label>Location</Label>
+                <Input placeholder="Main Store" />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Manufacturing Date" type="date" labelPlacement="outside" />
-              <Input label="Expiry Date" type="date" labelPlacement="outside" />
+              <div className="space-y-2">
+                <Label>Manufacturing Date</Label>
+                <Input type="date" />
+              </div>
+              <div className="space-y-2">
+                <Label>Expiry Date</Label>
+                <Input type="date" />
+              </div>
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={() => setShowAddModal(false)}>Cancel</Button>
-            <Button color="warning" className="font-black">Add Batch</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setShowAddModal(false)}>Cancel</Button>
+            <Button className="font-black bg-warning text-warning-foreground hover:bg-warning/90">Add Batch</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

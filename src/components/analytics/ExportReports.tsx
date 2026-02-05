@@ -1,7 +1,16 @@
 'use client';
 
-import { Button, Card, CardBody, CardHeader, DateRangePicker, Select, SelectItem } from '@heroui/react';
-import { Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Download, FileSpreadsheet, FileText, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface ReportType {
@@ -44,8 +53,8 @@ const reportTypes: ReportType[] = [
 ];
 
 const formatIcons: Record<string, React.ReactNode> = {
-  pdf: <FileText className="w-4 h-4 text-danger" />,
-  csv: <FileSpreadsheet className="w-4 h-4 text-success" />,
+  pdf: <FileText className="w-4 h-4 text-destructive" />,
+  csv: <FileSpreadsheet className="w-4 h-4 text-green-500" />,
   xlsx: <FileSpreadsheet className="w-4 h-4 text-primary" />,
 };
 
@@ -57,6 +66,8 @@ export function ExportReports({ isLoading }: ExportReportsProps) {
   const [selectedReport, setSelectedReport] = useState<string>('inventory');
   const [selectedFormat, setSelectedFormat] = useState<string>('pdf');
   const [isExporting, setIsExporting] = useState(false);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
 
   const currentReport = reportTypes.find((r) => r.id === selectedReport);
 
@@ -81,37 +92,46 @@ export function ExportReports({ isLoading }: ExportReportsProps) {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="pt-0 space-y-4">
+      <CardContent className="pt-0 space-y-4">
         {/* Report Type Selection */}
         <div className="space-y-2">
           <label className="text-sm font-semibold">Report Type</label>
-          <Select
-            selectedKeys={[selectedReport]}
-            onSelectionChange={(keys) => setSelectedReport(Array.from(keys)[0] as string)}
-            classNames={{
-              trigger: 'bg-foreground/5 border-0 h-12',
-            }}
-          >
-            {reportTypes.map((report) => (
-              <SelectItem
-                key={report.id}
-                startContent={report.icon}
-                description={report.description}
-              >
-                {report.name}
-              </SelectItem>
-            ))}
+          <Select value={selectedReport} onValueChange={setSelectedReport}>
+            <SelectTrigger className="bg-foreground/5 border-0 h-12">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {reportTypes.map((report) => (
+                <SelectItem key={report.id} value={report.id}>
+                  <div className="flex items-center gap-2">
+                    {report.icon}
+                    <span>{report.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
         {/* Date Range */}
         <div className="space-y-2">
           <label className="text-sm font-semibold">Date Range</label>
-          <DateRangePicker
-            classNames={{
-              inputWrapper: 'bg-foreground/5 border-0',
-            }}
-          />
+          <div className="flex gap-2">
+            <Input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-foreground/5 border-0"
+              placeholder="Start date"
+            />
+            <Input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-foreground/5 border-0"
+              placeholder="End date"
+            />
+          </div>
         </div>
 
         {/* Format Selection */}
@@ -121,13 +141,12 @@ export function ExportReports({ isLoading }: ExportReportsProps) {
             {currentReport?.formats.map((format) => (
               <Button
                 key={format}
-                variant={selectedFormat === format ? 'solid' : 'bordered'}
-                color={selectedFormat === format ? 'primary' : 'default'}
+                variant={selectedFormat === format ? 'default' : 'outline'}
                 className="flex-1"
-                startContent={formatIcons[format]}
                 onClick={() => setSelectedFormat(format)}
               >
-                {format.toUpperCase()}
+                {formatIcons[format]}
+                <span className="ml-2">{format.toUpperCase()}</span>
               </Button>
             ))}
           </div>
@@ -135,20 +154,28 @@ export function ExportReports({ isLoading }: ExportReportsProps) {
 
         {/* Export Button */}
         <Button
-          color="primary"
           className="w-full font-bold"
           size="lg"
-          startContent={!isExporting && <Download className="w-4 h-4" />}
-          isLoading={isExporting}
           onClick={handleExport}
+          disabled={isExporting}
         >
-          {isExporting ? 'Generating Report...' : 'Download Report'}
+          {isExporting ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating Report...
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4 mr-2" />
+              Download Report
+            </>
+          )}
         </Button>
 
         <p className="text-xs text-foreground/40 text-center">
           Reports are generated in real-time and may take a few seconds
         </p>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

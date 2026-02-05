@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import Footer from '@/components/landing/Footer';
@@ -58,13 +59,11 @@ export default function PressPage() {
               </p>
 
               <Button
-                color="warning"
                 size="lg"
-                className="font-black px-10 h-16 shadow-xl shadow-warning/30 uppercase tracking-widest"
-                radius="full"
+                className="font-black px-10 h-16 shadow-xl shadow-warning/30 uppercase tracking-widest rounded-full bg-warning text-warning-foreground hover:bg-warning/90"
               >
                 Download Full Press Kit
-                <Download size={20} />
+                <Download size={20} className="ml-2" />
               </Button>
             </motion.div>
           </div>
@@ -94,11 +93,11 @@ export default function PressPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card group hover:scale-105 transition-transform duration-500">
-                    <CardBody className="p-8 text-center">
+                    <CardContent className="p-8 text-center">
                       <div className="text-4xl mb-4">{stat.icon}</div>
                       <div className="text-4xl font-black text-primary mb-2">{stat.value}</div>
                       <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -134,14 +133,14 @@ export default function PressPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card h-full group hover:border-secondary/30 transition-all duration-500 cursor-pointer">
-                    <CardBody className="p-8 text-center">
+                    <CardContent className="p-8 text-center">
                       <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
                         <Download size={28} className="text-secondary" />
                       </div>
                       <h3 className="font-black mb-2">{asset.name}</h3>
                       <p className="text-sm text-foreground/60 italic mb-2">{asset.description}</p>
                       <p className="text-xs text-foreground/40">{asset.format}</p>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -177,7 +176,7 @@ export default function PressPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card group hover:border-primary/30 transition-all duration-500 cursor-pointer">
-                    <CardBody className="p-8 flex items-center gap-6">
+                    <CardContent className="p-8 flex items-center gap-6">
                       <div className="text-sm font-black text-foreground/40 uppercase tracking-widest shrink-0 w-24">
                         {release.date}
                       </div>
@@ -187,7 +186,7 @@ export default function PressPage() {
                       <div className="bg-primary/10 px-3 py-1 rounded-full shrink-0">
                         <span className="text-xs font-black text-primary">{release.tag}</span>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -204,7 +203,7 @@ export default function PressPage() {
               viewport={{ once: true }}
             >
               <Card className="modern-card bg-gradient-to-br from-warning/10 via-warning/5 to-transparent border-warning/20 overflow-hidden">
-                <CardBody className="p-12 lg:p-20 text-center relative">
+                <CardContent className="p-12 lg:p-20 text-center relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-warning/10 rounded-full blur-[100px] pointer-events-none" />
                   <div className="relative z-10">
                     <div className="text-6xl mb-8">✉️</div>
@@ -218,7 +217,7 @@ export default function PressPage() {
                       press@easeinventory.com
                     </a>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>

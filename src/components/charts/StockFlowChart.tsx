@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, ButtonGroup } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { BarChart3, LineChart, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
@@ -186,49 +186,50 @@ export default function StockFlowChart({ className }: StockFlowChartProps) {
         
         <div className="flex items-center gap-4">
           {/* Chart Type Selector */}
-          <ButtonGroup size="sm" variant="flat">
-            <Button 
-              isIconOnly 
-              color={chartType === 'area' ? 'primary' : 'default'}
+          <div className="flex border rounded-lg">
+            <Button
+              size="icon"
+              variant={chartType === 'area' ? 'default' : 'ghost'}
               onClick={() => setChartType('area')}
               title="Area Chart"
+              className="rounded-r-none"
             >
               <TrendingUp size={16} />
             </Button>
-            <Button 
-              isIconOnly 
-              color={chartType === 'line' ? 'primary' : 'default'}
+            <Button
+              size="icon"
+              variant={chartType === 'line' ? 'default' : 'ghost'}
               onClick={() => setChartType('line')}
               title="Line Chart"
+              className="rounded-none border-x"
             >
               <LineChart size={16} />
             </Button>
-            <Button 
-              isIconOnly 
-              color={chartType === 'bar' ? 'primary' : 'default'}
+            <Button
+              size="icon"
+              variant={chartType === 'bar' ? 'default' : 'ghost'}
               onClick={() => setChartType('bar')}
               title="Bar Chart"
+              className="rounded-l-none"
             >
               <BarChart3 size={16} />
             </Button>
-          </ButtonGroup>
+          </div>
 
           {/* Time Range Selector */}
           <div className="flex gap-2">
-            <Button 
-              size="sm" 
-              variant={timeRange === 'weekly' ? 'flat' : 'light'} 
-              radius="full" 
-              className="font-bold"
+            <Button
+              size="sm"
+              variant={timeRange === 'weekly' ? 'secondary' : 'ghost'}
+              className="font-bold rounded-full"
               onClick={() => setTimeRange('weekly')}
             >
               Weekly
             </Button>
-            <Button 
-              size="sm" 
-              variant={timeRange === 'monthly' ? 'flat' : 'light'}
-              radius="full" 
-              className={`font-bold ${timeRange !== 'monthly' ? 'opacity-40' : ''}`}
+            <Button
+              size="sm"
+              variant={timeRange === 'monthly' ? 'secondary' : 'ghost'}
+              className={`font-bold rounded-full ${timeRange !== 'monthly' ? 'opacity-40' : ''}`}
               onClick={() => setTimeRange('monthly')}
             >
               Monthly

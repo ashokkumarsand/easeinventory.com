@@ -1,21 +1,23 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
     Select,
+    SelectContent,
     SelectItem,
-    Tab,
-    Tabs,
-    useDisclosure,
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import {
     Calendar,
     Check,
     Clock,
     FileText,
+    Loader2,
     Plus,
     RefreshCw,
     X,
@@ -49,7 +51,7 @@ interface LeaveBalance {
 }
 
 export default function LeaveManagementPage() {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
     const [balance, setBalance] = useState<LeaveBalance | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -180,26 +182,24 @@ export default function LeaveManagementPage() {
                 </div>
                 <div className="flex items-center gap-3">
                     <Button
-                        variant="flat"
-                        color="default"
+                        variant="secondary"
                         className="font-bold rounded-2xl"
-                        startContent={<RefreshCw size={18} />}
                         onClick={() => {
                             fetchLeaves();
                             fetchBalance();
                         }}
-                        isLoading={isLoading}
+                        disabled={isLoading}
                     >
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <RefreshCw size={18} />
                         Refresh
                     </Button>
                     <Button
-                        color="secondary"
-                        radius="full"
+                        className="font-black px-8 shadow-xl shadow-secondary/20 rounded-full"
                         size="lg"
-                        className="font-black px-8 shadow-xl shadow-secondary/20"
-                        startContent={<Plus size={20} />}
                         onClick={onOpen}
                     >
+                        <Plus size={20} />
                         Request Leave
                     </Button>
                 </div>
@@ -207,17 +207,17 @@ export default function LeaveManagementPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="modern-card bg-secondary text-white p-6" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card bg-secondary text-white p-6 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 text-white">
                             Total Requests
                         </p>
                         <h2 className="text-4xl font-black">{leaves.length}</h2>
                         <p className="text-xs font-bold opacity-60">This year</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0 flex items-center gap-4">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0 flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-warning/10 flex items-center justify-center">
                             <Clock size={24} className="text-warning" />
                         </div>
@@ -225,10 +225,10 @@ export default function LeaveManagementPage() {
                             <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Pending</p>
                             <h2 className="text-3xl font-black text-warning">{pendingCount}</h2>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0 flex items-center gap-4">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0 flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center">
                             <Check size={24} className="text-success" />
                         </div>
@@ -236,10 +236,10 @@ export default function LeaveManagementPage() {
                             <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Approved</p>
                             <h2 className="text-3xl font-black text-success">{approvedCount}</h2>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0 flex items-center gap-4">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0 flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-danger/10 flex items-center justify-center">
                             <X size={24} className="text-danger" />
                         </div>
@@ -247,7 +247,7 @@ export default function LeaveManagementPage() {
                             <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Rejected</p>
                             <h2 className="text-3xl font-black text-danger">{rejectedCount}</h2>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             </div>
 
@@ -259,48 +259,53 @@ export default function LeaveManagementPage() {
                             Leave Requests
                         </h3>
                         <Select
-                            size="sm"
-                            selectedKeys={[statusFilter]}
-                            onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string)}
-                            classNames={{ trigger: 'bg-black/5 h-10 min-w-[140px] rounded-xl' }}
+                            value={statusFilter}
+                            onValueChange={(value) => setStatusFilter(value)}
                         >
-                            <SelectItem key="ALL">All Status</SelectItem>
-                            <SelectItem key="PENDING">Pending</SelectItem>
-                            <SelectItem key="APPROVED">Approved</SelectItem>
-                            <SelectItem key="REJECTED">Rejected</SelectItem>
+                            <SelectTrigger className="bg-black/5 h-10 min-w-[140px] rounded-xl">
+                                <SelectValue placeholder="All Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL">All Status</SelectItem>
+                                <SelectItem value="PENDING">Pending</SelectItem>
+                                <SelectItem value="APPROVED">Approved</SelectItem>
+                                <SelectItem value="REJECTED">Rejected</SelectItem>
+                            </SelectContent>
                         </Select>
                     </div>
 
                     {isLoading ? (
                         <div className="text-center py-20 opacity-40">Loading...</div>
                     ) : filteredLeaves.length === 0 ? (
-                        <Card className="modern-card p-8" radius="lg">
-                            <CardBody className="p-0 text-center py-12">
+                        <Card className="modern-card p-8 rounded-lg">
+                            <CardContent className="p-0 text-center py-12">
                                 <Calendar size={48} className="mx-auto opacity-20 mb-4" />
                                 <p className="font-bold opacity-40">No leave requests found</p>
-                            </CardBody>
+                            </CardContent>
                         </Card>
                     ) : (
-                        <Tabs
-                            aria-label="Leave status tabs"
-                            color="secondary"
-                            variant="underlined"
-                            classNames={{
-                                tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
-                                cursor: 'w-full bg-secondary',
-                                tab: 'max-w-fit px-0 h-12',
-                                tabContent: 'group-data-[selected=true]:text-secondary font-black uppercase tracking-widest text-[10px]',
-                            }}
-                        >
-                            <Tab
-                                key="pending"
-                                title={
+                        <Tabs defaultValue="pending" className="w-full">
+                            <TabsList className="gap-6 w-full relative rounded-none p-0 border-b border-divider bg-transparent h-auto">
+                                <TabsTrigger
+                                    value="pending"
+                                    className="max-w-fit px-0 h-12 data-[state=active]:text-secondary font-black uppercase tracking-widest text-[10px] rounded-none data-[state=active]:border-b-2 data-[state=active]:border-secondary data-[state=active]:shadow-none"
+                                >
                                     <div className="flex items-center gap-2">
                                         <Clock size={14} />
                                         <span>Pending ({pendingCount})</span>
                                     </div>
-                                }
-                            >
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="history"
+                                    className="max-w-fit px-0 h-12 data-[state=active]:text-secondary font-black uppercase tracking-widest text-[10px] rounded-none data-[state=active]:border-b-2 data-[state=active]:border-secondary data-[state=active]:shadow-none"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <FileText size={14} />
+                                        <span>History ({approvedCount + rejectedCount})</span>
+                                    </div>
+                                </TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="pending">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
                                     {leaves
                                         .filter((l) => l.status === 'PENDING')
@@ -319,16 +324,8 @@ export default function LeaveManagementPage() {
                                         </p>
                                     )}
                                 </div>
-                            </Tab>
-                            <Tab
-                                key="history"
-                                title={
-                                    <div className="flex items-center gap-2">
-                                        <FileText size={14} />
-                                        <span>History ({approvedCount + rejectedCount})</span>
-                                    </div>
-                                }
-                            >
+                            </TabsContent>
+                            <TabsContent value="history">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
                                     {leaves
                                         .filter((l) => l.status !== 'PENDING')
@@ -346,7 +343,7 @@ export default function LeaveManagementPage() {
                                         </p>
                                     )}
                                 </div>
-                            </Tab>
+                            </TabsContent>
                         </Tabs>
                     )}
                 </div>
@@ -360,7 +357,7 @@ export default function LeaveManagementPage() {
             {/* Leave Request Modal */}
             <LeaveRequestModal
                 isOpen={isOpen}
-                onClose={onOpenChange}
+                onClose={onClose}
                 onSubmit={handleSubmitLeave}
                 balance={balance}
             />

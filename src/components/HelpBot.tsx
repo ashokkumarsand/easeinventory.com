@@ -1,9 +1,10 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button, Input, ScrollShadow } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, MessageCircle, Minimize2, Send, Sparkles, X } from 'lucide-react';
+import { ArrowRight, Loader2, MessageCircle, Minimize2, Send, Sparkles, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -154,19 +155,19 @@ const HelpBot: React.FC = () => {
             {/* Messages Area */}
             {!isMinimized && (
               <>
-                <ScrollShadow className="flex-1 p-4 overflow-y-auto">
+                <div className="flex-1 p-4 overflow-y-auto">
                   {messages.length === 0 ? (
                     <div className="space-y-4">
                       <div className="text-center py-6">
                         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                           <Sparkles size={28} className="text-primary" />
                         </div>
-                        <h3 className="font-black uppercase tracking-tight mb-1">Hi there! 👋</h3>
+                        <h3 className="font-black uppercase tracking-tight mb-1">Hi there!</h3>
                         <p className="text-sm text-foreground/50 font-medium">
                           How can I help you today?
                         </p>
                       </div>
-                      
+
                       {/* Quick Actions */}
                       <div className="space-y-2">
                         <p className="text-[10px] font-black uppercase tracking-wider text-foreground/30">Quick Actions</p>
@@ -216,7 +217,7 @@ const HelpBot: React.FC = () => {
                       <div ref={messagesEndRef} />
                     </div>
                   )}
-                </ScrollShadow>
+                </div>
 
                 {/* Input Area */}
                 <div className="p-4 border-t border-foreground/5">
@@ -226,27 +227,19 @@ const HelpBot: React.FC = () => {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyPress}
                       placeholder="Ask me anything..."
-                      radius="full"
-                      size="sm"
-                      classNames={{
-                        inputWrapper: 'bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 h-10',
-                        input: 'font-medium text-sm',
-                      }}
+                      className="h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-medium text-sm"
                     />
                     <Button
-                      isIconOnly
-                      color="primary"
-                      radius="full"
-                      size="sm"
+                      size="icon"
+                      className="h-10 w-10 rounded-full"
                       onClick={() => handleSend()}
-                      isLoading={isLoading}
-                      className="h-10 w-10"
+                      disabled={isLoading}
                     >
-                      <Send size={16} />
+                      {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                     </Button>
                   </div>
                   <p className="text-[9px] font-medium text-foreground/20 text-center mt-2">
-                    Powered by AI • Visit <a href="/help" className="text-primary hover:underline">/help</a> for more
+                    Powered by AI - Visit <a href="/help" className="text-primary hover:underline">/help</a> for more
                   </p>
                 </div>
               </>

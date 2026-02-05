@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -68,9 +68,9 @@ const HowItWorks: React.FC = () => {
                      </div>
                   </div>
                   
-                  <Card className="modern-card group relative overflow-visible h-full bg-card hover:border-primary/30 pt-8" radius="lg">
-                    <CardBody className="p-12 lg:p-16 flex flex-col items-center text-center">
-                  
+                  <Card className="modern-card group relative overflow-visible h-full bg-card hover:border-primary/30 pt-8 rounded-lg">
+                    <CardContent className="p-12 lg:p-16 flex flex-col items-center text-center">
+
                   <div className="mt-12 space-y-8">
                     <span className="text-8xl font-black text-foreground/[0.05] block leading-none tracking-tighter italic group-hover:text-primary/10 transition-colors">{step.number}</span>
                     <h3 className="text-3xl font-black group-hover:text-primary transition-colors text-foreground uppercase tracking-tight">{step.title}</h3>
@@ -78,7 +78,7 @@ const HowItWorks: React.FC = () => {
                   </div>
 
                   <div className="mt-12 w-12 h-1.5 bg-primary/20 rounded-full group-hover:w-full transition-all duration-1000" />
-                </CardBody>
+                </CardContent>
               </Card>
               </div>
             </motion.div>

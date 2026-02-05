@@ -1,8 +1,8 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { usePlan } from '@/contexts/PlanContext';
 import { FeatureKey, PLAN_FEATURES, PLAN_DETAILS } from '@/lib/plan-features';
-import { Button } from '@heroui/react';
 import { Lock, Sparkles } from 'lucide-react';
 import React from 'react';
 
@@ -57,11 +57,10 @@ export function FeatureGate({
             Available on <span className="font-bold text-primary">{minPlan.name}</span> plan
           </p>
           <Button
-            color="primary"
             className="font-bold"
-            startContent={<Sparkles className="w-4 h-4" />}
             onClick={() => showUpgradeModal(feature)}
           >
+            <Sparkles className="w-4 h-4 mr-2" />
             Upgrade Now
           </Button>
         </div>
@@ -137,11 +136,10 @@ export function FeatureGateButton({
     <Button
       className={className}
       onClick={handleClick}
-      isDisabled={disabled}
-      startContent={isLocked ? <Lock className="w-4 h-4" /> : undefined}
-      variant={isLocked ? 'bordered' : 'solid'}
-      color={isLocked ? 'default' : 'primary'}
+      disabled={disabled}
+      variant={isLocked ? 'outline' : 'default'}
     >
+      {isLocked && <Lock className="w-4 h-4 mr-2" />}
       {children}
     </Button>
   );

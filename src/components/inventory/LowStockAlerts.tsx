@@ -1,6 +1,15 @@
 'use client';
 
-import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Switch } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 import { AlertTriangle, Bell, BellOff, Package, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -55,9 +64,9 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
 
   const getStockLevel = (current: number, min: number) => {
     const percentage = (current / min) * 100;
-    if (percentage <= 25) return { color: 'danger', label: 'Critical' };
-    if (percentage <= 50) return { color: 'warning', label: 'Low' };
-    return { color: 'primary', label: 'Moderate' };
+    if (percentage <= 25) return { colorClass: 'bg-destructive/10 text-destructive', label: 'Critical' };
+    if (percentage <= 50) return { colorClass: 'bg-yellow-500/10 text-yellow-600', label: 'Low' };
+    return { colorClass: 'bg-primary/10 text-primary', label: 'Moderate' };
   };
 
   return (
@@ -65,30 +74,28 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-1.5 h-6 bg-danger rounded-full" />
+          <div className="w-1.5 h-6 bg-destructive rounded-full" />
           <div>
             <h3 className="text-lg font-black tracking-tight">Low Stock Alerts</h3>
             <p className="text-xs text-foreground/40 font-medium">{items.length} items need attention</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            isIconOnly 
-            variant="flat" 
-            size="sm" 
-            onPress={() => setShowSettings(true)}
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setShowSettings(true)}
             className="rounded-xl"
           >
             <Settings size={16} />
           </Button>
-          <Chip 
-            color={alertsEnabled ? 'success' : 'default'}
-            variant="flat"
-            startContent={alertsEnabled ? <Bell size={12} /> : <BellOff size={12} />}
-            className="font-bold"
+          <Badge
+            variant="secondary"
+            className={`font-bold ${alertsEnabled ? 'bg-green-500/10 text-green-600' : 'bg-muted text-muted-foreground'}`}
           >
+            {alertsEnabled ? <Bell size={12} className="mr-1" /> : <BellOff size={12} className="mr-1" />}
             {alertsEnabled ? 'Alerts On' : 'Alerts Off'}
-          </Chip>
+          </Badge>
         </div>
       </div>
 
@@ -111,16 +118,16 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between p-4 bg-foreground/[0.02] border border-foreground/5 rounded-xl hover:border-danger/20 transition-colors group"
+                className="flex items-center justify-between p-4 bg-foreground/[0.02] border border-foreground/5 rounded-xl hover:border-destructive/20 transition-colors group"
               >
                 <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-xl bg-${level.color}/10 flex items-center justify-center`}>
-                    <AlertTriangle size={18} className={`text-${level.color}`} />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${level.colorClass.split(' ')[0]}`}>
+                    <AlertTriangle size={18} className={level.colorClass.split(' ')[1]} />
                   </div>
                   <div>
-                    <h4 className="font-black text-sm group-hover:text-danger transition-colors">{item.name}</h4>
+                    <h4 className="font-black text-sm group-hover:text-destructive transition-colors">{item.name}</h4>
                     <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider">
-                      {item.sku} • {item.category}
+                      {item.sku} - {item.category}
                     </p>
                   </div>
                 </div>
@@ -129,14 +136,12 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
                     <p className="font-black text-lg">{item.currentStock}</p>
                     <p className="text-[10px] font-bold text-foreground/40">of {item.minStock} min</p>
                   </div>
-                  <Chip 
-                    color={level.color as 'danger' | 'warning' | 'primary'}
-                    variant="flat"
-                    size="sm"
-                    className="font-black text-[10px] uppercase"
+                  <Badge
+                    variant="secondary"
+                    className={`font-black text-[10px] uppercase ${level.colorClass}`}
                   >
                     {level.label}
-                  </Chip>
+                  </Badge>
                 </div>
               </div>
             );
@@ -146,39 +151,38 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
 
       {/* Quick Reorder Button */}
       {items.length > 0 && (
-        <Button 
-          color="danger" 
-          variant="flat"
-          className="w-full mt-4 font-black"
-          startContent={<Package size={16} />}
+        <Button
+          variant="secondary"
+          className="w-full mt-4 font-black bg-destructive/10 text-destructive hover:bg-destructive/20"
         >
+          <Package size={16} className="mr-2" />
           Quick Reorder All ({items.length} items)
         </Button>
       )}
 
       {/* Settings Modal */}
-      <Modal isOpen={showSettings} onOpenChange={setShowSettings} radius="lg">
-        <ModalContent>
-          <ModalHeader>
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="rounded-xl">
+          <DialogHeader>
             <div className="flex items-center gap-3">
               <Settings size={20} className="text-primary" />
-              <span className="font-black">Alert Settings</span>
+              <DialogTitle className="font-black">Alert Settings</DialogTitle>
             </div>
-          </ModalHeader>
-          <ModalBody className="space-y-6">
+          </DialogHeader>
+          <div className="space-y-6 py-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold">Enable Alerts</p>
                 <p className="text-xs text-foreground/50">Show low stock notifications</p>
               </div>
-              <Switch isSelected={alertsEnabled} onValueChange={setAlertsEnabled} color="success" />
+              <Switch checked={alertsEnabled} onCheckedChange={setAlertsEnabled} />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold">Email Notifications</p>
                 <p className="text-xs text-foreground/50">Get daily email summaries</p>
               </div>
-              <Switch isSelected={emailAlerts} onValueChange={setEmailAlerts} color="primary" />
+              <Switch checked={emailAlerts} onCheckedChange={setEmailAlerts} />
             </div>
             <div>
               <p className="font-bold mb-2">Default Threshold</p>
@@ -189,10 +193,9 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
                 {[5, 10, 15, 20].map((val) => (
                   <Button
                     key={val}
-                    variant={threshold === val ? 'solid' : 'flat'}
-                    color={threshold === val ? 'primary' : 'default'}
+                    variant={threshold === val ? 'default' : 'secondary'}
                     size="sm"
-                    onPress={() => setThreshold(val)}
+                    onClick={() => setThreshold(val)}
                     className="font-bold"
                   >
                     {val} units
@@ -200,14 +203,14 @@ export default function LowStockAlerts({ className }: LowStockAlertsProps) {
                 ))}
               </div>
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onPress={() => setShowSettings(false)} className="font-black">
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowSettings(false)} className="font-black">
               Save Settings
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

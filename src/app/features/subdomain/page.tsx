@@ -1,6 +1,8 @@
 'use client';
 
-import { Button, Card, CardBody, Input } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
@@ -105,19 +107,22 @@ export default function SubdomainPage() {
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
                 <Card className="modern-card mb-10">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <p className="text-sm font-black mb-4 uppercase tracking-widest text-foreground/50">Check Availability</p>
                     <div className="flex gap-3">
-                      <Input
-                        placeholder="yourstore"
-                        value={subdomain}
-                        onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                        endContent={<span className="text-foreground/40 text-sm font-mono">.easeinventory.com</span>}
-                        classNames={{ input: 'font-mono text-lg', inputWrapper: 'h-14' }}
-                        size="lg"
-                      />
-                      <Button as={Link} href={`/register?subdomain=${subdomain}`} color="primary" className="font-black h-14 px-8 shrink-0 uppercase tracking-widest shadow-lg shadow-primary/20" radius="full">
-                        Claim It
+                      <div className="relative flex-1">
+                        <Input
+                          placeholder="yourstore"
+                          value={subdomain}
+                          onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                          className="font-mono text-lg h-14 pr-40"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 text-sm font-mono">.easeinventory.com</span>
+                      </div>
+                      <Button asChild className="font-black h-14 px-8 shrink-0 uppercase tracking-widest shadow-lg shadow-primary/20 rounded-full">
+                        <Link href={`/register?subdomain=${subdomain}`}>
+                          Claim It
+                        </Link>
                       </Button>
                     </div>
                     {subdomain && (
@@ -125,7 +130,7 @@ export default function SubdomainPage() {
                         Preview: <span className="font-mono text-primary font-bold">{subdomain}.easeinventory.com</span>
                       </p>
                     )}
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
 
@@ -149,11 +154,11 @@ export default function SubdomainPage() {
             >
               {stats.map((stat) => (
                 <Card key={stat.label} className="modern-card group hover:scale-105 transition-transform duration-500">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <div className="text-4xl mb-4">{stat.icon}</div>
                     <div className="text-4xl font-black text-primary mb-2">{stat.value}</div>
                     <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               ))}
             </motion.div>
@@ -194,7 +199,7 @@ export default function SubdomainPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="modern-card h-full group hover:border-primary/30 transition-all duration-500">
-                  <CardBody className="p-10">
+                  <CardContent className="p-10">
                     <div className="flex justify-between items-start mb-8">
                       <div className="w-20 h-20 rounded-[28px] bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
                         {feature.icon}
@@ -213,7 +218,7 @@ export default function SubdomainPage() {
                         </div>
                       ))}
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -297,13 +302,13 @@ export default function SubdomainPage() {
                 transition={{ delay: index * 0.08 }}
               >
                 <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
                       {feature.icon}
                     </div>
                     <h3 className="text-lg font-black mb-3 uppercase tracking-tight">{feature.title}</h3>
                     <p className="text-sm text-foreground/60 italic">{feature.description}</p>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -338,10 +343,10 @@ export default function SubdomainPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="modern-card">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <h3 className="text-lg font-black mb-3">{faq.q}</h3>
                     <p className="text-foreground/60 italic leading-relaxed">{faq.a}</p>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -360,7 +365,7 @@ export default function SubdomainPage() {
             viewport={{ once: true }}
           >
             <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
-              <CardBody className="p-12 lg:p-20 text-center relative">
+              <CardContent className="p-12 lg:p-20 text-center relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
                 <div className="relative z-10">
                   <div className="text-6xl mb-8">🌐</div>
@@ -371,16 +376,20 @@ export default function SubdomainPage() {
                     Good subdomains are going fast. Secure yours today—it's free with your account.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
-                    <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
-                      Start Free Trial
-                      <ArrowRight size={20} />
+                    <Button asChild className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest rounded-full">
+                      <Link href="/register">
+                        Start Free Trial
+                        <ArrowRight size={20} />
+                      </Link>
                     </Button>
-                    <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
-                      Talk to Sales
+                    <Button asChild variant="outline" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10 rounded-full">
+                      <Link href="/#contact">
+                        Talk to Sales
+                      </Link>
                     </Button>
                   </div>
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
         </div>

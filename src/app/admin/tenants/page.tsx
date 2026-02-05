@@ -1,19 +1,22 @@
 'use client';
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Button, Chip,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownTrigger,
-  Input,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
   Table,
   TableBody,
   TableCell,
-  TableColumn,
+  TableHead,
   TableHeader,
   TableRow
-} from "@heroui/react";
+} from "@/components/ui/table";
 import { Filter, MoreVertical, Search, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from 'react';
 
@@ -53,82 +56,90 @@ export default function AllTenantsPage() {
           <p className="text-foreground/60">Manage all registered businesses on the platform</p>
         </div>
         <div className="flex gap-2">
-          <Input 
-            placeholder="Search by name or slug..." 
-            startContent={<Search size={18} className="text-foreground/30" />}
-            value={search}
-            onValueChange={setSearch}
-            className="w-72"
-          />
-          <Button variant="flat" startContent={<Filter size={18} />}>
+          <div className="relative w-72">
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by name or slug..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button variant="secondary">
+            <Filter size={18} className="mr-2" />
             Filters
           </Button>
         </div>
       </div>
 
-      <Table aria-label="All tenants">
+      <Table>
         <TableHeader>
-          <TableColumn>BUSINESS NAME</TableColumn>
-          <TableColumn>WORKSPACE</TableColumn>
-          <TableColumn>PLAN</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>ROLE</TableColumn>
-          <TableColumn align="center">ACTIONS</TableColumn>
+          <TableRow>
+            <TableHead>BUSINESS NAME</TableHead>
+            <TableHead>WORKSPACE</TableHead>
+            <TableHead>PLAN</TableHead>
+            <TableHead>STATUS</TableHead>
+            <TableHead>ROLE</TableHead>
+            <TableHead className="text-center">ACTIONS</TableHead>
+          </TableRow>
         </TableHeader>
-        <TableBody 
-          emptyContent={isLoading ? "Loading..." : "No tenants found."}
-          items={filteredTenants}
-        >
-          {(item) => (
-            <TableRow key={item.id}>
-              <TableCell>
-                <div className="flex flex-col">
-                  <span className="font-bold">{item.name}</span>
-                  <span className="text-tiny text-foreground/40">{item.phone}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <span className="text-xs font-mono">{item.slug}</span>
-              </TableCell>
-              <TableCell>
-                <Chip size="sm" color="primary" variant="flat" className="font-bold">
-                  {item.plan}
-                </Chip>
-              </TableCell>
-              <TableCell>
-                <Chip 
-                  size="sm" 
-                  color={item.isActive ? "success" : "danger"} 
-                  variant="dot"
-                >
-                  {item.isActive ? "Active" : "Inactive"}
-                </Chip>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  <ShieldCheck size={14} className="text-success" />
-                  <span className="text-xs font-bold uppercase tracking-tighter">Verified</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex justify-center">
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button isIconOnly variant="light" size="sm">
-                        <MoreVertical size={20} />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu>
-                      <DropdownItem key="edit">Edit Details</DropdownItem>
-                      <DropdownItem key="impersonate">Impersonate Owner</DropdownItem>
-                      <DropdownItem key="suspend" className="text-danger" color="danger">
-                        Suspend Tenant
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </div>
+        <TableBody>
+          {filteredTenants.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center text-muted-foreground">
+                {isLoading ? "Loading..." : "No tenants found."}
               </TableCell>
             </TableRow>
+          ) : (
+            filteredTenants.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>
+                  <div className="flex flex-col">
+                    <span className="font-bold">{item.name}</span>
+                    <span className="text-xs text-muted-foreground">{item.phone}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs font-mono">{item.slug}</span>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="default" className="font-bold">
+                    {item.plan}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={item.isActive ? "default" : "destructive"}
+                  >
+                    {item.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <ShieldCheck size={14} className="text-green-600" />
+                    <span className="text-xs font-bold uppercase tracking-tighter">Verified</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost">
+                          <MoreVertical size={20} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                        <DropdownMenuItem>Impersonate Owner</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">
+                          Suspend Tenant
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
           )}
         </TableBody>
       </Table>

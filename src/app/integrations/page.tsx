@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -153,7 +154,7 @@ export default function IntegrationsPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card h-full group hover:border-success/30 transition-all duration-500">
-                    <CardBody className="p-10">
+                    <CardContent className="p-10">
                       <div className="flex justify-between items-start mb-6">
                         <div className="w-20 h-20 rounded-[28px] bg-success/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
                           {integration.icon}
@@ -168,7 +169,7 @@ export default function IntegrationsPage() {
                       <div className="bg-foreground/[0.03] px-3 py-1 rounded-full inline-block">
                         <span className="text-xs font-black text-foreground/40">{integration.tag}</span>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -209,7 +210,7 @@ export default function IntegrationsPage() {
                   transition={{ delay: index * 0.08 }}
                 >
                   <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
-                    <CardBody className="p-8">
+                    <CardContent className="p-8">
                       <div className="flex justify-between items-start mb-4">
                         <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-500">
                           {integration.icon}
@@ -219,7 +220,7 @@ export default function IntegrationsPage() {
                       <h3 className="text-lg font-black mb-2 uppercase tracking-tight">{integration.name}</h3>
                       <p className="text-sm text-foreground/60 italic mb-3">{integration.description}</p>
                       <span className="text-xs text-foreground/40">{integration.tag}</span>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -258,20 +259,22 @@ export default function IntegrationsPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card h-full group hover:border-secondary/30 transition-all duration-500">
-                    <CardBody className="p-8 text-center">
+                    <CardContent className="p-8 text-center">
                       <div className="text-4xl mb-4">{feature.icon}</div>
                       <h3 className="font-black mb-2">{feature.title}</h3>
                       <p className="text-sm text-foreground/60 italic">{feature.description}</p>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
             </div>
 
             <div className="text-center">
-              <Button as={Link} href="/api-docs" color="secondary" size="lg" className="font-black px-10 h-16 shadow-xl shadow-secondary/30 uppercase tracking-widest" radius="full">
-                View API Documentation
-                <ArrowRight size={20} />
+              <Button asChild size="lg" className="font-black px-10 h-16 shadow-xl shadow-secondary/30 uppercase tracking-widest rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                <Link href="/api-docs">
+                  View API Documentation
+                  <ArrowRight size={20} className="ml-2" />
+                </Link>
               </Button>
             </div>
           </div>
@@ -288,7 +291,7 @@ export default function IntegrationsPage() {
               viewport={{ once: true }}
             >
               <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
-                <CardBody className="p-12 lg:p-20 text-center relative">
+                <CardContent className="p-12 lg:p-20 text-center relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
                   <div className="relative z-10">
                     <div className="text-6xl mb-8">🔗</div>
@@ -298,12 +301,14 @@ export default function IntegrationsPage() {
                     <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
                       Don't see what you need? Tell us and we'll prioritize based on demand.
                     </p>
-                    <Button as={Link} href="/#contact" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
-                      Contact Us
-                      <ArrowRight size={20} />
+                    <Button asChild size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest rounded-full">
+                      <Link href="/#contact">
+                        Contact Us
+                        <ArrowRight size={20} className="ml-2" />
+                      </Link>
                     </Button>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>

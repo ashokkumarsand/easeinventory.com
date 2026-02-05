@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardBody, Progress } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Calendar, HeartPulse, Star, Umbrella } from 'lucide-react';
 
 interface LeaveBalance {
@@ -21,12 +22,12 @@ interface LeaveBalanceWidgetProps {
 export default function LeaveBalanceWidget({ balance, year, compact = false }: LeaveBalanceWidgetProps) {
     if (!balance) {
         return (
-            <Card className="modern-card p-6" radius="lg">
-                <CardBody className="p-0">
+            <Card className="modern-card p-6 rounded-xl">
+                <CardContent className="p-0">
                     <p className="text-sm font-bold opacity-40 text-center py-8">
                         No leave balance data for {year}
                     </p>
-                </CardBody>
+                </CardContent>
             </Card>
         );
     }
@@ -83,8 +84,8 @@ export default function LeaveBalanceWidget({ balance, year, compact = false }: L
     }
 
     return (
-        <Card className="modern-card p-6" radius="lg">
-            <CardBody className="p-0 space-y-6">
+        <Card className="modern-card p-6 rounded-xl">
+            <CardContent className="p-0 space-y-6">
                 <div className="flex items-center gap-2">
                     <Calendar size={18} className="text-primary" />
                     <h3 className="text-sm font-black uppercase tracking-widest">Leave Balance {year}</h3>
@@ -112,9 +113,7 @@ export default function LeaveBalanceWidget({ balance, year, compact = false }: L
                                 </div>
                                 <Progress
                                     value={percentage}
-                                    color={type.color as any}
-                                    size="sm"
-                                    className="max-w-full"
+                                    className="max-w-full h-2"
                                 />
                                 <div className="flex justify-between mt-2">
                                     <span className="text-[10px] font-bold opacity-40">Used: {type.used}</span>
@@ -124,7 +123,7 @@ export default function LeaveBalanceWidget({ balance, year, compact = false }: L
                         );
                     })}
                 </div>
-            </CardBody>
+            </CardContent>
         </Card>
     );
 }

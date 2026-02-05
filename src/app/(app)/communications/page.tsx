@@ -1,18 +1,21 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
     Select,
+    SelectContent,
     SelectItem,
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Check,
     CheckCheck,
     Clock,
     IndianRupee,
+    Loader2,
     MessageCircle,
     RefreshCw,
     Send,
@@ -179,71 +182,70 @@ export default function CommunicationsPage() {
                     </p>
                 </div>
                 <Button
-                    variant="flat"
-                    color="default"
+                    variant="secondary"
                     className="font-bold rounded-2xl"
-                    startContent={<RefreshCw size={18} />}
                     onClick={() => fetchMessages()}
-                    isLoading={isLoading}
+                    disabled={isLoading}
                 >
+                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw size={18} className="mr-2" />}
                     Refresh
                 </Button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <Card className="modern-card bg-success text-white p-4" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card bg-success text-white p-4 rounded-lg">
+                    <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
                             <Send size={16} className="opacity-60" />
                             <span className="text-[10px] font-black uppercase opacity-60">Total Sent</span>
                         </div>
                         <h2 className="text-2xl font-black">{totalMessages}</h2>
-                    </CardBody>
+                    </CardContent>
                 </Card>
 
-                <Card className="modern-card p-4 border border-black/5" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-4 border border-black/5 rounded-lg">
+                    <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
                             <Clock size={16} className="text-warning" />
                             <span className="text-[10px] font-black uppercase opacity-40">Pending</span>
                         </div>
                         <h2 className="text-2xl font-black text-warning">{stats.pending}</h2>
-                    </CardBody>
+                    </CardContent>
                 </Card>
 
-                <Card className="modern-card p-4 border border-black/5" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-4 border border-black/5 rounded-lg">
+                    <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
                             <Check size={16} className="text-primary" />
                             <span className="text-[10px] font-black uppercase opacity-40">Sent</span>
                         </div>
                         <h2 className="text-2xl font-black text-primary">{stats.sent}</h2>
-                    </CardBody>
+                    </CardContent>
                 </Card>
 
-                <Card className="modern-card p-4 border border-black/5" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-4 border border-black/5 rounded-lg">
+                    <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
                             <CheckCheck size={16} className="text-success" />
                             <span className="text-[10px] font-black uppercase opacity-40">Delivered</span>
                         </div>
                         <h2 className="text-2xl font-black text-success">{stats.delivered + stats.read}</h2>
-                    </CardBody>
+                    </CardContent>
                 </Card>
 
-                <Card className="modern-card p-4 border border-black/5" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-4 border border-black/5 rounded-lg">
+                    <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
-                            <X size={16} className="text-danger" />
+                            <X size={16} className="text-destructive" />
                             <span className="text-[10px] font-black uppercase opacity-40">Failed</span>
                         </div>
-                        <h2 className="text-2xl font-black text-danger">{stats.failed}</h2>
-                    </CardBody>
+                        <h2 className="text-2xl font-black text-destructive">{stats.failed}</h2>
+                    </CardContent>
                 </Card>
 
-                <Card className="modern-card p-4 border border-black/5" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-4 border border-black/5 rounded-lg">
+                    <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
                             <IndianRupee size={16} className="text-secondary" />
                             <span className="text-[10px] font-black uppercase opacity-40">This Month</span>
@@ -251,7 +253,7 @@ export default function CommunicationsPage() {
                         <h2 className="text-2xl font-black text-secondary">
                             ₹{formatCurrency(stats.monthlyCostPaise)}
                         </h2>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             </div>
 
@@ -263,30 +265,28 @@ export default function CommunicationsPage() {
                             Message History
                         </h3>
                         <div className="flex items-center gap-2">
-                            <Chip
-                                size="sm"
-                                color="success"
-                                variant="flat"
-                                className="font-bold text-[10px]"
+                            <Badge
+                                variant="secondary"
+                                className="bg-success/10 text-success font-bold text-[10px]"
                             >
                                 {successRate}% delivery rate
-                            </Chip>
+                            </Badge>
                             <Select
-                                size="sm"
-                                placeholder="All Status"
-                                selectedKeys={statusFilter ? [statusFilter] : []}
-                                onSelectionChange={(keys) =>
-                                    setStatusFilter(Array.from(keys)[0] as string || '')
-                                }
-                                classNames={{ trigger: 'bg-black/5 h-10 min-w-[140px] rounded-xl' }}
+                                value={statusFilter}
+                                onValueChange={(value) => setStatusFilter(value === 'all' ? '' : value)}
                             >
-                                <SelectItem key="">All Status</SelectItem>
-                                <SelectItem key="PENDING">Pending</SelectItem>
-                                <SelectItem key="SENT">Sent</SelectItem>
-                                <SelectItem key="DELIVERED">Delivered</SelectItem>
-                                <SelectItem key="READ">Read</SelectItem>
-                                <SelectItem key="FAILED">Failed</SelectItem>
-                                <SelectItem key="RETRY_SCHEDULED">Retry Scheduled</SelectItem>
+                                <SelectTrigger className="bg-black/5 h-10 min-w-[140px] rounded-xl">
+                                    <SelectValue placeholder="All Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Status</SelectItem>
+                                    <SelectItem value="PENDING">Pending</SelectItem>
+                                    <SelectItem value="SENT">Sent</SelectItem>
+                                    <SelectItem value="DELIVERED">Delivered</SelectItem>
+                                    <SelectItem value="READ">Read</SelectItem>
+                                    <SelectItem value="FAILED">Failed</SelectItem>
+                                    <SelectItem value="RETRY_SCHEDULED">Retry Scheduled</SelectItem>
+                                </SelectContent>
                             </Select>
                         </div>
                     </div>
@@ -305,8 +305,8 @@ export default function CommunicationsPage() {
                     <WhatsAppWidget onSend={handleSendMessage} />
 
                     {/* Quick Stats */}
-                    <Card className="modern-card p-6" radius="lg">
-                        <CardBody className="p-0 space-y-4">
+                    <Card className="modern-card p-6 rounded-lg">
+                        <CardContent className="p-0 space-y-4">
                             <h3 className="text-sm font-black uppercase tracking-widest opacity-40">
                                 Quick Stats
                             </h3>
@@ -314,26 +314,26 @@ export default function CommunicationsPage() {
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.02]">
                                     <span className="text-xs font-bold">Retry Scheduled</span>
-                                    <Chip size="sm" color="warning" variant="flat" className="font-black">
+                                    <Badge variant="secondary" className="bg-warning/10 text-warning font-black">
                                         {stats.retryScheduled}
-                                    </Chip>
+                                    </Badge>
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.02]">
                                     <span className="text-xs font-bold">Messages Read</span>
-                                    <Chip size="sm" color="success" variant="flat" className="font-black">
+                                    <Badge variant="secondary" className="bg-success/10 text-success font-black">
                                         {stats.read}
-                                    </Chip>
+                                    </Badge>
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.02]">
                                     <span className="text-xs font-bold">Avg. Cost/Message</span>
-                                    <Chip size="sm" color="default" variant="flat" className="font-black">
+                                    <Badge variant="secondary" className="font-black">
                                         ₹{totalMessages > 0
                                             ? (stats.monthlyCostPaise / 100 / totalMessages).toFixed(2)
                                             : '0.00'}
-                                    </Chip>
+                                    </Badge>
                                 </div>
                             </div>
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
             </div>

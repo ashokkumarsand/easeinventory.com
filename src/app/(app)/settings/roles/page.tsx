@@ -1,31 +1,32 @@
 'use client';
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
-    Avatar,
-    Button,
-    Card,
-    CardBody,
-    Checkbox,
-    CheckboxGroup,
-    Chip,
-    Divider,
-    Dropdown,
-    DropdownItem,
     DropdownMenu,
-    DropdownTrigger,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Tab,
-    Tabs,
-    useDisclosure
-} from '@heroui/react';
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import {
     Building,
     Edit2,
     FileText,
+    Loader2,
     MoreVertical,
     Package,
     Plus,
@@ -73,7 +74,7 @@ const ICON_MAP: Record<string, any> = {
 export default function RolesManagementPage() {
     const t = useTranslations('Roles');
     const commonT = useTranslations('HR'); // For standard modal buttons
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const { isOpen: isRoleModalOpen, onOpen: onRoleModalOpen, onOpenChange: onRoleModalOpenChange } = useDisclosure();
     const [roles, setRoles] = useState<Role[]>([]);
     const [customRoles, setCustomRoles] = useState<CustomRole[]>([]);
@@ -155,7 +156,7 @@ export default function RolesManagementPage() {
 
             if (response.ok) {
                 fetchTeamMembers();
-                onOpenChange();
+                onClose();
             } else {
                 const data = await response.json();
                 alert(data.message || 'Failed to update permissions');
@@ -222,6 +223,19 @@ export default function RolesManagementPage() {
     const currentCustomRole = selectedCustomRole ? customRoles.find(r => r.id === selectedCustomRole) : null;
     const displayRole = currentCustomRole || currentRole;
 
+    const handlePermissionChange = (moduleKey: string, permKey: string, checked: boolean) => {
+        if (checked) {
+            setEditingPermissions([...editingPermissions, permKey]);
+        } else {
+            setEditingPermissions(editingPermissions.filter(p => p !== permKey));
+        }
+    };
+
+    const getInitials = (name: string | null | undefined) => {
+        if (!name) return '?';
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    };
+
     return (
         <div className="space-y-10 pb-20">
             {/* Header */}
@@ -236,13 +250,11 @@ export default function RolesManagementPage() {
                     <p className="text-black/40 dark:text-white/40 font-bold ml-1">{t('subtitle')}</p>
                 </div>
                 <Button
-                    color="warning"
-                    radius="full"
+                    className="font-black px-8 shadow-xl shadow-warning/20 rounded-full bg-warning text-warning-foreground hover:bg-warning/90"
                     size="lg"
-                    className="font-black px-8 shadow-xl shadow-warning/20"
-                    startContent={<Plus size={20} />}
                     onClick={handleCreateCustomRole}
                 >
+                    <Plus size={20} className="mr-2" />
                     Create Custom Role
                 </Button>
             </div>
@@ -252,13 +264,13 @@ export default function RolesManagementPage() {
                 <div className="lg:col-span-4 space-y-6">
                     {/* Custom Roles */}
                     {customRoles.length > 0 && (
-                        <Card className="modern-card p-6" radius="lg">
-                            <CardBody className="p-0 space-y-4">
+                        <Card className="modern-card p-6 rounded-lg">
+                            <CardContent className="p-0 space-y-4">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-sm font-black uppercase tracking-widest opacity-40">Custom Roles</h3>
-                                    <Chip size="sm" color="warning" variant="flat" className="text-[8px] font-black">
+                                    <Badge variant="secondary" className="bg-warning/10 text-warning text-[8px] font-black">
                                         {customRoles.length}
-                                    </Chip>
+                                    </Badge>
                                 </div>
                                 <div className="space-y-2">
                                     {customRoles.map(role => (
@@ -289,45 +301,40 @@ export default function RolesManagementPage() {
                                                 </p>
                                             </button>
                                             <div className="flex items-center gap-2">
-                                                <Chip size="sm" variant="flat" color="default" className="text-[10px] font-black">
+                                                <Badge variant="secondary" className="text-[10px] font-black">
                                                     {t('users_count', { count: role.userCount })}
-                                                </Chip>
-                                                <Dropdown>
-                                                    <DropdownTrigger>
-                                                        <Button isIconOnly size="sm" variant="light">
+                                                </Badge>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon">
                                                             <MoreVertical size={16} />
                                                         </Button>
-                                                    </DropdownTrigger>
-                                                    <DropdownMenu aria-label="Role actions">
-                                                        <DropdownItem
-                                                            key="edit"
-                                                            startContent={<Edit2 size={14} />}
-                                                            onClick={() => handleEditCustomRole(role)}
-                                                        >
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent>
+                                                        <DropdownMenuItem onClick={() => handleEditCustomRole(role)}>
+                                                            <Edit2 size={14} className="mr-2" />
                                                             Edit Role
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                            key="delete"
-                                                            className="text-danger"
-                                                            color="danger"
-                                                            startContent={<Trash2 size={14} />}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            className="text-destructive"
                                                             onClick={() => handleDeleteCustomRole(role.id)}
                                                         >
+                                                            <Trash2 size={14} className="mr-2" />
                                                             Delete Role
-                                                        </DropdownItem>
-                                                    </DropdownMenu>
-                                                </Dropdown>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            </CardBody>
+                            </CardContent>
                         </Card>
                     )}
 
                     {/* Predefined Roles */}
-                    <Card className="modern-card p-6" radius="lg">
-                        <CardBody className="p-0 space-y-4">
+                    <Card className="modern-card p-6 rounded-lg">
+                        <CardContent className="p-0 space-y-4">
                             <h3 className="text-sm font-black uppercase tracking-widest opacity-40">{t('predefined_roles')}</h3>
                             <div className="space-y-2">
                                 {roles.map(role => (
@@ -349,20 +356,20 @@ export default function RolesManagementPage() {
                                                 {t('permissions_count', { count: role.permissions.length })}
                                             </p>
                                         </div>
-                                        <Chip size="sm" variant="flat" color="default" className="text-[10px] font-black">
+                                        <Badge variant="secondary" className="text-[10px] font-black">
                                             {t('users_count', { count: role.userCount })}
-                                        </Chip>
+                                        </Badge>
                                     </button>
                                 ))}
                             </div>
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
 
                 {/* Permission Matrix */}
                 <div className="lg:col-span-8">
-                    <Card className="modern-card p-8" radius="lg">
-                        <CardBody className="p-0 space-y-6">
+                    <Card className="modern-card p-8 rounded-lg">
+                        <CardContent className="p-0 space-y-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     {currentCustomRole && (
@@ -381,18 +388,17 @@ export default function RolesManagementPage() {
                                     {currentCustomRole && (
                                         <Button
                                             size="sm"
-                                            variant="flat"
-                                            color="warning"
-                                            className="font-bold"
-                                            startContent={<Edit2 size={14} />}
+                                            variant="secondary"
+                                            className="font-bold bg-warning/10 text-warning hover:bg-warning/20"
                                             onClick={() => handleEditCustomRole(currentCustomRole)}
                                         >
+                                            <Edit2 size={14} className="mr-2" />
                                             Edit
                                         </Button>
                                     )}
-                                    <Chip color={currentCustomRole ? 'primary' : 'warning'} variant="flat" className="font-black text-[10px]">
+                                    <Badge variant={currentCustomRole ? 'default' : 'secondary'} className={currentCustomRole ? '' : 'bg-warning/10 text-warning'}>
                                         {currentCustomRole ? 'Custom Role' : t('read_only')}
-                                    </Chip>
+                                    </Badge>
                                 </div>
                             </div>
 
@@ -400,7 +406,7 @@ export default function RolesManagementPage() {
                                 <p className="text-sm opacity-60">{currentCustomRole.description}</p>
                             )}
 
-                            <Divider />
+                            <Separator />
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {modules.map(module => {
@@ -447,14 +453,14 @@ export default function RolesManagementPage() {
                                     );
                                 })}
                             </div>
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
             </div>
 
             {/* Team Members with Custom Permissions */}
-            <Card className="modern-card p-8" radius="lg">
-                <CardBody className="p-0 space-y-6">
+            <Card className="modern-card p-8 rounded-lg">
+                <CardContent className="p-0 space-y-6">
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl font-black tracking-tight">{t('overrides_title')}</h3>
                         <p className="text-xs font-bold opacity-40">{t('overrides_hint')}</p>
@@ -467,108 +473,106 @@ export default function RolesManagementPage() {
                                 onClick={() => openPermissionEditor(member)}
                                 className="p-4 rounded-2xl bg-black/[0.02] border border-black/5 text-left hover:bg-black/[0.04] transition-all flex items-center gap-4"
                             >
-                                <Avatar name={member.name || member.email} radius="lg" className="bg-primary/10 text-primary font-black" />
+                                <Avatar className="bg-primary/10 text-primary font-black rounded-lg h-10 w-10">
+                                    <AvatarFallback className="bg-primary/10 text-primary font-black rounded-lg">
+                                        {getInitials(member.name || member.email)}
+                                    </AvatarFallback>
+                                </Avatar>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-black text-sm truncate">{member.name || t('unnamed')}</p>
                                     <p className="text-[10px] opacity-40 truncate">{member.email}</p>
                                 </div>
-                                <Chip size="sm" variant="flat" color={member.permissions ? 'warning' : 'default'} className="text-[10px] font-black">
+                                <Badge variant="secondary" className={member.permissions ? 'bg-warning/10 text-warning' : ''}>
                                     {member.permissions ? t('custom') : member.role}
-                                </Chip>
+                                </Badge>
                             </button>
                         ))}
                     </div>
-                </CardBody>
+                </CardContent>
             </Card>
 
             {/* Permission Editor Modal */}
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                size="4xl"
-                scrollBehavior="inside"
-                classNames={{ base: "modern-card" }}
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1 p-8">
-                                <h2 className="text-2xl font-black tracking-tight">
-                                    {t('modal.title', { name: editingUser?.name || editingUser?.email || '' })}
-                                </h2>
-                                <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">
-                                    {t('modal.subtitle')}
-                                </p>
-                            </ModalHeader>
-                            <ModalBody className="p-8">
-                                <Tabs aria-label="Permission Modules" color="warning" variant="underlined">
-                                    {modules.map(module => {
-                                        const Icon = ICON_MAP[module.icon] || Package;
-                                        return (
-                                            <Tab
-                                                key={module.key}
-                                                title={
-                                                    <div className="flex items-center gap-2">
-                                                        <Icon size={14} />
-                                                        <span>{module.label}</span>
-                                                    </div>
-                                                }
-                                            >
-                                                <div className="py-6 space-y-4">
-                                                    <CheckboxGroup
-                                                        value={editingPermissions.filter(p => p.startsWith(module.key))}
-                                                        onValueChange={(values) => {
-                                                            const otherPerms = editingPermissions.filter(p => !p.startsWith(module.key));
-                                                            setEditingPermissions([...otherPerms, ...values]);
-                                                        }}
-                                                    >
-                                                        {module.permissions.map(perm => (
-                                                            <Checkbox key={perm.key} value={perm.key} className="mb-2">
-                                                                <div>
-                                                                    <p className="font-bold text-sm">{perm.label}</p>
-                                                                    <p className="text-[10px] opacity-40">{perm.description}</p>
-                                                                </div>
-                                                            </Checkbox>
-                                                        ))}
-                                                    </CheckboxGroup>
-                                                </div>
-                                            </Tab>
-                                        );
-                                    })}
-                                </Tabs>
-                            </ModalBody>
-                            <ModalFooter className="border-t border-black/5 p-6">
-                                <Button variant="light" className="font-bold h-12 px-8" onPress={onClose}>{commonT('modal.cancel')}</Button>
-                                <Button
-                                    variant="flat"
-                                    className="font-bold h-12 px-8"
-                                    onClick={() => {
-                                        const role = roles.find(r => r.key === editingUser?.role);
-                                        setEditingPermissions(role?.permissions || []);
-                                    }}
-                                >
-                                    {t('modal.reset')}
-                                </Button>
-                                <Button
-                                    color="warning"
-                                    className="font-black h-12 px-10 shadow-xl shadow-warning/20"
-                                    radius="full"
-                                    onClick={handleSavePermissions}
-                                    isLoading={isLoading}
-                                >
-                                    {t('modal.save')}
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <Dialog open={isOpen} onOpenChange={onOpenChange}>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto modern-card">
+                    <DialogHeader className="p-8 pb-0">
+                        <DialogTitle className="text-2xl font-black tracking-tight">
+                            {t('modal.title', { name: editingUser?.name || editingUser?.email || '' })}
+                        </DialogTitle>
+                        <DialogDescription className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">
+                            {t('modal.subtitle')}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="p-8">
+                        <Tabs defaultValue={modules[0]?.key} className="w-full">
+                            <TabsList className="w-full justify-start border-b border-soft rounded-none bg-transparent h-auto p-0 mb-6">
+                                {modules.map(module => {
+                                    const Icon = ICON_MAP[module.icon] || Package;
+                                    return (
+                                        <TabsTrigger
+                                            key={module.key}
+                                            value={module.key}
+                                            className="rounded-none border-b-2 border-transparent data-[state=active]:border-warning data-[state=active]:text-warning data-[state=active]:shadow-none"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <Icon size={14} />
+                                                <span>{module.label}</span>
+                                            </div>
+                                        </TabsTrigger>
+                                    );
+                                })}
+                            </TabsList>
+                            {modules.map(module => (
+                                <TabsContent key={module.key} value={module.key}>
+                                    <div className="py-6 space-y-4">
+                                        {module.permissions.map(perm => (
+                                            <div key={perm.key} className="flex items-start gap-3 mb-4">
+                                                <Checkbox
+                                                    id={perm.key}
+                                                    checked={editingPermissions.includes(perm.key)}
+                                                    onCheckedChange={(checked) =>
+                                                        handlePermissionChange(module.key, perm.key, checked as boolean)
+                                                    }
+                                                />
+                                                <label htmlFor={perm.key} className="cursor-pointer">
+                                                    <p className="font-bold text-sm">{perm.label}</p>
+                                                    <p className="text-[10px] opacity-40">{perm.description}</p>
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </TabsContent>
+                            ))}
+                        </Tabs>
+                    </div>
+                    <DialogFooter className="border-t border-black/5 p-6">
+                        <Button variant="ghost" className="font-bold h-12 px-8" onClick={onClose}>{commonT('modal.cancel')}</Button>
+                        <Button
+                            variant="secondary"
+                            className="font-bold h-12 px-8"
+                            onClick={() => {
+                                const role = roles.find(r => r.key === editingUser?.role);
+                                setEditingPermissions(role?.permissions || []);
+                            }}
+                        >
+                            {t('modal.reset')}
+                        </Button>
+                        <Button
+                            className="font-black h-12 px-10 shadow-xl shadow-warning/20 rounded-full bg-warning text-warning-foreground hover:bg-warning/90"
+                            onClick={handleSavePermissions}
+                            disabled={isLoading}
+                        >
+                            {isLoading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                            {t('modal.save')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Custom Role Builder Modal */}
             <RoleBuilderModal
                 isOpen={isRoleModalOpen}
                 onClose={() => {
-                    onRoleModalOpenChange();
+                    onRoleModalOpenChange(false);
                     setEditingCustomRole(null);
                 }}
                 onSave={handleSaveCustomRole}

@@ -1,7 +1,8 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button, Card, CardBody } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -34,8 +35,8 @@ export default function PendingApprovalPage() {
           <Logo size={64} />
         </div>
 
-        <Card className="modern-card border-none shadow-2xl bg-card p-4" radius="lg">
-          <CardBody className="py-10 flex flex-col items-center gap-6">
+        <Card className="modern-card border-none shadow-2xl bg-card p-4">
+          <CardContent className="py-10 flex flex-col items-center gap-6">
             <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center text-warning mb-2">
               <Clock size={32} className="animate-pulse" />
             </div>
@@ -59,23 +60,22 @@ export default function PendingApprovalPage() {
             </div>
 
             <div className="flex gap-4 w-full pt-4">
-              <Button 
-                variant="flat" 
+              <Button
+                variant="secondary"
                 className="flex-1 font-bold"
-                onPress={() => window.location.reload()}
+                onClick={() => window.location.reload()}
               >
                 Check Status
               </Button>
-              <Button 
-                color="danger" 
-                variant="light" 
-                className="flex-1 font-bold italic"
-                onPress={() => signOut({ callbackUrl: '/' })}
+              <Button
+                variant="ghost"
+                className="flex-1 font-bold italic text-destructive hover:text-destructive"
+                onClick={() => signOut({ callbackUrl: '/' })}
               >
                 Sign Out
               </Button>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
         <p className="mt-8 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">

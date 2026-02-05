@@ -1,6 +1,8 @@
 'use client';
 
-import { Card, CardBody, CardHeader, Chip, Skeleton } from '@heroui/react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { TrendingUp } from 'lucide-react';
 
 interface TopProduct {
@@ -77,7 +79,7 @@ export function TopProducts({ isLoading }: TopProductsProps) {
         <CardHeader>
           <Skeleton className="h-6 w-32 rounded-lg" />
         </CardHeader>
-        <CardBody className="space-y-3">
+        <CardContent className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex items-center gap-3">
               <Skeleton className="w-8 h-8 rounded-full" />
@@ -88,7 +90,7 @@ export function TopProducts({ isLoading }: TopProductsProps) {
               <Skeleton className="h-5 w-16 rounded-lg" />
             </div>
           ))}
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -97,8 +99,8 @@ export function TopProducts({ isLoading }: TopProductsProps) {
     <Card className="border border-foreground/5">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-success" />
+          <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-green-500" />
           </div>
           <div>
             <h3 className="text-lg font-bold">Top Products</h3>
@@ -106,7 +108,7 @@ export function TopProducts({ isLoading }: TopProductsProps) {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="pt-0">
+      <CardContent className="pt-0">
         <div className="space-y-3">
           {topProducts.map((product, index) => (
             <div
@@ -122,18 +124,16 @@ export function TopProducts({ isLoading }: TopProductsProps) {
                   {product.unitsSold} units • {formatCurrency(product.revenue)}
                 </p>
               </div>
-              <Chip
-                size="sm"
-                variant="flat"
-                color={product.trend >= 0 ? 'success' : 'danger'}
+              <Badge
+                variant={product.trend >= 0 ? 'default' : 'destructive'}
                 className="font-bold"
               >
                 {product.trend >= 0 ? '+' : ''}{product.trend}%
-              </Chip>
+              </Badge>
             </div>
           ))}
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

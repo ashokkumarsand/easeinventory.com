@@ -1,7 +1,7 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Chip } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { ArrowRight, Calendar, Clock, User } from 'lucide-react';
 import Image from 'next/image';
@@ -70,14 +70,12 @@ const BlogCard: React.FC<BlogCardProps> = ({
 
           {/* Category Badge */}
           <div className="absolute top-4 left-4 md:top-6 md:left-6">
-            <Chip
-              size="sm"
-              color="primary"
-              variant="flat"
+            <Badge
+              variant="secondary"
               className="font-black uppercase text-[10px] tracking-wider"
             >
               {category}
-            </Chip>
+            </Badge>
           </div>
 
           {/* Content */}

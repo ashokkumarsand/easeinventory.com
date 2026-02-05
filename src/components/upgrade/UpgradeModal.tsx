@@ -1,5 +1,15 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePlan } from '@/contexts/PlanContext';
 import {
   PlanType,
@@ -9,17 +19,8 @@ import {
   formatPrice,
   getUnlockedFeatures,
 } from '@/lib/plan-features';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Tab,
-  Tabs,
-} from '@heroui/react';
-import { Check, Crown, Sparkles, Star, X, Zap } from 'lucide-react';
+import { Check, Crown, Sparkles, Star, Zap } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 const PLAN_ICONS: Record<PlanType, React.ReactNode> = {
@@ -29,11 +30,12 @@ const PLAN_ICONS: Record<PlanType, React.ReactNode> = {
   ENTERPRISE: <Crown className="w-5 h-5" />,
 };
 
-const PLAN_COLORS: Record<PlanType, string> = {
-  FREE: 'default',
-  STARTER: 'primary',
-  BUSINESS: 'secondary',
-  ENTERPRISE: 'warning',
+// Explicit color classes to prevent Tailwind purging
+const PLAN_COLOR_CLASSES: Record<PlanType, { bg: string; text: string }> = {
+  FREE: { bg: 'bg-zinc-500/10', text: 'text-zinc-500' },
+  STARTER: { bg: 'bg-primary/10', text: 'text-primary' },
+  BUSINESS: { bg: 'bg-secondary/10', text: 'text-secondary' },
+  ENTERPRISE: { bg: 'bg-amber-500/10', text: 'text-amber-500' },
 };
 
 export function UpgradeModal() {
@@ -50,57 +52,40 @@ export function UpgradeModal() {
   };
 
   return (
-    <Modal
-      isOpen={isUpgradeModalOpen}
-      onClose={hideUpgradeModal}
-      size="4xl"
-      scrollBehavior="inside"
-      classNames={{
-        base: 'bg-background',
-        header: 'border-b border-foreground/5',
-        footer: 'border-t border-foreground/5',
-      }}
-    >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-2">
+    <Dialog open={isUpgradeModalOpen} onOpenChange={(open) => !open && hideUpgradeModal()}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto theme-modal rounded-2xl">
+        <DialogHeader className="border-b border-foreground/5 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary" />
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">
+              <DialogTitle className="text-xl font-bold">
                 {featureInfo ? `Unlock ${featureInfo.name}` : 'Upgrade Your Plan'}
-              </h3>
-              <p className="text-sm text-foreground/50 font-normal">
+              </DialogTitle>
+              <DialogDescription className="text-sm text-foreground/50 font-normal">
                 {featureInfo
                   ? featureInfo.description
                   : 'Get more features and grow your business'}
-              </p>
+              </DialogDescription>
             </div>
           </div>
-        </ModalHeader>
+        </DialogHeader>
 
-        <ModalBody className="py-6">
+        <div className="py-6">
           {/* Billing Toggle */}
           <div className="flex justify-center mb-8">
-            <Tabs
-              selectedKey={billingCycle}
-              onSelectionChange={(key) => setBillingCycle(key as 'monthly' | 'yearly')}
-              classNames={{
-                tabList: 'bg-foreground/5 p-1',
-                tab: 'font-semibold',
-                cursor: 'bg-primary',
-              }}
-            >
-              <Tab key="monthly" title="Monthly" />
-              <Tab
-                key="yearly"
-                title={
+            <Tabs value={billingCycle} onValueChange={(v) => setBillingCycle(v as 'monthly' | 'yearly')}>
+              <TabsList className="bg-foreground/5 p-1">
+                <TabsTrigger value="monthly" className="font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  Monthly
+                </TabsTrigger>
+                <TabsTrigger value="yearly" className="font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <span className="flex items-center gap-2">
-                    Yearly <span className="text-xs text-success">Save 17%</span>
+                    Yearly <span className="text-xs text-green-500">Save 17%</span>
                   </span>
-                }
-              />
+                </TabsTrigger>
+              </TabsList>
             </Tabs>
           </div>
 
@@ -136,15 +121,15 @@ export function UpgradeModal() {
                     <div
                       className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                         isCurrentPlan
-                          ? 'bg-success/10 text-success'
-                          : `bg-${PLAN_COLORS[planType]}/10 text-${PLAN_COLORS[planType]}`
+                          ? 'bg-green-500/10 text-green-500'
+                          : `${PLAN_COLOR_CLASSES[planType].bg} ${PLAN_COLOR_CLASSES[planType].text}`
                       }`}
                     >
                       {PLAN_ICONS[planType]}
                     </div>
                     <span className="font-bold">{details.name}</span>
                     {isCurrentPlan && (
-                      <span className="text-[10px] bg-success/10 text-success px-2 py-0.5 rounded-full font-bold uppercase">
+                      <span className="text-[10px] bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full font-bold uppercase">
                         Current
                       </span>
                     )}
@@ -165,7 +150,7 @@ export function UpgradeModal() {
                   <ul className="space-y-2 mb-6">
                     {details.features.slice(0, 5).map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-sm">
-                        <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
+                        <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" aria-hidden="true" />
                         <span className="text-foreground/70">{feature}</span>
                       </li>
                     ))}
@@ -177,10 +162,9 @@ export function UpgradeModal() {
                   </ul>
 
                   <Button
-                    color={isRecommended ? 'primary' : 'default'}
-                    variant={isCurrentPlan ? 'flat' : isUpgrade ? 'solid' : 'bordered'}
-                    className="w-full font-bold"
-                    isDisabled={isCurrentPlan || !isUpgrade}
+                    variant={isRecommended ? 'default' : isCurrentPlan ? 'secondary' : isUpgrade ? 'default' : 'outline'}
+                    className="w-full font-bold rounded-full"
+                    disabled={isCurrentPlan || !isUpgrade}
                     onClick={() => handleUpgrade(planType)}
                   >
                     {isCurrentPlan
@@ -196,30 +180,30 @@ export function UpgradeModal() {
 
           {/* Feature Comparison Note */}
           {currentFeature && featureInfo && (
-            <div className="mt-6 p-4 rounded-xl bg-warning/10 border border-warning/20">
+            <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
               <p className="text-sm">
                 <strong>{featureInfo.name}</strong> requires the{' '}
                 <strong>{PLAN_DETAILS[featureInfo.minPlan].name}</strong> plan or higher.
               </p>
             </div>
           )}
-        </ModalBody>
+        </div>
 
-        <ModalFooter>
-          <Button variant="light" onClick={hideUpgradeModal}>
+        <DialogFooter className="border-t border-foreground/5 pt-4">
+          <Button variant="secondary" className="rounded-full" onClick={hideUpgradeModal}>
             Maybe Later
           </Button>
           <Button
-            color="primary"
-            variant="flat"
-            as="a"
-            href="/pricing"
-            target="_blank"
+            variant="secondary"
+            className="rounded-full"
+            asChild
           >
-            Compare All Features
+            <Link href="/pricing" target="_blank">
+              Compare All Features
+            </Link>
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,13 +1,13 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import {
-    Button,
-    Dropdown,
-    DropdownItem,
     DropdownMenu,
-    DropdownTrigger
-} from '@heroui/react';
-import { Globe } from 'lucide-react';
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Globe, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 
@@ -39,28 +39,34 @@ export default function LocaleSwitcher() {
   const currentLanguage = locales.find(l => l.code === currentLocale) || locales[0];
 
   return (
-    <Dropdown placement="bottom-end">
-      <DropdownTrigger>
-        <Button 
-          variant="light" 
-          radius="full" 
-          isIconOnly
-          isLoading={isPending}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          aria-label={`Change language - currently ${currentLanguage.name}`}
+          disabled={isPending}
         >
-          <Globe size={20} className="opacity-50" />
+          {isPending ? (
+            <Loader2 size={20} className="opacity-50 animate-spin" aria-hidden="true" />
+          ) : (
+            <Globe size={20} className="opacity-50" aria-hidden="true" />
+          )}
         </Button>
-      </DropdownTrigger>
-      <DropdownMenu 
-        aria-label="Language selection" 
-        selectedKeys={[currentLocale]}
-        onAction={onAction}
-      >
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
         {locales.map((locale) => (
-          <DropdownItem key={locale.code} startContent={<span>{locale.flag}</span>}>
+          <DropdownMenuItem
+            key={locale.code}
+            onClick={() => onAction(locale.code)}
+            className={currentLocale === locale.code ? 'bg-accent' : ''}
+          >
+            <span className="mr-2">{locale.flag}</span>
             {locale.name}
-          </DropdownItem>
+          </DropdownMenuItem>
         ))}
-      </DropdownMenu>
-    </Dropdown>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

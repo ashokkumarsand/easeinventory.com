@@ -1,6 +1,9 @@
 'use client';
 
-import { Card, CardBody, CardHeader, Chip, Progress, Skeleton } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowDown, ArrowUp, RotateCcw } from 'lucide-react';
 
 interface TurnoverCategory {
@@ -18,10 +21,10 @@ const turnoverData: TurnoverCategory[] = [
   { name: 'Services', turnoverRate: 15.8, avgDaysToSell: 23, trend: 12.1 },
 ];
 
-const getTurnoverHealth = (rate: number): { label: string; color: 'success' | 'warning' | 'danger' } => {
-  if (rate >= 10) return { label: 'Excellent', color: 'success' };
-  if (rate >= 6) return { label: 'Good', color: 'warning' };
-  return { label: 'Needs attention', color: 'danger' };
+const getTurnoverHealth = (rate: number): { label: string; colorClass: string } => {
+  if (rate >= 10) return { label: 'Excellent', colorClass: 'bg-green-500/10 text-green-600' };
+  if (rate >= 6) return { label: 'Good', colorClass: 'bg-yellow-500/10 text-yellow-600' };
+  return { label: 'Needs attention', colorClass: 'bg-destructive/10 text-destructive' };
 };
 
 interface InventoryTurnoverProps {
@@ -38,7 +41,7 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
         <CardHeader>
           <Skeleton className="h-6 w-40 rounded-lg" />
         </CardHeader>
-        <CardBody className="space-y-4">
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Skeleton className="h-20 rounded-xl" />
             <Skeleton className="h-20 rounded-xl" />
@@ -46,7 +49,7 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-12 rounded-lg" />
           ))}
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -56,7 +59,7 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
-            <RotateCcw className="w-4 h-4 text-secondary" />
+            <RotateCcw className="w-4 h-4 text-secondary-foreground" />
           </div>
           <div>
             <h3 className="text-lg font-bold">Inventory Turnover</h3>
@@ -64,7 +67,7 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="pt-0 space-y-5">
+      <CardContent className="pt-0 space-y-5">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
@@ -91,17 +94,17 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold">{category.name}</span>
-                    <Chip size="sm" color={health.color} variant="flat" className="text-[10px] h-5">
+                    <Badge variant="secondary" className={`text-[10px] h-5 ${health.colorClass}`}>
                       {health.label}
-                    </Chip>
+                    </Badge>
                   </div>
                   <div className="flex items-center gap-1 text-xs">
                     {category.trend >= 0 ? (
-                      <ArrowUp className="w-3 h-3 text-success" />
+                      <ArrowUp className="w-3 h-3 text-green-500" />
                     ) : (
-                      <ArrowDown className="w-3 h-3 text-danger" />
+                      <ArrowDown className="w-3 h-3 text-destructive" />
                     )}
-                    <span className={category.trend >= 0 ? 'text-success' : 'text-danger'}>
+                    <span className={category.trend >= 0 ? 'text-green-500' : 'text-destructive'}>
                       {Math.abs(category.trend)}%
                     </span>
                   </div>
@@ -109,13 +112,7 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
                 <div className="flex items-center gap-3">
                   <Progress
                     value={progressValue}
-                    color={health.color}
-                    size="sm"
-                    className="flex-1"
-                    classNames={{
-                      base: 'h-2',
-                      track: 'bg-foreground/10',
-                    }}
+                    className="flex-1 h-2"
                   />
                   <span className="text-sm font-bold w-14 text-right">{category.turnoverRate}x</span>
                 </div>
@@ -126,7 +123,7 @@ export function InventoryTurnover({ isLoading }: InventoryTurnoverProps) {
             );
           })}
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

@@ -1,6 +1,8 @@
 'use client';
 
-import { Card, CardBody, CardHeader, Progress, Skeleton } from '@heroui/react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, CheckCircle, Package } from 'lucide-react';
 
 interface StockCategory {
@@ -35,14 +37,14 @@ export function StockLevels({ isLoading }: StockLevelsProps) {
         <CardHeader>
           <Skeleton className="h-6 w-32 rounded-lg" />
         </CardHeader>
-        <CardBody className="space-y-4">
+        <CardContent className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="space-y-2">
               <Skeleton className="h-4 w-24 rounded-lg" />
               <Skeleton className="h-2 w-full rounded-full" />
             </div>
           ))}
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -61,27 +63,27 @@ export function StockLevels({ isLoading }: StockLevelsProps) {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="space-y-5">
+      <CardContent className="space-y-5">
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="p-3 rounded-xl bg-success/10 border border-success/20">
+          <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-success" />
-              <span className="text-xs font-semibold text-success">In Stock</span>
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <span className="text-xs font-semibold text-green-500">In Stock</span>
             </div>
             <p className="text-xl font-black mt-1">{totalInStock}</p>
           </div>
-          <div className="p-3 rounded-xl bg-warning/10 border border-warning/20">
+          <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-warning" />
-              <span className="text-xs font-semibold text-warning">Low Stock</span>
+              <AlertTriangle className="w-4 h-4 text-yellow-500" />
+              <span className="text-xs font-semibold text-yellow-500">Low Stock</span>
             </div>
             <p className="text-xl font-black mt-1">{totalLowStock}</p>
           </div>
-          <div className="p-3 rounded-xl bg-danger/10 border border-danger/20">
+          <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20">
             <div className="flex items-center gap-2">
-              <Package className="w-4 h-4 text-danger" />
-              <span className="text-xs font-semibold text-danger">Out of Stock</span>
+              <Package className="w-4 h-4 text-destructive" />
+              <span className="text-xs font-semibold text-destructive">Out of Stock</span>
             </div>
             <p className="text-xl font-black mt-1">{totalOutOfStock}</p>
           </div>
@@ -91,8 +93,6 @@ export function StockLevels({ isLoading }: StockLevelsProps) {
         <div className="space-y-4">
           {categories.map((category) => {
             const healthPercent = (category.inStock / category.total) * 100;
-            const healthColor =
-              healthPercent > 80 ? 'success' : healthPercent > 50 ? 'warning' : 'danger';
 
             return (
               <div key={category.name}>
@@ -104,18 +104,13 @@ export function StockLevels({ isLoading }: StockLevelsProps) {
                 </div>
                 <Progress
                   value={healthPercent}
-                  color={healthColor}
-                  size="sm"
-                  classNames={{
-                    base: 'h-2',
-                    track: 'bg-foreground/10',
-                  }}
+                  className="h-2"
                 />
               </div>
             );
           })}
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

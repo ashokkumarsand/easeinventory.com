@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { WifiOff, RefreshCw } from 'lucide-react';
 
 export default function OfflinePage() {
@@ -25,12 +25,11 @@ export default function OfflinePage() {
 
         <div className="space-y-4">
           <Button
-            color="primary"
             size="lg"
             className="w-full font-bold"
             onClick={handleRetry}
-            startContent={<RefreshCw size={18} />}
           >
+            <RefreshCw size={18} className="mr-2" />
             Try Again
           </Button>
 

@@ -1,6 +1,11 @@
 'use client';
 
-import { Accordion, AccordionItem } from '@heroui/react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -38,7 +43,7 @@ const FAQ: React.FC = () => {
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none" />
 
       <div className="container-custom relative z-10 flex flex-col lg:flex-row gap-24 lg:gap-32">
-        
+
         {/* Left Side: Text */}
         <div className="lg:w-1/3">
            <motion.div
@@ -53,7 +58,7 @@ const FAQ: React.FC = () => {
               </div>
               <h2 className="heading-lg mb-10">Got <span className="text-primary italic">Questions?</span></h2>
               <p className="paragraph-lg mb-12 italic">Everything you need to know about scaling operations with <span className="italic">Ease</span><span className="text-primary italic">Inventory</span>. Still stuck? Reach out to our 24/7 command center.</p>
-              
+
               <div className="p-10 rounded-[40px] bg-foreground/5 border border-foreground/5 hover:bg-foreground/[0.08] transition-all duration-500 shadow-sm">
                  <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 mb-6 underline underline-offset-8">Direct Access</p>
                  <a href="mailto:help@easeinventory.com" className="text-2xl font-black mb-2 block hover:text-primary transition-colors text-foreground tracking-tight">help@easeinventory.com</a>
@@ -64,23 +69,19 @@ const FAQ: React.FC = () => {
 
         {/* Right Side: Accordion */}
         <div className="lg:w-2/3">
-           <Accordion 
-             variant="splitted"
-             itemClasses={{
-               base: "px-8 mb-6 !shadow-none border border-foreground/5 bg-foreground/[0.02] hover:bg-foreground/5 hover:border-primary/20 rounded-[32px] overflow-hidden transition-all duration-500",
-               title: "font-black text-2xl py-8 text-foreground uppercase tracking-tight",
-               content: "pb-10 opacity-70 font-medium leading-relaxed italic text-lg text-foreground",
-               indicator: "text-primary text-2xl",
-               trigger: "py-0 h-auto"
-             }}
-           >
+           <Accordion type="single" collapsible className="space-y-6">
              {faqs.map((faq, index) => (
                 <AccordionItem
                   key={index}
-                  aria-label={faq.question}
-                  title={faq.question}
+                  value={`item-${index}`}
+                  className="px-8 border border-foreground/5 bg-foreground/[0.02] hover:bg-foreground/5 hover:border-primary/20 rounded-[32px] overflow-hidden transition-all duration-500"
                 >
-                  {faq.answer}
+                  <AccordionTrigger className="font-black text-2xl py-8 text-foreground uppercase tracking-tight hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-10 opacity-70 font-medium leading-relaxed italic text-lg text-foreground">
+                    {faq.answer}
+                  </AccordionContent>
                 </AccordionItem>
              ))}
            </Accordion>

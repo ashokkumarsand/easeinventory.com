@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import Footer from '@/components/landing/Footer';
 import Navbar from '@/components/landing/Navbar';
@@ -118,7 +118,7 @@ export default function PrivacyPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card">
-                    <CardBody className="p-8 lg:p-10">
+                    <CardContent className="p-8 lg:p-10">
                       <h2 className="text-2xl font-black mb-6 uppercase tracking-tight">{section.title}</h2>
                       <ul className="space-y-4">
                         {section.content.map((item, i) => (
@@ -128,7 +128,7 @@ export default function PrivacyPage() {
                           </li>
                         ))}
                       </ul>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -140,7 +140,7 @@ export default function PrivacyPage() {
                 viewport={{ once: true }}
               >
                 <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20">
-                  <CardBody className="p-8 lg:p-10">
+                  <CardContent className="p-8 lg:p-10">
                     <h2 className="text-2xl font-black mb-4 uppercase tracking-tight">Questions?</h2>
                     <p className="text-foreground/70 mb-4 italic">
                       For privacy-related inquiries, contact our Data Protection Officer:
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
                     <a href="mailto:privacy@easeinventory.com" className="text-primary font-bold hover:underline">
                       privacy@easeinventory.com
                     </a>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             </div>

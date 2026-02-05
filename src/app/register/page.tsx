@@ -1,18 +1,20 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import {
-    Button,
-    Card,
-    CardBody,
-    Checkbox,
-    Divider,
-    Input,
     Select,
-    SelectItem
-} from '@heroui/react';
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Building2, Check, Crown, Zap } from 'lucide-react';
+import { Building2, Check, Crown, Loader2, Zap } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -130,8 +132,8 @@ export default function RegisterPage() {
   };
 
   const selectedPlanDetails = plans.find(p => p.id === formData.selectedPlan);
-  const currentPrice = formData.billingCycle === 'annual' 
-    ? selectedPlanDetails?.annualPrice 
+  const currentPrice = formData.billingCycle === 'annual'
+    ? selectedPlanDetails?.annualPrice
     : selectedPlanDetails?.monthlyPrice;
   const gstAmount = Math.round((currentPrice || 0) * 0.18);
   const totalPrice = (currentPrice || 0) + gstAmount;
@@ -143,7 +145,7 @@ export default function RegisterPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[130px] animate-drift delay-1000 pointer-events-none" />
 
       <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-20 items-center relative z-10">
-        
+
         {/* Left: Branding & Info */}
         <div className="hidden lg:flex flex-col gap-12">
            <Link href="/" className="inline-flex items-center gap-4 group active:scale-95 transition-transform">
@@ -182,9 +184,9 @@ export default function RegisterPage() {
 
         {/* Right: Actual Form */}
         <div className="relative w-full max-w-xl mx-auto lg:mx-0 py-12">
-          <Card className="modern-card p-6 md:p-12 border-none shadow-2xl bg-card" radius="lg">
-            <CardBody className="space-y-10">
-              
+          <Card className="modern-card p-6 md:p-12 border-none shadow-2xl bg-card rounded-lg">
+            <CardContent className="space-y-10 p-0">
+
               <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                 <div className="lg:hidden mb-12">
                    <Link href="/" className="flex items-center gap-4">
@@ -218,13 +220,8 @@ export default function RegisterPage() {
                           placeholder="John Doe"
                           value={formData.ownerName}
                           onChange={(e) => setFormData({...formData, ownerName: e.target.value})}
-                          size="lg"
-                          radius="lg"
                           required
-                          classNames={{
-                            inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                            input: "text-sm font-bold"
-                          }}
+                          className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold"
                         />
                       </div>
 
@@ -234,43 +231,31 @@ export default function RegisterPage() {
                           placeholder="Vertex Solutions"
                           value={formData.brandName}
                           onChange={(e) => setFormData({...formData, brandName: e.target.value})}
-                          size="lg"
-                          radius="lg"
                           required
-                          classNames={{
-                            inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                            input: "text-sm font-bold"
-                          }}
+                          className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold"
                         />
                       </div>
-                      
+
                       <div className="space-y-1">
                         <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Industry Designation</label>
                         <Select
-                          placeholder="Select industry"
-                          selectedKeys={formData.businessType ? [formData.businessType] : []}
-                          onSelectionChange={(keys) => setFormData({...formData, businessType: Array.from(keys)[0] as string})}
-                          size="lg"
-                          radius="lg"
-                          classNames={{
-                            trigger: "bg-foreground/5 h-12 border-none shadow-inner",
-                            value: "text-sm font-bold",
-                            popoverContent: "bg-white dark:bg-black shadow-2xl border border-foreground/10 rounded-[22px] min-w-[220px] z-[100]",
-                            listbox: "p-2",
-                          }}
-                          popoverProps={{
-                            offset: 10,
-                            showArrow: true,
-                          }}
+                          value={formData.businessType}
+                          onValueChange={(value) => setFormData({...formData, businessType: value})}
                         >
-                          {businessTypes.map((type) => (
-                            <SelectItem 
-                              key={type.value} 
-                              className="font-bold text-foreground py-3 rounded-xl hover:bg-primary/10 transition-colors"
-                            >
-                              {type.label}
-                            </SelectItem>
-                          ))}
+                          <SelectTrigger className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold">
+                            <SelectValue placeholder="Select industry" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {businessTypes.map((type) => (
+                              <SelectItem
+                                key={type.value}
+                                value={type.value}
+                                className="font-bold text-foreground py-3"
+                              >
+                                {type.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       </div>
 
@@ -283,13 +268,8 @@ export default function RegisterPage() {
                           placeholder="22AAAAA0000A1Z5"
                           value={formData.gstin}
                           onChange={(e) => setFormData({...formData, gstin: e.target.value.toUpperCase()})}
-                          size="lg"
-                          radius="lg"
                           maxLength={15}
-                          classNames={{
-                            inputWrapper: `bg-foreground/5 h-12 border-none shadow-inner ${formData.gstin && !isGSTINValid ? 'border-2 border-red-500' : ''}`,
-                            input: "text-sm font-bold uppercase tracking-wider"
-                          }}
+                          className={`bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold uppercase tracking-wider ${formData.gstin && !isGSTINValid ? 'border-2 border-red-500' : ''}`}
                         />
                         {formData.gstin && !isGSTINValid && (
                           <p className="text-[10px] text-red-500 font-bold ml-1 mt-1">Invalid GSTIN format</p>
@@ -297,13 +277,11 @@ export default function RegisterPage() {
                         <p className="text-[10px] text-foreground/30 ml-1 mt-1">Required for B2B GST invoices</p>
                       </div>
 
-                      <Button 
-                        color="primary" 
+                      <Button
                         size="lg"
-                        className="w-full font-black h-12 shadow-xl shadow-primary/20 mt-6 text-sm uppercase tracking-widest" 
-                        radius="full"
+                        className="w-full font-black h-12 shadow-xl shadow-primary/20 mt-6 text-sm uppercase tracking-widest rounded-full"
                         onClick={() => setStep(2)}
-                        isDisabled={!formData.ownerName || !formData.brandName || Boolean(formData.gstin && !isGSTINValid)}
+                        disabled={!formData.ownerName || !formData.brandName || Boolean(formData.gstin && !isGSTINValid)}
                       >
                         Proceed to Next Step
                       </Button>
@@ -319,14 +297,14 @@ export default function RegisterPage() {
                       {/* Plan Selection - New Step */}
                       <div className="space-y-4">
                         <label className="font-black text-[10px] uppercase tracking-[0.2em] text-foreground/40 block mb-2 ml-1">Select Your Plan</label>
-                        
+
                         {/* Billing Toggle */}
                         <div className="flex items-center justify-center gap-4 p-2 bg-foreground/5 rounded-full">
                           <button
                             type="button"
                             className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
-                              formData.billingCycle === 'monthly' 
-                                ? 'bg-primary text-white' 
+                              formData.billingCycle === 'monthly'
+                                ? 'bg-primary text-white'
                                 : 'text-foreground/50 hover:text-foreground'
                             }`}
                             onClick={() => setFormData({...formData, billingCycle: 'monthly'})}
@@ -336,8 +314,8 @@ export default function RegisterPage() {
                           <button
                             type="button"
                             className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                              formData.billingCycle === 'annual' 
-                                ? 'bg-primary text-white' 
+                              formData.billingCycle === 'annual'
+                                ? 'bg-primary text-white'
                                 : 'text-foreground/50 hover:text-foreground'
                             }`}
                             onClick={() => setFormData({...formData, billingCycle: 'annual'})}
@@ -353,15 +331,15 @@ export default function RegisterPage() {
                             const PlanIcon = plan.icon;
                             const price = formData.billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
                             const isSelected = formData.selectedPlan === plan.id;
-                            
+
                             return (
                               <button
                                 key={plan.id}
                                 type="button"
                                 onClick={() => setFormData({...formData, selectedPlan: plan.id})}
                                 className={`w-full p-4 rounded-2xl border-2 transition-all text-left ${
-                                  isSelected 
-                                    ? 'border-primary bg-primary/10' 
+                                  isSelected
+                                    ? 'border-primary bg-primary/10'
                                     : 'border-foreground/10 bg-foreground/5 hover:border-foreground/20'
                                 }`}
                               >
@@ -411,7 +389,7 @@ export default function RegisterPage() {
                             <span className="text-foreground/50">GST (18%)</span>
                             <span className="font-bold">₹{gstAmount.toLocaleString()}</span>
                           </div>
-                          <Divider className="my-2" />
+                          <Separator className="my-2" />
                           <div className="flex justify-between text-lg">
                             <span className="font-black">Total</span>
                             <span className="font-black text-primary">₹{totalPrice.toLocaleString()}</span>
@@ -420,17 +398,15 @@ export default function RegisterPage() {
                       </div>
 
                       <div className="flex flex-col gap-4 pt-2">
-                        <Button 
-                          color="primary" 
+                        <Button
                           size="lg"
-                          className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest" 
-                          radius="full"
+                          className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest rounded-full"
                           onClick={() => setStep(3)}
                         >
                           Continue to Credentials
                         </Button>
-                        <Button 
-                          variant="light"
+                        <Button
+                          variant="ghost"
                           className="font-black text-[10px] uppercase tracking-widest text-foreground/40 hover:text-foreground"
                           onClick={() => setStep(1)}
                         >
@@ -453,13 +429,8 @@ export default function RegisterPage() {
                           placeholder="admin@business.in"
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
-                          size="lg"
-                          radius="lg"
                           required
-                          classNames={{
-                            inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                            input: "text-sm font-bold transition-all"
-                          }}
+                          className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold transition-all"
                         />
                       </div>
 
@@ -470,13 +441,8 @@ export default function RegisterPage() {
                           placeholder="+91 98XXX XXXXX"
                           value={formData.phone}
                           onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                          size="lg"
-                          radius="lg"
                           required
-                          classNames={{
-                            inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                            input: "text-sm font-bold"
-                          }}
+                          className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold"
                         />
                       </div>
 
@@ -487,41 +453,33 @@ export default function RegisterPage() {
                           placeholder="••••••••••••"
                           value={formData.password}
                           onChange={(e) => setFormData({...formData, password: e.target.value})}
-                          size="lg"
-                          radius="lg"
                           required
-                          classNames={{
-                            inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                            input: "text-sm font-bold"
-                          }}
+                          className="bg-foreground/5 h-12 border-none shadow-inner text-sm font-bold"
                         />
                       </div>
 
-                      <Checkbox 
-                        isSelected={formData.agreeToTerms}
-                        onValueChange={(val) => setFormData({...formData, agreeToTerms: val})}
-                        color="primary"
-                        radius="sm"
-                        classNames={{ 
-                          label: "text-xs font-bold text-foreground/40 select-none",
-                        }}
-                      >
-                        I accept the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and acknowledge that pricing is subject to 18% GST
-                      </Checkbox>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="terms"
+                          checked={formData.agreeToTerms}
+                          onCheckedChange={(checked) => setFormData({...formData, agreeToTerms: checked as boolean})}
+                        />
+                        <label htmlFor="terms" className="text-xs font-bold text-foreground/40 select-none">
+                          I accept the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and acknowledge that pricing is subject to 18% GST
+                        </label>
+                      </div>
 
                       <div className="flex flex-col gap-4 pt-6">
-                        <Button 
-                          color="primary" 
+                        <Button
                           size="lg"
-                          className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest" 
-                          radius="full"
+                          className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest rounded-full"
                           onClick={() => setStep(4)}
-                          isDisabled={!formData.email || !formData.password || !formData.phone || !formData.agreeToTerms}
+                          disabled={!formData.email || !formData.password || !formData.phone || !formData.agreeToTerms}
                         >
                           Proceed to Verification
                         </Button>
-                        <Button 
-                          variant="light"
+                        <Button
+                          variant="ghost"
                           className="font-black text-[10px] uppercase tracking-widest text-foreground/40 hover:text-foreground"
                           onClick={() => setStep(2)}
                         >
@@ -552,13 +510,8 @@ export default function RegisterPage() {
                             placeholder="X X X X X X"
                             value={formData.otp}
                             onChange={(e) => setFormData({...formData, otp: e.target.value})}
-                            size="lg"
-                            radius="lg"
                             maxLength={6}
-                            classNames={{
-                              inputWrapper: "bg-foreground/5 h-12 border-none shadow-inner",
-                              input: "text-lg font-black tracking-[0.5em] text-center"
-                            }}
+                            className="bg-foreground/5 h-12 border-none shadow-inner text-lg font-black tracking-[0.5em] text-center"
                           />
                         </div>
 
@@ -573,20 +526,19 @@ export default function RegisterPage() {
                             <span className="font-bold text-primary">₹{totalPrice.toLocaleString()}</span>
                           </div>
                         </div>
-                        
+
                         <div className="flex flex-col gap-4">
-                          <Button 
-                            color="primary" 
+                          <Button
                             size="lg"
-                            className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest" 
-                            radius="full"
-                            isLoading={isLoading}
+                            className="w-full font-black h-12 shadow-xl shadow-primary/20 text-sm uppercase tracking-widest rounded-full"
+                            disabled={isLoading}
                             onClick={handleRegister}
                           >
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Create Account & Pay
                           </Button>
-                          <Button 
-                            variant="light"
+                          <Button
+                            variant="ghost"
                             className="font-black text-[10px] uppercase tracking-widest text-foreground/40 hover:text-foreground"
                             onClick={() => setStep(3)}
                           >
@@ -600,29 +552,26 @@ export default function RegisterPage() {
               </form>
 
               <div className="flex items-center gap-6 py-2">
-                 <Divider className="flex-1 opacity-10" />
+                 <Separator className="flex-1 opacity-10" />
                  <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-20">Express Path</span>
-                 <Divider className="flex-1 opacity-10" />
+                 <Separator className="flex-1 opacity-10" />
               </div>
 
-              <Button 
-                variant="bordered" 
-                className="w-full font-black h-12 border-foreground/10 text-foreground text-xs uppercase tracking-widest hover:bg-foreground/5" 
-                radius="full"
+              <Button
+                variant="outline"
+                className="w-full font-black h-12 border-foreground/10 text-foreground text-xs uppercase tracking-widest hover:bg-foreground/5 rounded-full"
                 onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-                startContent={
-                  <svg className="w-5 h-5 mr-1" viewBox="0 0 24 24">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                  </svg>
-                }
               >
+                <svg className="w-5 h-5 mr-1" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
                 Sign up with Google
               </Button>
 
-              <Divider className="opacity-10" />
+              <Separator className="opacity-10" />
 
               <p className="text-center text-sm font-black uppercase tracking-widest text-foreground/40">
                 Already Authenticated?{' '}
@@ -630,7 +579,7 @@ export default function RegisterPage() {
                   Log in here
                 </Link>
               </p>
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
 

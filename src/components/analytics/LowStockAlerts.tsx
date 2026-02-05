@@ -1,8 +1,11 @@
 'use client';
 
-import { Button, Card, CardBody, CardHeader, Chip, Skeleton } from '@heroui/react';
-import { AlertTriangle, ArrowRight, Package } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
+import { AlertTriangle, ArrowRight, Package } from 'lucide-react';
 
 interface LowStockItem {
   id: string;
@@ -71,7 +74,7 @@ export function LowStockAlerts({ isLoading, limit = 5 }: LowStockAlertsProps) {
         <CardHeader>
           <Skeleton className="h-6 w-32 rounded-lg" />
         </CardHeader>
-        <CardBody className="space-y-3">
+        <CardContent className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex items-center gap-3 p-3">
               <Skeleton className="w-10 h-10 rounded-lg" />
@@ -82,7 +85,7 @@ export function LowStockAlerts({ isLoading, limit = 5 }: LowStockAlertsProps) {
               <Skeleton className="h-6 w-16 rounded-full" />
             </div>
           ))}
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -92,8 +95,8 @@ export function LowStockAlerts({ isLoading, limit = 5 }: LowStockAlertsProps) {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
-              <AlertTriangle className="w-4 h-4 text-warning" />
+            <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-yellow-500" />
             </div>
             <div>
               <h3 className="text-lg font-bold">Low Stock Alerts</h3>
@@ -101,21 +104,22 @@ export function LowStockAlerts({ isLoading, limit = 5 }: LowStockAlertsProps) {
             </div>
           </div>
           <Button
-            as={Link}
-            href="/inventory?filter=low_stock"
+            variant="secondary"
             size="sm"
-            variant="flat"
-            endContent={<ArrowRight className="w-4 h-4" />}
+            asChild
           >
-            View All
+            <Link href="/inventory?filter=low_stock">
+              View All
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
           </Button>
         </div>
       </CardHeader>
-      <CardBody className="pt-0">
+      <CardContent className="pt-0">
         <div className="divide-y divide-foreground/5">
           {items.map((item) => {
             const stockPercent = (item.currentStock / item.minStock) * 100;
-            const severity = stockPercent <= 30 ? 'danger' : 'warning';
+            const severity = stockPercent <= 30 ? 'destructive' : 'secondary';
 
             return (
               <div
@@ -130,16 +134,16 @@ export function LowStockAlerts({ isLoading, limit = 5 }: LowStockAlertsProps) {
                   <p className="text-xs text-foreground/40">{item.sku}</p>
                 </div>
                 <div className="text-right">
-                  <Chip size="sm" color={severity} variant="flat" className="font-bold">
+                  <Badge variant={severity} className={`font-bold ${severity === 'destructive' ? '' : 'bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20'}`}>
                     {item.currentStock} left
-                  </Chip>
+                  </Badge>
                   <p className="text-[10px] text-foreground/40 mt-1">Min: {item.minStock}</p>
                 </div>
               </div>
             );
           })}
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

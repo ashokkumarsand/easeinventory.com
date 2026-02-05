@@ -1,73 +1,77 @@
 'use client';
 
-import { Button, Card, CardBody, Tab, Tabs } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
 const plans = [
   {
-    name: 'Starter Accelerator',
-    description: 'Perfect for local shops starting their digital journey',
+    name: 'Free',
+    description: 'For small businesses getting started',
     monthlyPrice: 0,
     yearlyPrice: 0,
     period: 'forever',
     features: [
-      'Single Admin Seat',
-      '100 Inventory Items',
-      'Basic Invoicing',
-      'Community Support',
+      'Up to 100 products',
+      '1 user',
+      '1 location',
+      'Basic inventory tracking',
+      'Simple invoicing',
+      'Email support',
     ],
-    cta: 'Start Accelerating',
+    cta: 'Get Started Free',
     popular: false,
   },
   {
-    name: 'Business Catalyst',
-    description: 'The definitive solution for scaling franchises',
-    monthlyPrice: 1999,
-    yearlyPrice: 1599,
+    name: 'Starter',
+    description: 'For growing businesses',
+    monthlyPrice: 999,
+    yearlyPrice: 833, // ₹9,990/year = ₹833/month
     period: '/mo',
     features: [
-      'Up to 10 User Seats',
-      'Unlimited Inventory',
-      'Repair Center Management',
-      'GST Invoicing Terminal',
-      'No WhatsApp Automation',
-      'No Device Attendance',
+      'Up to 500 products',
+      '5 users',
+      'WhatsApp notifications',
+      'Bulk import/export',
+      'Basic reports',
+      'Chat support',
     ],
-    cta: 'Ignite Growth',
+    cta: 'Start Growing',
     popular: false,
   },
   {
-    name: 'Growth Engine',
-    description: 'Full-scale operational power for serious businesses',
-    monthlyPrice: 3500,
-    yearlyPrice: 2800,
+    name: 'Business',
+    description: 'For established businesses',
+    monthlyPrice: 2499,
+    yearlyPrice: 2083, // ₹24,990/year = ₹2,083/month
     period: '/mo',
     features: [
-      'Up to 20 User Seats',
-      'WhatsApp Integration',
-      'Device Attendance Mgmt',
-      'Priority Support',
-      'Advanced Logistics',
-      'Profit Analytics',
+      'Unlimited products',
+      '20 users',
+      '5 locations',
+      'Custom domain',
+      'Advanced analytics',
+      'Priority support',
     ],
-    cta: 'Scale Faster',
+    cta: 'Scale Up',
     popular: true,
   },
   {
-    name: 'Empire Command',
-    description: 'Complete sovereignty for large-scale operations',
-    monthlyPrice: 'Custom',
-    yearlyPrice: 'Custom',
-    period: '',
+    name: 'Enterprise',
+    description: 'For large organizations',
+    monthlyPrice: 4999,
+    yearlyPrice: 4166, // ₹49,990/year = ₹4,166/month
+    period: '/mo',
     features: [
-      'Unlimited Enterprise Seats',
-      'Sub-Admin Rights Delegation',
-      'Logistics & Fleet Command',
-      'B2B Dispatch Manifests',
-      'Advanced API Access',
-      'Dedicated Success Manager',
+      'Unlimited users',
+      'Unlimited locations',
+      'API access',
+      'White label',
+      'SSO integration',
+      'Dedicated account manager',
     ],
     cta: 'Contact Sales',
     popular: false,
@@ -76,7 +80,7 @@ const plans = [
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState('monthly');
-  const [selectedPlan, setSelectedPlan] = useState('Growth Engine');
+  const [selectedPlan, setSelectedPlan] = useState('Business');
 
   return (
     <section id="pricing" className="section-padding bg-background relative overflow-hidden">
@@ -92,40 +96,32 @@ const Pricing: React.FC = () => {
            </h2>
            
             <div className="flex flex-col items-center gap-6 mt-10 w-full mx-auto">
-               <Tabs 
-                 aria-label="Billing Cycle" 
-                 color="primary" 
-                 variant="solid"
-                 radius="full"
-                 size="md"
-                 selectedKey={billingCycle}
-                 onSelectionChange={(key) => setBillingCycle(key.toString())}
-                 classNames={{
-                   base: "overflow-hidden",
-                   tabList: "bg-default-100 p-1 gap-0 border border-default-200 overflow-hidden",
-                   cursor: "shadow-lg bg-white dark:bg-primary shadow-primary/20",
-                   tab: "h-10 px-6",
-                   tabContent: "font-black text-[10px] md:text-xs group-data-[selected=true]:text-primary dark:group-data-[selected=true]:text-white tracking-widest uppercase flex items-center justify-center h-full w-full"
-                 }}
-               >
-                 <Tab key="monthly" title="Monthly" />
-                 <Tab 
-                   key="yearly" 
-                   title={
+               <Tabs value={billingCycle} onValueChange={setBillingCycle} className="overflow-hidden">
+                 <TabsList className="bg-muted p-1 gap-0 border border-border overflow-hidden rounded-full">
+                   <TabsTrigger
+                     value="monthly"
+                     className="h-10 px-6 font-black text-[10px] md:text-xs tracking-widest uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-primary data-[state=active]:text-primary dark:data-[state=active]:text-white data-[state=active]:shadow-lg rounded-full"
+                   >
+                     Monthly
+                   </TabsTrigger>
+                   <TabsTrigger
+                     value="yearly"
+                     className="h-10 px-6 font-black text-[10px] md:text-xs tracking-widest uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-primary data-[state=active]:text-primary dark:data-[state=active]:text-white data-[state=active]:shadow-lg rounded-full"
+                   >
                      <div className="flex items-center justify-center gap-2 w-full">
                         <span>Yearly</span>
                         <div className="relative flex items-center">
-                          <div className="absolute inset-0 bg-success blur-md opacity-40 animate-pulse rounded-full" />
-                          <div className="relative bg-success text-white text-[8px] px-2 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap leading-none">
-                            -20%
+                          <div className="absolute inset-0 bg-green-500 blur-md opacity-40 animate-pulse rounded-full" />
+                          <div className="relative bg-green-500 text-white text-[8px] px-2 py-0.5 rounded-full font-black tracking-tighter shadow-lg whitespace-nowrap leading-none">
+                            Save 17%
                           </div>
                         </div>
                      </div>
-                   } 
-                 />
+                   </TabsTrigger>
+                 </TabsList>
                </Tabs>
-               <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 animate-bounce text-primary">
-                  Limited time launch offer ✦
+               <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 text-primary">
+                  Billed annually
                </p>
             </div>
         </div>
@@ -142,20 +138,17 @@ const Pricing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative flex flex-col overflow-visible shrink-0 snap-center w-[85vw] md:w-auto ${isSelected ? 'z-30' : 'z-10'}`}
+                className={`relative flex flex-col overflow-visible shrink-0 snap-center w-[85vw] md:w-auto cursor-pointer ${isSelected ? 'z-30' : 'z-10'}`}
                 onClick={() => setSelectedPlan(plan.name)}
               >
-                <Card 
-                  className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full ${
+                <Card
+                  className={`modern-card flex-1 border shadow-lg transition-all duration-500 overflow-visible relative h-full rounded-xl ${
                     isSelected
-                      ? '!bg-background border-primary shadow-2xl shadow-primary/20 translate-y-[-16px]' 
+                      ? '!bg-background border-primary shadow-2xl shadow-primary/20 translate-y-[-16px]'
                       : 'bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/5 hover:bg-white/60 dark:hover:bg-white/10 opacity-70 hover:opacity-100'
                   }`}
-                  radius="lg"
-                  isPressable
-                  onPress={() => setSelectedPlan(plan.name)}
                 >
-                  <CardBody className="p-8 flex flex-col h-full relative overflow-visible">
+                  <CardContent className="p-8 flex flex-col h-full relative overflow-visible">
                     {isPopular && (
                       <div className="absolute -top-10 left-0 w-full flex justify-center z-50 pointer-events-none">
                         <div className="bg-gradient-to-r from-primary to-secondary text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-full shadow-lg shadow-primary/40 border border-white/20 whitespace-nowrap">
@@ -175,7 +168,7 @@ const Pricing: React.FC = () => {
 
                     <div className="flex items-baseline justify-center sm:justify-start gap-1 mb-8">
                       <span className={`text-4xl font-black tracking-tighter ${isSelected ? 'text-foreground' : 'text-foreground/80'}`}>
-                        {typeof plan.monthlyPrice === 'number' 
+                        {typeof plan.monthlyPrice === 'number'
                           ? `₹${billingCycle === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}`
                           : plan.monthlyPrice
                         }
@@ -188,8 +181,8 @@ const Pricing: React.FC = () => {
                     <ul className="space-y-4 mb-8 flex-1">
                       {plan.features.map((feature) => (
                         <li key={feature} className={`flex items-start gap-3 text-xs font-bold ${isSelected ? 'text-foreground' : 'text-foreground/90'}`}>
-                          <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${feature.startsWith('No ') ? 'bg-danger/10' : 'bg-primary/10'}`}>
-                             <span className={`text-[8px] ${feature.startsWith('No ') ? 'text-danger' : 'text-primary'}`}>
+                          <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${feature.startsWith('No ') ? 'bg-destructive/10' : 'bg-primary/10'}`}>
+                             <span className={`text-[8px] ${feature.startsWith('No ') ? 'text-destructive' : 'text-primary'}`}>
                                {feature.startsWith('No ') ? '✕' : '✦'}
                              </span>
                           </div>
@@ -201,21 +194,20 @@ const Pricing: React.FC = () => {
                     </ul>
 
                     <Button
-                      as={Link}
-                      href="/register"
-                      color={isSelected ? 'primary' : 'default'}
-                      variant={isSelected ? 'solid' : 'bordered'}
-                      className={`w-full font-black h-12 text-xs uppercase tracking-[0.2em] shadow-lg ${
-                        isSelected 
-                          ? 'shadow-primary/30' 
+                      asChild
+                      variant={isSelected ? 'default' : 'outline'}
+                      className={`w-full font-black h-12 text-xs uppercase tracking-[0.2em] shadow-lg rounded-full ${
+                        isSelected
+                          ? 'shadow-primary/30'
                           : 'border-foreground/10 text-foreground hover:bg-foreground/5'
                       }`}
-                      radius="full"
                       size="lg"
                     >
-                      {plan.cta}
+                      <Link href="/register">
+                        {plan.cta}
+                      </Link>
                     </Button>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             );

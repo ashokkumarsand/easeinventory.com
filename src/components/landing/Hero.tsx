@@ -1,7 +1,8 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -96,24 +97,19 @@ const Hero: React.FC = () => {
             {/* CTA's */}
             <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start mt-8">
               <Button
-                as={Link}
-                href="/register"
-                color="primary"
+                asChild
                 size="lg"
-                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl shadow-2xl shadow-primary/40 uppercase tracking-widest w-full sm:w-auto min-w-[200px]"
-                radius="full"
+                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl shadow-2xl shadow-primary/40 uppercase tracking-widest w-full sm:w-auto min-w-[200px] rounded-full"
               >
-                Start Trial
+                <Link href="/register">Start Trial</Link>
               </Button>
               <Button
-                as={Link}
-                href="#demo"
-                variant="bordered"
+                asChild
+                variant="outline"
                 size="lg"
-                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl border-foreground/10 text-foreground uppercase tracking-widest hover:bg-foreground/5 w-full sm:w-auto min-w-[200px]"
-                radius="full"
+                className="font-black px-12 h-16 md:h-20 text-lg md:text-xl border-foreground/10 text-foreground uppercase tracking-widest hover:bg-foreground/5 w-full sm:w-auto min-w-[200px] rounded-full"
               >
-                View Demo
+                <Link href="#demo">View Demo</Link>
               </Button>
             </div>
 
@@ -161,19 +157,19 @@ const Hero: React.FC = () => {
 
                    {/* Stat Grid */}
                    <div className="grid grid-cols-2 gap-4 mb-8">
-                      <Card className="bg-primary/5 border-none shadow-none" radius="lg">
-                         <CardBody className="p-4">
+                      <Card className="bg-primary/5 border-none shadow-none rounded-lg">
+                         <CardContent className="p-4">
                             <p className="text-[10px] font-black opacity-40 uppercase mb-2 text-foreground tracking-widest">Products</p>
                             <p className="text-2xl font-black text-foreground">2,482</p>
                             <div className="h-1 w-10 bg-primary mt-3 rounded-full" />
-                         </CardBody>
+                         </CardContent>
                       </Card>
-                      <Card className="bg-secondary/5 border-none shadow-none" radius="lg">
-                        <CardBody className="p-4">
+                      <Card className="bg-secondary/5 border-none shadow-none rounded-lg">
+                        <CardContent className="p-4">
                            <p className="text-[10px] font-black opacity-40 uppercase mb-2 text-foreground tracking-widest">Stock Value</p>
                            <p className="text-2xl font-black text-foreground">₹14.2L</p>
                            <div className="h-1 w-10 bg-secondary mt-3 rounded-full" />
-                        </CardBody>
+                        </CardContent>
                      </Card>
                   </div>
 

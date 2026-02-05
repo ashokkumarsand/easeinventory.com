@@ -1,25 +1,26 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Switch,
-    useDisclosure
-} from '@heroui/react';
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import {
     Calendar,
     ChevronLeft,
     ChevronRight,
     Download,
     Gift,
+    Loader2,
     Plus,
     Trash2
 } from 'lucide-react';
@@ -81,7 +82,7 @@ export default function HolidayCalendarPage() {
 
             if (response.ok) {
                 fetchHolidays();
-                onOpenChange();
+                onOpenChange(false);
                 setNewHoliday({ name: '', date: '', isOptional: false });
             } else {
                 const data = await response.json();
@@ -162,8 +163,8 @@ export default function HolidayCalendarPage() {
         // Days of the month
         for (let day = 1; day <= daysInMonth; day++) {
             const holiday = isHoliday(day);
-            const isToday = new Date().getDate() === day && 
-                            new Date().getMonth() === currentMonth && 
+            const isToday = new Date().getDate() === day &&
+                            new Date().getMonth() === currentMonth &&
                             new Date().getFullYear() === currentYear;
             const isSunday = new Date(currentYear, currentMonth, day).getDay() === 0;
 
@@ -171,32 +172,32 @@ export default function HolidayCalendarPage() {
                 <div
                     key={day}
                     className={`h-24 p-2 border border-black/5 dark:border-white/10 rounded-xl transition-all ${
-                        holiday ? 'bg-danger/5 border-danger/20' : 
-                        isSunday ? 'bg-warning/5' : 
+                        holiday ? 'bg-danger/5 border-danger/20' :
+                        isSunday ? 'bg-warning/5' :
                         isToday ? 'bg-primary/5 border-primary/20' : ''
                     }`}
                 >
                     <div className="flex items-start justify-between">
                         <span className={`text-sm font-black ${
-                            holiday ? 'text-danger' : 
-                            isSunday ? 'text-warning' : 
+                            holiday ? 'text-danger' :
+                            isSunday ? 'text-warning' :
                             isToday ? 'text-primary' : 'opacity-60'
                         }`}>
                             {day}
                         </span>
                         {isToday && (
-                            <Chip size="sm" color="primary" variant="flat" className="text-[8px] font-black h-5">
+                            <Badge variant="secondary" className="text-[8px] font-black h-5">
                                 TODAY
-                            </Chip>
+                            </Badge>
                         )}
                     </div>
                     {holiday && (
                         <div className="mt-1">
                             <p className="text-[10px] font-bold text-danger truncate">{holiday.name}</p>
                             {holiday.isOptional && (
-                                <Chip size="sm" color="warning" variant="flat" className="text-[8px] font-black h-4 mt-1">
+                                <Badge variant="outline" className="text-[8px] font-black h-4 mt-1 text-warning border-warning">
                                     Optional
-                                </Chip>
+                                </Badge>
                             )}
                         </div>
                     )}
@@ -210,7 +211,7 @@ export default function HolidayCalendarPage() {
     const changeMonth = (delta: number) => {
         let newMonth = currentMonth + delta;
         let newYear = currentYear;
-        
+
         if (newMonth < 0) {
             newMonth = 11;
             newYear--;
@@ -218,7 +219,7 @@ export default function HolidayCalendarPage() {
             newMonth = 0;
             newYear++;
         }
-        
+
         setCurrentMonth(newMonth);
         if (newYear !== currentYear) {
             setCurrentYear(newYear);
@@ -240,23 +241,21 @@ export default function HolidayCalendarPage() {
                 </div>
                 <div className="flex items-center gap-3">
                     <Button
-                        variant="flat"
-                        color="default"
+                        variant="secondary"
                         className="font-bold rounded-2xl"
-                        startContent={<Download size={18} />}
                         onClick={handleImportIndiaHolidays}
-                        isLoading={isLoading}
+                        disabled={isLoading}
                     >
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <Download size={18} />
                         Import India Holidays
                     </Button>
                     <Button
-                        color="danger"
-                        radius="full"
+                        className="font-black px-8 shadow-xl shadow-danger/20 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         size="lg"
-                        className="font-black px-8 shadow-xl shadow-danger/20"
-                        startContent={<Plus size={20} />}
                         onClick={onOpen}
                     >
+                        <Plus size={20} />
                         Add Holiday
                     </Button>
                 </div>
@@ -264,50 +263,50 @@ export default function HolidayCalendarPage() {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="modern-card bg-danger text-white p-6" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card bg-danger text-white p-6 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2 text-white">Total Holidays</p>
                         <h2 className="text-4xl font-black">{holidays.length}</h2>
                         <p className="text-xs font-bold opacity-60">{currentYear}</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Mandatory</p>
                         <h2 className="text-4xl font-black text-danger">{holidays.filter(h => !h.isOptional).length}</h2>
                         <p className="text-xs font-bold opacity-40">Paid holidays</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Optional</p>
                         <h2 className="text-4xl font-black text-warning">{holidays.filter(h => h.isOptional).length}</h2>
                         <p className="text-xs font-bold opacity-40">Restricted days</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Sundays</p>
                         <h2 className="text-4xl font-black text-warning">52</h2>
                         <p className="text-xs font-bold opacity-40">Weekly off</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Calendar View */}
                 <div className="lg:col-span-8">
-                    <Card className="modern-card p-8" radius="lg">
-                        <CardBody className="p-0 space-y-6">
+                    <Card className="modern-card p-8 rounded-lg">
+                        <CardContent className="p-0 space-y-6">
                             {/* Month Navigation */}
                             <div className="flex items-center justify-between">
-                                <Button isIconOnly variant="flat" radius="full" onClick={() => changeMonth(-1)}>
+                                <Button size="icon" variant="secondary" className="rounded-full" onClick={() => changeMonth(-1)}>
                                     <ChevronLeft size={20} />
                                 </Button>
                                 <h3 className="text-xl font-black tracking-tight">
                                     {MONTHS[currentMonth]} {currentYear}
                                 </h3>
-                                <Button isIconOnly variant="flat" radius="full" onClick={() => changeMonth(1)}>
+                                <Button size="icon" variant="secondary" className="rounded-full" onClick={() => changeMonth(1)}>
                                     <ChevronRight size={20} />
                                 </Button>
                             </div>
@@ -325,14 +324,14 @@ export default function HolidayCalendarPage() {
                             <div className="grid grid-cols-7 gap-2">
                                 {renderCalendar()}
                             </div>
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
 
                 {/* Holiday List */}
                 <div className="lg:col-span-4">
-                    <Card className="modern-card p-6" radius="lg">
-                        <CardBody className="p-0 space-y-4">
+                    <Card className="modern-card p-6 rounded-lg">
+                        <CardContent className="p-0 space-y-4">
                             <div className="flex items-center gap-2 mb-4">
                                 <Gift size={18} className="text-danger" />
                                 <h3 className="text-sm font-black uppercase tracking-widest">Upcoming Holidays</h3>
@@ -345,8 +344,8 @@ export default function HolidayCalendarPage() {
                             ) : (
                                 <div className="space-y-3">
                                     {holidays.map(holiday => (
-                                        <div 
-                                            key={holiday.id} 
+                                        <div
+                                            key={holiday.id}
                                             className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/10 flex items-center justify-between"
                                         >
                                             <div>
@@ -361,15 +360,14 @@ export default function HolidayCalendarPage() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {holiday.isOptional && (
-                                                    <Chip size="sm" color="warning" variant="flat" className="text-[8px] font-black">
+                                                    <Badge variant="outline" className="text-[8px] font-black text-warning border-warning">
                                                         Optional
-                                                    </Chip>
+                                                    </Badge>
                                                 )}
-                                                <Button 
-                                                    isIconOnly 
-                                                    size="sm" 
-                                                    variant="light" 
-                                                    color="danger"
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    className="text-destructive hover:text-destructive"
                                                     onClick={() => handleDeleteHoliday(holiday.id)}
                                                 >
                                                     <Trash2 size={16} />
@@ -379,68 +377,60 @@ export default function HolidayCalendarPage() {
                                     ))}
                                 </div>
                             )}
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
             </div>
 
             {/* Add Holiday Modal */}
-            <Modal 
-                isOpen={isOpen} 
+            <Dialog
+                open={isOpen}
                 onOpenChange={onOpenChange}
-                size="lg"
-                classNames={{ base: "modern-card p-6" }}
             >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-black tracking-tight">Add New Holiday</h2>
-                                <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">Define company-wide holiday</p>
-                            </ModalHeader>
-                            <ModalBody className="py-8 space-y-6">
-                                <Input 
-                                    label="Holiday Name" 
-                                    placeholder="e.g. Diwali, Republic Day" 
-                                    labelPlacement="outside"
-                                    size="lg"
-                                    radius="lg"
-                                    classNames={{ inputWrapper: "bg-black/5 h-14" }}
-                                    value={newHoliday.name}
-                                    onValueChange={(val) => setNewHoliday({...newHoliday, name: val})}
-                                />
-                                <Input 
-                                    label="Date" 
-                                    type="date"
-                                    labelPlacement="outside"
-                                    size="lg"
-                                    radius="lg"
-                                    classNames={{ inputWrapper: "bg-black/5 h-14" }}
-                                    value={newHoliday.date}
-                                    onValueChange={(val) => setNewHoliday({...newHoliday, date: val})}
-                                />
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-black/[0.02] border border-black/5">
-                                    <div>
-                                        <p className="font-black text-sm">Optional Holiday</p>
-                                        <p className="text-[10px] font-bold opacity-40">Employees can choose to work</p>
-                                    </div>
-                                    <Switch 
-                                        isSelected={newHoliday.isOptional}
-                                        onValueChange={(val) => setNewHoliday({...newHoliday, isOptional: val})}
-                                        color="warning"
-                                    />
-                                </div>
-                            </ModalBody>
-                            <ModalFooter className="border-t border-black/5 pt-6">
-                                <Button variant="light" className="font-bold h-12 px-8" onPress={onClose}>Cancel</Button>
-                                <Button color="danger" className="font-black h-12 px-10 shadow-xl shadow-danger/20" radius="full" onClick={handleAddHoliday} isLoading={isLoading}>
-                                    Add Holiday
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+                <DialogContent className="modern-card p-6 sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black tracking-tight">Add New Holiday</DialogTitle>
+                        <DialogDescription className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">Define company-wide holiday</DialogDescription>
+                    </DialogHeader>
+                    <div className="py-8 space-y-6">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Holiday Name</label>
+                            <Input
+                                placeholder="e.g. Diwali, Republic Day"
+                                className="bg-black/5 h-14"
+                                value={newHoliday.name}
+                                onChange={(e) => setNewHoliday({...newHoliday, name: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Date</label>
+                            <Input
+                                type="date"
+                                className="bg-black/5 h-14"
+                                value={newHoliday.date}
+                                onChange={(e) => setNewHoliday({...newHoliday, date: e.target.value})}
+                            />
+                        </div>
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-black/[0.02] border border-black/5">
+                            <div>
+                                <p className="font-black text-sm">Optional Holiday</p>
+                                <p className="text-[10px] font-bold opacity-40">Employees can choose to work</p>
+                            </div>
+                            <Switch
+                                checked={newHoliday.isOptional}
+                                onCheckedChange={(val) => setNewHoliday({...newHoliday, isOptional: val})}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="border-t border-black/5 pt-6">
+                        <Button variant="ghost" className="font-bold h-12 px-8" onClick={() => onOpenChange(false)}>Cancel</Button>
+                        <Button className="font-black h-12 px-10 shadow-xl shadow-danger/20 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleAddHoliday} disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Add Holiday
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -1,34 +1,34 @@
 'use client';
 
+import { useDisclosure } from '@/hooks/useDisclosure';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-    Avatar,
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
     Select,
+    SelectContent,
     SelectItem,
-    Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Tabs,
-    useDisclosure
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Briefcase,
     Calculator,
     ChevronRight,
     Download,
+    Loader2,
     Search,
     UserPlus,
     Users
@@ -84,7 +84,7 @@ export default function HRDashboardPage() {
 
             if (response.ok) {
                 fetchEmployees();
-                onOpenChange();
+                onOpenChange(false);
                 setNewEmployee({
                     employeeId: '',
                     name: '',
@@ -106,7 +106,7 @@ export default function HRDashboardPage() {
         }
     };
 
-    const filteredEmployees = employees.filter(emp => 
+    const filteredEmployees = employees.filter(emp =>
         emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         emp.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -127,10 +127,12 @@ export default function HRDashboardPage() {
                     <p className="text-black/40 dark:text-white/40 font-bold ml-1">{t('subtitle')}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="flat" color="default" className="font-bold rounded-2xl" startContent={<Download size={18} />}>
+                    <Button variant="secondary" className="font-bold rounded-2xl">
+                        <Download size={18} className="mr-2" />
                         {t('export')}
                     </Button>
-                    <Button color="secondary" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-secondary/20" startContent={<UserPlus size={20} />} onClick={onOpen}>
+                    <Button onClick={onOpen} className="font-black px-8 shadow-xl shadow-secondary/20 rounded-full">
+                        <UserPlus size={20} className="mr-2" />
                         {t('add_employee')}
                     </Button>
                 </div>
@@ -138,268 +140,226 @@ export default function HRDashboardPage() {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-secondary text-white p-6" radius="lg">
-                    <CardBody className="p-0">
+                <Card className="bg-secondary text-white p-6 rounded-lg">
+                    <CardContent className="p-0">
                         <p className="text-xs font-semibold uppercase tracking-wider opacity-60 mb-3">{t('stats.active')}</p>
                         <h2 className="text-4xl font-bold mb-1">{employees.length}</h2>
                         <p className="text-sm opacity-70">{t('stats.departments', { count: new Set(employees.map(e => e.department)).size })}</p>
-                    </CardBody>
+                    </CardContent>
                 </Card>
-                <Card className="bg-card border border-soft p-6" radius="lg">
-                    <CardBody className="p-0">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">{t('stats.commitment')}</p>
-                        <h2 className="text-4xl font-bold mb-1 text-secondary">₹{totalSalary.toLocaleString()}</h2>
-                        <p className="text-sm text-muted">{t('stats.salary_base')}</p>
-                    </CardBody>
+                <Card className="bg-card border border-border p-6 rounded-lg">
+                    <CardContent className="p-0">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">{t('stats.commitment')}</p>
+                        <h2 className="text-4xl font-bold mb-1 text-secondary">{totalSalary.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</h2>
+                        <p className="text-sm text-muted-foreground">{t('stats.salary_base')}</p>
+                    </CardContent>
                 </Card>
-                <Card className="bg-card border border-soft p-6" radius="lg">
-                    <CardBody className="p-0">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">{t('stats.leaves')}</p>
-                        <h2 className="text-4xl font-bold text-danger">2</h2>
-                        <p className="text-sm text-muted">{t('stats.absence')}</p>
-                    </CardBody>
+                <Card className="bg-card border border-border p-6 rounded-lg">
+                    <CardContent className="p-0">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">{t('stats.leaves')}</p>
+                        <h2 className="text-4xl font-bold text-destructive">2</h2>
+                        <p className="text-sm text-muted-foreground">{t('stats.absence')}</p>
+                    </CardContent>
                 </Card>
             </div>
 
-            <Tabs 
-                aria-label="HR Options" 
-                color="secondary" 
-                variant="underlined"
-                classNames={{
-                    tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-                    cursor: "w-full bg-secondary",
-                    tab: "max-w-fit px-0 h-12",
-                    tabContent: "group-data-[selected=true]:text-secondary font-black uppercase tracking-widest text-[10px]"
-                }}
-            >
-                <Tab
-                    key="roster"
-                    title={
-                        <div className="flex items-center space-x-2">
-                            <Users size={16}/>
-                            <span>{t('tabs.roster')}</span>
-                        </div>
-                    }
-                >
-                    <div className="space-y-6 pt-6">
+            <Tabs defaultValue="roster" className="w-full">
+                <TabsList className="w-full justify-start gap-6 bg-transparent border-b border-border rounded-none p-0 h-auto">
+                    <TabsTrigger
+                        value="roster"
+                        className="data-[state=active]:border-b-2 data-[state=active]:border-secondary data-[state=active]:text-secondary rounded-none px-0 h-12 font-black uppercase tracking-widest text-[10px] bg-transparent"
+                    >
+                        <Users size={16} className="mr-2" />
+                        {t('tabs.roster')}
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="payroll"
+                        className="data-[state=active]:border-b-2 data-[state=active]:border-secondary data-[state=active]:text-secondary rounded-none px-0 h-12 font-black uppercase tracking-widest text-[10px] bg-transparent"
+                    >
+                        <Calculator size={16} className="mr-2" />
+                        {t('tabs.payroll')}
+                    </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="roster" className="pt-6">
+                    <div className="space-y-6">
                         <div className="flex items-center gap-4 max-w-md">
-                            <Input
-                                placeholder="Search by name or ID..."
-                                labelPlacement="outside"
-                                startContent={<Search size={18} className="text-muted" />}
-                                value={searchTerm}
-                                onValueChange={setSearchTerm}
-                                classNames={{
-                                    inputWrapper: "h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                }}
-                            />
+                            <div className="relative flex-1">
+                                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search by name or ID..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 pl-10"
+                                />
+                            </div>
                         </div>
 
-                        <Table
-                            aria-label="Employee Roster"
-                            classNames={{
-                                wrapper: "p-0 bg-card border border-soft rounded-2xl overflow-hidden shadow-none",
-                                th: "bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted px-6",
-                                td: "py-5 px-6",
-                                tr: "border-b border-soft last:border-none",
-                            }}
-                        >
-                            <TableHeader>
-                                <TableColumn>EMPLOYEE</TableColumn>
-                                <TableColumn>DEPARTMENT</TableColumn>
-                                <TableColumn>JOIN DATE</TableColumn>
-                                <TableColumn>SALARY</TableColumn>
-                                <TableColumn>STATUS</TableColumn>
-                                <TableColumn align="center">ACTION</TableColumn>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredEmployees.map((emp) => (
-                                    <TableRow key={emp.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                                        <TableCell>
-                                            <div className="flex items-center gap-4">
-                                                <Avatar name={emp.name} radius="lg" className="bg-secondary/10 text-secondary font-black" />
-                                                <div className="flex flex-col">
-                                                    <span className="font-black tracking-tight">{emp.name}</span>
-                                                    <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">{emp.employeeId}</span>
+                        <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-border">
+                                        <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted-foreground px-6 text-left">EMPLOYEE</th>
+                                        <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted-foreground px-6 text-left">DEPARTMENT</th>
+                                        <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted-foreground px-6 text-left">JOIN DATE</th>
+                                        <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted-foreground px-6 text-left">SALARY</th>
+                                        <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted-foreground px-6 text-left">STATUS</th>
+                                        <th className="bg-transparent h-14 font-semibold uppercase tracking-wider text-xs text-muted-foreground px-6 text-center">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredEmployees.map((emp) => (
+                                        <tr key={emp.id} className="border-b border-border last:border-none hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+                                            <td className="py-5 px-6">
+                                                <div className="flex items-center gap-4">
+                                                    <Avatar className="bg-secondary/10 text-secondary font-black rounded-lg">
+                                                        <AvatarFallback className="rounded-lg">{emp.name[0]}</AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-black tracking-tight">{emp.name}</span>
+                                                        <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">{emp.employeeId}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <Briefcase size={14} className="opacity-30" />
-                                                <span className="text-xs">{emp.designation || 'Staff'}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-[10px] font-black opacity-40 uppercase">{new Date(emp.joinDate).toLocaleDateString()}</TableCell>
-                                        <TableCell>
-                                            <span className="font-black text-lg">₹{Number(emp.baseSalary).toLocaleString()}</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip variant="flat" size="sm" color={emp.isActive ? "success" : "danger"} className="font-black text-[10px] uppercase">
-                                                {emp.isActive ? 'Active' : 'Inactive'}
-                                            </Chip>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button isIconOnly radius="full" variant="light" size="sm"><ChevronRight size={18} className="opacity-30" /></Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </Tab>
-                <Tab
-                    key="payroll"
-                    title={
-                        <div className="flex items-center space-x-2">
-                            <Calculator size={16}/>
-                            <span>{t('tabs.payroll')}</span>
+                                            </td>
+                                            <td className="py-5 px-6">
+                                                <div className="flex items-center gap-2">
+                                                    <Briefcase size={14} className="opacity-30" />
+                                                    <span className="text-xs">{emp.designation || 'Staff'}</span>
+                                                </div>
+                                            </td>
+                                            <td className="py-5 px-6 text-[10px] font-black opacity-40 uppercase">{new Date(emp.joinDate).toLocaleDateString()}</td>
+                                            <td className="py-5 px-6">
+                                                <span className="font-black text-lg">{Number(emp.baseSalary).toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</span>
+                                            </td>
+                                            <td className="py-5 px-6">
+                                                <Badge variant={emp.isActive ? "default" : "destructive"} className="font-black text-[10px] uppercase">
+                                                    {emp.isActive ? 'Active' : 'Inactive'}
+                                                </Badge>
+                                            </td>
+                                            <td className="py-5 px-6 text-center">
+                                                <Button variant="ghost" size="icon" className="rounded-full">
+                                                    <ChevronRight size={18} className="opacity-30" />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                    }
-                >
-                    <div className="pt-6">
-                        <PayrollTab />
                     </div>
-                </Tab>
+                </TabsContent>
+
+                <TabsContent value="payroll" className="pt-6">
+                    <PayrollTab />
+                </TabsContent>
             </Tabs>
 
             {/* Add Employee Modal */}
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                size="3xl"
-                scrollBehavior="inside"
-                classNames={{
-                    backdrop: "bg-black/50 backdrop-blur-sm",
-                    base: "theme-modal rounded-2xl",
-                    header: "border-b border-zinc-200 dark:border-zinc-800",
-                    body: "py-6",
-                    footer: "border-t border-zinc-200 dark:border-zinc-800",
-                }}
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-xl font-bold">{t('modal.title')}</h2>
-                                <p className="text-sm text-muted font-normal">{t('modal.subtitle')}</p>
-                            </ModalHeader>
-                            <ModalBody className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Input
-                                        label="Full Name"
-                                        placeholder="e.g. John Doe"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.name}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, name: val})}
-                                    />
-                                    <Input
-                                        label="Employee ID (Alpha-numeric)"
-                                        placeholder="e.g. EMP-101"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.employeeId}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, employeeId: val})}
-                                    />
-                                    <Input
-                                        label="Email Address"
-                                        placeholder="johndoe@example.com"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.email}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, email: val})}
-                                    />
-                                    <Input
-                                        label="Phone Number"
-                                        placeholder="+91 00000 00000"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.phone}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, phone: val})}
-                                    />
-                                    <Input
-                                        label="Designation"
-                                        placeholder="e.g. Senior Technician"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.designation}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, designation: val})}
-                                    />
-                                    <Select
-                                        label="Department"
-                                        placeholder="Select department"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            trigger: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        onSelectionChange={(keys) => setNewEmployee({...newEmployee, department: Array.from(keys)[0] as string})}
-                                    >
-                                        <SelectItem key="Operations">Operations</SelectItem>
-                                        <SelectItem key="Repairs">Repairs & Tech</SelectItem>
-                                        <SelectItem key="Inventory">Inventory Control</SelectItem>
-                                        <SelectItem key="Accounting">Accounting & GST</SelectItem>
-                                        <SelectItem key="Logistics">Logistics & Delivery</SelectItem>
-                                    </Select>
-                                    <Input
-                                        label="Monthly Base Salary"
-                                        placeholder="0.00"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        startContent={<span className="text-sm text-muted">₹</span>}
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.baseSalary}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, baseSalary: val})}
-                                    />
-                                    <Input
-                                        label="Join Date"
-                                        type="date"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{
-                                            inputWrapper: "h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
-                                        }}
-                                        value={newEmployee.joinDate}
-                                        onValueChange={(val) => setNewEmployee({...newEmployee, joinDate: val})}
-                                    />
-                                </div>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button variant="flat" className="font-semibold" onPress={onClose}>{t('modal.cancel')}</Button>
-                                <Button color="secondary" className="font-semibold" onClick={handleAddEmployee} isLoading={isLoading}>
-                                    {t('modal.confirm')}
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <Dialog open={isOpen} onOpenChange={onOpenChange}>
+                <DialogContent className="sm:max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle>{t('modal.title')}</DialogTitle>
+                        <DialogDescription>{t('modal.subtitle')}</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Full Name</Label>
+                            <Input
+                                id="name"
+                                placeholder="e.g. John Doe"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                value={newEmployee.name}
+                                onChange={(e) => setNewEmployee({...newEmployee, name: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="employeeId">Employee ID (Alpha-numeric)</Label>
+                            <Input
+                                id="employeeId"
+                                placeholder="e.g. EMP-101"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                value={newEmployee.employeeId}
+                                onChange={(e) => setNewEmployee({...newEmployee, employeeId: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input
+                                id="email"
+                                placeholder="johndoe@example.com"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                value={newEmployee.email}
+                                onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <Input
+                                id="phone"
+                                placeholder="+91 00000 00000"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                value={newEmployee.phone}
+                                onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="designation">Designation</Label>
+                            <Input
+                                id="designation"
+                                placeholder="e.g. Senior Technician"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                value={newEmployee.designation}
+                                onChange={(e) => setNewEmployee({...newEmployee, designation: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Department</Label>
+                            <Select onValueChange={(val) => setNewEmployee({...newEmployee, department: val})}>
+                                <SelectTrigger className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+                                    <SelectValue placeholder="Select department" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Operations">Operations</SelectItem>
+                                    <SelectItem value="Repairs">Repairs & Tech</SelectItem>
+                                    <SelectItem value="Inventory">Inventory Control</SelectItem>
+                                    <SelectItem value="Accounting">Accounting & GST</SelectItem>
+                                    <SelectItem value="Logistics">Logistics & Delivery</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="baseSalary">Monthly Base Salary</Label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">Rs.</span>
+                                <Input
+                                    id="baseSalary"
+                                    placeholder="0.00"
+                                    className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 pl-10"
+                                    value={newEmployee.baseSalary}
+                                    onChange={(e) => setNewEmployee({...newEmployee, baseSalary: e.target.value})}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="joinDate">Join Date</Label>
+                            <Input
+                                id="joinDate"
+                                type="date"
+                                className="h-12 bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700"
+                                value={newEmployee.joinDate}
+                                onChange={(e) => setNewEmployee({...newEmployee, joinDate: e.target.value})}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('modal.cancel')}</Button>
+                        <Button onClick={handleAddEmployee} disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {t('modal.confirm')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

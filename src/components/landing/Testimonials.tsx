@@ -1,6 +1,7 @@
 'use client';
 
-import { Avatar, Card, CardBody } from '@heroui/react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -64,27 +65,26 @@ const Testimonials: React.FC = () => {
               transition={{ delay: index * 0.15 }}
               className="shrink-0 snap-center w-[85vw] md:w-auto h-full"
             >
-              <Card className="modern-card p-4 h-full bg-card hover:border-primary/30" radius="lg">
-                <CardBody className="p-8 flex flex-col h-full">
+              <Card className="modern-card p-4 h-full bg-card hover:border-primary/30 rounded-lg">
+                <CardContent className="p-8 flex flex-col h-full">
                   <div className="flex gap-1 mb-10">
                     {[1, 2, 3, 4, 5].map(i => <span key={i} className="text-primary text-xl font-black">★</span>)}
                   </div>
-                  
+
                   <blockquote className="text-lg font-medium leading-relaxed mb-12 opacity-80 italic flex-1">
                     &quot;{t.text}&quot;
                   </blockquote>
-                  
+
                   <div className="flex items-center gap-5 pt-8 border-t border-foreground/5 mt-auto">
-                    <Avatar 
-                       name={t.initials}
-                       className="w-14 h-14 bg-foreground/10 text-foreground font-black text-lg"
-                    />
+                    <Avatar className="w-14 h-14 bg-foreground/10">
+                       <AvatarFallback className="text-foreground font-black text-lg">{t.initials}</AvatarFallback>
+                    </Avatar>
                     <div>
                       <h4 className="font-black text-lg leading-none mb-2 text-foreground uppercase tracking-tight">{t.author}</h4>
                       <p className="text-[10px] font-black opacity-40 uppercase tracking-widest text-foreground">{t.role}</p>
                     </div>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           ))}

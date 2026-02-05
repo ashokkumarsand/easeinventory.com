@@ -1,17 +1,25 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import {
-    Button,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
     Select,
+    SelectContent,
     SelectItem,
-    Textarea,
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface LeaveRequestModalProps {
@@ -106,112 +114,110 @@ export default function LeaveRequestModal({
     const availableBalance = getAvailableBalance();
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onOpenChange={(open) => !open && handleClose()}
-            size="lg"
-            classNames={{ base: 'modern-card p-6' }}
-        >
-            <ModalContent>
-                {() => (
-                    <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            <h2 className="text-2xl font-black tracking-tight">Request Leave</h2>
-                            <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">
-                                Submit a new leave request
-                            </p>
-                        </ModalHeader>
-                        <ModalBody className="py-8 space-y-6">
-                            {error && (
-                                <div className="p-4 rounded-xl bg-danger/10 border border-danger/20">
-                                    <p className="text-sm font-bold text-danger">{error}</p>
-                                </div>
-                            )}
+        <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+            <DialogContent className="max-w-lg modern-card p-6">
+                <DialogHeader>
+                    <DialogTitle className="text-2xl font-black tracking-tight">Request Leave</DialogTitle>
+                    <DialogDescription className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">
+                        Submit a new leave request
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-8 space-y-6">
+                    {error && (
+                        <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+                            <p className="text-sm font-bold text-destructive">{error}</p>
+                        </div>
+                    )}
 
-                            <Select
-                                label="Leave Type"
-                                placeholder="Select leave type"
-                                labelPlacement="outside"
-                                size="lg"
-                                radius="lg"
-                                selectedKeys={leaveType ? [leaveType] : []}
-                                onSelectionChange={(keys) => setLeaveType(Array.from(keys)[0] as string)}
-                                classNames={{ trigger: 'bg-black/5 h-14' }}
-                                isRequired
-                            >
+                    <div className="space-y-2">
+                        <Label htmlFor="leave-type" className="text-sm font-bold">
+                            Leave Type <span className="text-destructive">*</span>
+                        </Label>
+                        <Select value={leaveType} onValueChange={setLeaveType}>
+                            <SelectTrigger className="bg-black/5 h-14 text-lg rounded-lg">
+                                <SelectValue placeholder="Select leave type" />
+                            </SelectTrigger>
+                            <SelectContent>
                                 {LEAVE_TYPES.map((type) => (
-                                    <SelectItem key={type.key} description={type.description}>
-                                        {type.label}
+                                    <SelectItem key={type.key} value={type.key}>
+                                        <div className="flex flex-col">
+                                            <span>{type.label}</span>
+                                            <span className="text-xs text-muted-foreground">{type.description}</span>
+                                        </div>
                                     </SelectItem>
                                 ))}
-                            </Select>
+                            </SelectContent>
+                        </Select>
+                    </div>
 
-                            {availableBalance !== null && (
-                                <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-                                    <p className="text-sm">
-                                        <span className="font-bold">Available Balance: </span>
-                                        <span className="font-black text-primary">{availableBalance} days</span>
-                                    </p>
-                                </div>
-                            )}
+                    {availableBalance !== null && (
+                        <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+                            <p className="text-sm">
+                                <span className="font-bold">Available Balance: </span>
+                                <span className="font-black text-primary">{availableBalance} days</span>
+                            </p>
+                        </div>
+                    )}
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    label="Start Date"
-                                    type="date"
-                                    labelPlacement="outside"
-                                    size="lg"
-                                    radius="lg"
-                                    value={startDate}
-                                    onValueChange={setStartDate}
-                                    classNames={{ inputWrapper: 'bg-black/5 h-14' }}
-                                    isRequired
-                                />
-                                <Input
-                                    label="End Date"
-                                    type="date"
-                                    labelPlacement="outside"
-                                    size="lg"
-                                    radius="lg"
-                                    value={endDate}
-                                    onValueChange={setEndDate}
-                                    classNames={{ inputWrapper: 'bg-black/5 h-14' }}
-                                    isRequired
-                                />
-                            </div>
-
-                            <Textarea
-                                label="Reason"
-                                placeholder="Please provide a reason for your leave request..."
-                                labelPlacement="outside"
-                                radius="lg"
-                                value={reason}
-                                onValueChange={setReason}
-                                classNames={{ inputWrapper: 'bg-black/5' }}
-                                minRows={3}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="start-date" className="text-sm font-bold">
+                                Start Date <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="start-date"
+                                type="date"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                className="bg-black/5 h-14 rounded-lg"
                             />
-                        </ModalBody>
-                        <ModalFooter className="border-t border-black/5 pt-6">
-                            <Button
-                                variant="light"
-                                className="font-bold h-12 px-8"
-                                onPress={handleClose}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                color="secondary"
-                                className="font-black h-12 px-10 shadow-xl shadow-secondary/20"
-                                radius="full"
-                                onClick={handleSubmit}
-                                isLoading={isLoading}
-                            >
-                                Submit Request
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="end-date" className="text-sm font-bold">
+                                End Date <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="end-date"
+                                type="date"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                className="bg-black/5 h-14 rounded-lg"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="reason" className="text-sm font-bold">
+                            Reason
+                        </Label>
+                        <Textarea
+                            id="reason"
+                            placeholder="Please provide a reason for your leave request..."
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                            className="bg-black/5 rounded-lg min-h-[100px]"
+                        />
+                    </div>
+                </div>
+                <DialogFooter className="border-t border-black/5 pt-6">
+                    <Button
+                        variant="ghost"
+                        className="font-bold h-12 px-8"
+                        onClick={handleClose}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        className="font-black h-12 px-10 shadow-xl shadow-secondary/20 rounded-full"
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                    >
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Submit Request
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

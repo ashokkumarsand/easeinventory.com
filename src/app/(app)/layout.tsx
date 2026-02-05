@@ -4,23 +4,29 @@ import { Logo } from '@/components/icons/Logo';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { UpgradeBanner } from '@/components/upgrade';
+import { CurrencySelector } from '@/components/currency';
 import { usePlanFeatures } from '@/hooks/usePlanFeatures';
 import { GATED_MENU_ITEMS, FeatureKey } from '@/lib/plan-features';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import {
-    Avatar,
-    Badge,
-    Button,
-    Divider,
-    Dropdown,
-    DropdownItem,
     DropdownMenu,
-    DropdownTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    ScrollShadow,
+} from '@/components/ui/popover';
+import {
     Tooltip,
-} from '@heroui/react';
+    TooltipContent,
+    TooltipTrigger,
+    TooltipProvider,
+} from '@/components/ui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     AlertCircle,
@@ -29,6 +35,7 @@ import {
     Building2,
     Calendar,
     Check,
+    Command,
     FileText,
     Fingerprint,
     Globe,
@@ -48,6 +55,7 @@ import {
     Users,
     Wrench
 } from 'lucide-react';
+import { getShortcutForRoute } from '@/hooks/useKeyboardShortcuts';
 import { signOut, useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
@@ -213,7 +221,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (status === 'loading' || status === 'unauthenticated') {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-foreground/[0.06] skeleton-shimmer" />
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-32 h-4 rounded-md bg-foreground/[0.06] skeleton-shimmer" />
+            <div className="w-24 h-3 rounded-md bg-foreground/[0.06] skeleton-shimmer" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -268,10 +282,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
              </Link>
           </div>
 
-          <Divider className="opacity-50" />
+          <Separator className="opacity-50" />
 
           {/* Menu Items */}
-          <ScrollShadow className="flex-grow py-6" hideScrollBar>
+          <div className="flex-grow py-6 overflow-auto">
             <div className="px-4 space-y-8">
               {[
                 ...menuItems,
@@ -296,6 +310,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       const isLocked = isMenuItemLocked(item.href);
                       const lockedFeature = getMenuItemFeature(item.href);
                       const featureDetails = lockedFeature ? getFeatureDetails(lockedFeature) : null;
+                      const shortcut = getShortcutForRoute(item.href);
 
                       const handleClick = (e: React.MouseEvent) => {
                         if (isLocked && lockedFeature) {
@@ -324,6 +339,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           {isSidebarOpen && (
                             <>
                               <span className={`text-sm font-semibold flex-1 ${isLocked ? 'opacity-50' : ''}`}>{item.label}</span>
+                              {shortcut && !isLocked && (
+                                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                                  isActive ? 'bg-white/20 text-white' : 'bg-foreground/5 text-foreground/40'
+                                }`}>
+                                  {shortcut}
+                                </span>
+                              )}
                               {isLocked && (
                                 <Lock className="w-3.5 h-3.5 text-warning" />
                               )}
@@ -332,6 +354,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           {!isSidebarOpen && (
                             <div className="absolute left-full ml-4 px-3 py-1.5 bg-foreground text-background text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-lg flex items-center gap-2">
                               {item.label}
+                              {shortcut && <span className="text-[10px] opacity-60">{shortcut}</span>}
                               {isLocked && <Lock className="w-3 h-3" />}
                             </div>
                           )}
@@ -340,18 +363,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                       if (isLocked && featureDetails && isSidebarOpen) {
                         return (
-                          <Tooltip
-                            key={item.label}
-                            content={
-                              <div className="p-2 max-w-[200px]">
+                          <TooltipProvider key={item.label}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                {menuItemContent}
+                              </TooltipTrigger>
+                              <TooltipContent side="right" className="p-2 max-w-[200px] bg-popover text-popover-foreground">
                                 <p className="font-semibold text-sm">{featureDetails.name}</p>
                                 <p className="text-xs text-foreground/60 mt-1">Requires {featureDetails.minPlan} plan</p>
-                              </div>
-                            }
-                            placement="right"
-                          >
-                            {menuItemContent}
-                          </Tooltip>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         );
                       }
 
@@ -361,18 +383,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
               ))}
             </div>
-          </ScrollShadow>
+          </div>
 
           {/* User Section (Bottom) */}
            <div className="p-4 shrink-0 border-t border-black/[0.08] dark:border-white/[0.08]">
              <div className={`p-3 rounded-2xl bg-background transition-all ${!isSidebarOpen && 'p-1 bg-transparent'}`}>
                 <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
-                   <Avatar
-                    name={user?.name || 'User'}
-                    src={user?.image}
-                    size={isSidebarOpen ? 'md' : 'sm'}
-                    className="ring-2 ring-primary ring-offset-2 ring-offset-card shrink-0"
-                   />
+                   <Avatar className={`ring-2 ring-primary ring-offset-2 ring-offset-card shrink-0 ${isSidebarOpen ? 'h-10 w-10' : 'h-8 w-8'}`}>
+                     {user?.image && <AvatarImage src={user.image} alt={user?.name || 'User'} />}
+                     <AvatarFallback>{(user?.name || 'U').charAt(0).toUpperCase()}</AvatarFallback>
+                   </Avatar>
                    {isSidebarOpen && (
                      <div className="flex-grow min-w-0 pr-2">
                         <p className="text-sm font-bold truncate leading-tight">{user?.name || 'Administrator'}</p>
@@ -380,17 +400,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                      </div>
                    )}
                    {isSidebarOpen && (
-                     <Dropdown placement="top-end">
-                       <DropdownTrigger>
-                         <Button isIconOnly variant="light" size="sm" radius="full">
-                           <Settings className="w-4 h-4" />
+                     <DropdownMenu>
+                       <DropdownMenuTrigger asChild>
+                         <Button variant="ghost" size="icon" className="rounded-full" aria-label="User settings menu">
+                           <Settings className="w-4 h-4" aria-hidden="true" />
                          </Button>
-                       </DropdownTrigger>
-                         <DropdownMenu variant="flat">
-                           <DropdownItem key="profile">Profile Settings</DropdownItem>
-                           <DropdownItem key="logout" className="text-danger" color="danger" onClick={() => signOut()}>Log Out</DropdownItem>
-                         </DropdownMenu>
-                     </Dropdown>
+                       </DropdownMenuTrigger>
+                       <DropdownMenuContent align="end" side="top">
+                         <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+                         <DropdownMenuItem className="text-destructive" onClick={() => signOut()}>Log Out</DropdownMenuItem>
+                       </DropdownMenuContent>
+                     </DropdownMenu>
                    )}
                 </div>
              </div>
@@ -413,20 +433,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         >
            <div className="flex items-center gap-4">
               <Button
-                isIconOnly
-                variant="light"
+                variant="ghost"
+                size="icon"
                 className="hidden lg:flex"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+                aria-expanded={isSidebarOpen}
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-5 h-5" aria-hidden="true" />
               </Button>
               <Button
-                isIconOnly
-                variant="light"
+                variant="ghost"
+                size="icon"
                 className="lg:hidden"
                 onClick={() => setIsMobileMenuOpen(true)}
+                aria-label="Open navigation menu"
+                aria-expanded={isMobileMenuOpen}
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-5 h-5" aria-hidden="true" />
               </Button>
                <h2 className="text-xl font-black tracking-tight font-heading flex items-center gap-3">
                  {pathname.split('/').pop()?.charAt(0).toUpperCase()}{pathname.split('/').pop()?.slice(1) || 'Dashboard'}
@@ -439,23 +463,44 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            </div>
 
            <div className="flex items-center gap-3 md:gap-4">
+              {/* Command Palette Trigger */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex items-center gap-2 px-3 h-9 font-medium text-foreground/60 hover:text-foreground"
+                onClick={() => {
+                  // Dispatch keyboard event to open command palette
+                  const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
+                  document.dispatchEvent(event);
+                }}
+              >
+                <Command size={14} />
+                <span className="text-sm">Search...</span>
+                <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono bg-foreground/10 rounded">⌘K</kbd>
+              </Button>
+              <CurrencySelector variant="compact" />
               <ThemeToggle />
               <LocaleSwitcher />
-              <Popover placement="bottom-end" showArrow offset={10}>
-                <PopoverTrigger>
-                  <Button isIconOnly variant="light" radius="full" className="relative">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative rounded-full"
+                    aria-label={`Notifications${hasUnread ? ` - ${unreadCount} unread` : ''}`}
+                  >
                     {hasUnread && (
-                      <div className="w-2 h-2 bg-danger rounded-full absolute top-2 right-2 border-2 border-white dark:border-zinc-900 animate-pulse" />
+                      <div className="w-2 h-2 bg-destructive rounded-full absolute top-2 right-2 border-2 border-white dark:border-zinc-900 animate-pulse" aria-hidden="true" />
                     )}
-                    <Bell size={20} />
+                    <Bell size={20} aria-hidden="true" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 p-0">
+                <PopoverContent align="end" className="w-80 p-0">
                   <div className="p-4 border-b border-black/5 dark:border-white/10">
                     <div className="flex items-center justify-between">
                       <h3 className="font-bold text-sm">Notifications</h3>
                       {hasUnread && (
-                        <Button size="sm" variant="light" color="primary" className="text-xs font-semibold h-7" onClick={markAllAsRead}>
+                        <Button size="sm" variant="ghost" className="text-xs font-semibold h-7 text-primary" onClick={markAllAsRead}>
                           Mark all read
                         </Button>
                       )}
@@ -507,7 +552,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </div>
                   {notifications.length > 0 && (
                     <div className="p-3 border-t border-black/5 dark:border-white/10">
-                      <Button variant="flat" color="primary" size="sm" className="w-full font-semibold">
+                      <Button variant="secondary" size="sm" className="w-full font-semibold">
                         View All Notifications
                       </Button>
                     </div>

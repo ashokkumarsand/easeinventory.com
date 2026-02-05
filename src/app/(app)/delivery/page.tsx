@@ -1,25 +1,25 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Progress,
-    Textarea,
-    useDisclosure
-} from '@heroui/react';
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import { motion } from 'framer-motion';
 import {
     ArrowRight,
     Box,
     Clock,
+    Loader2,
     MapPin,
     Navigation,
     Package,
@@ -63,10 +63,10 @@ export default function DeliveryPage() {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="space-y-10 pb-20">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
@@ -79,7 +79,8 @@ export default function DeliveryPage() {
            <p className="text-black/40 dark:text-white/40 font-bold ml-1">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
-           <Button color="primary" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-primary/20" startContent={<Plus size={20} />} onClick={onOpen}>
+           <Button className="font-black px-8 shadow-xl shadow-primary/20 rounded-full" size="lg" onClick={onOpen}>
+              <Plus size={20} />
               {t('dispatch_manifest')}
            </Button>
         </div>
@@ -93,12 +94,12 @@ export default function DeliveryPage() {
            { label: t('fleet_stats.avg_time'), val: '1.2h', sub: t('fleet_stats.comparison', { val: '-10%' }), color: 'warning' },
            { label: t('fleet_stats.pending_dispatch'), val: '5', sub: t('fleet_stats.processing'), color: 'secondary' },
          ].map((it) => (
-           <Card key={it.label} className="modern-card p-6 border-none shadow-sm" radius="lg">
-              <CardBody className="p-0 space-y-2">
+           <Card key={it.label} className="modern-card p-6 border-none shadow-sm rounded-lg">
+              <CardContent className="p-0 space-y-2">
                   <p className="text-[10px] font-black uppercase tracking-widest opacity-30">{it.label}</p>
                   <h3 className={`text-3xl font-black text-${it.color}`}>{it.val}</h3>
                   <p className="text-[10px] font-bold opacity-40 uppercase tracking-tight">{it.sub}</p>
-              </CardBody>
+              </CardContent>
            </Card>
          ))}
       </div>
@@ -109,7 +110,7 @@ export default function DeliveryPage() {
             <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-4">
                <h3 className="text-xl font-black tracking-tight">{t('view.active_dispatches')}</h3>
                <div className="flex bg-black/[0.03] dark:bg-white/5 p-1 rounded-xl">
-                  <Button size="sm" variant="flat" radius="lg" className="font-black">{t('view.view_all')}</Button>
+                  <Button size="sm" variant="secondary" className="font-black rounded-lg">{t('view.view_all')}</Button>
                </div>
             </div>
 
@@ -120,13 +121,13 @@ export default function DeliveryPage() {
                  </div>
                )}
                {deliveries.map((shp) => (
-                 <motion.div 
-                   key={shp.id} 
+                 <motion.div
+                   key={shp.id}
                    initial={{ opacity: 0, x: -20 }}
                    animate={{ opacity: 1, x: 0 }}
                  >
-                   <Card className="modern-card border border-black/5 dark:border-white/5 hover:border-primary/20 transition-all p-2" radius="lg">
-                      <CardBody className="p-6">
+                   <Card className="modern-card border border-black/5 dark:border-white/5 hover:border-primary/20 transition-all p-2 rounded-lg">
+                      <CardContent className="p-6">
                          <div className="flex flex-col md:flex-row gap-6">
                             {/* Icon & ID */}
                             <div className="flex md:flex-col items-center justify-between md:justify-center w-full md:w-32 p-4 rounded-2xl bg-black/[0.02] dark:bg-white/5 border border-black/5 shrink-0">
@@ -148,14 +149,16 @@ export default function DeliveryPage() {
                                         <MapPin size={12} /> {shp.address || shp.invoice?.customer?.address || 'Pickup from Hub'}
                                      </p>
                                   </div>
-                                  <Chip 
-                                    variant="flat" 
-                                    size="sm" 
-                                    color={shp.status === 'DELIVERED' ? 'success' : shp.status === 'IN_TRANSIT' ? 'primary' : shp.status === 'PENDING' ? 'warning' : 'default'}
-                                    className="font-black uppercase text-[10px] tracking-widest"
+                                  <Badge
+                                    variant="secondary"
+                                    className={`font-black uppercase text-[10px] tracking-widest ${
+                                      shp.status === 'DELIVERED' ? 'bg-green-500/10 text-green-600' :
+                                      shp.status === 'IN_TRANSIT' ? 'bg-primary/10 text-primary' :
+                                      shp.status === 'PENDING' ? 'bg-yellow-500/10 text-yellow-600' : ''
+                                    }`}
                                   >
                                     {shp.status.replace(/_/g, ' ')}
-                                  </Chip>
+                                  </Badge>
                                </div>
 
                                <div className="p-4 rounded-2xl bg-black/[0.01] dark:bg-white/[0.02] border border-black/[0.03] grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -173,12 +176,12 @@ export default function DeliveryPage() {
                                   </div>
                                   <div className="space-y-1">
                                      <p className="text-[10px] font-black uppercase tracking-widest opacity-20 flex items-center gap-1"><TrendingUp size={10} /> {t('view.progress')}</p>
-                                     <Progress value={shp.status === 'DELIVERED' ? 100 : shp.status === 'IN_TRANSIT' ? 60 : 10} size="sm" radius="full" color="primary" className="h-1 mt-1" />
+                                     <Progress value={shp.status === 'DELIVERED' ? 100 : shp.status === 'IN_TRANSIT' ? 60 : 10} className="h-1 mt-1" />
                                   </div>
                                </div>
                             </div>
                          </div>
-                      </CardBody>
+                      </CardContent>
                    </Card>
                  </motion.div>
                ))}
@@ -187,18 +190,18 @@ export default function DeliveryPage() {
 
          {/* Logistics Sidebar */}
          <div className="space-y-8">
-            <Card className="modern-card p-6 bg-black text-white" radius="lg">
-               <CardBody className="p-0 space-y-6">
+            <Card className="modern-card p-6 bg-black text-white rounded-lg">
+               <CardContent className="p-0 space-y-6">
                   <div className="flex items-center gap-3">
                      <div className="w-1.5 h-6 bg-primary rounded-full" />
                      <h3 className="text-xl font-black tracking-tight">{t('sidebar.fleet_map')}</h3>
                   </div>
-                  
+
                   {/* Simulated Map Placeholder */}
                   <div className="h-60 rounded-[2.5rem] bg-white/5 border border-white/10 relative overflow-hidden flex items-center justify-center group cursor-crosshair">
                      <div className="absolute inset-0 bg-[radial-gradient(#ffffff22_1px,#0000_1px)] bg-[size:20px_20px] opacity-20" />
-                     <motion.div 
-                       animate={{ 
+                     <motion.div
+                       animate={{
                          x: [0, 20, -10, 0],
                          y: [0, -30, 10, 0]
                        }}
@@ -224,16 +227,16 @@ export default function DeliveryPage() {
                                 <span className="opacity-50">{area.area}</span>
                                 <span>{area.perf}%</span>
                              </div>
-                             <Progress value={area.perf} size="sm" radius="full" color="primary" className="bg-white/10" />
+                             <Progress value={area.perf} className="h-1 bg-white/10" />
                           </div>
                         ))}
                      </div>
                   </div>
-               </CardBody>
+               </CardContent>
             </Card>
 
-            <Card className="modern-card p-6 border border-black/5 dark:border-white/5" radius="lg">
-               <CardBody className="p-0">
+            <Card className="modern-card p-6 border border-black/5 dark:border-white/5 rounded-lg">
+               <CardContent className="p-0">
                   <div className="flex items-center gap-3 mb-6">
                      <Phone size={18} className="text-primary" />
                      <h4 className="text-sm font-black uppercase tracking-widest">{t('sidebar.hotlines')}</h4>
@@ -246,43 +249,46 @@ export default function DeliveryPage() {
                        </div>
                      ))}
                   </div>
-               </CardBody>
+               </CardContent>
             </Card>
          </div>
       </div>
 
       {/* Dispatch Modal */}
-      <Modal 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange}
-        size="2xl"
-        radius="lg"
-        classNames={{ backdrop: "bg-black/60 backdrop-blur-md", base: "modern-card p-4" }}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>
-                 <h2 className="text-2xl font-black tracking-tight">{t('modal.title')}</h2>
-              </ModalHeader>
-              <ModalBody className="py-6 space-y-6">
-                 <Input label={t('modal.recipient')} placeholder="e.g. Global Logistics" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
-                 <div className="grid md:grid-cols-2 gap-6">
-                    <Input label={t('modal.items')} type="number" placeholder="200" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
-                    <Input label={t('modal.weight')} placeholder="45 kg" labelPlacement="outside" size="lg" radius="lg" classNames={{ inputWrapper: "bg-black/5 h-14" }} />
-                 </div>
-                 <Textarea label={t('modal.address')} placeholder="Enter full destination details..." labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-black/5 min-h-[100px]" }} />
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="light" className="font-bold h-14 px-8" onPress={onClose}>{commonT('modal.cancel')}</Button>
-                <Button color="primary" className="px-10 font-black h-14 shadow-xl shadow-primary/20 text-white" radius="full" onPress={onClose} startContent={<Navigation size={20} />}>
-                   {t('modal.confirm')}
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="modern-card p-4 max-w-2xl rounded-lg">
+          <DialogHeader>
+             <DialogTitle className="text-2xl font-black tracking-tight">{t('modal.title')}</DialogTitle>
+          </DialogHeader>
+          <div className="py-6 space-y-6">
+             <div className="space-y-2">
+               <label className="text-sm font-medium">{t('modal.recipient')}</label>
+               <Input placeholder="e.g. Global Logistics" className="bg-black/5 h-14 border-none" />
+             </div>
+             <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('modal.items')}</label>
+                  <Input type="number" placeholder="200" className="bg-black/5 h-14 border-none" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('modal.weight')}</label>
+                  <Input placeholder="45 kg" className="bg-black/5 h-14 border-none" />
+                </div>
+             </div>
+             <div className="space-y-2">
+               <label className="text-sm font-medium">{t('modal.address')}</label>
+               <Textarea placeholder="Enter full destination details..." className="bg-black/5 min-h-[100px] border-none" />
+             </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" className="font-bold h-14 px-8" onClick={() => onOpenChange(false)}>{commonT('modal.cancel')}</Button>
+            <Button className="px-10 font-black h-14 shadow-xl shadow-primary/20 text-white rounded-full" onClick={() => onOpenChange(false)}>
+               <Navigation size={20} />
+               {t('modal.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

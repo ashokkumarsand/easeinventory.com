@@ -1,18 +1,15 @@
 'use client';
 
-import {
-    Avatar,
-    Button,
-    Card,
-    Chip,
-    Input,
-    ScrollShadow,
-    Spinner,
-} from '@heroui/react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     Bot,
     ChevronDown,
+    Loader2,
     MessageCircle,
     Send,
     Sparkles,
@@ -176,7 +173,7 @@ export default function AIHelpWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)]"
           >
-            <Card 
+            <Card
               data-help-widget="true"
               className="w-full h-full flex flex-col overflow-hidden rounded-3xl border border-white/20 dark:border-zinc-700/50 backdrop-blur-xl bg-white/90 dark:bg-zinc-900/95 shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
             >
@@ -194,20 +191,18 @@ export default function AIHelpWidget() {
                 <div className="flex items-center gap-1">
                   {messages.length > 0 && (
                     <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      className="text-white/80 hover:text-white"
+                      size="icon"
+                      variant="ghost"
+                      className="text-white/80 hover:text-white h-8 w-8"
                       onClick={clearChat}
                     >
                       <ChevronDown size={18} />
                     </Button>
                   )}
                   <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    className="text-white/80 hover:text-white"
+                    size="icon"
+                    variant="ghost"
+                    className="text-white/80 hover:text-white h-8 w-8"
                     onClick={() => setIsOpen(false)}
                   >
                     <X size={18} />
@@ -216,7 +211,7 @@ export default function AIHelpWidget() {
               </div>
 
               {/* Messages area */}
-              <ScrollShadow className="flex-1 p-4 space-y-4 overflow-y-auto">
+              <CardContent className="flex-1 p-4 space-y-4 overflow-y-auto">
                 {messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center p-4">
                     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -232,14 +227,14 @@ export default function AIHelpWidget() {
                     {/* Quick suggestions */}
                     <div className="flex flex-wrap gap-2 justify-center">
                       {suggestions.slice(0, 4).map((suggestion, idx) => (
-                        <Chip
+                        <Badge
                           key={idx}
-                          variant="flat"
+                          variant="secondary"
                           className="cursor-pointer hover:bg-primary/20 transition-colors"
                           onClick={() => handleSuggestionClick(suggestion)}
                         >
                           {suggestion}
-                        </Chip>
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -253,20 +248,20 @@ export default function AIHelpWidget() {
                         }`}
                       >
                         <Avatar
-                          size="sm"
-                          className={`flex-shrink-0 ${
+                          className={`flex-shrink-0 h-8 w-8 ${
                             message.role === 'assistant'
                               ? 'bg-primary/20'
                               : 'bg-foreground/10'
                           }`}
-                          icon={
-                            message.role === 'assistant' ? (
+                        >
+                          <AvatarFallback className={message.role === 'assistant' ? 'bg-primary/20' : 'bg-foreground/10'}>
+                            {message.role === 'assistant' ? (
                               <Bot size={16} className="text-primary" />
                             ) : (
                               <User size={16} />
-                            )
-                          }
-                        />
+                            )}
+                          </AvatarFallback>
+                        </Avatar>
                         <div
                           className={`flex flex-col max-w-[80%] ${
                             message.role === 'user' ? 'items-end' : ''
@@ -289,15 +284,14 @@ export default function AIHelpWidget() {
                             message.relatedTopics.length > 0 && (
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {message.relatedTopics.map((topic, idx) => (
-                                  <Chip
+                                  <Badge
                                     key={idx}
-                                    size="sm"
-                                    variant="flat"
+                                    variant="secondary"
                                     className="text-xs cursor-pointer hover:bg-primary/20"
                                     onClick={() => handleSuggestionClick(`Tell me about ${topic}`)}
                                   >
                                     {topic}
-                                  </Chip>
+                                  </Badge>
                                 ))}
                               </div>
                             )}
@@ -314,14 +308,14 @@ export default function AIHelpWidget() {
 
                     {isLoading && (
                       <div className="flex gap-3">
-                        <Avatar
-                          size="sm"
-                          className="bg-primary/20 flex-shrink-0"
-                          icon={<Bot size={16} className="text-primary" />}
-                        />
+                        <Avatar className="bg-primary/20 flex-shrink-0 h-8 w-8">
+                          <AvatarFallback className="bg-primary/20">
+                            <Bot size={16} className="text-primary" />
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="p-3 rounded-2xl rounded-bl-sm bg-foreground/5">
                           <div className="flex items-center gap-2">
-                            <Spinner size="sm" color="primary" />
+                            <Loader2 size={16} className="animate-spin text-primary" />
                             <span className="text-sm text-foreground/60">
                               Thinking...
                             </span>
@@ -333,7 +327,7 @@ export default function AIHelpWidget() {
                     <div ref={messagesEndRef} />
                   </>
                 )}
-              </ScrollShadow>
+              </CardContent>
 
               {/* Input area */}
               <div className="p-4 border-t border-zinc-200/50 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-b-3xl">
@@ -343,21 +337,14 @@ export default function AIHelpWidget() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask anything..."
-                    size="sm"
-                    radius="full"
-                    classNames={{
-                      inputWrapper: 'bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200/50 dark:border-zinc-700/50 h-10 backdrop-blur-sm',
-                    }}
+                    className="bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200/50 dark:border-zinc-700/50 h-10 rounded-full backdrop-blur-sm"
                     disabled={isLoading}
                   />
                   <Button
                     type="submit"
-                    isIconOnly
-                    color="primary"
-                    radius="full"
-                    size="sm"
-                    className="h-10 w-10 shadow-md"
-                    isDisabled={!input.trim() || isLoading}
+                    size="icon"
+                    className="h-10 w-10 rounded-full shadow-md"
+                    disabled={!input.trim() || isLoading}
                   >
                     <Send size={16} />
                   </Button>

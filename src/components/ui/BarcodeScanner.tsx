@@ -1,6 +1,13 @@
 'use client';
 
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { Maximize2 } from "lucide-react";
 import { useEffect } from "react";
@@ -58,48 +65,35 @@ export default function BarcodeScanner({
     }, [isOpen, onScanSuccess, onScanError, onClose]);
 
     return (
-        <Modal 
-            isOpen={isOpen} 
-            onClose={onClose}
-            size="2xl"
-            backdrop="blur"
-            classNames={{
-                base: "bg-background border border-foreground/5 dark:bg-card",
-                header: "border-b border-foreground/5",
-            }}
-        >
-            <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                                    <Maximize2 size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-black">Scan Barcode / QR</h3>
-                                    <p className="text-xs text-foreground/50 font-medium">Position the item in front of your camera</p>
-                                </div>
-                            </div>
-                        </ModalHeader>
-                        <ModalBody className="py-6">
-                            <div 
-                                id="reader" 
-                                className="w-full h-full min-h-[300px] overflow-hidden rounded-3xl border-2 border-dashed border-primary/20 bg-foreground/5 flex items-center justify-center relative"
-                            >
-                                <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10">
-                                    <Maximize2 size={120} className="text-primary" />
-                                </div>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button variant="flat" onPress={onClose} className="font-bold">
-                                Close Scanner
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="bg-background border border-foreground/5 dark:bg-card max-w-2xl">
+                <DialogHeader className="border-b border-foreground/5 pb-4">
+                    <div className="flex items-center gap-2">
+                        <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                            <Maximize2 size={20} />
+                        </div>
+                        <div>
+                            <DialogTitle className="font-black">Scan Barcode / QR</DialogTitle>
+                            <p className="text-xs text-foreground/50 font-medium">Position the item in front of your camera</p>
+                        </div>
+                    </div>
+                </DialogHeader>
+                <div className="py-6">
+                    <div
+                        id="reader"
+                        className="w-full h-full min-h-[300px] overflow-hidden rounded-3xl border-2 border-dashed border-primary/20 bg-foreground/5 flex items-center justify-center relative"
+                    >
+                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10">
+                            <Maximize2 size={120} className="text-primary" />
+                        </div>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="secondary" onClick={onClose} className="font-bold">
+                        Close Scanner
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

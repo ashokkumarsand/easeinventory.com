@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
@@ -96,12 +97,16 @@ export default function StaffPage() {
               </p>
 
               <div className="flex flex-wrap gap-4 mb-10">
-                <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
-                  Start Free Trial
-                  <ArrowRight size={20} />
+                <Button asChild className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest rounded-full">
+                  <Link href="/register">
+                    Start Free Trial
+                    <ArrowRight size={20} />
+                  </Link>
                 </Button>
-                <Button as={Link} href="#features" variant="bordered" size="lg" className="font-black px-10 h-16 uppercase tracking-widest border-foreground/10" radius="full">
-                  Explore
+                <Button asChild variant="outline" className="font-black px-10 h-16 uppercase tracking-widest border-foreground/10 rounded-full">
+                  <Link href="#features">
+                    Explore
+                  </Link>
                 </Button>
               </div>
 
@@ -125,11 +130,11 @@ export default function StaffPage() {
             >
               {stats.map((stat) => (
                 <Card key={stat.label} className="modern-card group hover:scale-105 transition-transform duration-500">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <div className="text-4xl mb-4">{stat.icon}</div>
                     <div className="text-4xl font-black text-primary mb-2">{stat.value}</div>
                     <div className="text-sm font-bold text-foreground/50">{stat.label}</div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               ))}
             </motion.div>
@@ -170,7 +175,7 @@ export default function StaffPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="modern-card h-full group hover:border-primary/30 transition-all duration-500">
-                  <CardBody className="p-10">
+                  <CardContent className="p-10">
                     <div className="flex justify-between items-start mb-8">
                       <div className="w-20 h-20 rounded-[28px] bg-primary/10 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
                         {feature.icon}
@@ -189,7 +194,7 @@ export default function StaffPage() {
                         </div>
                       ))}
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -273,13 +278,13 @@ export default function StaffPage() {
                 transition={{ delay: index * 0.08 }}
               >
                 <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <div className="w-16 h-16 rounded-2xl bg-warning/10 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
                       {feature.icon}
                     </div>
                     <h3 className="text-lg font-black mb-3 uppercase tracking-tight">{feature.title}</h3>
                     <p className="text-sm text-foreground/60 italic">{feature.description}</p>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -314,10 +319,10 @@ export default function StaffPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="modern-card">
-                  <CardBody className="p-8">
+                  <CardContent className="p-8">
                     <h3 className="text-lg font-black mb-3">{faq.q}</h3>
                     <p className="text-foreground/60 italic leading-relaxed">{faq.a}</p>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -336,7 +341,7 @@ export default function StaffPage() {
             viewport={{ once: true }}
           >
             <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
-              <CardBody className="p-12 lg:p-20 text-center relative">
+              <CardContent className="p-12 lg:p-20 text-center relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
                 <div className="relative z-10">
                   <div className="text-6xl mb-8">👥</div>
@@ -347,16 +352,20 @@ export default function StaffPage() {
                     From attendance to payroll, simplify HR for your retail business.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
-                    <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
-                      Start Free Trial
-                      <ArrowRight size={20} />
+                    <Button asChild className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest rounded-full">
+                      <Link href="/register">
+                        Start Free Trial
+                        <ArrowRight size={20} />
+                      </Link>
                     </Button>
-                    <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
-                      Talk to Sales
+                    <Button asChild variant="outline" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10 rounded-full">
+                      <Link href="/#contact">
+                        Talk to Sales
+                      </Link>
                     </Button>
                   </div>
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
         </div>

@@ -1,17 +1,21 @@
 'use client';
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-    Button,
-    Chip,
-    Input,
     Table,
     TableBody,
     TableCell,
-    TableColumn,
+    TableHead,
     TableHeader,
-    TableRow,
-    Tooltip
-} from "@heroui/react";
+    TableRow
+} from "@/components/ui/table";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger
+} from "@/components/ui/tooltip";
 import { Check, Eye, Package, Search, X } from "lucide-react";
 import { useEffect, useState } from 'react';
 
@@ -62,91 +66,107 @@ export default function InventoryRequestsPage() {
                     <h2 className="text-2xl font-black tracking-tight">Inventory Requests</h2>
                     <p className="text-foreground/60 font-medium">Review product and category addition requests</p>
                 </div>
-                <Chip variant="flat" color="warning" size="lg" className="font-bold">
+                <Badge variant="secondary" className="font-bold text-base px-3 py-1">
                     {requests.filter(r => r.status === 'PENDING').length} Pending
-                </Chip>
+                </Badge>
             </div>
 
             <div className="flex gap-4 mb-4">
-                <Input 
-                    placeholder="Search requests..." 
-                    startContent={<Search size={18} className="opacity-30" />}
-                    className="max-w-md"
-                    value={search}
-                    onValueChange={setSearch}
-                />
+                <div className="relative max-w-md">
+                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30" />
+                    <Input
+                        placeholder="Search requests..."
+                        className="pl-10"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
             </div>
 
-            <Table aria-label="Inventory requests">
+            <Table>
                 <TableHeader>
-                    <TableColumn>CLIENT</TableColumn>
-                    <TableColumn>TYPE</TableColumn>
-                    <TableColumn>ITEM DETAILS</TableColumn>
-                    <TableColumn>STATUS</TableColumn>
-                    <TableColumn align="center">ACTIONS</TableColumn>
+                    <TableRow>
+                        <TableHead>CLIENT</TableHead>
+                        <TableHead>TYPE</TableHead>
+                        <TableHead>ITEM DETAILS</TableHead>
+                        <TableHead>STATUS</TableHead>
+                        <TableHead className="text-center">ACTIONS</TableHead>
+                    </TableRow>
                 </TableHeader>
-                <TableBody 
-                    emptyContent={isLoading ? "Loading..." : "No requests found."}
-                    items={filteredRequests}
-                >
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>
-                                <div className="flex flex-col">
-                                    <span className="font-bold">{item.tenant.name}</span>
-                                    <span className="text-tiny text-foreground/40">{item.tenant.slug}.easeinventory.com</span>
-                                </div>
-                            </TableCell>
-                            <TableCell>
-                                <Chip size="sm" variant="flat" className="font-black uppercase tracking-widest text-[10px]">
-                                    {item.type}
-                                </Chip>
-                            </TableCell>
-                            <TableCell>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center">
-                                        <Package size={14} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="font-bold">{(item.details as any).name}</span>
-                                        <span className="text-tiny opacity-40 italic">{(item.details as any).brand || 'Standard'}</span>
-                                    </div>
-                                </div>
-                            </TableCell>
-                            <TableCell>
-                                <Chip 
-                                    color={item.status === 'APPROVED' ? 'success' : item.status === 'REJECTED' ? 'danger' : 'warning'} 
-                                    size="sm" 
-                                    variant="dot"
-                                    className="font-bold"
-                                >
-                                    {item.status}
-                                </Chip>
-                            </TableCell>
-                            <TableCell>
-                                <div className="flex items-center gap-2 justify-center">
-                                    {item.status === 'PENDING' && (
-                                        <>
-                                            <Tooltip content="Approve">
-                                                <Button isIconOnly size="sm" color="success" variant="light" onPress={() => handleAction(item.id, 'APPROVED')}>
-                                                    <Check size={20} />
-                                                </Button>
-                                            </Tooltip>
-                                            <Tooltip content="Reject">
-                                                <Button isIconOnly size="sm" color="danger" variant="light" onPress={() => handleAction(item.id, 'REJECTED')}>
-                                                    <X size={20} />
-                                                </Button>
-                                            </Tooltip>
-                                        </>
-                                    )}
-                                    <Tooltip content="View Details">
-                                        <Button isIconOnly size="sm" variant="light">
-                                            <Eye size={20} />
-                                        </Button>
-                                    </Tooltip>
-                                </div>
+                <TableBody>
+                    {filteredRequests.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                {isLoading ? "Loading..." : "No requests found."}
                             </TableCell>
                         </TableRow>
+                    ) : (
+                        filteredRequests.map((item) => (
+                            <TableRow key={item.id}>
+                                <TableCell>
+                                    <div className="flex flex-col">
+                                        <span className="font-bold">{item.tenant.name}</span>
+                                        <span className="text-xs text-muted-foreground">{item.tenant.slug}.easeinventory.com</span>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant="secondary" className="font-black uppercase tracking-widest text-[10px]">
+                                        {item.type}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                                            <Package size={14} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">{(item.details as any).name}</span>
+                                            <span className="text-xs text-muted-foreground italic">{(item.details as any).brand || 'Standard'}</span>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge
+                                        variant={item.status === 'APPROVED' ? 'default' : item.status === 'REJECTED' ? 'destructive' : 'secondary'}
+                                        className="font-bold"
+                                    >
+                                        {item.status}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex items-center gap-2 justify-center">
+                                        {item.status === 'PENDING' && (
+                                            <>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button size="icon" variant="ghost" className="text-green-600 hover:text-green-700 hover:bg-green-100" onClick={() => handleAction(item.id, 'APPROVED')}>
+                                                            <Check size={20} />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>Approve</TooltipContent>
+                                                </Tooltip>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button size="icon" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-100" onClick={() => handleAction(item.id, 'REJECTED')}>
+                                                            <X size={20} />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>Reject</TooltipContent>
+                                                </Tooltip>
+                                            </>
+                                        )}
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button size="icon" variant="ghost">
+                                                    <Eye size={20} />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>View Details</TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
                     )}
                 </TableBody>
             </Table>

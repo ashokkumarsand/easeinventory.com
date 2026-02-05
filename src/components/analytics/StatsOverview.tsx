@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardBody, Skeleton } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowDown, ArrowUp, DollarSign, Package, ShoppingCart, Users } from 'lucide-react';
 
 interface StatCardProps {
@@ -17,7 +18,7 @@ function StatCard({ title, value, change, changeLabel, icon, trend, isLoading }:
   if (isLoading) {
     return (
       <Card className="border border-foreground/5">
-        <CardBody className="p-6">
+        <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div className="space-y-3">
               <Skeleton className="h-4 w-20 rounded-lg" />
@@ -26,27 +27,27 @@ function StatCard({ title, value, change, changeLabel, icon, trend, isLoading }:
             </div>
             <Skeleton className="w-12 h-12 rounded-xl" />
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
 
   return (
     <Card className="border border-foreground/5 hover:border-foreground/10 transition-colors">
-      <CardBody className="p-6">
+      <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-foreground/50 font-medium">{title}</p>
             <p className="text-3xl font-black mt-2 tracking-tight">{value}</p>
             <div className="flex items-center gap-1 mt-2">
               {trend === 'up' ? (
-                <ArrowUp className="w-4 h-4 text-success" />
+                <ArrowUp className="w-4 h-4 text-green-500" />
               ) : trend === 'down' ? (
-                <ArrowDown className="w-4 h-4 text-danger" />
+                <ArrowDown className="w-4 h-4 text-destructive" />
               ) : null}
               <span
                 className={`text-sm font-semibold ${
-                  trend === 'up' ? 'text-success' : trend === 'down' ? 'text-danger' : 'text-foreground/50'
+                  trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-destructive' : 'text-foreground/50'
                 }`}
               >
                 {change > 0 ? '+' : ''}{change}%
@@ -58,7 +59,7 @@ function StatCard({ title, value, change, changeLabel, icon, trend, isLoading }:
             {icon}
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

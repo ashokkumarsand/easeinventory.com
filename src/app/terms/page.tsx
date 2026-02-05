@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import Footer from '@/components/landing/Footer';
 import Navbar from '@/components/landing/Navbar';
@@ -98,10 +98,10 @@ export default function TermsPage() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card className="modern-card">
-                    <CardBody className="p-8 lg:p-10">
+                    <CardContent className="p-8 lg:p-10">
                       <h2 className="text-xl font-black mb-4 uppercase tracking-tight">{section.title}</h2>
                       <p className="text-foreground/70 leading-relaxed whitespace-pre-line">{section.content}</p>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -113,7 +113,7 @@ export default function TermsPage() {
                 viewport={{ once: true }}
               >
                 <Card className="modern-card bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent border-secondary/20">
-                  <CardBody className="p-8 lg:p-10">
+                  <CardContent className="p-8 lg:p-10">
                     <h2 className="text-xl font-black mb-4 uppercase tracking-tight">Questions About These Terms?</h2>
                     <p className="text-foreground/70 mb-4 italic">
                       Contact our legal team for clarification:
@@ -121,7 +121,7 @@ export default function TermsPage() {
                     <a href="mailto:legal@easeinventory.com" className="text-secondary font-bold hover:underline">
                       legal@easeinventory.com
                     </a>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardBody, Spinner } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 import {
     AlertTriangle,
     Check,
@@ -129,17 +130,17 @@ export default function ActivityFeed({ limit = 10, refreshInterval = 30000, clas
 
     if (isLoading) {
         return (
-            <Card className={`modern-card p-6 ${className}`} radius="lg">
-                <CardBody className="flex items-center justify-center p-8">
-                    <Spinner color="primary" />
-                </CardBody>
+            <Card className={`modern-card p-6 rounded-xl ${className}`}>
+                <CardContent className="flex items-center justify-center p-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                </CardContent>
             </Card>
         );
     }
 
     return (
-        <Card className={`modern-card p-6 ${className}`} radius="lg">
-            <CardBody className="p-0 space-y-4">
+        <Card className={`modern-card p-6 rounded-xl ${className}`}>
+            <CardContent className="p-0 space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                     <Activity size={18} className="text-primary" />
                     <h3 className="text-sm font-black uppercase tracking-widest">Recent Activity</h3>
@@ -176,7 +177,7 @@ export default function ActivityFeed({ limit = 10, refreshInterval = 30000, clas
                         })}
                     </div>
                 )}
-            </CardBody>
+            </CardContent>
         </Card>
     );
 }

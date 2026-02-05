@@ -1,18 +1,10 @@
 'use client';
 
-import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow
-} from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Loader2 } from 'lucide-react';
 import {
     AlertCircle,
     Bell,
@@ -61,8 +53,8 @@ export default function CreditManagementPage() {
     }
   };
 
-  const filteredCustomers = customers.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredCustomers = customers.filter(c =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.phone?.includes(searchQuery)
   );
 
@@ -70,18 +62,18 @@ export default function CreditManagementPage() {
 
   const sendReminder = async (customer: any) => {
     try {
-      alert(`Sending WhatsApp reminder to ${customer.name} (${customer.phone}) for ₹${customer.outstanding.toLocaleString()}`);
-      
+      alert(`Sending WhatsApp reminder to ${customer.name} (${customer.phone}) for ${customer.outstanding.toLocaleString()}`);
+
       const res = await fetch('/api/whatsapp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           phoneNumber: customer.phone,
           templateName: 'PAYMENT_REMINDER',
-          variables: [customer.name, `₹${customer.outstanding.toLocaleString()}`]
+          variables: [customer.name, `${customer.outstanding.toLocaleString()}`]
         })
       });
-      
+
       if (res.ok) {
         alert('Reminder sent successfully');
       }
@@ -92,7 +84,7 @@ export default function CreditManagementPage() {
 
   return (
     <div className="space-y-10 pb-20">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
@@ -105,14 +97,14 @@ export default function CreditManagementPage() {
            <p className="text-black/40 dark:text-white/40 font-bold ml-1">Credit management and automated collection tracking.</p>
         </div>
         <div className="flex items-center gap-3">
-            <Button 
-                variant="flat" 
-                color="danger" 
-                className="font-black rounded-2xl" 
-                startContent={<Bell size={18} />}
+            <Button
+                variant="secondary"
+                className="font-black rounded-2xl bg-danger/10 text-danger hover:bg-danger/20"
                 onClick={handleBulkReminders}
-                isLoading={isSendingBulk}
+                disabled={isSendingBulk}
             >
+               {isSendingBulk && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+               <Bell size={18} className="mr-2" />
                Bulk Reminders
             </Button>
         </div>
@@ -120,120 +112,122 @@ export default function CreditManagementPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-         <Card className="modern-card bg-danger text-white p-6" radius="lg">
-            <CardBody className="p-0">
+         <Card className="modern-card bg-danger text-white p-6 rounded-lg">
+            <CardContent className="p-0">
                <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-4">Total Outstanding (Udhaar)</p>
-               <h3 className="text-4xl font-black mb-6">₹{totalOutstanding.toLocaleString()}</h3>
+               <h3 className="text-4xl font-black mb-6">{totalOutstanding.toLocaleString()}</h3>
                <div className="flex items-center gap-2 font-black text-xs">
-                  <TrendingDown size={14} /> At risk: ₹{ (totalOutstanding * 0.15).toLocaleString() }
+                  <TrendingDown size={14} /> At risk: { (totalOutstanding * 0.15).toLocaleString() }
                </div>
-            </CardBody>
+            </CardContent>
          </Card>
-         <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-            <CardBody className="p-0">
+         <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+            <CardContent className="p-0">
                <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">Active Debtors</p>
                <h3 className="text-4xl font-black mb-6 text-white">{customers.filter(c => c.outstanding > 0).length}</h3>
                <p className="text-xs font-bold opacity-40 uppercase tracking-tight">Customers with pending dues</p>
-            </CardBody>
+            </CardContent>
          </Card>
-         <Card className="modern-card p-6 border border-black/5 dark:border-white/10" radius="lg">
-            <CardBody className="p-0">
+         <Card className="modern-card p-6 border border-black/5 dark:border-white/10 rounded-lg">
+            <CardContent className="p-0">
                <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">Average Aging</p>
                <h3 className="text-4xl font-black text-white">18 Days</h3>
                <p className="text-xs font-bold opacity-40 uppercase tracking-tight mt-6">Payment cycle health</p>
-            </CardBody>
+            </CardContent>
          </Card>
       </div>
 
       {/* Control Bar */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <Input 
-            placeholder="Search by name or phone..." 
-            variant="flat"
-            radius="lg"
-            size="lg"
-            className="w-full md:w-96"
-            startContent={<Search size={18} className="opacity-30" />}
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            classNames={{ inputWrapper: "bg-black/[0.03] dark:bg-white/[0.03] h-14 text-white" }}
-          />
+          <div className="relative w-full md:w-96">
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30" />
+            <Input
+              placeholder="Search by name or phone..."
+              className="w-full bg-black/[0.03] dark:bg-white/[0.03] h-14 pl-10 text-white"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
           <div className="flex gap-2">
-            <Button variant="flat" size="lg" radius="lg" className="font-bold text-white border-white/10" startContent={<Filter size={18} />}>All Dues</Button>
+            <Button variant="secondary" size="lg" className="font-bold text-white border-white/10">
+              <Filter size={18} className="mr-2" />
+              All Dues
+            </Button>
           </div>
       </div>
 
       {/* Credit Table */}
-      <Table 
-        aria-label="Credit Ledger Table"
-        className="modern-card border-none"
-        classNames={{
-            wrapper: "p-0 modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
-            th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 first:pl-10 last:pr-10",
-            td: "py-6 px-8 first:pl-10 last:pr-10 font-bold text-white/70",
-        }}
-      >
-        <TableHeader>
-          <TableColumn>CUSTOMER</TableColumn>
-          <TableColumn>TOTAL BILLED</TableColumn>
-          <TableColumn>TOTAL PAID</TableColumn>
-          <TableColumn>OUTSTANDING</TableColumn>
-          <TableColumn>LAST TRANSACTION</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn align="center">ACTIONS</TableColumn>
-        </TableHeader>
-        <TableBody items={filteredCustomers} emptyContent={"No customers with transaction history found."}>
-          {(c: any) => (
-            <TableRow key={c.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
-              <TableCell>
-                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-black/20 dark:text-white/20">
-                        <User size={20} />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-black tracking-tight text-white">{c.name}</span>
-                        <span className="text-[10px] opacity-30 font-bold uppercase">{c.phone}</span>
-                    </div>
-                 </div>
-              </TableCell>
-              <TableCell>₹{c.totalInvoiced.toLocaleString()}</TableCell>
-              <TableCell className="text-success">₹{c.totalPaid.toLocaleString()}</TableCell>
-              <TableCell>
-                 <span className={`text-lg font-black ${c.outstanding > 0 ? 'text-danger' : 'text-success'}`}>
-                    ₹{c.outstanding.toLocaleString()}
-                 </span>
-              </TableCell>
-              <TableCell className="text-xs font-black opacity-40 uppercase">
-                {c.lastTransaction ? new Date(c.lastTransaction).toLocaleDateString() : 'N/A'}
-              </TableCell>
-              <TableCell>
-                 {c.outstanding > 0 ? (
-                    <Chip variant="flat" color="danger" size="sm" className="font-black text-[9px] uppercase">Payment Due</Chip>
-                 ) : (
-                    <Chip variant="flat" color="success" size="sm" className="font-black text-[9px] uppercase">Settled</Chip>
-                 )}
-              </TableCell>
-              <TableCell>
-                 <div className="flex gap-2 justify-center">
-                    <Button 
-                        isIconOnly 
-                        variant="flat" 
-                        color="primary" 
-                        radius="lg" 
-                        onClick={() => sendReminder(c)}
-                        isDisabled={c.outstanding <= 0}
-                    >
-                        <MessageSquare size={16} />
-                    </Button>
-                    <Button isIconOnly variant="flat" color="default" radius="lg">
-                        <AlertCircle size={16} />
-                    </Button>
-                 </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <div className="modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-black/[0.02] dark:bg-white/[0.02]">
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 pl-10 text-left">CUSTOMER</th>
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">TOTAL BILLED</th>
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">TOTAL PAID</th>
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">OUTSTANDING</th>
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">LAST TRANSACTION</th>
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">STATUS</th>
+              <th className="h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 pr-10 text-center">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCustomers.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="text-center py-10 opacity-30">No customers with transaction history found.</td>
+              </tr>
+            ) : (
+              filteredCustomers.map((c: any) => (
+                <tr key={c.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                  <td className="py-6 px-8 pl-10 font-bold text-white/70">
+                     <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-black/20 dark:text-white/20">
+                            <User size={20} />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="font-black tracking-tight text-white">{c.name}</span>
+                            <span className="text-[10px] opacity-30 font-bold uppercase">{c.phone}</span>
+                        </div>
+                     </div>
+                  </td>
+                  <td className="py-6 px-8 font-bold text-white/70">{c.totalInvoiced.toLocaleString()}</td>
+                  <td className="py-6 px-8 font-bold text-success">{c.totalPaid.toLocaleString()}</td>
+                  <td className="py-6 px-8 font-bold text-white/70">
+                     <span className={`text-lg font-black ${c.outstanding > 0 ? 'text-danger' : 'text-success'}`}>
+                        {c.outstanding.toLocaleString()}
+                     </span>
+                  </td>
+                  <td className="py-6 px-8 font-bold text-white/70 text-xs font-black opacity-40 uppercase">
+                    {c.lastTransaction ? new Date(c.lastTransaction).toLocaleDateString() : 'N/A'}
+                  </td>
+                  <td className="py-6 px-8 font-bold text-white/70">
+                     {c.outstanding > 0 ? (
+                        <Badge variant="secondary" className="font-black text-[9px] uppercase bg-danger/10 text-danger">Payment Due</Badge>
+                     ) : (
+                        <Badge variant="secondary" className="font-black text-[9px] uppercase bg-success/10 text-success">Settled</Badge>
+                     )}
+                  </td>
+                  <td className="py-6 px-8 pr-10 font-bold text-white/70">
+                     <div className="flex gap-2 justify-center">
+                        <Button
+                            variant="secondary"
+                            size="icon"
+                            className="rounded-lg bg-primary/10 text-primary hover:bg-primary/20"
+                            onClick={() => sendReminder(c)}
+                            disabled={c.outstanding <= 0}
+                        >
+                            <MessageSquare size={16} />
+                        </Button>
+                        <Button variant="secondary" size="icon" className="rounded-lg">
+                            <AlertCircle size={16} />
+                        </Button>
+                     </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -1,32 +1,34 @@
 'use client';
 
 import { usePermissions } from '@/hooks/usePermissions';
+import { useDisclosure } from '@/hooks/useDisclosure';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
-    Avatar,
-    Button,
-    Chip,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
     Select,
+    SelectContent,
     SelectItem,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Textarea,
-    useDisclosure
-} from '@heroui/react';
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Calendar,
     Check,
     Clock,
     Filter,
+    Loader2,
     Plus,
     X
 } from 'lucide-react';
@@ -74,7 +76,7 @@ export default function LeavesPage() {
 
             if (response.ok) {
                 fetchLeaves();
-                onOpenChange();
+                onOpenChange(false);
                 setNewLeave({
                     leaveType: 'CASUAL',
                     startDate: new Date().toISOString().split('T')[0],
@@ -114,12 +116,12 @@ export default function LeavesPage() {
         }
     };
 
-    const getStatusColor = (status: string) => {
+    const getStatusColor = (status: string): "default" | "secondary" | "destructive" | "outline" => {
         switch (status) {
-            case 'APPROVED': return 'success';
-            case 'REJECTED': return 'danger';
-            case 'PENDING': return 'warning';
-            default: return 'default';
+            case 'APPROVED': return 'default';
+            case 'REJECTED': return 'destructive';
+            case 'PENDING': return 'secondary';
+            default: return 'outline';
         }
     };
 
@@ -129,18 +131,20 @@ export default function LeavesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-2xl bg-warning/10 flex items-center justify-center text-warning">
+                        <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-600">
                             <Calendar size={22} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tight text-warning">Leave Management</h1>
+                        <h1 className="text-3xl font-black tracking-tight text-yellow-600">Leave Management</h1>
                     </div>
                     <p className="text-black/40 dark:text-white/40 font-bold ml-1">Request absences and track approval workflows.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="flat" color="default" className="font-bold rounded-2xl" startContent={<Filter size={18} />}>
+                    <Button variant="outline" className="font-bold rounded-2xl">
+                        <Filter size={18} className="mr-2" />
                         Filter Requests
                     </Button>
-                    <Button color="warning" radius="full" size="lg" className="font-black px-8 shadow-xl shadow-warning/20 text-white" startContent={<Plus size={20} />} onClick={onOpen}>
+                    <Button onClick={onOpen} className="font-black px-8 shadow-xl shadow-yellow-500/20 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white">
+                        <Plus size={20} className="mr-2" />
                         Request Leave
                     </Button>
                 </div>
@@ -148,150 +152,144 @@ export default function LeavesPage() {
 
             {/* Content Table */}
             <div className="space-y-6">
-                <Table 
-                    aria-label="Leave Requests"
-                    className="modern-card border-none"
-                    classNames={{
-                        wrapper: "p-0 modern-card theme-table-wrapper border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-none",
-                        th: "bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8",
-                        td: "py-6 px-8 font-bold",
-                    }}
-                >
-                    <TableHeader>
-                        <TableColumn>EMPLOYEE</TableColumn>
-                        <TableColumn>TYPE</TableColumn>
-                        <TableColumn>DURATION</TableColumn>
-                        <TableColumn>STATUS</TableColumn>
-                        <TableColumn>REASON</TableColumn>
-                        <TableColumn align="center">ACTION</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {leaves.map((leave) => (
-                            <TableRow key={leave.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <Avatar name={leave.employee?.name} size="sm" className="bg-warning/10 text-warning font-black" />
+                <div className="bg-card border border-black/5 dark:border-white/10 rounded-[2.5rem] overflow-hidden">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b border-black/5 dark:border-white/10">
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">EMPLOYEE</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">TYPE</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">DURATION</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">STATUS</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-left">REASON</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-16 font-black uppercase tracking-wider text-[10px] opacity-40 px-8 text-center">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leaves.map((leave) => (
+                                <tr key={leave.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                                    <td className="py-6 px-8 font-bold">
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-8 w-8 bg-yellow-500/10 text-yellow-600 font-black">
+                                                <AvatarFallback>{leave.employee?.name?.[0]}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <span className="font-black tracking-tight">{leave.employee?.name}</span>
+                                                <span className="text-[10px] font-bold opacity-30 uppercase">{leave.employee?.employeeId}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <Badge variant="secondary" className="font-black text-[10px] border-none">
+                                            {leave.leaveType}
+                                        </Badge>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
                                         <div className="flex flex-col">
-                                            <span className="font-black tracking-tight">{leave.employee?.name}</span>
-                                            <span className="text-[10px] font-bold opacity-30 uppercase">{leave.employee?.employeeId}</span>
+                                            <span className="text-sm">{new Date(leave.startDate).toLocaleDateString()}</span>
+                                            <span className="text-[10px] opacity-30 uppercase font-black">To {new Date(leave.endDate).toLocaleDateString()}</span>
                                         </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip variant="dot" color="warning" size="sm" className="font-black text-[10px] border-none">
-                                        {leave.leaveType}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span className="text-sm">{new Date(leave.startDate).toLocaleDateString()}</span>
-                                        <span className="text-[10px] opacity-30 uppercase font-black">To {new Date(leave.endDate).toLocaleDateString()}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip variant="flat" size="sm" color={getStatusColor(leave.status) as any} className="font-black text-[10px] uppercase">
-                                        {leave.status}
-                                    </Chip>
-                                </TableCell>
-                                <TableCell className="max-w-[200px] truncate opacity-50 text-xs italic">
-                                    "{leave.reason || 'No reason provided'}"
-                                </TableCell>
-                                <TableCell>
-                                    {leave.status === 'PENDING' && canManageHR ? (
-                                        <div className="flex items-center gap-2">
-                                            <Button isIconOnly radius="full" color="success" variant="flat" size="sm" onClick={() => handleAction(leave.id, 'APPROVED')}>
-                                                <Check size={16} />
+                                    </td>
+                                    <td className="py-6 px-8 font-bold">
+                                        <Badge variant={getStatusColor(leave.status)} className="font-black text-[10px] uppercase">
+                                            {leave.status}
+                                        </Badge>
+                                    </td>
+                                    <td className="py-6 px-8 font-bold max-w-[200px] truncate opacity-50 text-xs italic">
+                                        &quot;{leave.reason || 'No reason provided'}&quot;
+                                    </td>
+                                    <td className="py-6 px-8 font-bold text-center">
+                                        {leave.status === 'PENDING' && canManageHR ? (
+                                            <div className="flex items-center gap-2 justify-center">
+                                                <Button variant="default" size="icon" className="rounded-full h-8 w-8" onClick={() => handleAction(leave.id, 'APPROVED')}>
+                                                    <Check size={16} />
+                                                </Button>
+                                                <Button variant="destructive" size="icon" className="rounded-full h-8 w-8" onClick={() => handleAction(leave.id, 'REJECTED')}>
+                                                    <X size={16} />
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" disabled>
+                                                <Clock size={16} className="opacity-20" />
                                             </Button>
-                                            <Button isIconOnly radius="full" color="danger" variant="flat" size="sm" onClick={() => handleAction(leave.id, 'REJECTED')}>
-                                                <X size={16} />
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <Button isIconOnly radius="full" variant="light" size="sm" disabled><Clock size={16} className="opacity-20" /></Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Request Leave Modal */}
-            <Modal 
-                isOpen={isOpen} 
-                onOpenChange={onOpenChange}
-                size="2xl"
-                classNames={{ base: "modern-card p-6" }}
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-black tracking-tight">Request Absence</h2>
-                                <p className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">Submit leave for manager approval</p>
-                            </ModalHeader>
-                            <ModalBody className="py-8 space-y-8">
-                                <div className="grid grid-cols-2 gap-8">
-                                    <Select 
-                                        label="Leave Type" 
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{ trigger: "bg-black/5 h-14" }}
-                                        defaultSelectedKeys={['CASUAL']}
-                                        onSelectionChange={(keys) => setNewLeave({...newLeave, leaveType: Array.from(keys)[0] as string})}
-                                    >
-                                        <SelectItem key="CASUAL">Casual Leave</SelectItem>
-                                        <SelectItem key="SICK">Sick Leave</SelectItem>
-                                        <SelectItem key="EARNED">Earned Leave</SelectItem>
-                                        <SelectItem key="UNPAID">Unpaid Leave</SelectItem>
-                                    </Select>
-                                    <div className="space-y-1">
-                                         <p className="text-xs font-black opacity-40 ml-1">Balance</p>
-                                         <div className="h-14 bg-warning/5 rounded-2xl flex items-center px-4 border border-warning/10">
-                                            <span className="font-black text-warning">12 Days Remaining</span>
-                                         </div>
-                                    </div>
-                                    <Input 
-                                        label="From Date" 
-                                        type="date"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14 text-xs" }}
-                                        value={newLeave.startDate}
-                                        onValueChange={(val) => setNewLeave({...newLeave, startDate: val})}
-                                    />
-                                    <Input 
-                                        label="To Date" 
-                                        type="date"
-                                        labelPlacement="outside"
-                                        size="lg"
-                                        radius="lg"
-                                        classNames={{ inputWrapper: "bg-black/5 h-14 text-xs" }}
-                                        value={newLeave.endDate}
-                                        onValueChange={(val) => setNewLeave({...newLeave, endDate: val})}
-                                    />
-                                </div>
-                                <Textarea 
-                                    label="Reason for Absence"
-                                    placeholder="Briefly describe why you are requesting this leave..."
-                                    labelPlacement="outside"
-                                    classNames={{ inputWrapper: "bg-black/5 p-4 rounded-2xl" }}
-                                    value={newLeave.reason}
-                                    onValueChange={(val) => setNewLeave({...newLeave, reason: val})}
+            <Dialog open={isOpen} onOpenChange={onOpenChange}>
+                <DialogContent className="sm:max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black tracking-tight">Request Absence</DialogTitle>
+                        <DialogDescription className="text-xs font-bold opacity-30 uppercase tracking-[0.2em]">Submit leave for manager approval</DialogDescription>
+                    </DialogHeader>
+                    <div className="py-8 space-y-8">
+                        <div className="grid grid-cols-2 gap-8">
+                            <div className="space-y-2">
+                                <Label>Leave Type</Label>
+                                <Select
+                                    defaultValue="CASUAL"
+                                    onValueChange={(val) => setNewLeave({...newLeave, leaveType: val})}
+                                >
+                                    <SelectTrigger className="bg-black/5 h-14">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="CASUAL">Casual Leave</SelectItem>
+                                        <SelectItem value="SICK">Sick Leave</SelectItem>
+                                        <SelectItem value="EARNED">Earned Leave</SelectItem>
+                                        <SelectItem value="UNPAID">Unpaid Leave</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                 <Label>Balance</Label>
+                                 <div className="h-14 bg-yellow-500/5 rounded-2xl flex items-center px-4 border border-yellow-500/10">
+                                    <span className="font-black text-yellow-600">12 Days Remaining</span>
+                                 </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>From Date</Label>
+                                <Input
+                                    type="date"
+                                    className="bg-black/5 h-14 text-xs"
+                                    value={newLeave.startDate}
+                                    onChange={(e) => setNewLeave({...newLeave, startDate: e.target.value})}
                                 />
-                            </ModalBody>
-                            <ModalFooter className="border-t border-black/5 pt-6">
-                                <Button variant="light" className="font-bold h-12 px-8" onPress={onClose}>Cancel</Button>
-                                <Button color="warning" className="font-black h-12 px-10 shadow-xl shadow-warning/20 text-white" radius="full" onClick={handleSubmitLeave} isLoading={isLoading}>
-                                    Submit Request
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>To Date</Label>
+                                <Input
+                                    type="date"
+                                    className="bg-black/5 h-14 text-xs"
+                                    value={newLeave.endDate}
+                                    onChange={(e) => setNewLeave({...newLeave, endDate: e.target.value})}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Reason for Absence</Label>
+                            <Textarea
+                                placeholder="Briefly describe why you are requesting this leave..."
+                                className="bg-black/5 p-4 rounded-2xl"
+                                value={newLeave.reason}
+                                onChange={(e) => setNewLeave({...newLeave, reason: e.target.value})}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="border-t border-black/5 pt-6">
+                        <Button variant="ghost" className="font-bold h-12 px-8" onClick={() => onOpenChange(false)}>Cancel</Button>
+                        <Button onClick={handleSubmitLeave} disabled={isLoading} className="font-black h-12 px-10 shadow-xl shadow-yellow-500/20 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white">
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Submit Request
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

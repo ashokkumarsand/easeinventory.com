@@ -1,29 +1,23 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Spinner,
-  Switch,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Textarea,
-  useDisclosure,
-} from '@heroui/react';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import {
   Edit,
+  Loader2,
   MapPin,
   Navigation,
   Plus,
@@ -228,21 +222,20 @@ export default function GeoFencesPage() {
           </p>
         </div>
         <Button
-          color="primary"
           className="font-black rounded-2xl"
-          startContent={<Plus size={18} />}
           onClick={() => {
             resetForm();
             onOpen();
           }}
         >
+          <Plus size={18} />
           Add Location
         </Button>
       </div>
 
       {/* Info Card */}
-      <Card className="bg-primary/5 border border-primary/10" radius="lg">
-        <CardBody className="p-6">
+      <Card className="bg-primary/5 border border-primary/10 rounded-lg">
+        <CardContent className="p-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
               <MapPin size={20} />
@@ -256,196 +249,206 @@ export default function GeoFencesPage() {
               </p>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Geo-Fences Table */}
-      <Card className="modern-card" radius="lg">
-        <CardBody className="p-0">
-          <Table
-            aria-label="Geo-Fences"
-            classNames={{
-              wrapper: 'p-0 bg-transparent shadow-none',
-              th: 'bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6',
-              td: 'py-4 px-6',
-            }}
-          >
-            <TableHeader>
-              <TableColumn>LOCATION</TableColumn>
-              <TableColumn>COORDINATES</TableColumn>
-              <TableColumn>RADIUS</TableColumn>
-              <TableColumn>STATUS</TableColumn>
-              <TableColumn>ACTIONS</TableColumn>
-            </TableHeader>
-            <TableBody
-              isLoading={isLoading}
-              loadingContent={<Spinner color="primary" />}
-              emptyContent="No geo-fences defined. Attendance can be marked from anywhere."
-            >
-              {geoFences.map((geoFence) => (
-                <TableRow key={geoFence.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${geoFence.isDefault ? 'bg-primary/10 text-primary' : 'bg-black/5 dark:bg-white/5'}`}>
-                        <MapPin size={16} />
-                      </div>
-                      <div>
-                        <p className="font-bold flex items-center gap-2">
-                          {geoFence.name}
-                          {geoFence.isDefault && (
-                            <Chip size="sm" color="primary" variant="flat" className="text-[8px]">DEFAULT</Chip>
+      <Card className="modern-card rounded-lg">
+        <CardContent className="p-0">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-black/[0.02] dark:bg-white/[0.02]">
+                <th className="h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">LOCATION</th>
+                <th className="h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">COORDINATES</th>
+                <th className="h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">RADIUS</th>
+                <th className="h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">STATUS</th>
+                <th className="h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                  </td>
+                </tr>
+              ) : geoFences.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 opacity-60">
+                    No geo-fences defined. Attendance can be marked from anywhere.
+                  </td>
+                </tr>
+              ) : (
+                geoFences.map((geoFence) => (
+                  <tr key={geoFence.id} className="border-t border-black/5 dark:border-white/10">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${geoFence.isDefault ? 'bg-primary/10 text-primary' : 'bg-black/5 dark:bg-white/5'}`}>
+                          <MapPin size={16} />
+                        </div>
+                        <div>
+                          <p className="font-bold flex items-center gap-2">
+                            {geoFence.name}
+                            {geoFence.isDefault && (
+                              <Badge variant="secondary" className="text-[8px]">DEFAULT</Badge>
+                            )}
+                          </p>
+                          {geoFence.description && (
+                            <p className="text-xs opacity-50 truncate max-w-[200px]">{geoFence.description}</p>
                           )}
-                        </p>
-                        {geoFence.description && (
-                          <p className="text-xs opacity-50 truncate max-w-[200px]">{geoFence.description}</p>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      variant="light"
-                      className="font-mono text-xs"
-                      onClick={() => openInMaps(geoFence.latitude, geoFence.longitude)}
-                      startContent={<Navigation size={12} />}
-                    >
-                      {geoFence.latitude.toFixed(4)}, {geoFence.longitude.toFixed(4)}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-bold">{geoFence.radius}m</span>
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      size="sm"
-                      isSelected={geoFence.isActive}
-                      onValueChange={() => handleToggleActive(geoFence)}
-                      color="success"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
+                    </td>
+                    <td className="py-4 px-6">
                       <Button
-                        isIconOnly
                         size="sm"
-                        variant="light"
-                        onClick={() => handleEdit(geoFence)}
+                        variant="ghost"
+                        className="font-mono text-xs"
+                        onClick={() => openInMaps(geoFence.latitude, geoFence.longitude)}
                       >
-                        <Edit size={16} />
+                        <Navigation size={12} />
+                        {geoFence.latitude.toFixed(4)}, {geoFence.longitude.toFixed(4)}
                       </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        onClick={() => handleDelete(geoFence.id)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardBody>
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className="font-bold">{geoFence.radius}m</span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <Switch
+                        checked={geoFence.isActive}
+                        onCheckedChange={() => handleToggleActive(geoFence)}
+                      />
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => handleEdit(geoFence)}
+                        >
+                          <Edit size={16} />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(geoFence.id)}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </CardContent>
       </Card>
 
       {/* Create/Edit Modal */}
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="font-black">
-                {editingId ? 'Edit Geo-Fence' : 'Add Attendance Location'}
-              </ModalHeader>
-              <ModalBody className="space-y-4">
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-black">
+              {editingId ? 'Edit Geo-Fence' : 'Add Attendance Location'}
+            </DialogTitle>
+            <DialogDescription>
+              Configure geo-fence location settings
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Location Name *</label>
+              <Input
+                placeholder="e.g., Main Office, Warehouse"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Description (Optional)</label>
+              <Textarea
+                placeholder="Additional details about this location..."
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Latitude *</label>
                 <Input
-                  label="Location Name"
-                  placeholder="e.g., Main Office, Warehouse"
-                  value={formData.name}
-                  onValueChange={(v) => setFormData({ ...formData, name: v })}
-                  isRequired
-                />
-
-                <Textarea
-                  label="Description (Optional)"
-                  placeholder="Additional details about this location..."
-                  value={formData.description}
-                  onValueChange={(v) => setFormData({ ...formData, description: v })}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Latitude"
-                    type="number"
-                    step="any"
-                    placeholder="e.g., 28.6139"
-                    value={formData.latitude}
-                    onValueChange={(v) => setFormData({ ...formData, latitude: v })}
-                    isRequired
-                  />
-                  <Input
-                    label="Longitude"
-                    type="number"
-                    step="any"
-                    placeholder="e.g., 77.2090"
-                    value={formData.longitude}
-                    onValueChange={(v) => setFormData({ ...formData, longitude: v })}
-                    isRequired
-                  />
-                </div>
-
-                <Button
-                  variant="flat"
-                  color="primary"
-                  className="w-full"
-                  startContent={<Navigation size={18} />}
-                  onClick={getCurrentLocation}
-                  isLoading={isGettingLocation}
-                >
-                  Use My Current Location
-                </Button>
-
-                <Input
-                  label="Radius (meters)"
                   type="number"
-                  placeholder="100"
-                  description="How far from the center point attendance is allowed"
-                  value={formData.radius}
-                  onValueChange={(v) => setFormData({ ...formData, radius: v })}
+                  step="any"
+                  placeholder="e.g., 28.6139"
+                  value={formData.latitude}
+                  onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Longitude *</label>
+                <Input
+                  type="number"
+                  step="any"
+                  placeholder="e.g., 77.2090"
+                  value={formData.longitude}
+                  onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                />
+              </div>
+            </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Switch
-                      isSelected={formData.isActive}
-                      onValueChange={(v) => setFormData({ ...formData, isActive: v })}
-                    />
-                    <span className="text-sm font-bold">Active</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Switch
-                      isSelected={formData.isDefault}
-                      onValueChange={(v) => setFormData({ ...formData, isDefault: v })}
-                    />
-                    <span className="text-sm font-bold">Set as Default</span>
-                  </div>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="flat" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button color="primary" onPress={handleSubmit} isLoading={isSaving}>
-                  {editingId ? 'Update' : 'Add'} Location
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={getCurrentLocation}
+              disabled={isGettingLocation}
+            >
+              {isGettingLocation && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Navigation size={18} />
+              Use My Current Location
+            </Button>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Radius (meters)</label>
+              <Input
+                type="number"
+                placeholder="100"
+                value={formData.radius}
+                onChange={(e) => setFormData({ ...formData, radius: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">How far from the center point attendance is allowed</p>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={formData.isActive}
+                  onCheckedChange={(v) => setFormData({ ...formData, isActive: v })}
+                />
+                <span className="text-sm font-bold">Active</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={formData.isDefault}
+                  onCheckedChange={(v) => setFormData({ ...formData, isDefault: v })}
+                />
+                <span className="text-sm font-bold">Set as Default</span>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {editingId ? 'Update' : 'Add'} Location
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

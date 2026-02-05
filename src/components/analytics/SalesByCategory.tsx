@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardBody, CardHeader, Skeleton } from '@heroui/react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface CategorySales {
@@ -11,11 +12,11 @@ interface CategorySales {
 
 // Mock data
 const categorySales: CategorySales[] = [
-  { name: 'Electronics', value: 4520000, color: 'hsl(var(--heroui-primary))' },
-  { name: 'Accessories', value: 1890000, color: 'hsl(var(--heroui-secondary))' },
-  { name: 'Parts', value: 980000, color: 'hsl(var(--heroui-success))' },
-  { name: 'Services', value: 560000, color: 'hsl(var(--heroui-warning))' },
-  { name: 'Other', value: 340000, color: 'hsl(var(--heroui-default))' },
+  { name: 'Electronics', value: 4520000, color: 'hsl(var(--primary))' },
+  { name: 'Accessories', value: 1890000, color: 'hsl(var(--secondary))' },
+  { name: 'Parts', value: 980000, color: '#22c55e' },
+  { name: 'Services', value: 560000, color: '#eab308' },
+  { name: 'Other', value: 340000, color: 'hsl(var(--muted-foreground))' },
 ];
 
 const formatCurrency = (value: number) => {
@@ -41,7 +42,7 @@ export function SalesByCategory({ isLoading }: SalesByCategoryProps) {
         <CardHeader>
           <Skeleton className="h-6 w-40 rounded-lg" />
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="flex items-center justify-center">
             <Skeleton className="w-48 h-48 rounded-full" />
           </div>
@@ -50,7 +51,7 @@ export function SalesByCategory({ isLoading }: SalesByCategoryProps) {
               <Skeleton key={i} className="h-8 rounded-lg" />
             ))}
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -63,7 +64,7 @@ export function SalesByCategory({ isLoading }: SalesByCategoryProps) {
           <p className="text-sm text-foreground/50">Revenue distribution this month</p>
         </div>
       </CardHeader>
-      <CardBody>
+      <CardContent>
         <div className="h-[250px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -82,8 +83,8 @@ export function SalesByCategory({ isLoading }: SalesByCategoryProps) {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--heroui-background))',
-                  border: '1px solid hsl(var(--heroui-foreground) / 0.1)',
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--foreground) / 0.1)',
                   borderRadius: '12px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }}
@@ -110,7 +111,7 @@ export function SalesByCategory({ isLoading }: SalesByCategoryProps) {
             </div>
           ))}
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

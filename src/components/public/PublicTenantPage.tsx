@@ -1,20 +1,20 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-    Button,
-    Card,
-    CardBody,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalHeader,
-    useDisclosure
-} from '@heroui/react';
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { useDisclosure } from '@/hooks/useDisclosure';
 import {
     CheckCircle2,
     Clock,
     Globe,
+    Loader2,
     MessageCircle,
     Phone,
     Search,
@@ -35,7 +35,7 @@ interface PublicTenantPageProps {
 }
 
 export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
     const [ticketNumber, setTicketNumber] = useState('');
     const [repairStatus, setRepairStatus] = useState<any>(null);
     const [isSearching, setIsSearching] = useState(false);
@@ -74,8 +74,8 @@ export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
                     <span className="text-xl font-black tracking-tighter uppercase">{tenant.name}</span>
                 </div>
                 <div className="flex items-center gap-6">
-                    <Button variant="light" className="font-bold opacity-60 hover:opacity-100 hidden md:flex">Our Services</Button>
-                    <Button color="primary" radius="full" className="font-black px-8" onClick={onOpen}>Inquire Now</Button>
+                    <Button variant="ghost" className="font-bold opacity-60 hover:opacity-100 hidden md:flex text-white">Our Services</Button>
+                    <Button className="font-black px-8 rounded-full" onClick={onOpen}>Inquire Now</Button>
                 </div>
             </nav>
 
@@ -108,33 +108,29 @@ export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
                 <div className="relative group">
                     <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                     <Card className="modern-card bg-white/5 backdrop-blur-3xl border border-white/10 p-10 rounded-[3rem] relative overflow-visible shadow-2xl">
-                        <CardBody className="p-0 space-y-8">
+                        <CardContent className="p-0 space-y-8">
                             <div>
                                 <h3 className="text-2xl font-black mb-2">Check Repair Progress</h3>
                                 <p className="text-xs font-bold opacity-40 uppercase tracking-widest">Enter your ticket number to track live status</p>
                             </div>
 
                             <div className="space-y-4">
-                                <Input 
-                                    placeholder="e.g. TIC-10024"
+                                <div className="relative">
+                                    <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
+                                    <Input
+                                        placeholder="e.g. TIC-10024"
+                                        value={ticketNumber}
+                                        onChange={(e) => setTicketNumber(e.target.value)}
+                                        className="bg-white/5 h-16 border border-white/5 hover:border-white/20 transition-all font-black pl-12 rounded-xl"
+                                    />
+                                </div>
+                                <Button
                                     size="lg"
-                                    radius="lg"
-                                    value={ticketNumber}
-                                    onValueChange={setTicketNumber}
-                                    startContent={<Search size={20} className="opacity-30" />}
-                                    classNames={{
-                                        inputWrapper: "bg-white/5 h-16 border border-white/5 group-hover:border-white/20 transition-all",
-                                        input: "font-black"
-                                    }}
-                                />
-                                <Button 
-                                    color="primary" 
-                                    size="lg" 
-                                    radius="lg" 
-                                    className="w-full h-16 font-black text-lg shadow-xl shadow-primary/20"
-                                    isLoading={isSearching}
+                                    className="w-full h-16 font-black text-lg shadow-xl shadow-primary/20 rounded-xl"
                                     onClick={handleCheckStatus}
+                                    disabled={isSearching}
                                 >
+                                    {isSearching ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Track Live Device
                                 </Button>
                             </div>
@@ -163,7 +159,7 @@ export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
                                     </div>
                                 </div>
                             )}
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
             </main>
@@ -213,27 +209,29 @@ export default function PublicTenantPage({ tenant }: PublicTenantPageProps) {
             </footer>
 
             {/* Inquiry Modal */}
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg" radius="lg" classNames={{
-                backdrop: "bg-black/80 backdrop-blur-xl",
-                base: "bg-neutral-900 border border-white/10 p-6 text-white"
-            }}>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-black">Direct Inquiry</h2>
-                                <p className="text-[10px] font-black uppercase opacity-40 tracking-widest">Connect with local experts</p>
-                            </ModalHeader>
-                            <ModalBody className="space-y-6 py-8">
-                                <Input label="Full Name" placeholder="Alex Smith" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
-                                <Input label="Phone Number" placeholder="+91 00000 00000" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
-                                <Input label="What are you looking for?" placeholder="e.g. MacBook Pro repair, iPhone battery" labelPlacement="outside" radius="lg" classNames={{ inputWrapper: "bg-white/5 h-14" }} />
-                                <Button color="primary" className="w-full h-14 font-black text-lg" radius="full" onPress={onClose}>Send Request</Button>
-                            </ModalBody>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <Dialog open={isOpen} onOpenChange={onOpenChange}>
+                <DialogContent className="bg-neutral-900 border border-white/10 p-6 text-white">
+                    <DialogHeader className="flex flex-col gap-1">
+                        <DialogTitle className="text-2xl font-black">Direct Inquiry</DialogTitle>
+                        <p className="text-[10px] font-black uppercase opacity-40 tracking-widest">Connect with local experts</p>
+                    </DialogHeader>
+                    <div className="space-y-6 py-8">
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold">Full Name</label>
+                            <Input placeholder="Alex Smith" className="bg-white/5 h-14 rounded-xl" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold">Phone Number</label>
+                            <Input placeholder="+91 00000 00000" className="bg-white/5 h-14 rounded-xl" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold">What are you looking for?</label>
+                            <Input placeholder="e.g. MacBook Pro repair, iPhone battery" className="bg-white/5 h-14 rounded-xl" />
+                        </div>
+                        <Button className="w-full h-14 font-black text-lg rounded-full" onClick={onClose}>Send Request</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

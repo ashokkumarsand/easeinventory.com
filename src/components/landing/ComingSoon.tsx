@@ -4,9 +4,13 @@ import { Logo } from '@/components/icons/Logo';
 import BetaGallery from '@/components/landing/BetaGallery';
 import Footer from '@/components/landing/Footer';
 import WhyUs from '@/components/landing/WhyUs';
-import { Button, Card, CardBody, Checkbox, Chip, Input } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bell, Building2, CheckCircle2, Globe, Rocket, Shield, Store, Users, Zap } from 'lucide-react';
+import { Bell, Building2, CheckCircle2, Globe, Loader2, Rocket, Shield, Store, Users, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 
 const ComingSoon: React.FC = () => {
@@ -85,12 +89,12 @@ const ComingSoon: React.FC = () => {
                     className="space-y-6 md:space-y-8 mb-16 md:mb-20"
                 >
                     <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-                        <Chip variant="flat" color="primary" className="font-black uppercase tracking-widest text-[8px] md:text-[10px] px-4 md:px-6 py-1 md:py-2 bg-primary/10 border border-primary/20">
-                            INDIA READY ERP 🇮🇳
-                        </Chip>
-                        <Chip variant="flat" color="secondary" className="font-black uppercase tracking-widest text-[8px] md:text-[10px] px-4 md:px-6 py-1 md:py-2 bg-secondary/10 border border-secondary/20">
+                        <Badge variant="secondary" className="font-black uppercase tracking-widest text-[8px] md:text-[10px] px-4 md:px-6 py-1 md:py-2 bg-primary/10 border border-primary/20 text-primary">
+                            INDIA READY ERP
+                        </Badge>
+                        <Badge variant="secondary" className="font-black uppercase tracking-widest text-[8px] md:text-[10px] px-4 md:px-6 py-1 md:py-2 bg-secondary/10 border border-secondary/20">
                             GST COMPLIANT
-                        </Chip>
+                        </Badge>
                     </div>
 
                     <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[1.15] md:leading-[0.85] uppercase">
@@ -137,7 +141,7 @@ const ComingSoon: React.FC = () => {
                         >
                             <Card className="modern-card bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl relative overflow-visible">
                                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/20 blur-3xl opacity-50 pointer-events-none" />
-                                <CardBody className="p-0 space-y-6 md:space-y-8">
+                                <CardContent className="p-0 space-y-6 md:space-y-8">
                                     <div className="text-left">
                                         <h2 className="text-2xl md:text-3xl font-black mb-1 md:mb-2 uppercase tracking-tight italic">Activate Protocol</h2>
                                         <p className="text-[10px] font-bold opacity-40 uppercase tracking-[0.15em] md:tracking-[0.2em]">Secure early access and exclusive operational benefits</p>
@@ -153,84 +157,62 @@ const ComingSoon: React.FC = () => {
                                                 onSubmit={handleSubmit}
                                                 className="space-y-4 md:space-y-5"
                                             >
-                                                <Input
-                                                    label="Business Name"
-                                                    placeholder="Vertex Solutions"
-                                                    labelPlacement="inside"
-                                                    radius="lg"
-                                                    size="lg"
-                                                    value={businessName}
-                                                    onValueChange={setBusinessName}
-                                                    classNames={{
-                                                        base: "max-w-full",
-                                                        mainWrapper: "h-full",
-                                                        inputWrapper: "bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50 px-4 py-2",
-                                                        input: "font-black text-base md:text-lg pt-2",
-                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-40 group-data-[filled-within=true]:opacity-60"
-                                                    }}
-                                                />
-                                                <Input
-                                                    label="Your Name"
-                                                    placeholder="John Doe"
-                                                    labelPlacement="inside"
-                                                    radius="lg"
-                                                    size="lg"
-                                                    value={name}
-                                                    onValueChange={setName}
-                                                    classNames={{
-                                                        base: "max-w-full",
-                                                        mainWrapper: "h-full",
-                                                        inputWrapper: "bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50 px-4 py-2",
-                                                        input: "font-black text-base md:text-lg pt-2",
-                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-40 group-data-[filled-within=true]:opacity-60"
-                                                    }}
-                                                />
-                                                <Input
-                                                    label="Work Email"
-                                                    placeholder="hello@vertex.com"
-                                                    labelPlacement="inside"
-                                                    radius="lg"
-                                                    size="lg"
-                                                    required
-                                                    type="email"
-                                                    value={email}
-                                                    onValueChange={setEmail}
-                                                    classNames={{
-                                                        base: "max-w-full",
-                                                        mainWrapper: "h-full",
-                                                        inputWrapper: "bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 transition-all focus-within:border-primary/50 px-4 py-2",
-                                                        input: "font-black text-base md:text-lg pt-2",
-                                                        label: "font-black uppercase text-[10px] tracking-widest opacity-40 group-data-[filled-within=true]:opacity-60"
-                                                    }}
-                                                />
-                                                
+                                                <div className="space-y-2">
+                                                    <label className="font-black uppercase text-[10px] tracking-widest opacity-40">Business Name</label>
+                                                    <Input
+                                                        placeholder="Vertex Solutions"
+                                                        value={businessName}
+                                                        onChange={(e) => setBusinessName(e.target.value)}
+                                                        className="bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 focus:border-primary/50 px-4 font-black text-base md:text-lg rounded-xl"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="font-black uppercase text-[10px] tracking-widest opacity-40">Your Name</label>
+                                                    <Input
+                                                        placeholder="John Doe"
+                                                        value={name}
+                                                        onChange={(e) => setName(e.target.value)}
+                                                        className="bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 focus:border-primary/50 px-4 font-black text-base md:text-lg rounded-xl"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="font-black uppercase text-[10px] tracking-widest opacity-40">Work Email</label>
+                                                    <Input
+                                                        placeholder="hello@vertex.com"
+                                                        required
+                                                        type="email"
+                                                        value={email}
+                                                        onChange={(e) => setEmail(e.target.value)}
+                                                        className="bg-white/5 h-16 md:h-20 border border-white/5 hover:border-white/20 focus:border-primary/50 px-4 font-black text-base md:text-lg rounded-xl"
+                                                    />
+                                                </div>
+
                                                 {/* Notify on Release Checkbox */}
                                                 <div className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/10">
                                                     <Checkbox
-                                                        isSelected={notifyOnRelease}
-                                                        onValueChange={setNotifyOnRelease}
-                                                        color="primary"
-                                                        classNames={{
-                                                            wrapper: "before:border-white/20",
-                                                            label: "text-sm font-bold"
-                                                        }}
-                                                    >
-                                                        <div className="flex items-center gap-2">
-                                                            <Bell size={16} className="text-primary" />
-                                                            <span>Notify me when EaseInventory launches</span>
-                                                        </div>
-                                                    </Checkbox>
+                                                        id="notify"
+                                                        checked={notifyOnRelease}
+                                                        onCheckedChange={(checked) => setNotifyOnRelease(checked === true)}
+                                                    />
+                                                    <label htmlFor="notify" className="flex items-center gap-2 text-sm font-bold cursor-pointer">
+                                                        <Bell size={16} className="text-primary" />
+                                                        <span>Notify me when EaseInventory launches</span>
+                                                    </label>
                                                 </div>
 
                                                 <Button
-                                                    color="primary"
-                                                    className="w-full h-14 md:h-16 font-black text-lg md:text-xl shadow-2xl shadow-primary/30 uppercase tracking-widest mt-2 md:mt-4"
-                                                    radius="full"
+                                                    className="w-full h-14 md:h-16 font-black text-lg md:text-xl shadow-2xl shadow-primary/30 uppercase tracking-widest mt-2 md:mt-4 rounded-full"
                                                     type="submit"
-                                                    isLoading={isLoading}
-                                                    startContent={!isLoading && <Rocket size={20} />}
+                                                    disabled={isLoading}
                                                 >
-                                                    Mobilize Access
+                                                    {isLoading ? (
+                                                        <Loader2 size={20} className="animate-spin" />
+                                                    ) : (
+                                                        <>
+                                                            <Rocket size={20} className="mr-2" />
+                                                            Mobilize Access
+                                                        </>
+                                                    )}
                                                 </Button>
                                             </motion.form>
                                         ) : (
@@ -252,7 +234,7 @@ const ComingSoon: React.FC = () => {
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
-                                </CardBody>
+                                </CardContent>
                             </Card>
                         </motion.div>
                     </div>

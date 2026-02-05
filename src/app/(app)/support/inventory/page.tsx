@@ -1,21 +1,13 @@
 'use client';
 
-import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Input,
-    Select,
-    SelectItem,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Textarea
-} from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from 'react';
 
@@ -71,105 +63,117 @@ export default function InventoryRequestsClientPage() {
                     <h2 className="text-2xl font-black tracking-tight">Inventory Requests</h2>
                     <p className="text-foreground/60 font-medium">Request new products or categories for your inventory</p>
                 </div>
-                <Button 
-                    color="primary" 
-                    className="font-black px-8 shadow-xl shadow-primary/20" 
-                    startContent={<Plus size={18} />}
-                    onPress={() => setShowCreate(true)}
+                <Button
+                    variant="default"
+                    className="font-black px-8 shadow-xl shadow-primary/20"
+                    onClick={() => setShowCreate(true)}
                 >
+                    <Plus size={18} />
                     Request Addition
                 </Button>
             </div>
 
             {showCreate && (
                 <Card className="modern-card border-none shadow-2xl bg-primary/5">
-                    <CardBody className="p-8 space-y-6">
+                    <CardContent className="p-8 space-y-6">
                         <div className="flex justify-between items-center">
                             <h3 className="text-xl font-black">New Addition Request</h3>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Input 
-                                label="Item Name" 
-                                placeholder="e.g. iPhone 15 Pro" 
-                                value={newRequest.name}
-                                onValueChange={(val) => setNewRequest({...newRequest, name: val})}
-                                labelPlacement="outside"
-                                size="lg"
-                                radius="lg"
-                            />
-                            <Select 
-                                label="Request Type" 
-                                value={newRequest.type}
-                                onChange={(e) => setNewRequest({...newRequest, type: e.target.value})}
-                                labelPlacement="outside"
-                                size="lg"
-                                radius="lg"
-                            >
-                                <SelectItem key="PRODUCT">Product Addition</SelectItem>
-                                <SelectItem key="CATEGORY">Category Addition</SelectItem>
-                            </Select>
+                            <div className="space-y-2">
+                                <Label htmlFor="item-name">Item Name</Label>
+                                <Input
+                                    id="item-name"
+                                    placeholder="e.g. iPhone 15 Pro"
+                                    value={newRequest.name}
+                                    onChange={(e) => setNewRequest({...newRequest, name: e.target.value})}
+                                    className="h-12 rounded-lg"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="request-type">Request Type</Label>
+                                <Select
+                                    value={newRequest.type}
+                                    onValueChange={(val) => setNewRequest({...newRequest, type: val})}
+                                >
+                                    <SelectTrigger className="h-12 rounded-lg">
+                                        <SelectValue placeholder="Select type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="PRODUCT">Product Addition</SelectItem>
+                                        <SelectItem value="CATEGORY">Category Addition</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
-                        <Input 
-                            label="Brand / Manufacturer" 
-                            placeholder="e.g. Apple" 
-                            value={newRequest.brand}
-                            onValueChange={(val) => setNewRequest({...newRequest, brand: val})}
-                            labelPlacement="outside"
-                            size="lg"
-                            radius="lg"
-                        />
+                        <div className="space-y-2">
+                            <Label htmlFor="brand">Brand / Manufacturer</Label>
+                            <Input
+                                id="brand"
+                                placeholder="e.g. Apple"
+                                value={newRequest.brand}
+                                onChange={(e) => setNewRequest({...newRequest, brand: e.target.value})}
+                                className="h-12 rounded-lg"
+                            />
+                        </div>
 
-                        <Textarea 
-                            label="Additional Details" 
-                            placeholder="Specifications, reasons for addition, etc."
-                            value={newRequest.description}
-                            onValueChange={(val) => setNewRequest({...newRequest, description: val})}
-                            labelPlacement="outside"
-                            size="lg"
-                            radius="lg"
-                        />
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Additional Details</Label>
+                            <Textarea
+                                id="description"
+                                placeholder="Specifications, reasons for addition, etc."
+                                value={newRequest.description}
+                                onChange={(e) => setNewRequest({...newRequest, description: e.target.value})}
+                                className="rounded-lg"
+                            />
+                        </div>
 
                         <div className="flex justify-end gap-3 mt-4">
-                            <Button variant="flat" onPress={() => setShowCreate(false)}>Cancel</Button>
-                            <Button color="primary" className="font-black px-10" onPress={handleCreate}>
+                            <Button variant="secondary" onClick={() => setShowCreate(false)}>Cancel</Button>
+                            <Button variant="default" className="font-black px-10" onClick={handleCreate}>
                                 Submit Request
                             </Button>
                         </div>
-                    </CardBody>
+                    </CardContent>
                 </Card>
             )}
 
-            <Table aria-label="Request history">
+            <Table>
                 <TableHeader>
-                    <TableColumn>ITEM NAME</TableColumn>
-                    <TableColumn>TYPE</TableColumn>
-                    <TableColumn>STATUS</TableColumn>
-                    <TableColumn>SUBMITTED</TableColumn>
-                    <TableColumn>ADMIN NOTE</TableColumn>
+                    <TableRow>
+                        <TableHead>ITEM NAME</TableHead>
+                        <TableHead>TYPE</TableHead>
+                        <TableHead>STATUS</TableHead>
+                        <TableHead>SUBMITTED</TableHead>
+                        <TableHead>ADMIN NOTE</TableHead>
+                    </TableRow>
                 </TableHeader>
-                <TableBody 
-                    emptyContent={isLoading ? "Loading..." : "No requests yet."}
-                    items={requests}
-                >
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            <TableCell><span className="font-bold">{(item.details as any).name}</span></TableCell>
-                            <TableCell><Chip size="sm" variant="flat" className="font-black text-[10px] uppercase">{item.type}</Chip></TableCell>
-                            <TableCell>
-                                <Chip 
-                                    color={item.status === 'APPROVED' ? 'success' : item.status === 'REJECTED' ? 'danger' : 'warning'} 
-                                    size="sm" 
-                                    variant="dot"
-                                    className="font-bold"
-                                >
-                                    {item.status}
-                                </Chip>
+                <TableBody>
+                    {requests.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                {isLoading ? "Loading..." : "No requests yet."}
                             </TableCell>
-                            <TableCell><span className="text-sm opacity-60">{new Date(item.createdAt).toLocaleDateString()}</span></TableCell>
-                            <TableCell><span className="text-sm font-medium italic opacity-50">{item.adminNote || 'No response yet'}</span></TableCell>
                         </TableRow>
+                    ) : (
+                        requests.map((item) => (
+                            <TableRow key={item.id}>
+                                <TableCell><span className="font-bold">{(item.details as any).name}</span></TableCell>
+                                <TableCell><Badge variant="secondary" className="font-black text-[10px] uppercase">{item.type}</Badge></TableCell>
+                                <TableCell>
+                                    <Badge
+                                        variant={item.status === 'APPROVED' ? 'default' : item.status === 'REJECTED' ? 'destructive' : 'secondary'}
+                                        className="font-bold"
+                                    >
+                                        {item.status}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell><span className="text-sm opacity-60">{new Date(item.createdAt).toLocaleDateString()}</span></TableCell>
+                                <TableCell><span className="text-sm font-medium italic opacity-50">{item.adminNote || 'No response yet'}</span></TableCell>
+                            </TableRow>
+                        ))
                     )}
                 </TableBody>
             </Table>

@@ -1,6 +1,14 @@
 'use client';
 
-import { Card, CardBody, CardHeader, Select, SelectItem, Skeleton } from '@heroui/react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
 import {
   Area,
@@ -74,9 +82,9 @@ export function RevenueChart({ isLoading }: RevenueChartProps) {
           <Skeleton className="h-6 w-32 rounded-lg" />
           <Skeleton className="h-10 w-32 rounded-lg" />
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <Skeleton className="h-[300px] w-full rounded-lg" />
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -88,47 +96,44 @@ export function RevenueChart({ isLoading }: RevenueChartProps) {
           <h3 className="text-lg font-bold">Revenue Trends</h3>
           <p className="text-sm text-foreground/50">Track your income over time</p>
         </div>
-        <Select
-          size="sm"
-          selectedKeys={[period]}
-          onSelectionChange={(keys) => setPeriod(Array.from(keys)[0] as string)}
-          className="w-32"
-          classNames={{
-            trigger: 'bg-foreground/5 border-0',
-          }}
-        >
-          <SelectItem key="7d">Last 7 days</SelectItem>
-          <SelectItem key="30d">Last 30 days</SelectItem>
-          <SelectItem key="12m">Last 12 months</SelectItem>
+        <Select value={period} onValueChange={setPeriod}>
+          <SelectTrigger className="w-32 bg-foreground/5 border-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="7d">Last 7 days</SelectItem>
+            <SelectItem value="30d">Last 30 days</SelectItem>
+            <SelectItem value="12m">Last 12 months</SelectItem>
+          </SelectContent>
         </Select>
       </CardHeader>
-      <CardBody>
+      <CardContent>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--heroui-primary))" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(var(--heroui-primary))" stopOpacity={0} />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--heroui-foreground) / 0.1)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--foreground) / 0.1)" />
               <XAxis
                 dataKey="name"
-                tick={{ fill: 'hsl(var(--heroui-foreground) / 0.5)', fontSize: 12 }}
-                axisLine={{ stroke: 'hsl(var(--heroui-foreground) / 0.1)' }}
+                tick={{ fill: 'hsl(var(--foreground) / 0.5)', fontSize: 12 }}
+                axisLine={{ stroke: 'hsl(var(--foreground) / 0.1)' }}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={formatCurrency}
-                tick={{ fill: 'hsl(var(--heroui-foreground) / 0.5)', fontSize: 12 }}
-                axisLine={{ stroke: 'hsl(var(--heroui-foreground) / 0.1)' }}
+                tick={{ fill: 'hsl(var(--foreground) / 0.5)', fontSize: 12 }}
+                axisLine={{ stroke: 'hsl(var(--foreground) / 0.1)' }}
                 tickLine={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--heroui-background))',
-                  border: '1px solid hsl(var(--heroui-foreground) / 0.1)',
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--foreground) / 0.1)',
                   borderRadius: '12px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }}
@@ -137,7 +142,7 @@ export function RevenueChart({ isLoading }: RevenueChartProps) {
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke="hsl(var(--heroui-primary))"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorRevenue)"
@@ -145,7 +150,7 @@ export function RevenueChart({ isLoading }: RevenueChartProps) {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -91,13 +92,13 @@ export default function AboutPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card h-full group hover:border-secondary/30 transition-all duration-500">
-                    <CardBody className="p-8 text-center">
+                    <CardContent className="p-8 text-center">
                       <div className="w-20 h-20 rounded-[28px] bg-secondary/10 flex items-center justify-center text-4xl mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
                         {value.icon}
                       </div>
                       <h3 className="text-xl font-black mb-3 uppercase tracking-tight">{value.title}</h3>
                       <p className="text-foreground/60 italic">{value.description}</p>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -135,7 +136,7 @@ export default function AboutPage() {
                   transition={{ delay: index * 0.15 }}
                 >
                   <Card className="modern-card">
-                    <CardBody className="p-8 flex gap-8 items-center">
+                    <CardContent className="p-8 flex gap-8 items-center">
                       <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                         <span className="text-2xl font-black text-primary">{item.year}</span>
                       </div>
@@ -143,7 +144,7 @@ export default function AboutPage() {
                         <h3 className="text-xl font-black mb-2 uppercase tracking-tight">{item.title}</h3>
                         <p className="text-foreground/60 italic">{item.description}</p>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -182,11 +183,11 @@ export default function AboutPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card h-full group hover:border-warning/30 transition-all duration-500">
-                    <CardBody className="p-8 text-center">
+                    <CardContent className="p-8 text-center">
                       <div className="text-6xl mb-6">{member.emoji}</div>
                       <h3 className="text-lg font-black mb-2 uppercase tracking-tight">{member.role}</h3>
                       <p className="text-sm text-foreground/60 italic">{member.description}</p>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -205,7 +206,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
             >
               <Card className="modern-card bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 overflow-hidden">
-                <CardBody className="p-12 lg:p-20 text-center relative">
+                <CardContent className="p-12 lg:p-20 text-center relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
                   <div className="relative z-10">
                     <div className="text-6xl mb-8">🤝</div>
@@ -216,16 +217,20 @@ export default function AboutPage() {
                       Be part of India's retail transformation. Start your free trial today.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                      <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
-                        Start Free Trial
-                        <ArrowRight size={20} />
+                      <Button asChild size="lg" className="font-black px-12 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest rounded-full">
+                        <Link href="/register">
+                          Start Free Trial
+                          <ArrowRight size={20} className="ml-2" />
+                        </Link>
                       </Button>
-                      <Button as={Link} href="/#contact" variant="bordered" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10" radius="full">
-                        Contact Us
+                      <Button asChild variant="outline" size="lg" className="font-black px-12 h-16 uppercase tracking-widest border-foreground/10 rounded-full">
+                        <Link href="/#contact">
+                          Contact Us
+                        </Link>
                       </Button>
                     </div>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>

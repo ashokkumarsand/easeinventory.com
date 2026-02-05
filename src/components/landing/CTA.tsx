@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
@@ -10,9 +10,9 @@ const CTA: React.FC = () => {
     <section className="section-padding relative overflow-hidden !bg-background !text-foreground">
       {/* Background with Theme-aware Base and Primary Glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-50 dark:opacity-100" />
-      
+
       {/* Precision Pattern Overlay */}
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
@@ -21,7 +21,7 @@ const CTA: React.FC = () => {
       />
 
       <div className="container-custom relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -35,29 +35,25 @@ const CTA: React.FC = () => {
             Join 10,000+ modern businesses redefining retail in India. <br />
             No legacy systems. Just pure momentum.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-12">
             <Button
-              as={Link}
-              href="/register"
+              asChild
               size="lg"
-              className="bg-primary text-white font-black px-12 h-20 text-xl shadow-2xl hover:scale-105 transition-transform"
-              radius="full"
+              className="bg-primary text-white font-black px-12 h-20 text-xl shadow-2xl hover:scale-105 transition-transform rounded-full"
             >
-              Get Started Free
+              <Link href="/register">Get Started Free</Link>
             </Button>
             <Button
-              as={Link}
-              href="/contact"
-              variant="bordered"
+              asChild
+              variant="outline"
               size="lg"
-              className="border-foreground/10 text-foreground font-black px-12 h-20 text-xl hover:bg-foreground/5"
-              radius="full"
+              className="border-foreground/10 text-foreground font-black px-12 h-20 text-xl hover:bg-foreground/5 rounded-full"
             >
-              Consult an Expert
+              <Link href="/contact">Consult an Expert</Link>
             </Button>
           </div>
-          
+
           <div className="flex items-center justify-center gap-8 text-foreground/30">
             <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 bg-secondary rounded-full" />

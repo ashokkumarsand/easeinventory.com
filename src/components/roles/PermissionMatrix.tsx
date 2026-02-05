@@ -1,11 +1,9 @@
 'use client';
 
-import {
-    Checkbox,
-    CheckboxGroup,
-    Chip,
-    Switch,
-} from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
     Building,
     FileText,
@@ -73,14 +71,12 @@ export default function PermissionMatrix({
         }
     };
 
-    const handlePermissionChange = (moduleKey: string, values: string[]) => {
-        // Remove old permissions for this module and add new ones
-        const module = modules.find((m) => m.key === moduleKey);
-        if (!module) return;
-
-        const modulePermKeys = module.permissions.map((p) => p.key);
-        const otherPerms = selectedPermissions.filter((p) => !modulePermKeys.includes(p));
-        onChange([...otherPerms, ...values]);
+    const handlePermissionChange = (permKey: string, checked: boolean) => {
+        if (checked) {
+            onChange([...selectedPermissions, permKey]);
+        } else {
+            onChange(selectedPermissions.filter((p) => p !== permKey));
+        }
     };
 
     const getModulePermissions = (moduleKey: string) => {
@@ -144,51 +140,48 @@ export default function PermissionMatrix({
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] font-bold opacity-40">All</span>
                                     <Switch
-                                        size="sm"
-                                        isSelected={isFullySelected}
-                                        onValueChange={(checked) =>
+                                        checked={isFullySelected}
+                                        onCheckedChange={(checked) =>
                                             handleModuleToggle(module.key, checked)
                                         }
-                                        color="success"
+                                        className="data-[state=checked]:bg-green-500"
                                     />
                                 </div>
                             )}
                         </div>
 
-                        <CheckboxGroup
-                            value={modulePerms}
-                            onValueChange={(values) =>
-                                handlePermissionChange(module.key, values as string[])
-                            }
-                            isDisabled={readOnly}
-                            classNames={{
-                                wrapper: 'gap-2',
-                            }}
-                        >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                {module.permissions.map((perm) => (
-                                    <Checkbox
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {module.permissions.map((perm) => {
+                                const isChecked = selectedPermissions.includes(perm.key);
+                                return (
+                                    <div
                                         key={perm.key}
-                                        value={perm.key}
-                                        classNames={{
-                                            base: `p-3 rounded-xl border ${
-                                                selectedPermissions.includes(perm.key)
-                                                    ? 'bg-primary/5 border-primary/20'
-                                                    : 'bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/5'
-                                            } hover:bg-primary/5 transition-all`,
-                                            label: 'w-full',
-                                        }}
+                                        className={`p-3 rounded-xl border ${
+                                            isChecked
+                                                ? 'bg-primary/5 border-primary/20'
+                                                : 'bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/5'
+                                        } hover:bg-primary/5 transition-all`}
                                     >
-                                        <div className="flex-1">
-                                            <p className="font-bold text-xs">{perm.label}</p>
-                                            <p className="text-[10px] opacity-40 leading-tight">
-                                                {perm.description}
-                                            </p>
-                                        </div>
-                                    </Checkbox>
-                                ))}
-                            </div>
-                        </CheckboxGroup>
+                                        <Label className="flex items-start gap-3 cursor-pointer">
+                                            <Checkbox
+                                                checked={isChecked}
+                                                onCheckedChange={(checked) =>
+                                                    handlePermissionChange(perm.key, checked as boolean)
+                                                }
+                                                disabled={readOnly}
+                                                className="mt-0.5"
+                                            />
+                                            <div className="flex-1">
+                                                <p className="font-bold text-xs">{perm.label}</p>
+                                                <p className="text-[10px] opacity-40 leading-tight">
+                                                    {perm.description}
+                                                </p>
+                                            </div>
+                                        </Label>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 );
             })}
@@ -200,22 +193,20 @@ export default function PermissionMatrix({
                         Selected across all modules
                     </p>
                 </div>
-                <Chip
-                    size="lg"
-                    color={
+                <Badge
+                    variant={
                         selectedPermissions.length === 0
-                            ? 'default'
+                            ? 'outline'
                             : selectedPermissions.length ===
                               modules.reduce((acc, m) => acc + m.permissions.length, 0)
-                            ? 'success'
-                            : 'primary'
+                            ? 'default'
+                            : 'secondary'
                     }
-                    variant="flat"
-                    className="font-black"
+                    className="font-black text-base px-4 py-1"
                 >
                     {selectedPermissions.length} /{' '}
                     {modules.reduce((acc, m) => acc + m.permissions.length, 0)}
-                </Chip>
+                </Badge>
             </div>
         </div>
     );

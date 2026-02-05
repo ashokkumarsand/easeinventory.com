@@ -1,6 +1,13 @@
 'use client';
 
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Camera, ScanBarcode, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -107,33 +114,24 @@ export default function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScann
   };
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onOpenChange={(open) => !open && onClose()}
-      size="xl"
-      radius="lg"
-      classNames={{
-        backdrop: "bg-black/80 backdrop-blur-md",
-        base: "bg-black",
-      }}
-    >
-      <ModalContent>
-        <ModalHeader className="flex items-center justify-between text-white">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-black max-w-xl p-0">
+        <DialogHeader className="flex flex-row items-center justify-between text-white p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
               <ScanBarcode size={20} className="text-primary" />
             </div>
             <div>
-              <h3 className="font-black text-lg">Scan Barcode / QR</h3>
+              <DialogTitle className="font-black text-lg">Scan Barcode / QR</DialogTitle>
               <p className="text-xs text-white/50 font-medium">Point camera at code</p>
             </div>
           </div>
-          <Button isIconOnly variant="light" onPress={onClose} className="text-white">
+          <Button variant="ghost" size="icon" onClick={onClose} className="text-white">
             <X size={20} />
           </Button>
-        </ModalHeader>
-        
-        <ModalBody className="p-0">
+        </DialogHeader>
+
+        <div className="p-0">
           <div className="relative aspect-video bg-black overflow-hidden">
             {/* Camera Video */}
             <video
@@ -143,7 +141,7 @@ export default function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScann
               muted
               className="w-full h-full object-cover"
             />
-            
+
             {/* Scan Overlay */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-64 h-64 relative">
@@ -152,64 +150,64 @@ export default function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScann
                 <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg" />
                 <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg" />
                 <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg" />
-                
+
                 {/* Scanning Line Animation */}
                 {isScanning && (
-                  <div className="absolute inset-x-2 h-0.5 bg-primary animate-pulse" 
-                    style={{ 
+                  <div className="absolute inset-x-2 h-0.5 bg-primary animate-pulse"
+                    style={{
                       animation: 'scanline 2s ease-in-out infinite',
                       top: '50%'
-                    }} 
+                    }}
                   />
                 )}
               </div>
             </div>
-            
+
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60" />
-            
+
             {/* Error Message */}
             {error && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/80">
                 <div className="text-center p-6">
                   <Camera size={48} className="mx-auto mb-4 text-white/30" />
                   <p className="text-white/70 text-sm mb-4">{error}</p>
-                  <Button color="primary" onPress={handleManualEntry}>
+                  <Button onClick={handleManualEntry}>
                     Enter Manually
                   </Button>
                 </div>
               </div>
             )}
-            
+
             {/* Last Scanned */}
             {lastScanned && (
-              <div className="absolute bottom-4 left-4 right-4 bg-success/90 text-white p-3 rounded-xl">
+              <div className="absolute bottom-4 left-4 right-4 bg-green-500/90 text-white p-3 rounded-xl">
                 <p className="text-xs font-bold uppercase opacity-70">Scanned:</p>
                 <p className="font-black text-lg truncate">{lastScanned}</p>
               </div>
             )}
           </div>
-          
+
           <canvas ref={canvasRef} className="hidden" />
-        </ModalBody>
-        
-        <ModalFooter className="bg-black border-t border-white/10">
-          <Button variant="flat" onPress={handleManualEntry} className="text-white">
-            <ScanBarcode size={16} />
+        </div>
+
+        <DialogFooter className="bg-black border-t border-white/10 p-4">
+          <Button variant="secondary" onClick={handleManualEntry} className="text-white">
+            <ScanBarcode size={16} className="mr-2" />
             Manual Entry
           </Button>
-          <Button color="primary" onPress={onClose} className="font-black">
+          <Button onClick={onClose} className="font-black">
             Done
           </Button>
-        </ModalFooter>
-      </ModalContent>
-      
+        </DialogFooter>
+      </DialogContent>
+
       <style jsx global>{`
         @keyframes scanline {
           0%, 100% { top: 10%; }
           50% { top: 90%; }
         }
       `}</style>
-    </Modal>
+    </Dialog>
   );
 }

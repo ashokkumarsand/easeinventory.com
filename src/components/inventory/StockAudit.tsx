@@ -1,6 +1,18 @@
 'use client';
 
-import { Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress, Textarea } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 import { AlertCircle, Check, CheckCircle, ClipboardList, Edit3, Package, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -70,9 +82,9 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
 
     const actualCount = parseInt(countInput);
     const variance = actualCount - selectedItem.expectedStock;
-    
-    setItems(items.map(item => 
-      item.id === selectedItem.id 
+
+    setItems(items.map(item =>
+      item.id === selectedItem.id
         ? {
             ...item,
             actualStock: actualCount,
@@ -99,7 +111,7 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, notes }),
       });
-      
+
       setAuditInProgress(false);
       setIsModalOpen(false);
       onComplete?.('audit-' + Date.now());
@@ -108,7 +120,7 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
     }
   };
 
-  const filteredItems = items.filter(item => 
+  const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.sku.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -119,11 +131,11 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
     discrepancies: items.filter(i => i.status === 'discrepancy').length,
   };
 
-  const getStatusColor = (status: AuditItem['status']) => {
+  const getStatusVariant = (status: AuditItem['status']) => {
     switch (status) {
-      case 'counted': return 'success';
-      case 'discrepancy': return 'danger';
-      default: return 'default';
+      case 'counted': return 'default' as const;
+      case 'discrepancy': return 'destructive' as const;
+      default: return 'outline' as const;
     }
   };
 
@@ -138,12 +150,12 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
             <p className="text-xs text-foreground/40 font-medium">Physical count verification</p>
           </div>
         </div>
-        <Button 
-          color="secondary" 
+        <Button
+          variant="secondary"
           className="font-black"
-          onPress={startAudit}
-          startContent={<ClipboardList size={16} />}
+          onClick={startAudit}
         >
+          <ClipboardList size={16} className="mr-2" />
           {auditInProgress ? 'Continue Audit' : 'Start Audit'}
         </Button>
       </div>
@@ -155,14 +167,12 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
             <span className="text-sm font-bold">Audit Progress</span>
             <span className="text-sm font-black">{progress.counted}/{progress.total} counted</span>
           </div>
-          <Progress 
-            value={(progress.counted / progress.total) * 100} 
-            color="secondary" 
-            size="md" 
-            className="mb-2"
+          <Progress
+            value={(progress.counted / progress.total) * 100}
+            className="mb-2 [&>div]:bg-secondary"
           />
           {progress.discrepancies > 0 && (
-            <div className="flex items-center gap-2 text-danger text-xs font-bold mt-2">
+            <div className="flex items-center gap-2 text-destructive text-xs font-bold mt-2">
               <AlertCircle size={14} />
               {progress.discrepancies} discrepancies found
             </div>
@@ -192,17 +202,17 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
             >
               <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  item.status === 'counted' ? 'bg-success/10' : 
-                  item.status === 'discrepancy' ? 'bg-danger/10' : 'bg-foreground/5'
+                  item.status === 'counted' ? 'bg-green-500/10' :
+                  item.status === 'discrepancy' ? 'bg-destructive/10' : 'bg-foreground/5'
                 }`}>
-                  {item.status === 'counted' ? <Check size={18} className="text-success" /> :
-                   item.status === 'discrepancy' ? <AlertCircle size={18} className="text-danger" /> :
+                  {item.status === 'counted' ? <Check size={18} className="text-green-500" /> :
+                   item.status === 'discrepancy' ? <AlertCircle size={18} className="text-destructive" /> :
                    <Package size={18} className="text-foreground/40" />}
                 </div>
                 <div>
                   <h4 className="font-black text-sm">{item.name}</h4>
                   <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider">
-                    {item.sku} • {item.location}
+                    {item.sku} - {item.location}
                   </p>
                 </div>
               </div>
@@ -211,17 +221,15 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
                   <p className="font-black text-lg">{item.actualStock ?? '—'}</p>
                   <p className="text-[10px] font-bold text-foreground/40">of {item.expectedStock} expected</p>
                 </div>
-                <Chip 
-                  color={getStatusColor(item.status)}
-                  variant="flat"
-                  size="sm"
+                <Badge
+                  variant={getStatusVariant(item.status)}
                   className="font-black text-[10px] uppercase"
                 >
-                  {item.status === 'discrepancy' && item.variance !== null ? 
-                    (item.variance > 0 ? `+${item.variance}` : item.variance) : 
+                  {item.status === 'discrepancy' && item.variance !== null ?
+                    (item.variance > 0 ? `+${item.variance}` : item.variance) :
                     item.status
                   }
-                </Chip>
+                </Badge>
               </div>
             </div>
           ))}
@@ -229,35 +237,29 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
       )}
 
       {/* Audit Modal */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onOpenChange={setIsModalOpen}
-        size="3xl"
-        scrollBehavior="inside"
-        radius="lg"
-      >
-        <ModalContent>
-          <ModalHeader>
-            <div className="flex items-center gap-3">
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
               <ClipboardList size={20} className="text-secondary" />
               <div>
                 <h3 className="font-black text-lg">Physical Stock Count</h3>
                 <p className="text-xs text-foreground/50 font-medium">{progress.counted}/{progress.total} items counted</p>
               </div>
-            </div>
-          </ModalHeader>
-          
-          <ModalBody className="space-y-6">
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
             {/* Search */}
-            <Input
-              placeholder="Search by name or SKU..."
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              startContent={<Search size={16} className="text-foreground/40" />}
-              classNames={{
-                inputWrapper: 'bg-foreground/5 h-12',
-              }}
-            />
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+              <Input
+                placeholder="Search by name or SKU..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-foreground/5 h-12 pl-10"
+              />
+            </div>
 
             {/* Item List */}
             <div className="max-h-96 overflow-y-auto space-y-2">
@@ -265,8 +267,8 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
                 <div
                   key={item.id}
                   className={`flex items-center justify-between p-4 rounded-xl border transition-colors cursor-pointer ${
-                    selectedItem?.id === item.id 
-                      ? 'border-secondary bg-secondary/5' 
+                    selectedItem?.id === item.id
+                      ? 'border-secondary bg-secondary/5'
                       : 'border-foreground/5 hover:border-secondary/20'
                   }`}
                   onClick={() => {
@@ -280,9 +282,9 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-foreground/40">Expected: {item.expectedStock}</span>
-                    <Chip color={getStatusColor(item.status)} variant="flat" size="sm" className="font-bold">
+                    <Badge variant={getStatusVariant(item.status)} className="font-bold">
                       {item.actualStock ?? 'Not counted'}
-                    </Chip>
+                    </Badge>
                   </div>
                 </div>
               ))}
@@ -297,19 +299,17 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
                     type="number"
                     placeholder="Enter count"
                     value={countInput}
-                    onValueChange={setCountInput}
-                    size="lg"
-                    className="flex-1"
-                    classNames={{ inputWrapper: 'h-14' }}
+                    onChange={(e) => setCountInput(e.target.value)}
+                    className="flex-1 h-14"
                     autoFocus
                   />
-                  <Button 
-                    color="secondary" 
+                  <Button
+                    variant="secondary"
                     size="lg"
-                    onPress={handleCountSubmit}
+                    onClick={handleCountSubmit}
                     className="font-black h-14 px-8"
-                    startContent={<CheckCircle size={18} />}
                   >
+                    <CheckCircle size={18} className="mr-2" />
                     Confirm
                   </Button>
                 </div>
@@ -317,30 +317,31 @@ export default function StockAudit({ locationId, onComplete }: StockAuditProps) 
             )}
 
             {/* Notes */}
-            <Textarea
-              label="Audit Notes"
-              placeholder="Any observations or discrepancy explanations..."
-              value={notes}
-              onValueChange={setNotes}
-              minRows={2}
-            />
-          </ModalBody>
-          
-          <ModalFooter>
-            <Button variant="flat" onPress={() => setIsModalOpen(false)}>
+            <div className="space-y-2">
+              <Label>Audit Notes</Label>
+              <Textarea
+                placeholder="Any observations or discrepancy explanations..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="min-h-[60px]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
               Save & Close
             </Button>
-            <Button 
-              color="secondary" 
+            <Button
               className="font-black"
-              onPress={completeAudit}
-              startContent={<Edit3 size={16} />}
+              onClick={completeAudit}
             >
+              <Edit3 size={16} className="mr-2" />
               Complete Audit
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

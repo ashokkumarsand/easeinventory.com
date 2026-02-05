@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -119,9 +120,11 @@ export default function ChangelogPage() {
                 and performance enhancements—all documented here.
               </p>
 
-              <Button as={Link} href="/register" color="primary" size="lg" className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest" radius="full">
-                Try Latest Version
-                <ArrowRight size={20} />
+              <Button asChild size="lg" className="font-black px-10 h-16 shadow-xl shadow-primary/30 uppercase tracking-widest rounded-full">
+                <Link href="/register">
+                  Try Latest Version
+                  <ArrowRight size={20} className="ml-2" />
+                </Link>
               </Button>
             </motion.div>
           </div>
@@ -140,7 +143,7 @@ export default function ChangelogPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card overflow-hidden">
-                    <CardBody className="p-0">
+                    <CardContent className="p-0">
                       {/* Header */}
                       <div className="p-8 border-b border-foreground/5 flex flex-wrap items-center gap-4">
                         <h2 className="text-3xl font-black">v{release.version}</h2>
@@ -178,7 +181,7 @@ export default function ChangelogPage() {
                           );
                         })}
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -191,7 +194,7 @@ export default function ChangelogPage() {
               viewport={{ once: true }}
               className="text-center mt-12"
             >
-              <Button variant="bordered" size="lg" className="font-black px-10 h-14 uppercase tracking-widest border-foreground/10" radius="full">
+              <Button variant="outline" size="lg" className="font-black px-10 h-14 uppercase tracking-widest border-foreground/10 rounded-full">
                 Load Older Releases
               </Button>
             </motion.div>
@@ -209,7 +212,7 @@ export default function ChangelogPage() {
               viewport={{ once: true }}
             >
               <Card className="modern-card bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent border-secondary/20 overflow-hidden">
-                <CardBody className="p-12 lg:p-20 text-center relative">
+                <CardContent className="p-12 lg:p-20 text-center relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-[100px] pointer-events-none" />
                   <div className="relative z-10">
                     <div className="text-6xl mb-8">📬</div>
@@ -219,12 +222,14 @@ export default function ChangelogPage() {
                     <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
                       Get notified about major updates and new features via email.
                     </p>
-                    <Button as={Link} href="/#contact" color="secondary" size="lg" className="font-black px-12 h-16 shadow-xl shadow-secondary/30 uppercase tracking-widest" radius="full">
-                      Subscribe to Updates
-                      <ArrowRight size={20} />
+                    <Button asChild size="lg" className="font-black px-12 h-16 shadow-xl shadow-secondary/30 uppercase tracking-widest rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                      <Link href="/#contact">
+                        Subscribe to Updates
+                        <ArrowRight size={20} className="ml-2" />
+                      </Link>
                     </Button>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>

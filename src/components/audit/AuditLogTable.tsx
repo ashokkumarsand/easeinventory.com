@@ -1,23 +1,23 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
-    Chip,
-    Pagination,
-    Spinner,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
     Tooltip,
-} from '@heroui/react';
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import {
     AlertTriangle,
     Check,
+    ChevronLeft,
+    ChevronRight,
     Eye,
     FileText,
     Key,
+    Loader2,
     Lock,
     LogIn,
     LogOut,
@@ -53,7 +53,9 @@ interface AuditLogTableProps {
     onPageChange: (page: number) => void;
 }
 
-const ACTION_CONFIG: Record<string, { icon: any; color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'; category: string }> = {
+type ColorType = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+
+const ACTION_CONFIG: Record<string, { icon: any; color: ColorType; category: string }> = {
     // Authentication
     LOGIN_SUCCESS: { icon: LogIn, color: 'success', category: 'Auth' },
     LOGIN_FAILED: { icon: AlertTriangle, color: 'danger', category: 'Auth' },
@@ -112,6 +114,15 @@ const ACTION_CONFIG: Record<string, { icon: any; color: 'default' | 'primary' | 
 
 const DEFAULT_CONFIG = { icon: Eye, color: 'default' as const, category: 'Other' };
 
+const colorClasses: Record<ColorType, { bg: string; text: string; badge: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    default: { bg: 'bg-muted', text: 'text-muted-foreground', badge: 'secondary' },
+    primary: { bg: 'bg-primary/10', text: 'text-primary', badge: 'default' },
+    secondary: { bg: 'bg-secondary/10', text: 'text-secondary-foreground', badge: 'secondary' },
+    success: { bg: 'bg-green-500/10', text: 'text-green-600', badge: 'default' },
+    warning: { bg: 'bg-yellow-500/10', text: 'text-yellow-600', badge: 'secondary' },
+    danger: { bg: 'bg-red-500/10', text: 'text-red-600', badge: 'destructive' },
+};
+
 export default function AuditLogTable({ logs, isLoading, pagination, onPageChange }: AuditLogTableProps) {
     const getActionConfig = (action: string) => ACTION_CONFIG[action] || DEFAULT_CONFIG;
 
@@ -134,95 +145,145 @@ export default function AuditLogTable({ logs, isLoading, pagination, onPageChang
     };
 
     return (
-        <div className="space-y-4">
-            <Table
-                aria-label="Audit Log Table"
-                classNames={{
-                    wrapper: 'p-0 modern-card theme-table-wrapper rounded-[2.5rem] overflow-hidden shadow-none',
-                    th: 'bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6',
-                    td: 'py-4 px-6',
-                }}
-            >
-                <TableHeader>
-                    <TableColumn>ACTION</TableColumn>
-                    <TableColumn>USER</TableColumn>
-                    <TableColumn>RESOURCE</TableColumn>
-                    <TableColumn>IP ADDRESS</TableColumn>
-                    <TableColumn>TIMESTAMP</TableColumn>
-                    <TableColumn>DETAILS</TableColumn>
-                </TableHeader>
-                <TableBody
-                    isLoading={isLoading}
-                    loadingContent={<Spinner color="primary" />}
-                    emptyContent="No audit logs found"
-                >
-                    {logs.map((log) => {
-                        const config = getActionConfig(log.action);
-                        const Icon = config.icon;
-                        return (
-                            <TableRow key={log.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center bg-${config.color}/10`}>
-                                            <Icon size={16} className={`text-${config.color}`} />
+        <TooltipProvider>
+            <div className="space-y-4">
+                <div className="modern-card theme-table-wrapper rounded-[2.5rem] overflow-hidden shadow-none">
+                    <table className="w-full" aria-label="Audit Log Table">
+                        <thead>
+                            <tr className="border-b border-black/5 dark:border-white/10">
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">ACTION</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">USER</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">RESOURCE</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">IP ADDRESS</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">TIMESTAMP</th>
+                                <th className="bg-black/[0.02] dark:bg-white/[0.02] h-14 font-black uppercase tracking-wider text-[10px] opacity-40 px-6 text-left">DETAILS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={6} className="py-8 px-6">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                                            <span className="text-sm text-foreground/50">Loading audit logs...</span>
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-sm">{formatActionLabel(log.action)}</p>
-                                            <Chip size="sm" variant="flat" color={config.color} className="text-[8px] font-black h-4 mt-1">
-                                                {config.category}
-                                            </Chip>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="font-bold text-sm">{log.userName}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-xs font-medium opacity-60">{log.resource || '-'}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-[10px] font-mono opacity-40">{log.ipAddress || '-'}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-[10px] font-bold opacity-40">{formatDate(log.createdAt)}</span>
-                                </TableCell>
-                                <TableCell>
-                                    {log.details && Object.keys(log.details).length > 0 ? (
-                                        <Tooltip
-                                            content={
-                                                <pre className="text-xs max-w-md overflow-auto">
-                                                    {JSON.stringify(log.details, null, 2)}
-                                                </pre>
-                                            }
-                                        >
-                                            <Chip size="sm" variant="flat" color="default" className="text-[8px] font-bold cursor-pointer">
-                                                View Details
-                                            </Chip>
-                                        </Tooltip>
-                                    ) : (
-                                        <span className="text-[10px] opacity-30">-</span>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
-
-            {pagination.totalPages > 1 && (
-                <div className="flex justify-center pt-4">
-                    <Pagination
-                        total={pagination.totalPages}
-                        page={pagination.page}
-                        onChange={onPageChange}
-                        color="primary"
-                        showControls
-                        classNames={{
-                            cursor: 'bg-primary font-black',
-                        }}
-                    />
+                                    </td>
+                                </tr>
+                            ) : logs.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="py-8 px-6 text-center text-foreground/50">
+                                        No audit logs found
+                                    </td>
+                                </tr>
+                            ) : (
+                                logs.map((log) => {
+                                    const config = getActionConfig(log.action);
+                                    const Icon = config.icon;
+                                    const colors = colorClasses[config.color];
+                                    return (
+                                        <tr key={log.id} className="border-b last:border-none border-black/5 dark:border-white/10 hover:bg-black/[0.01] transition-colors">
+                                            <td className="py-4 px-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${colors.bg}`}>
+                                                        <Icon size={16} className={colors.text} />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-sm">{formatActionLabel(log.action)}</p>
+                                                        <Badge variant={colors.badge} className="text-[8px] font-black h-4 mt-1">
+                                                            {config.category}
+                                                        </Badge>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="font-bold text-sm">{log.userName}</span>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="text-xs font-medium opacity-60">{log.resource || '-'}</span>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="text-[10px] font-mono opacity-40">{log.ipAddress || '-'}</span>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="text-[10px] font-bold opacity-40">{formatDate(log.createdAt)}</span>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                {log.details && Object.keys(log.details).length > 0 ? (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Badge variant="secondary" className="text-[8px] font-bold cursor-pointer">
+                                                                View Details
+                                                            </Badge>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="left" className="max-w-md bg-popover text-popover-foreground p-2">
+                                                            <pre className="text-xs overflow-auto whitespace-pre-wrap">
+                                                                {JSON.stringify(log.details, null, 2)}
+                                                            </pre>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <span className="text-[10px] opacity-30">-</span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-            )}
-        </div>
+
+                {pagination.totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 pt-4">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => onPageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1}
+                            className="h-9 w-9"
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+
+                        {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                            .filter(page => {
+                                // Show first, last, current, and adjacent pages
+                                return page === 1 ||
+                                    page === pagination.totalPages ||
+                                    Math.abs(page - pagination.page) <= 1;
+                            })
+                            .map((page, index, array) => {
+                                // Add ellipsis
+                                const showEllipsisBefore = index > 0 && page - array[index - 1] > 1;
+                                return (
+                                    <div key={page} className="flex items-center gap-2">
+                                        {showEllipsisBefore && (
+                                            <span className="text-foreground/40 px-2">...</span>
+                                        )}
+                                        <Button
+                                            variant={pagination.page === page ? 'default' : 'outline'}
+                                            size="icon"
+                                            onClick={() => onPageChange(page)}
+                                            className={`h-9 w-9 ${pagination.page === page ? 'font-black' : ''}`}
+                                        >
+                                            {page}
+                                        </Button>
+                                    </div>
+                                );
+                            })}
+
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => onPageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.totalPages}
+                            className="h-9 w-9"
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
+            </div>
+        </TooltipProvider>
     );
 }

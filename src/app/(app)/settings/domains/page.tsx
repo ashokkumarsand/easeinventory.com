@@ -1,13 +1,11 @@
 'use client';
 
-import {
-    Button,
-    Card,
-    CardBody,
-    Chip,
-    Divider,
-    Input
-} from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Loader2 } from 'lucide-react';
 import {
     Copy,
     ExternalLink,
@@ -189,8 +187,8 @@ export default function DomainSettingsPage() {
             {/* EaseInventory Subdomain */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <div className="lg:col-span-7 space-y-6">
-                    <Card className="modern-card p-8 bg-primary/5 border-primary/20" radius="lg">
-                        <CardBody className="p-0 space-y-6">
+                    <Card className="modern-card p-8 bg-primary/5 border-primary/20 rounded-lg">
+                        <CardContent className="p-0 space-y-6">
                             <div>
                                 <h3 className="text-xl font-black mb-2 flex items-center gap-2">
                                     <Zap size={20} className="text-primary" />
@@ -205,48 +203,45 @@ export default function DomainSettingsPage() {
                                         <span className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1 text-primary">Your Subdomain</span>
                                         <div className="flex items-center gap-2">
                                           <span className="text-lg font-black tracking-tight font-mono">{existingSubdomain}.easeinventory.com</span>
-                                          <Button isIconOnly variant="light" size="sm" onClick={() => copyToClipboard(`${existingSubdomain}.easeinventory.com`)}>
+                                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copyToClipboard(`${existingSubdomain}.easeinventory.com`)}>
                                             <Copy size={16} className="opacity-40" />
                                           </Button>
                                         </div>
                                     </div>
-                                    <Chip color="primary" variant="flat" className="font-black">ACTIVE</Chip>
+                                    <Badge variant="secondary" className="bg-primary/10 text-primary font-black">ACTIVE</Badge>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
                                     <div className="p-4 rounded-xl bg-warning/5 border border-warning/20">
-                                        <p className="text-xs font-bold text-warning italic">You haven't claimed a premium subdomain yet.</p>
+                                        <p className="text-xs font-bold text-warning italic">You haven&apos;t claimed a premium subdomain yet.</p>
                                     </div>
                                     <div className="flex gap-4">
-                                        <Input 
-                                            placeholder="your-unique-slug" 
-                                            size="lg"
-                                            radius="lg"
-                                            value={subdomain}
-                                            onValueChange={setSubdomain}
-                                            classNames={{ inputWrapper: "bg-black/5 h-14" }}
-                                            endContent={<span className="text-xs font-black opacity-30">.easeinventory.com</span>}
-                                        />
-                                        <Button 
-                                            color="primary" 
-                                            size="lg" 
-                                            radius="lg" 
+                                        <div className="relative flex-1">
+                                            <Input
+                                                placeholder="your-unique-slug"
+                                                className="bg-black/5 h-14 pr-32"
+                                                value={subdomain}
+                                                onChange={(e) => setSubdomain(e.target.value)}
+                                            />
+                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black opacity-30">.easeinventory.com</span>
+                                        </div>
+                                        <Button
                                             className="h-14 font-black px-10 shadow-lg shadow-primary/20"
                                             onClick={handleClaimSubdomain}
-                                            isLoading={isClaiming}
-                                            isDisabled={!subdomain || subdomain.length < 3}
+                                            disabled={isClaiming || !subdomain || subdomain.length < 3}
                                         >
+                                            {isClaiming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                             Claim
                                         </Button>
                                     </div>
                                 </div>
                             )}
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
             </div>
 
-            <Divider className="opacity-10" />
+            <Separator className="opacity-10" />
 
             <div>
                 <div className="flex items-center gap-3 mb-2">
@@ -263,8 +258,8 @@ export default function DomainSettingsPage() {
                 <div className="lg:col-span-7 space-y-8">
                     {/* Upgrade Prompt for Starter Plan */}
                     {customDomainAllowed === false && (
-                        <Card className="modern-card p-8 border-2 border-warning/30 bg-warning/5" radius="lg">
-                            <CardBody className="p-0 space-y-4">
+                        <Card className="modern-card p-8 border-2 border-warning/30 bg-warning/5 rounded-lg">
+                            <CardContent className="p-0 space-y-4">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
                                         <Info size={20} className="text-warning" />
@@ -275,71 +270,60 @@ export default function DomainSettingsPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-3">
-                                    <Button 
-                                        color="warning" 
-                                        size="lg" 
-                                        radius="lg" 
-                                        className="font-black"
-                                        as="a"
-                                        href="/settings/billing"
+                                    <Button
+                                        className="font-black bg-warning text-warning-foreground hover:bg-warning/90"
+                                        asChild
                                     >
-                                        Upgrade to Business
+                                        <a href="/settings/billing">Upgrade to Business</a>
                                     </Button>
-                                    <Chip color="default" variant="flat" className="font-bold">
+                                    <Badge variant="secondary" className="font-bold">
                                         Current: {currentPlan}
-                                    </Chip>
+                                    </Badge>
                                 </div>
-                            </CardBody>
+                            </CardContent>
                         </Card>
                     )}
 
-                    <Card className="modern-card p-8" radius="lg">
-                        <CardBody className="p-0 space-y-8">
+                    <Card className="modern-card p-8 rounded-lg">
+                        <CardContent className="p-0 space-y-8">
                             <div>
                                 <h3 className="text-xl font-black mb-2">Connect New Domain</h3>
                                 <p className="text-sm opacity-40 font-bold">Use a subdomain like <code className="text-primary bg-primary/5 px-2 py-0.5 rounded">inventory.yourcompany.com</code> for the best experience.</p>
                             </div>
 
                             <div className="flex gap-4">
-                                <Input
-                                    placeholder="e.g. portal.acme.com"
-                                    size="lg"
-                                    radius="lg"
-                                    value={domain}
-                                    onValueChange={setDomain}
-                                    classNames={{ inputWrapper: "bg-black/5 h-14" }}
-                                    startContent={<Globe size={18} className="opacity-20" />}
-                                    isDisabled={customDomainAllowed === false || status === 'VERIFIED'}
-                                />
+                                <div className="relative flex-1">
+                                    <Globe size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-20" />
+                                    <Input
+                                        placeholder="e.g. portal.acme.com"
+                                        className="bg-black/5 h-14 pl-10"
+                                        value={domain}
+                                        onChange={(e) => setDomain(e.target.value)}
+                                        disabled={customDomainAllowed === false || status === 'VERIFIED'}
+                                    />
+                                </div>
                                 {status === 'IDLE' ? (
                                     <Button
-                                        color="primary"
-                                        size="lg"
-                                        radius="lg"
                                         className="h-14 font-black px-10"
                                         onClick={handleSetDomain}
-                                        isLoading={isVerifying}
-                                        isDisabled={customDomainAllowed === false || !domain}
+                                        disabled={isVerifying || customDomainAllowed === false || !domain}
                                     >
+                                        {isVerifying && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         Set Domain
                                     </Button>
                                 ) : status === 'PENDING' ? (
                                     <Button
-                                        color="secondary"
-                                        size="lg"
-                                        radius="lg"
+                                        variant="secondary"
                                         className="h-14 font-black px-10"
                                         onClick={handleVerify}
-                                        isLoading={isVerifying}
+                                        disabled={isVerifying}
                                     >
+                                        {isVerifying && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         Verify DNS
                                     </Button>
                                 ) : (
                                     <Button
-                                        color="danger"
-                                        variant="flat"
-                                        size="lg"
-                                        radius="lg"
+                                        variant="destructive"
                                         className="h-14 font-black px-10"
                                         onClick={handleRemoveDomain}
                                     >
@@ -357,11 +341,11 @@ export default function DomainSettingsPage() {
                                         <p className="text-sm font-black text-success uppercase tracking-widest leading-none mb-1">Domain Verified</p>
                                         <p className="text-xs font-bold opacity-60">Provisioning SSL certificates. Estimated time: 10 mins.</p>
                                     </div>
-                                    <Chip color="success" size="sm" variant="flat" className="ml-auto font-black">ACTIVE</Chip>
+                                    <Badge variant="secondary" className="ml-auto font-black bg-success/10 text-success">ACTIVE</Badge>
                                 </div>
                             )}
 
-                            <Divider className="opacity-40" />
+                            <Separator className="opacity-40" />
 
                             <div className="space-y-6">
                                 <h4 className="text-sm font-black uppercase tracking-widest opacity-40">DNS Configuration</h4>
@@ -392,14 +376,14 @@ export default function DomainSettingsPage() {
                                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Host/Name</span>
                                                 <div className="flex items-center gap-2">
                                                     <code className="text-xs font-bold">_easeinventory-verify</code>
-                                                    <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard('_easeinventory-verify')}><Copy size={12} /></Button>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => copyToClipboard('_easeinventory-verify')}><Copy size={12} /></Button>
                                                 </div>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Value</span>
                                                 <div className="flex items-center gap-2">
                                                     <code className="text-xs font-bold text-primary break-all max-w-[200px]">{verificationToken}</code>
-                                                    <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard(verificationToken)}><Copy size={12} /></Button>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => copyToClipboard(verificationToken)}><Copy size={12} /></Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -415,20 +399,20 @@ export default function DomainSettingsPage() {
                                             <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Host/Name</span>
                                             <div className="flex items-center gap-2">
                                                 <code className="text-xs font-bold">{domain ? domain.split('.')[0] : 'inventory'}</code>
-                                                <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard(domain ? domain.split('.')[0] : 'inventory')}><Copy size={12} /></Button>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => copyToClipboard(domain ? domain.split('.')[0] : 'inventory')}><Copy size={12} /></Button>
                                             </div>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Value</span>
                                             <div className="flex items-center gap-2">
                                                 <code className="text-xs font-bold text-primary">cname.easeinventory.com</code>
-                                                <Button isIconOnly variant="light" size="sm" radius="full" onClick={() => copyToClipboard('cname.easeinventory.com')}><Copy size={12} /></Button>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => copyToClipboard('cname.easeinventory.com')}><Copy size={12} /></Button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </CardBody>
+                        </CardContent>
                     </Card>
 
                     <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10 flex items-start gap-4">
@@ -442,17 +426,17 @@ export default function DomainSettingsPage() {
 
                 {/* FAQ / Guidance */}
                 <div className="lg:col-span-5 space-y-8">
-                    <Card className="modern-card bg-black/5 dark:bg-white/5 border-none shadow-none p-8" radius="lg">
-                        <CardBody className="p-0 space-y-6">
+                    <Card className="modern-card bg-black/5 dark:bg-white/5 border-none shadow-none p-8 rounded-lg">
+                        <CardContent className="p-0 space-y-6">
                             <div className="flex items-center gap-2 mb-4">
                                 <HelpCircle size={18} className="opacity-30" />
                                 <h3 className="text-sm font-black uppercase tracking-widest">Setup Guide</h3>
                             </div>
-                            
+
                             <div className="space-y-6">
                                 <div className="space-y-2">
                                     <p className="text-xs font-black">1. Use a Subdomain</p>
-                                    <p className="text-[11px] font-bold opacity-40">Subdomains are easier to manage and don't require root domain redirection logic.</p>
+                                    <p className="text-[11px] font-bold opacity-40">Subdomains are easier to manage and don&apos;t require root domain redirection logic.</p>
                                 </div>
                                 <div className="space-y-2">
                                     <p className="text-xs font-black">2. Propogation Time</p>
@@ -460,20 +444,20 @@ export default function DomainSettingsPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <p className="text-xs font-black">3. SSL/HTTPS</p>
-                                    <p className="text-[11px] font-bold opacity-40">We automatically provision Let's Encrypt certificates for all verified custom domains.</p>
+                                    <p className="text-[11px] font-bold opacity-40">We automatically provision Let&apos;s Encrypt certificates for all verified custom domains.</p>
                                 </div>
                             </div>
 
-                            <Divider className="opacity-10" />
+                            <Separator className="opacity-10" />
 
-                            <Button 
-                                variant="light" 
+                            <Button
+                                variant="ghost"
                                 className="w-full h-12 font-black text-xs uppercase tracking-widest"
-                                endContent={<ExternalLink size={14} />}
                             >
                                 Detailed Documentation
+                                <ExternalLink size={14} className="ml-2" />
                             </Button>
-                        </CardBody>
+                        </CardContent>
                     </Card>
                 </div>
             </div>

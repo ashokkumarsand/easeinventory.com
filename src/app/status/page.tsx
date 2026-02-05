@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -112,11 +113,11 @@ export default function StatusPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card group hover:scale-105 transition-transform duration-500">
-                    <CardBody className="p-8 text-center">
+                    <CardContent className="p-8 text-center">
                       <div className="text-4xl mb-4">{metric.icon}</div>
                       <div className="text-4xl font-black text-success mb-2">{metric.value}</div>
                       <div className="text-sm font-bold text-foreground/50">{metric.label}</div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -139,7 +140,7 @@ export default function StatusPage() {
             </motion.div>
 
             <Card className="modern-card max-w-4xl mx-auto overflow-hidden">
-              <CardBody className="p-0 divide-y divide-foreground/5">
+              <CardContent className="p-0 divide-y divide-foreground/5">
                 {services.map((service, index) => {
                   const styles = getStatusStyles(service.status);
                   return (
@@ -164,7 +165,7 @@ export default function StatusPage() {
                     </motion.div>
                   );
                 })}
-              </CardBody>
+              </CardContent>
             </Card>
           </div>
         </section>
@@ -197,7 +198,7 @@ export default function StatusPage() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="modern-card">
-                    <CardBody className="p-8">
+                    <CardContent className="p-8">
                       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                         <div className="flex items-center gap-4">
                           <span className={`text-xs font-black px-3 py-1 rounded-full ${
@@ -215,7 +216,7 @@ export default function StatusPage() {
                         </div>
                       </div>
                       <p className="text-foreground/60 italic">{incident.description}</p>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -234,7 +235,7 @@ export default function StatusPage() {
               viewport={{ once: true }}
             >
               <Card className="modern-card bg-gradient-to-br from-success/10 via-success/5 to-transparent border-success/20 overflow-hidden">
-                <CardBody className="p-12 lg:p-20 text-center relative">
+                <CardContent className="p-12 lg:p-20 text-center relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-success/10 rounded-full blur-[100px] pointer-events-none" />
                   <div className="relative z-10">
                     <div className="text-6xl mb-8">🔔</div>
@@ -244,12 +245,14 @@ export default function StatusPage() {
                     <p className="paragraph-lg mb-10 max-w-2xl mx-auto">
                       Subscribe to receive notifications about scheduled maintenance and service disruptions.
                     </p>
-                    <Button as={Link} href="/#contact" color="success" size="lg" className="font-black px-12 h-16 shadow-xl shadow-success/30 uppercase tracking-widest" radius="full">
-                      Subscribe to Updates
-                      <ArrowRight size={20} />
+                    <Button asChild size="lg" className="font-black px-12 h-16 shadow-xl shadow-success/30 uppercase tracking-widest rounded-full bg-success text-success-foreground hover:bg-success/90">
+                      <Link href="/#contact">
+                        Subscribe to Updates
+                        <ArrowRight size={20} className="ml-2" />
+                      </Link>
                     </Button>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           </div>

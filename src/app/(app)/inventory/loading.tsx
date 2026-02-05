@@ -1,7 +1,5 @@
-'use client';
-
-import { DashboardPageSkeleton } from '@/components/ui/PageSkeleton';
+import { InventoryPageSkeleton } from '@/components/ui/PageSkeleton';
 
 export default function InventoryLoading() {
-  return <DashboardPageSkeleton />;
+  return <InventoryPageSkeleton />;
 }

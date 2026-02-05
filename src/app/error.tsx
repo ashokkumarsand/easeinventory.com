@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -37,22 +37,21 @@ export default function GlobalError({
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
-            color="primary"
-            variant="solid"
-            startContent={<RefreshCw className="w-4 h-4" />}
             onClick={reset}
             className="font-semibold"
           >
+            <RefreshCw className="w-4 h-4 mr-2" />
             Try Again
           </Button>
           <Button
-            as={Link}
-            href="/"
-            variant="flat"
-            startContent={<Home className="w-4 h-4" />}
+            asChild
+            variant="secondary"
             className="font-semibold"
           >
-            Go Home
+            <Link href="/">
+              <Home className="w-4 h-4 mr-2" />
+              Go Home
+            </Link>
           </Button>
         </div>
 

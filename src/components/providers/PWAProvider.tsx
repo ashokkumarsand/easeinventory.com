@@ -3,7 +3,7 @@
 import { useServiceWorker } from '@/hooks/useServiceWorker';
 import OfflineIndicator from '@/components/ui/OfflineIndicator';
 import PWAInstallPrompt from '@/components/ui/PWAInstallPrompt';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,12 +33,11 @@ export default function PWAProvider({ children }: { children: React.ReactNode })
               <span className="text-sm font-bold">New version available!</span>
               <Button
                 size="sm"
-                color="default"
-                variant="flat"
+                variant="secondary"
                 className="font-bold bg-white/20 text-white"
                 onClick={updateServiceWorker}
-                startContent={<RefreshCw size={14} />}
               >
+                <RefreshCw size={14} className="mr-2" />
                 Update
               </Button>
             </div>
