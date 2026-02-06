@@ -552,6 +552,9 @@ model Product {
   demandSnapshots     DemandSnapshot[]
   reorderSuggestions  ReorderSuggestion[]
 
+  // Supply Chain (Phase 6)
+  productSuppliers    ProductSupplier[] @relation("ProductSuppliers")
+
   @@unique([slug, tenantId])
   @@index([tenantId])
   @@index([serialNumber])
@@ -674,6 +677,9 @@ model Supplier {
   purchaseOrders PurchaseOrder[]
   goodsReceipts  GoodsReceipt[]
   reorderSuggestions ReorderSuggestion[]
+
+  // Supply Chain (Phase 6)
+  productSuppliers ProductSupplier[] @relation("SupplierProducts")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -2691,4 +2697,46 @@ model InventoryKpiSnapshot {
   @@index([tenantId])
   @@index([periodDate])
   @@map("inventory_kpi_snapshots")
+}
+
+// ==================== SUPPLY CHAIN OPTIMIZATION (Phase 6) ====================
+
+enum SupplierPriority {
+  PREFERRED
+  BACKUP
+  EMERGENCY
+}
+
+model ProductSupplier {
+  id String @id @default(cuid())
+
+  productId  String  @map("product_id")
+  product    Product @relation("ProductSuppliers", fields: [productId], references: [id], onDelete: Cascade)
+
+  supplierId String   @map("supplier_id")
+  supplier   Supplier @relation("SupplierProducts", fields: [supplierId], references: [id], onDelete: Cascade)
+
+  // Supplier-specific product info
+  supplierSku         String? @map("supplier_sku")
+  supplierProductName String? @map("supplier_product_name")
+
+  // Pricing & terms
+  unitCost     Decimal @map("unit_cost") @db.Decimal(12, 2)
+  moq          Int     @default(1) // Minimum order quantity
+  leadTimeDays Int     @map("lead_time_days")
+
+  // Priority & status
+  priority SupplierPriority @default(BACKUP)
+  isActive Boolean          @default(true) @map("is_active")
+
+  // Notes
+  notes String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, supplierId])
+  @@index([productId])
+  @@index([supplierId])
+  @@map("product_suppliers")
 }
