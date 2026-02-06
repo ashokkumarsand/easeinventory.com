@@ -88,14 +88,14 @@
 - [x] P1-T14: Sidebar nav + WhatsApp templates | 2026-02-06
 
 ### Phase 2: Inbound — Purchase & Receiving (Week 3-4)
-- [ ] P2-T1: PurchaseOrder + GoodsReceipt schema + migration
-- [ ] P2-T2: PO CRUD API + purchase-order.service.ts
-- [ ] P2-T3: GRN workflow API + goods-receipt.service.ts
-- [ ] P2-T4: PO pages (list, detail, create)
-- [ ] P2-T5: GRN pages (list, detail, create)
+- [x] P2-T1: PurchaseOrder + GoodsReceipt schema + migration | 2026-02-06
+- [x] P2-T2: PO CRUD API + purchase-order.service.ts | 2026-02-06
+- [x] P2-T3: GRN workflow API + goods-receipt.service.ts | 2026-02-06
+- [x] P2-T4: PO pages (list, detail, create) | 2026-02-06
+- [x] P2-T5: GRN pages (list, detail, create) | 2026-02-06
 - [ ] P2-T6: PO PDF generation
 - [ ] P2-T7: ClearTax GSP adapter for real e-Way Bill
-- [ ] P2-T8: NDR management UI + API
+- [x] P2-T8: NDR management UI + API | 2026-02-06
 
 ### Phase 3: Returns & Advanced Operations (Week 5-6)
 - [ ] P3-T1: ReturnRequest + Wave schema + migration

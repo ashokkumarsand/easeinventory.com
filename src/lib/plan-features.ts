@@ -21,7 +21,8 @@ export type FeatureKey =
   | 'white_label'
   | 'sso_integration'
   | 'carrier_integration'
-  | 'orders_management';
+  | 'orders_management'
+  | 'procurement_management';
 
 export interface PlanFeature {
   name: string;
@@ -122,6 +123,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   orders_management: {
     name: 'Orders Management',
     description: 'Sales order fulfillment with pick/pack workflow',
+    minPlan: 'STARTER',
+  },
+  procurement_management: {
+    name: 'Procurement',
+    description: 'Purchase orders and goods receipt management',
     minPlan: 'STARTER',
   },
 };

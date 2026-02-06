@@ -79,6 +79,18 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'procurement',
+    label: 'Procurement',
+    icon: 'ClipboardList',
+    permissions: [
+      { key: 'procurement:view', label: 'View POs & GRNs', description: 'See purchase orders and goods receipts', module: 'procurement' },
+      { key: 'procurement:create', label: 'Create POs & GRNs', description: 'Create purchase orders and goods receipts', module: 'procurement' },
+      { key: 'procurement:edit', label: 'Edit POs', description: 'Modify purchase order details', module: 'procurement' },
+      { key: 'procurement:approve', label: 'Approve POs', description: 'Send and approve purchase orders', module: 'procurement' },
+      { key: 'procurement:receive', label: 'Receive Goods', description: 'Complete goods receipts and update stock', module: 'procurement' },
+    ]
+  },
+  {
     key: 'delivery',
     label: 'Delivery',
     icon: 'PackageCheck',
@@ -144,6 +156,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'invoices:view', 'invoices:create', 'invoices:edit',
     'orders:view', 'orders:create', 'orders:edit', 'orders:fulfill',
     'shipments:view', 'shipments:create', 'shipments:manage', 'shipments:cod',
+    'procurement:view', 'procurement:create', 'procurement:edit', 'procurement:approve', 'procurement:receive',
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit',
@@ -154,6 +167,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'inventory:view',
     'repairs:view', 'repairs:finalize',
     'invoices:view', 'invoices:create', 'invoices:edit', 'invoices:export',
+    'procurement:view', 'procurement:create', 'procurement:approve',
     'hr:view', 'hr:payroll',
     'suppliers:view', 'suppliers:settlements',
   ],
@@ -181,6 +195,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'repairs:view',
     'orders:view',
     'shipments:view',
+    'procurement:view',
     'delivery:view',
   ],
 };
