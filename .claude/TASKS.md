@@ -101,10 +101,10 @@
 - [x] P3-T1: ReturnRequest + Wave schema + migration | 2026-02-06
 - [x] P3-T2: Return workflow API + UI | 2026-02-06
 - [x] P3-T3: Wave planning API + UI | 2026-02-06
-- [ ] P3-T4: Delhivery carrier adapter
-- [ ] P3-T5: Multi-carrier rate comparison
+- [ ] P3-T4: Delhivery carrier adapter (deferred — add when carrier needed)
+- [ ] P3-T5: Multi-carrier rate comparison (deferred — add when carrier needed)
 
-### Phase 4: Analytics, Fleet & Polish (Week 7-8)
+### Phase 4: Analytics, Fleet & Polish (Week 7-8) — NOT STARTED
 - [ ] P4-T1: Fleet models (Vehicle, Driver, Trip) schema + migration
 - [ ] P4-T2: CycleCount schema + workflow
 - [ ] P4-T3: Warehouse KPI dashboard
