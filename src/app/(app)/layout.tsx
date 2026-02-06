@@ -32,6 +32,7 @@ import {
     AlertCircle,
     ArrowRightLeft,
     Bell,
+    Brain,
     Building2,
     Calendar,
     Check,
@@ -79,6 +80,7 @@ const menuItems = [
   { group: 'Overview', items: [
     { label: 'Dashboard', icon: Home, href: '/dashboard' },
     { label: 'Analytics', icon: TrendingUp, href: '/analytics' },
+    { label: 'Intelligence', icon: Brain, href: '/intelligence' },
   ]},
   { group: 'Operations', items: [
     { label: 'Inventory', icon: Package, href: '/inventory' },

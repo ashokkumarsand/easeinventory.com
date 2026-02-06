@@ -148,6 +148,16 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'analytics',
+    label: 'Analytics & Intelligence',
+    icon: 'Brain',
+    permissions: [
+      { key: 'analytics:view', label: 'View Analytics', description: 'View analytics dashboards and intelligence', module: 'analytics' },
+      { key: 'analytics:configure', label: 'Configure Analytics', description: 'Run classifications, set reorder points', module: 'analytics' },
+      { key: 'analytics:reorder', label: 'Reorder Suggestions', description: 'View and act on reorder suggestions', module: 'analytics' },
+    ]
+  },
+  {
     key: 'settings',
     label: 'Settings',
     icon: 'Settings',
@@ -173,6 +183,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit',
+    'analytics:view', 'analytics:configure', 'analytics:reorder',
     'team:view',
     'settings:view'
   ],
@@ -183,6 +194,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'procurement:view', 'procurement:create', 'procurement:approve',
     'hr:view', 'hr:payroll',
     'suppliers:view', 'suppliers:settlements',
+    'analytics:view',
   ],
   TECHNICIAN: [
     'inventory:view',
@@ -195,6 +207,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'shipments:view', 'shipments:create',
     'returns:view', 'returns:create',
     'delivery:view', 'delivery:create',
+    'analytics:view',
   ],
   VIEWER: [
     'inventory:view',

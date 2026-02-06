@@ -107,11 +107,50 @@
 ### Phase 4: Analytics, Fleet & Polish (Week 7-8) — NOT STARTED
 - [ ] P4-T1: Fleet models (Vehicle, Driver, Trip) schema + migration
 - [ ] P4-T2: CycleCount schema + workflow
-- [ ] P4-T3: Warehouse KPI dashboard
+- [-] P4-T3: Warehouse KPI dashboard → merged into P5-T4
 - [ ] P4-T4: Shipping KPI dashboard
 - [ ] P4-T5: COD analytics + reconciliation
 - [ ] P4-T6: Fleet management UI
 - [ ] P4-T7: Cycle counting UI
 
+---
+
+## Book-Informed Expansion — From "Research Handbook on Inventory Management" (2026-02-06)
+> Full analysis: `.claude/BOOK-ANALYSIS.md`
+
+### Phase 5: Inventory Intelligence (HIGHEST PRIORITY — Foundation for All)
+- [x] P5-T0: Foundation — schema, permissions, plan features, nav | 2026-02-06
+- [~] P5-T1: Demand analytics engine — sales velocity, moving averages, seasonal detection per SKU
+- [ ] P5-T2: Safety stock & reorder point calculator — based on demand stats, lead time, service level
+- [ ] P5-T3: ABC/XYZ classification — auto-classify products, matrix dashboard, strategy recommendations
+- [ ] P5-T4: Inventory KPI dashboard — turnover, GMROI, days-of-supply, fill rate, stockout rate, aging
+- [ ] P5-T5: Perishable/expiry management — expiryDate on lots, FEFO picking, near-expiry alerts, waste tracking
+- [ ] P5-T6: Smart reorder suggestions — auto-generated PO suggestions based on reorder points + lead times
+- [ ] P5-T7: Dead stock & slow mover detection — aging analysis, markdown recommendations
+
+### Phase 6: Supply Chain Optimization
+- [ ] P6-T1: Multi-supplier per SKU — ProductSupplier model, preferred/emergency supplier config
+- [ ] P6-T2: Supplier performance tracking — actual vs. promised lead time, quality score, on-time %
+- [ ] P6-T3: BOM / Kit management — BOM model, component availability, kit assembly workflow
+- [ ] P6-T4: Inventory valuation & working capital — total value, carrying cost, capital tied up, GMROI
+- [ ] P6-T5: Supplier payment terms — net-30/60/90 tracking, trade credit visibility
+- [ ] P6-T6: Order smoothing — dampen order variability to reduce bullwhip effect
+
+### Phase 7: Advanced Features
+- [ ] P7-T1: Dynamic pricing rules — inventory-level-based pricing, markdown scheduling
+- [ ] P7-T2: Warehouse capacity management — capacity per location, utilization dashboard
+- [ ] P7-T3: Spare parts linkage — connect repair tickets to spare parts, maintenance-driven forecasting
+- [ ] P7-T4: Quality grading on returns — Grade A/B/C/Scrap, refurbishment queue, condition-based pricing
+- [ ] P7-T5: Supplier portal — read-only access for suppliers to see stock levels & velocity
+- [ ] P7-T6: Lost sales tracking — log stockout events, lost revenue analytics
+- [ ] P7-T7: Decision support nudges — smart ordering assistant, pipeline visibility, bias alerts
+- [ ] P7-T8: Lateral transshipment — location-to-location emergency transfers with approval
+- [ ] P7-T9: Inventory placement optimizer — recommend SKU allocation across warehouses
+
 ## Pending / Backlog
-<!-- Long-term items go here -->
+- [ ] P3-T4: Delhivery carrier adapter (add when carrier needed)
+- [ ] P3-T5: Multi-carrier rate comparison (add when carrier needed)
+- [ ] ML-based demand forecasting (requires P5-T1 data maturity)
+- [ ] Multi-echelon inventory optimization (enterprise feature)
+- [ ] Remanufacturing workflow (niche manufacturing)
+- [ ] Assortment planning tools (retail-specific)

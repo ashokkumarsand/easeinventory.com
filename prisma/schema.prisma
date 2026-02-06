@@ -109,6 +109,11 @@ model Tenant {
   returnRequests    ReturnRequest[]
   waves             Wave[]
 
+  // Intelligence (Phase 5)
+  demandSnapshots      DemandSnapshot[]
+  reorderSuggestions   ReorderSuggestion[]
+  inventoryKpiSnapshots InventoryKpiSnapshot[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -492,6 +497,15 @@ model Product {
 
   isActive Boolean @default(true) @map("is_active")
 
+  // Intelligence (Phase 5)
+  reorderPoint     Int?     @map("reorder_point")     // Calculated reorder trigger
+  safetyStock      Int?     @map("safety_stock")      // Buffer stock quantity
+  economicOrderQty Int?     @map("economic_order_qty") // EOQ calculation
+  abcClass         String?  @map("abc_class")          // A, B, or C
+  xyzClass         String?  @map("xyz_class")          // X, Y, or Z
+  leadTimeDays     Int?     @map("lead_time_days")     // Avg days from order to receipt
+  isPerishable     Boolean  @default(false) @map("is_perishable")
+
   // Consignment
   isConsignment         Boolean  @default(false) @map("is_consignment")
   consignmentCommission Decimal? @map("consignment_commission") @db.Decimal(5, 2) // % for tenant
@@ -521,6 +535,10 @@ model Product {
   purchaseOrderItems  PurchaseOrderItem[]
   goodsReceiptItems   GoodsReceiptItem[]
   returnRequestItems  ReturnRequestItem[]
+
+  // Intelligence (Phase 5)
+  demandSnapshots     DemandSnapshot[]
+  reorderSuggestions  ReorderSuggestion[]
 
   @@unique([slug, tenantId])
   @@index([tenantId])
@@ -630,6 +648,10 @@ model Supplier {
   accountNumber String? @map("account_number")
   ifscCode      String? @map("ifsc_code")
 
+  // Intelligence (Phase 5)
+  avgLeadTimeDays  Int?     @map("avg_lead_time_days")  // Average delivery days
+  reliabilityScore Decimal? @map("reliability_score") @db.Decimal(5, 2) // 0-100 score
+
   tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -639,6 +661,7 @@ model Supplier {
   settlements    ConsignmentSettlement[]
   purchaseOrders PurchaseOrder[]
   goodsReceipts  GoodsReceipt[]
+  reorderSuggestions ReorderSuggestion[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -2409,4 +2432,134 @@ enum WaveStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+// ==================== INVENTORY INTELLIGENCE (Phase 5) ====================
+
+model DemandSnapshot {
+  id        String @id @default(cuid())
+
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Period
+  periodType  DemandPeriodType @map("period_type")
+  periodStart DateTime         @map("period_start")
+  periodEnd   DateTime         @map("period_end")
+
+  // Aggregated metrics
+  totalQuantity Int     @default(0) @map("total_quantity")
+  totalRevenue  Decimal @default(0) @map("total_revenue") @db.Decimal(14, 2)
+  totalCost     Decimal @default(0) @map("total_cost") @db.Decimal(14, 2)
+  orderCount    Int     @default(0) @map("order_count")
+
+  // Moving averages & stats
+  movingAvg7d  Decimal? @map("moving_avg_7d") @db.Decimal(10, 4)
+  movingAvg30d Decimal? @map("moving_avg_30d") @db.Decimal(10, 4)
+  stdDeviation Decimal? @map("std_deviation") @db.Decimal(10, 4)
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, periodType, periodStart])
+  @@index([tenantId])
+  @@index([productId, periodType])
+  @@index([periodStart])
+  @@map("demand_snapshots")
+}
+
+enum DemandPeriodType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model ReorderSuggestion {
+  id        String @id @default(cuid())
+
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Suggestion details
+  suggestedQty   Int @map("suggested_qty")
+  currentStock   Int @map("current_stock")
+  reorderPoint   Int @map("reorder_point")
+  safetyStock    Int @map("safety_stock")
+  avgDailyDemand Decimal @map("avg_daily_demand") @db.Decimal(10, 4)
+  leadTimeDays   Int     @map("lead_time_days")
+  estimatedCost  Decimal @map("estimated_cost") @db.Decimal(14, 2)
+
+  // Preferred supplier
+  supplierId String?   @map("supplier_id")
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  // Status
+  status  ReorderSuggestionStatus @default(PENDING)
+  urgency ReorderUrgency          @default(NORMAL)
+
+  // Calculations
+  daysUntilStockout Int? @map("days_until_stockout")
+
+  // Conversion
+  convertedPoId String? @map("converted_po_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([urgency])
+  @@index([productId])
+  @@map("reorder_suggestions")
+}
+
+enum ReorderSuggestionStatus {
+  PENDING
+  ACCEPTED
+  DISMISSED
+  CONVERTED_TO_PO
+}
+
+enum ReorderUrgency {
+  CRITICAL
+  HIGH
+  NORMAL
+  LOW
+}
+
+model InventoryKpiSnapshot {
+  id String @id @default(cuid())
+
+  // Period
+  periodDate DateTime         @map("period_date")
+  periodType DemandPeriodType @map("period_type")
+
+  // KPI metrics
+  inventoryTurnover  Decimal? @map("inventory_turnover") @db.Decimal(10, 4)
+  gmroi              Decimal? @db.Decimal(10, 4)
+  avgDaysOfSupply    Decimal? @map("avg_days_of_supply") @db.Decimal(10, 2)
+  fillRate           Decimal? @map("fill_rate") @db.Decimal(5, 4) // 0.0000 to 1.0000
+  stockoutRate       Decimal? @map("stockout_rate") @db.Decimal(5, 4)
+  totalInventoryValue Decimal? @map("total_inventory_value") @db.Decimal(16, 2)
+  deadStockValue     Decimal? @map("dead_stock_value") @db.Decimal(14, 2)
+  deadStockCount     Int?     @map("dead_stock_count")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([tenantId, periodDate, periodType])
+  @@index([tenantId])
+  @@index([periodDate])
+  @@map("inventory_kpi_snapshots")
 }

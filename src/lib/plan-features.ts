@@ -22,7 +22,11 @@ export type FeatureKey =
   | 'sso_integration'
   | 'carrier_integration'
   | 'orders_management'
-  | 'procurement_management';
+  | 'procurement_management'
+  | 'inventory_intelligence'
+  | 'demand_analytics'
+  | 'perishable_management'
+  | 'reorder_suggestions';
 
 export interface PlanFeature {
   name: string;
@@ -129,6 +133,26 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     name: 'Procurement',
     description: 'Purchase orders and goods receipt management',
     minPlan: 'STARTER',
+  },
+  inventory_intelligence: {
+    name: 'Inventory Intelligence',
+    description: 'ABC/XYZ classification, safety stock, reorder optimization',
+    minPlan: 'BUSINESS',
+  },
+  demand_analytics: {
+    name: 'Demand Analytics',
+    description: 'Sales velocity tracking, moving averages, and demand forecasting',
+    minPlan: 'BUSINESS',
+  },
+  perishable_management: {
+    name: 'Perishable Management',
+    description: 'FEFO picking, expiry alerts, and waste tracking',
+    minPlan: 'STARTER',
+  },
+  reorder_suggestions: {
+    name: 'Smart Reorder',
+    description: 'Automated PO suggestions based on reorder points and lead times',
+    minPlan: 'BUSINESS',
   },
 };
 
@@ -293,6 +317,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/settings/roles': 'custom_roles',
   '/settings/audit': 'audit_trail',
   '/carriers': 'carrier_integration',
+  '/intelligence': 'demand_analytics',
 };
 
 /**
@@ -308,4 +333,10 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   sales_by_category: { minPlan: 'BUSINESS', name: 'Sales by Category' },
   inventory_turnover: { minPlan: 'BUSINESS', name: 'Inventory Turnover' },
   export_reports: { minPlan: 'ENTERPRISE', name: 'Export Reports' },
+  demand_velocity: { minPlan: 'BUSINESS', name: 'Demand Velocity' },
+  abc_xyz_matrix: { minPlan: 'BUSINESS', name: 'ABC/XYZ Matrix' },
+  safety_stock: { minPlan: 'BUSINESS', name: 'Safety Stock' },
+  reorder_suggestions: { minPlan: 'BUSINESS', name: 'Reorder Suggestions' },
+  expiry_alerts: { minPlan: 'STARTER', name: 'Expiry Alerts' },
+  dead_stock: { minPlan: 'BUSINESS', name: 'Dead Stock Detection' },
 };
