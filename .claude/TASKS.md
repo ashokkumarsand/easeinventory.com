@@ -55,9 +55,12 @@
 - [x] T13: CTA Banner — gradient glassmorphic banner | commit: f13f45b2
 - [x] T14: Skip-to-content link + main landmark | commit: 3ecb3766
 
-### Phase 3: Polish (Remaining)
-- [ ] T15: Responsive testing & fixes — mobile, tablet, desktop
-- [ ] T16: Final accessibility audit — WCAG 2.1 AA contrast, keyboard nav
+### Phase 3: Polish
+- [x] T15: Responsive testing & fixes — mobile, tablet, desktop | commit: 4a4049be
+- [x] T16: Final accessibility audit — WCAG 2.1 AA (ARIA roles, touch targets, focus, semantics) | commit: 4a4049be
+
+### Phase 4: Feature Pages
+- [x] T17: Create shared FeaturePageTemplate + rewrite all 6 feature pages + link from landing | 2026-02-06
 
 ---
 

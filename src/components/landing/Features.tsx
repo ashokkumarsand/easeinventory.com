@@ -18,42 +18,42 @@ const features = [
     description:
       'Track every unit with serial numbers. Automated cost vs sale price profit analysis.',
     icon: PackageSearch,
-    href: '/register',
+    href: '/features/inventory',
   },
   {
     title: 'Repair Logistics',
     description:
       'Ticketing with technician benchmarks, photo attachments, and lifecycle tracking.',
     icon: Wrench,
-    href: '/register',
+    href: '/features/repairs',
   },
   {
     title: 'Instant GST Bills',
     description:
       'Compliant invoicing in seconds. HSN codes, multiple tax rates, digital payments.',
     icon: FileText,
-    href: '/register',
+    href: '/features/billing',
   },
   {
     title: 'Smart Alerts',
     description:
       'Auto-notifications for low stock, repair completion via WhatsApp, urgent supplier dues.',
     icon: Bell,
-    href: '/register',
+    href: '/features/alerts',
   },
   {
     title: 'Subdomain Hosting',
     description:
       'Claim your unique .easeinventory.com link with custom branding.',
     icon: Globe,
-    href: '/register',
+    href: '/features/subdomain',
   },
   {
     title: 'Staff Management',
     description:
       'Attendance tracking, performance-based payroll, and secure role management.',
     icon: Users,
-    href: '/register',
+    href: '/features/staff',
   },
 ];
 
