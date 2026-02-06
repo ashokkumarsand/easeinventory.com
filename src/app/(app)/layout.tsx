@@ -31,6 +31,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
     AlertCircle,
     ArrowRightLeft,
+    BarChart3,
     Bell,
     Brain,
     Building2,
@@ -89,6 +90,7 @@ const menuItems = [
     { label: 'Shipments', icon: Truck, href: '/shipments' },
     { label: 'COD Management', icon: IndianRupee, href: '/shipments/cod' },
     { label: 'NDR Management', icon: AlertCircle, href: '/shipments/ndr' },
+    { label: 'Shipping Analytics', icon: BarChart3, href: '/shipments/analytics' },
     { label: 'Blanket Discounts', icon: Tag, href: '/inventory/discounts' },
     { label: 'Warehouse Transfers', icon: ArrowRightLeft, href: '/inventory/transfers' },
     { label: 'Inventory Locations', icon: Building2, href: '/inventory/locations' },

@@ -108,8 +108,8 @@
 - [-] P4-T1: Fleet models → moved to Backlog (most tenants use 3rd-party carriers)
 - [x] P4-T2: CycleCount schema + workflow | 2026-02-06
 - [-] P4-T3: Warehouse KPI dashboard → merged into P5-T4
-- [ ] P4-T4: Shipping KPI dashboard
-- [ ] P4-T5: COD analytics + reconciliation
+- [x] P4-T4: Shipping KPI dashboard | 2026-02-06
+- [x] P4-T5: COD analytics + reconciliation | 2026-02-06
 - [-] P4-T6: Fleet management UI → moved to Backlog (depends on P4-T1)
 - [x] P4-T7: Cycle counting UI | 2026-02-06
 
