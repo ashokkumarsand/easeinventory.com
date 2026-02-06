@@ -100,6 +100,7 @@ const menuItems = [
     { label: 'Wave Planning', icon: Layers, href: '/waves' },
     { label: 'Cycle Counting', icon: ClipboardCheck, href: '/cycle-counting' },
     { label: 'Suppliers', icon: PackageCheck, href: '/suppliers' },
+    { label: 'Supplier Performance', icon: BarChart3, href: '/suppliers/performance' },
     { label: 'Repair Center', icon: Wrench, href: '/repairs' },
     { label: 'Invoices', icon: FileText, href: '/invoices' },
     { label: 'Delivery', icon: PackageCheck, href: '/delivery' },

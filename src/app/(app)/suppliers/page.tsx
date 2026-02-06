@@ -122,6 +122,12 @@ export default function SuppliersPage() {
                     <p className="text-foreground/40 font-bold ml-1">Manage supply chain partners and procurement channels.</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    <Link href="/suppliers/performance">
+                        <Button variant="secondary" className="font-bold rounded-full gap-2">
+                            <Briefcase size={18} aria-hidden="true" />
+                            Performance
+                        </Button>
+                    </Link>
                     <Link href="/suppliers/settlements">
                         <Button variant="secondary" className="font-bold rounded-full gap-2">
                             <Banknote size={18} aria-hidden="true" />
@@ -263,9 +269,11 @@ export default function SuppliersPage() {
                                         <span className="font-black opacity-30 text-lg">{sup._count?.products || 0}</span>
                                     </td>
                                     <td className="py-5 px-6 text-center">
-                                        <Button variant="ghost" size="icon" className="rounded-full">
-                                            <ChevronRight size={18} className="opacity-30" />
-                                        </Button>
+                                        <Link href={`/suppliers/${sup.id}`}>
+                                            <Button variant="ghost" size="icon" className="rounded-full">
+                                                <ChevronRight size={18} className="opacity-30" />
+                                            </Button>
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

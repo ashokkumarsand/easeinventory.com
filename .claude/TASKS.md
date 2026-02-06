@@ -129,8 +129,8 @@
 - [x] P5-T7: Dead stock & slow mover detection — aging analysis, markdown recommendations | 2026-02-06
 
 ### Phase 6: Supply Chain Optimization
-- [ ] P6-T1: Multi-supplier per SKU — ProductSupplier model, preferred/emergency supplier config
-- [ ] P6-T2: Supplier performance tracking — actual vs. promised lead time, quality score, on-time %
+- [x] P6-T1: Multi-supplier per SKU — ProductSupplier model, preferred/emergency supplier config | 2026-02-07
+- [x] P6-T2: Supplier performance tracking — actual vs. promised lead time, quality score, on-time % | 2026-02-07
 - [ ] P6-T3: BOM / Kit management — BOM model, component availability, kit assembly workflow
 - [ ] P6-T4: Inventory valuation & working capital — total value, carrying cost, capital tied up, GMROI
 - [ ] P6-T5: Supplier payment terms — net-30/60/90 tracking, trade credit visibility

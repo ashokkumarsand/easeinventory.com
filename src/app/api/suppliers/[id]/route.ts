@@ -5,6 +5,40 @@ import { encrypt } from '@/lib/security';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
+// GET - Get supplier details
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const tenantId = (session.user as any).tenantId;
+
+    const supplier = await prisma.supplier.findFirst({
+      where: { id, tenantId },
+      include: {
+        _count: {
+          select: { products: true, purchaseOrders: true, goodsReceipts: true },
+        },
+      },
+    });
+
+    if (!supplier) {
+      return NextResponse.json({ message: 'Supplier not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ supplier });
+  } catch (error: any) {
+    console.error('SUPPLIER_GET_ERROR:', error);
+    return NextResponse.json({ message: 'Internal error' }, { status: 500 });
+  }
+}
+
 // PATCH - Update supplier
 export async function PATCH(
   req: NextRequest,
