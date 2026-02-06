@@ -7,6 +7,7 @@ import { SafetyStockCalculator } from '@/components/intelligence/SafetyStockCalc
 import { ClassificationTable } from '@/components/intelligence/ClassificationTable';
 import { KpiDashboard } from '@/components/intelligence/KpiDashboard';
 import { ExpiringLotsTable } from '@/components/intelligence/ExpiringLotsTable';
+import { ReorderSuggestionsTable } from '@/components/intelligence/ReorderSuggestionsTable';
 import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX } from 'lucide-react';
 
 const TABS = [
@@ -67,11 +68,7 @@ export default function IntelligencePage() {
         </TabsContent>
 
         <TabsContent value="reorder" className="mt-6">
-          <div className="p-8 text-center text-muted-foreground border rounded-xl">
-            <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-semibold">Reorder Suggestions</p>
-            <p className="text-sm mt-1">Coming in next update</p>
-          </div>
+          <ReorderSuggestionsTable />
         </TabsContent>
 
         <TabsContent value="dead-stock" className="mt-6">
