@@ -28,7 +28,8 @@ export type FeatureKey =
   | 'perishable_management'
   | 'reorder_suggestions'
   | 'shipping_analytics'
-  | 'cycle_counting';
+  | 'cycle_counting'
+  | 'supplier_performance';
 
 export interface PlanFeature {
   name: string;
@@ -165,6 +166,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     name: 'Cycle Counting',
     description: 'Physical inventory counting workflow with variance tracking',
     minPlan: 'STARTER',
+  },
+  supplier_performance: {
+    name: 'Supplier Performance',
+    description: 'Track lead times, quality, on-time delivery, and reliability scores',
+    minPlan: 'BUSINESS',
   },
 };
 
@@ -332,6 +338,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/intelligence': 'demand_analytics',
   '/shipments/analytics': 'shipping_analytics',
   '/cycle-counting': 'cycle_counting',
+  '/suppliers/performance': 'supplier_performance',
 };
 
 /**

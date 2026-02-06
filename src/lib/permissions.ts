@@ -134,6 +134,7 @@ export const PERMISSION_MODULES: PermissionModule[] = [
       { key: 'suppliers:create', label: 'Add Suppliers', description: 'Register new suppliers', module: 'suppliers' },
       { key: 'suppliers:edit', label: 'Edit Suppliers', description: 'Modify supplier info', module: 'suppliers' },
       { key: 'suppliers:settlements', label: 'Settlements', description: 'Process consignment payouts', module: 'suppliers' },
+      { key: 'suppliers:analytics', label: 'Supplier Analytics', description: 'View supplier performance metrics', module: 'suppliers' },
     ]
   },
   {
@@ -195,7 +196,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'cycle_counting:view', 'cycle_counting:create', 'cycle_counting:count', 'cycle_counting:verify', 'cycle_counting:adjust',
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
-    'suppliers:view', 'suppliers:create', 'suppliers:edit',
+    'suppliers:view', 'suppliers:create', 'suppliers:edit', 'suppliers:analytics',
     'analytics:view', 'analytics:configure', 'analytics:reorder',
     'team:view',
     'settings:view'
