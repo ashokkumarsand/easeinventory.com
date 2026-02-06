@@ -8,7 +8,9 @@ import { ClassificationTable } from '@/components/intelligence/ClassificationTab
 import { KpiDashboard } from '@/components/intelligence/KpiDashboard';
 import { ExpiringLotsTable } from '@/components/intelligence/ExpiringLotsTable';
 import { ReorderSuggestionsTable } from '@/components/intelligence/ReorderSuggestionsTable';
-import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX } from 'lucide-react';
+import { DeadStockTable } from '@/components/intelligence/DeadStockTable';
+import { SlowMoverTable } from '@/components/intelligence/SlowMoverTable';
+import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown } from 'lucide-react';
 
 const TABS = [
   { value: 'demand', label: 'Demand', icon: TrendingUp },
@@ -18,6 +20,7 @@ const TABS = [
   { value: 'perishables', label: 'Perishables', icon: Clock },
   { value: 'reorder', label: 'Reorder', icon: ShoppingCart },
   { value: 'dead-stock', label: 'Dead Stock', icon: PackageX },
+  { value: 'slow-movers', label: 'Slow Movers', icon: TrendingDown },
 ] as const;
 
 export default function IntelligencePage() {
@@ -72,11 +75,11 @@ export default function IntelligencePage() {
         </TabsContent>
 
         <TabsContent value="dead-stock" className="mt-6">
-          <div className="p-8 text-center text-muted-foreground border rounded-xl">
-            <PackageX className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-semibold">Dead Stock Detection</p>
-            <p className="text-sm mt-1">Coming in next update</p>
-          </div>
+          <DeadStockTable />
+        </TabsContent>
+
+        <TabsContent value="slow-movers" className="mt-6">
+          <SlowMoverTable />
         </TabsContent>
       </Tabs>
     </div>

@@ -119,14 +119,14 @@
 > Full analysis: `.claude/BOOK-ANALYSIS.md`
 
 ### Phase 5: Inventory Intelligence (HIGHEST PRIORITY — Foundation for All)
-- [x] P5-T0: Foundation — schema, permissions, plan features, nav | 2026-02-06
-- [~] P5-T1: Demand analytics engine — sales velocity, moving averages, seasonal detection per SKU
-- [ ] P5-T2: Safety stock & reorder point calculator — based on demand stats, lead time, service level
-- [ ] P5-T3: ABC/XYZ classification — auto-classify products, matrix dashboard, strategy recommendations
-- [ ] P5-T4: Inventory KPI dashboard — turnover, GMROI, days-of-supply, fill rate, stockout rate, aging
-- [ ] P5-T5: Perishable/expiry management — expiryDate on lots, FEFO picking, near-expiry alerts, waste tracking
-- [ ] P5-T6: Smart reorder suggestions — auto-generated PO suggestions based on reorder points + lead times
-- [ ] P5-T7: Dead stock & slow mover detection — aging analysis, markdown recommendations
+- [x] P5-T0: Foundation — schema, permissions, plan features, nav | 2026-02-06 | commit: f674fbea
+- [x] P5-T1: Demand analytics engine — sales velocity, moving averages, seasonal detection per SKU | 2026-02-06 | commit: 9cf75300
+- [x] P5-T2: Safety stock & reorder point calculator — based on demand stats, lead time, service level | 2026-02-06 | commit: 5b28447b
+- [x] P5-T3: ABC/XYZ classification — auto-classify products, matrix dashboard, strategy recommendations | 2026-02-06 | commit: e1ee8f7b
+- [x] P5-T4: Inventory KPI dashboard — turnover, GMROI, days-of-supply, fill rate, stockout rate, aging | 2026-02-06 | commit: 6931c3df
+- [x] P5-T5: Perishable/expiry management — expiryDate on lots, FEFO picking, near-expiry alerts, waste tracking | 2026-02-06 | commit: 30952ec7
+- [x] P5-T6: Smart reorder suggestions — auto-generated PO suggestions based on reorder points + lead times | 2026-02-06 | commit: bc37c85f
+- [x] P5-T7: Dead stock & slow mover detection — aging analysis, markdown recommendations | 2026-02-06
 
 ### Phase 6: Supply Chain Optimization
 - [ ] P6-T1: Multi-supplier per SKU — ProductSupplier model, preferred/emergency supplier config
