@@ -26,7 +26,8 @@ export type FeatureKey =
   | 'inventory_intelligence'
   | 'demand_analytics'
   | 'perishable_management'
-  | 'reorder_suggestions';
+  | 'reorder_suggestions'
+  | 'cycle_counting';
 
 export interface PlanFeature {
   name: string;
@@ -153,6 +154,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     name: 'Smart Reorder',
     description: 'Automated PO suggestions based on reorder points and lead times',
     minPlan: 'BUSINESS',
+  },
+  cycle_counting: {
+    name: 'Cycle Counting',
+    description: 'Physical inventory counting workflow with variance tracking',
+    minPlan: 'STARTER',
   },
 };
 
@@ -318,6 +324,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/settings/audit': 'audit_trail',
   '/carriers': 'carrier_integration',
   '/intelligence': 'demand_analytics',
+  '/cycle-counting': 'cycle_counting',
 };
 
 /**

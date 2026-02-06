@@ -109,6 +109,9 @@ model Tenant {
   returnRequests    ReturnRequest[]
   waves             Wave[]
 
+  // Cycle Counting
+  cycleCounts       CycleCount[]
+
   // Intelligence (Phase 5)
   demandSnapshots      DemandSnapshot[]
   reorderSuggestions   ReorderSuggestion[]
@@ -274,6 +277,11 @@ model User {
 
   // Orders & Shipments
   assignedPickLists PickList[]   @relation("PickerUser")
+
+  // Cycle Counting
+  assignedCycleCounts CycleCount[] @relation("CycleCountAssignee")
+  verifiedCycleCounts CycleCount[] @relation("CycleCountVerifier")
+  createdCycleCounts  CycleCount[] @relation("CycleCountCreator")
 
   // Biometric & Access Control
   profileImage    String?  @map("profile_image")
@@ -536,6 +544,9 @@ model Product {
   goodsReceiptItems   GoodsReceiptItem[]
   returnRequestItems  ReturnRequestItem[]
 
+  // Cycle Counting
+  cycleCountItems     CycleCountItem[]
+
   // Intelligence (Phase 5)
   demandSnapshots     DemandSnapshot[]
   reorderSuggestions  ReorderSuggestion[]
@@ -713,6 +724,7 @@ enum MovementType {
   DAMAGE // Stock Out - Damaged
   REPAIR_IN // Stock In - From repair
   REPAIR_OUT // Stock Out - For repair
+  CYCLE_COUNT // Adjustment from cycle count
 }
 
 // ==================== CUSTOMER & INVOICE MODELS ====================
@@ -1238,6 +1250,9 @@ model Location {
   // Purchase & Receiving
   purchaseOrders PurchaseOrder[] @relation("PODeliveryLocation")
   goodsReceipts  GoodsReceipt[]  @relation("GRNReceivingLocation")
+
+  // Cycle Counting
+  cycleCounts CycleCount[] @relation("CycleCountLocation")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -2432,6 +2447,119 @@ enum WaveStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+// ==================== CYCLE COUNTING (Phase 4) ====================
+
+model CycleCount {
+  id       String @id @default(cuid())
+  ccNumber String @unique @map("cc_number")
+
+  // Location being counted
+  locationId String   @map("location_id")
+  location   Location @relation("CycleCountLocation", fields: [locationId], references: [id])
+
+  // Count configuration
+  type       CycleCountType   @default(FULL)
+  status     CycleCountStatus @default(DRAFT)
+  blindCount Boolean          @default(false) @map("blind_count")
+  abcFilter  String?          @map("abc_filter") // A, B, C, or null for all
+
+  // Scheduling
+  scheduledDate DateTime? @map("scheduled_date")
+
+  // Timestamps
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  verifiedAt  DateTime? @map("verified_at")
+
+  // Assignment
+  assignedToId String? @map("assigned_to_id")
+  assignedTo   User?   @relation("CycleCountAssignee", fields: [assignedToId], references: [id])
+
+  verifiedById String? @map("verified_by_id")
+  verifiedBy   User?   @relation("CycleCountVerifier", fields: [verifiedById], references: [id])
+
+  createdById String @map("created_by_id")
+  createdBy   User   @relation("CycleCountCreator", fields: [createdById], references: [id])
+
+  // Summary stats (updated on complete)
+  totalItems    Int @default(0) @map("total_items")
+  countedItems  Int @default(0) @map("counted_items")
+  varianceCount Int @default(0) @map("variance_count")
+  varianceValue Decimal @default(0) @map("variance_value") @db.Decimal(14, 2)
+
+  notes String?
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  items CycleCountItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([locationId])
+  @@map("cycle_counts")
+}
+
+model CycleCountItem {
+  id String @id @default(cuid())
+
+  cycleCountId String     @map("cycle_count_id")
+  cycleCount   CycleCount @relation(fields: [cycleCountId], references: [id], onDelete: Cascade)
+
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+
+  // Snapshot of expected quantity at count start
+  expectedQuantity Int @map("expected_quantity")
+
+  // Counted quantity (null = not yet counted)
+  countedQuantity Int? @map("counted_quantity")
+
+  // Variance (calculated on complete)
+  variance        Int?     @default(0)
+  variancePercent Decimal? @map("variance_percent") @db.Decimal(8, 2)
+  varianceValue   Decimal? @map("variance_value") @db.Decimal(14, 2)
+
+  // Status
+  status CycleCountItemStatus @default(PENDING)
+
+  notes     String?
+  countedAt DateTime? @map("counted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([cycleCountId])
+  @@index([productId])
+  @@map("cycle_count_items")
+}
+
+enum CycleCountType {
+  FULL
+  ABC_BASED
+  RANDOM_SAMPLE
+  SPOT_CHECK
+}
+
+enum CycleCountStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  VERIFIED
+  CANCELLED
+}
+
+enum CycleCountItemStatus {
+  PENDING
+  COUNTED
+  VERIFIED
+  ADJUSTED
 }
 
 // ==================== INVENTORY INTELLIGENCE (Phase 5) ====================

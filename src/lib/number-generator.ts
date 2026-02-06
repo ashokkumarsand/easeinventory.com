@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 
-type EntityType = 'SO' | 'SHP' | 'PK' | 'COD' | 'PO' | 'GRN' | 'RET' | 'WV' | 'INV' | 'TRF';
+type EntityType = 'SO' | 'SHP' | 'PK' | 'COD' | 'PO' | 'GRN' | 'RET' | 'WV' | 'INV' | 'TRF' | 'CC';
 
 const MODEL_MAP: Record<EntityType, string> = {
   SO: 'salesOrder',
@@ -13,6 +13,7 @@ const MODEL_MAP: Record<EntityType, string> = {
   WV: 'wave',
   INV: 'invoice',
   TRF: 'stockTransfer',
+  CC: 'cycleCount',
 };
 
 /**

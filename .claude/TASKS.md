@@ -97,21 +97,21 @@
 - [x] P2-T7: ClearTax GSP adapter for real e-Way Bill | 2026-02-06
 - [x] P2-T8: NDR management UI + API | 2026-02-06
 
-### Phase 3: Returns & Advanced Operations (Week 5-6)
+### Phase 3: Returns & Advanced Operations (Week 5-6) — COMPLETE
 - [x] P3-T1: ReturnRequest + Wave schema + migration | 2026-02-06
 - [x] P3-T2: Return workflow API + UI | 2026-02-06
 - [x] P3-T3: Wave planning API + UI | 2026-02-06
-- [ ] P3-T4: Delhivery carrier adapter (deferred — add when carrier needed)
-- [ ] P3-T5: Multi-carrier rate comparison (deferred — add when carrier needed)
+- [-] P3-T4: Delhivery carrier adapter → moved to Backlog (Shiprocket already aggregates Delhivery)
+- [-] P3-T5: Multi-carrier rate comparison → moved to Backlog (Shiprocket already returns multi-courier rates)
 
-### Phase 4: Analytics, Fleet & Polish (Week 7-8) — NOT STARTED
-- [ ] P4-T1: Fleet models (Vehicle, Driver, Trip) schema + migration
-- [ ] P4-T2: CycleCount schema + workflow
+### Phase 4: Analytics & Polish (Week 7-8) — IN PROGRESS
+- [-] P4-T1: Fleet models → moved to Backlog (most tenants use 3rd-party carriers)
+- [x] P4-T2: CycleCount schema + workflow | 2026-02-06
 - [-] P4-T3: Warehouse KPI dashboard → merged into P5-T4
 - [ ] P4-T4: Shipping KPI dashboard
 - [ ] P4-T5: COD analytics + reconciliation
-- [ ] P4-T6: Fleet management UI
-- [ ] P4-T7: Cycle counting UI
+- [-] P4-T6: Fleet management UI → moved to Backlog (depends on P4-T1)
+- [x] P4-T7: Cycle counting UI | 2026-02-06
 
 ---
 
@@ -148,8 +148,9 @@
 - [ ] P7-T9: Inventory placement optimizer — recommend SKU allocation across warehouses
 
 ## Pending / Backlog
-- [ ] P3-T4: Delhivery carrier adapter (add when carrier needed)
-- [ ] P3-T5: Multi-carrier rate comparison (add when carrier needed)
+- [ ] Fleet models + UI (was P4-T1/T6) — Vehicle, Driver, Trip; only needed for businesses with own delivery fleet
+- [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract; Shiprocket already aggregates Delhivery as a courier option
+- [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist; Shiprocket already compares couriers internally
 - [ ] ML-based demand forecasting (requires P5-T1 data maturity)
 - [ ] Multi-echelon inventory optimization (enterprise feature)
 - [ ] Remanufacturing workflow (niche manufacturing)

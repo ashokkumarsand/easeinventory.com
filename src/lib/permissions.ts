@@ -148,6 +148,18 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'cycle_counting',
+    label: 'Cycle Counting',
+    icon: 'ClipboardCheck',
+    permissions: [
+      { key: 'cycle_counting:view', label: 'View Counts', description: 'See cycle count sessions', module: 'cycle_counting' },
+      { key: 'cycle_counting:create', label: 'Create Counts', description: 'Create new cycle count sessions', module: 'cycle_counting' },
+      { key: 'cycle_counting:count', label: 'Record Counts', description: 'Record physical inventory counts', module: 'cycle_counting' },
+      { key: 'cycle_counting:verify', label: 'Verify Counts', description: 'Verify and approve count results', module: 'cycle_counting' },
+      { key: 'cycle_counting:adjust', label: 'Adjust Inventory', description: 'Apply inventory adjustments from counts', module: 'cycle_counting' },
+    ]
+  },
+  {
     key: 'analytics',
     label: 'Analytics & Intelligence',
     icon: 'Brain',
@@ -180,6 +192,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'shipments:view', 'shipments:create', 'shipments:manage', 'shipments:cod',
     'procurement:view', 'procurement:create', 'procurement:edit', 'procurement:approve', 'procurement:receive',
     'returns:view', 'returns:create', 'returns:approve', 'returns:inspect', 'returns:refund',
+    'cycle_counting:view', 'cycle_counting:create', 'cycle_counting:count', 'cycle_counting:verify', 'cycle_counting:adjust',
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit',
@@ -192,6 +205,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'repairs:view', 'repairs:finalize',
     'invoices:view', 'invoices:create', 'invoices:edit', 'invoices:export',
     'procurement:view', 'procurement:create', 'procurement:approve',
+    'cycle_counting:view',
     'hr:view', 'hr:payroll',
     'suppliers:view', 'suppliers:settlements',
     'analytics:view',
@@ -223,6 +237,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'orders:view',
     'shipments:view',
     'procurement:view',
+    'cycle_counting:view', 'cycle_counting:count',
     'delivery:view',
   ],
 };
