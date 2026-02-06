@@ -55,9 +55,33 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'orders',
+    label: 'Orders',
+    icon: 'ShoppingCart',
+    permissions: [
+      { key: 'orders:view', label: 'View Orders', description: 'See sales orders list', module: 'orders' },
+      { key: 'orders:create', label: 'Create Orders', description: 'Create new sales orders', module: 'orders' },
+      { key: 'orders:edit', label: 'Edit Orders', description: 'Modify order details', module: 'orders' },
+      { key: 'orders:cancel', label: 'Cancel Orders', description: 'Cancel sales orders', module: 'orders' },
+      { key: 'orders:fulfill', label: 'Fulfill Orders', description: 'Pick, pack, and process orders', module: 'orders' },
+    ]
+  },
+  {
+    key: 'shipments',
+    label: 'Shipments',
+    icon: 'Truck',
+    permissions: [
+      { key: 'shipments:view', label: 'View Shipments', description: 'See shipment tracking', module: 'shipments' },
+      { key: 'shipments:create', label: 'Create Shipments', description: 'Push orders to carriers', module: 'shipments' },
+      { key: 'shipments:manage', label: 'Manage Shipments', description: 'Handle labels, pickups, NDR', module: 'shipments' },
+      { key: 'shipments:cod', label: 'COD Management', description: 'Track COD remittances', module: 'shipments' },
+      { key: 'shipments:carriers', label: 'Manage Carriers', description: 'Add/edit carrier accounts', module: 'shipments' },
+    ]
+  },
+  {
     key: 'delivery',
     label: 'Delivery',
-    icon: 'Truck',
+    icon: 'PackageCheck',
     permissions: [
       { key: 'delivery:view', label: 'View Deliveries', description: 'See delivery list', module: 'delivery' },
       { key: 'delivery:create', label: 'Create Deliveries', description: 'Schedule deliveries', module: 'delivery' },
@@ -118,6 +142,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'inventory:view', 'inventory:create', 'inventory:edit', 'inventory:adjust', 'inventory:transfer',
     'repairs:view', 'repairs:create', 'repairs:edit', 'repairs:diagnose',
     'invoices:view', 'invoices:create', 'invoices:edit',
+    'orders:view', 'orders:create', 'orders:edit', 'orders:fulfill',
+    'shipments:view', 'shipments:create', 'shipments:manage', 'shipments:cod',
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit',
@@ -138,6 +164,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
   SALES_STAFF: [
     'inventory:view', 'inventory:create',
     'invoices:view', 'invoices:create',
+    'orders:view', 'orders:create', 'orders:fulfill',
+    'shipments:view', 'shipments:create',
     'delivery:view', 'delivery:create',
   ],
   VIEWER: [
@@ -151,6 +179,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
   STAFF: [
     'inventory:view',
     'repairs:view',
+    'orders:view',
+    'shipments:view',
     'delivery:view',
   ],
 };

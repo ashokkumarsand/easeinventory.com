@@ -19,7 +19,9 @@ export type FeatureKey =
   | 'audit_trail'
   | 'priority_support'
   | 'white_label'
-  | 'sso_integration';
+  | 'sso_integration'
+  | 'carrier_integration'
+  | 'orders_management';
 
 export interface PlanFeature {
   name: string;
@@ -111,6 +113,16 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     name: 'SSO Integration',
     description: 'Single Sign-On with Google, Microsoft, etc.',
     minPlan: 'ENTERPRISE',
+  },
+  carrier_integration: {
+    name: 'Carrier Integration',
+    description: 'Ship via Shiprocket, Delhivery, and other carriers',
+    minPlan: 'BUSINESS',
+  },
+  orders_management: {
+    name: 'Orders Management',
+    description: 'Sales order fulfillment with pick/pack workflow',
+    minPlan: 'STARTER',
   },
 };
 
@@ -274,6 +286,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/inventory/locations': 'multi_location',
   '/settings/roles': 'custom_roles',
   '/settings/audit': 'audit_trail',
+  '/carriers': 'carrier_integration',
 };
 
 /**

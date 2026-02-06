@@ -69,5 +69,49 @@
 
 ---
 
+## Warehouse Operations, Delivery & Shipment Management (2026-02-06)
+
+### Phase 1: Outbound MVP — Order Fulfillment & Shipping (Week 1-2)
+- [x] P1-T1: Schema + migration — SalesOrder, PickList, CarrierAccount, Shipment, CODRemittance models + enums | 2026-02-06
+- [x] P1-T2: Number generator utility (SO-YYYY-XXXX pattern) | 2026-02-06
+- [x] P1-T3: SalesOrder CRUD API + order.service.ts | 2026-02-06
+- [x] P1-T4: Carrier adapter interface + Shiprocket + mock adapters | 2026-02-06
+- [x] P1-T5: Shipment API + shipment.service.ts (create, AWB, label, tracking) | 2026-02-06
+- [x] P1-T6: Pick/pack workflow API | 2026-02-06
+- [x] P1-T7: Webhook receiver for carrier status updates | 2026-02-06
+- [x] P1-T8: COD tracking API | 2026-02-06
+- [x] P1-T9: Permissions + plan gating for orders/shipments modules | 2026-02-06
+- [x] P1-T10: Orders list/detail/create UI pages | 2026-02-06
+- [x] P1-T11: Shipments dashboard + detail UI | 2026-02-06
+- [x] P1-T12: COD management UI | 2026-02-06
+- [x] P1-T13: Carrier settings UI | 2026-02-06
+- [x] P1-T14: Sidebar nav + WhatsApp templates | 2026-02-06
+
+### Phase 2: Inbound — Purchase & Receiving (Week 3-4)
+- [ ] P2-T1: PurchaseOrder + GoodsReceipt schema + migration
+- [ ] P2-T2: PO CRUD API + purchase-order.service.ts
+- [ ] P2-T3: GRN workflow API + goods-receipt.service.ts
+- [ ] P2-T4: PO pages (list, detail, create)
+- [ ] P2-T5: GRN pages (list, detail, create)
+- [ ] P2-T6: PO PDF generation
+- [ ] P2-T7: ClearTax GSP adapter for real e-Way Bill
+- [ ] P2-T8: NDR management UI + API
+
+### Phase 3: Returns & Advanced Operations (Week 5-6)
+- [ ] P3-T1: ReturnRequest + Wave schema + migration
+- [ ] P3-T2: Return workflow API + UI
+- [ ] P3-T3: Wave planning API + UI
+- [ ] P3-T4: Delhivery carrier adapter
+- [ ] P3-T5: Multi-carrier rate comparison
+
+### Phase 4: Analytics, Fleet & Polish (Week 7-8)
+- [ ] P4-T1: Fleet models (Vehicle, Driver, Trip) schema + migration
+- [ ] P4-T2: CycleCount schema + workflow
+- [ ] P4-T3: Warehouse KPI dashboard
+- [ ] P4-T4: Shipping KPI dashboard
+- [ ] P4-T5: COD analytics + reconciliation
+- [ ] P4-T6: Fleet management UI
+- [ ] P4-T7: Cycle counting UI
+
 ## Pending / Backlog
 <!-- Long-term items go here -->

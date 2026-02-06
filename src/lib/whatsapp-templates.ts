@@ -186,3 +186,94 @@ export function otpTemplate(params: {
     ],
   };
 }
+
+// Order confirmed notification
+export function orderConfirmedTemplate(params: {
+  customerName: string;
+  orderNumber: string;
+  total: string;
+  itemCount: string;
+}): { name: string; components: TemplateComponent[] } {
+  return {
+    name: 'order_confirmed',
+    components: [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: params.customerName },
+          { type: 'text', text: params.orderNumber },
+          { type: 'text', text: params.total },
+          { type: 'text', text: params.itemCount },
+        ],
+      },
+    ],
+  };
+}
+
+// Order shipped with AWB tracking
+export function orderShippedTemplate(params: {
+  customerName: string;
+  orderNumber: string;
+  awbNumber: string;
+  carrierName: string;
+  trackingLink?: string;
+}): { name: string; components: TemplateComponent[] } {
+  return {
+    name: 'order_shipped',
+    components: [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: params.customerName },
+          { type: 'text', text: params.orderNumber },
+          { type: 'text', text: params.awbNumber },
+          { type: 'text', text: params.carrierName },
+        ],
+      },
+      ...(params.trackingLink ? [{
+        type: 'button' as const,
+        parameters: [{ type: 'text' as const, text: params.trackingLink }],
+      }] : []),
+    ],
+  };
+}
+
+// Order delivered confirmation
+export function orderDeliveredTemplate(params: {
+  customerName: string;
+  orderNumber: string;
+}): { name: string; components: TemplateComponent[] } {
+  return {
+    name: 'order_delivered',
+    components: [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: params.customerName },
+          { type: 'text', text: params.orderNumber },
+        ],
+      },
+    ],
+  };
+}
+
+// Out for delivery notification
+export function outForDeliveryTemplate(params: {
+  customerName: string;
+  orderNumber: string;
+  estimatedTime?: string;
+}): { name: string; components: TemplateComponent[] } {
+  return {
+    name: 'out_for_delivery',
+    components: [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: params.customerName },
+          { type: 'text', text: params.orderNumber },
+          ...(params.estimatedTime ? [{ type: 'text' as const, text: params.estimatedTime }] : []),
+        ],
+      },
+    ],
+  };
+}
