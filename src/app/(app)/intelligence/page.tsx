@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DemandVelocityTable } from '@/components/intelligence/DemandVelocityTable';
+import { SafetyStockCalculator } from '@/components/intelligence/SafetyStockCalculator';
 import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX } from 'lucide-react';
 
 const TABS = [
@@ -47,11 +48,7 @@ export default function IntelligencePage() {
         </TabsContent>
 
         <TabsContent value="safety-stock" className="mt-6">
-          <div className="p-8 text-center text-muted-foreground border rounded-xl">
-            <Shield className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-semibold">Safety Stock Calculator</p>
-            <p className="text-sm mt-1">Coming in next update</p>
-          </div>
+          <SafetyStockCalculator />
         </TabsContent>
 
         <TabsContent value="classification" className="mt-6">
