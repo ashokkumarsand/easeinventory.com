@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DemandVelocityTable } from '@/components/intelligence/DemandVelocityTable';
 import { SafetyStockCalculator } from '@/components/intelligence/SafetyStockCalculator';
+import { ClassificationTable } from '@/components/intelligence/ClassificationTable';
 import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX } from 'lucide-react';
 
 const TABS = [
@@ -52,11 +53,7 @@ export default function IntelligencePage() {
         </TabsContent>
 
         <TabsContent value="classification" className="mt-6">
-          <div className="p-8 text-center text-muted-foreground border rounded-xl">
-            <Grid3X3 className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-semibold">ABC/XYZ Classification</p>
-            <p className="text-sm mt-1">Coming in next update</p>
-          </div>
+          <ClassificationTable />
         </TabsContent>
 
         <TabsContent value="kpis" className="mt-6">
