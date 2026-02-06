@@ -64,5 +64,10 @@
 
 ---
 
+### Phase 5: Admin Tools
+- [x] T18: Admin preview mode — bypass Coming Soon for SUPER_ADMIN/internal staff | 2026-02-06
+
+---
+
 ## Pending / Backlog
 <!-- Long-term items go here -->

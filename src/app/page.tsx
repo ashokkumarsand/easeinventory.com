@@ -1,6 +1,8 @@
 import prisma from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { cookies, headers } from 'next/headers';
 
 import AboutUs from '@/components/landing/AboutUs';
 import ComingSoon from '@/components/landing/ComingSoon';
@@ -14,6 +16,7 @@ import HowItWorks from '@/components/landing/HowItWorks';
 import Navbar from '@/components/landing/Navbar';
 import Pricing from '@/components/landing/Pricing';
 import Testimonials from '@/components/landing/Testimonials';
+import PreviewBadge from '@/components/preview/PreviewBadge';
 import PublicTenantPage from '@/components/public/PublicTenantPage';
 
 export const metadata: Metadata = {
@@ -81,6 +84,50 @@ export default async function HomePage() {
   
   // Show Coming Soon only on the actual production root domain
   if (isRootDomain && !isLocal) {
+    // Check if an admin wants to preview the full site
+    const session = await getServerSession(authOptions);
+    const user = session?.user as any;
+    const isAdmin = user?.role === 'SUPER_ADMIN' || user?.isInternalStaff;
+
+    if (isAdmin) {
+      const cookieStore = await cookies();
+      const previewCookie = cookieStore.get('ei_preview_mode')?.value === 'true';
+
+      if (previewCookie) {
+        // Admin with preview cookie → show full landing
+        return (
+          <>
+            <a href="#main-content" className="skip-link">
+              Skip to main content
+            </a>
+            <Navbar />
+            <main id="main-content">
+              <Hero />
+              <Features />
+              <AboutUs />
+              <HowItWorks />
+              <Pricing />
+              <Testimonials />
+              <ContactForm />
+              <FAQ />
+              <CTA />
+            </main>
+            <Footer />
+            <PreviewBadge isPreviewActive={true} />
+          </>
+        );
+      }
+
+      // Admin without preview cookie → Coming Soon + "Enter Preview" badge
+      return (
+        <div className="bg-[#030407] min-h-screen">
+          <ComingSoon />
+          <PreviewBadge isPreviewActive={false} />
+        </div>
+      );
+    }
+
+    // Non-admin → Coming Soon, no badge
     return (
       <div className="bg-[#030407] min-h-screen">
         <ComingSoon />
