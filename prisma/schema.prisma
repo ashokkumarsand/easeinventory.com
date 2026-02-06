@@ -105,6 +105,10 @@ model Tenant {
   purchaseOrders    PurchaseOrder[]
   goodsReceipts     GoodsReceipt[]
 
+  // Returns & Waves
+  returnRequests    ReturnRequest[]
+  waves             Wave[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -514,8 +518,9 @@ model Product {
   pickListItems   PickListItem[]
 
   // Purchase & Receiving
-  purchaseOrderItems PurchaseOrderItem[]
-  goodsReceiptItems  GoodsReceiptItem[]
+  purchaseOrderItems  PurchaseOrderItem[]
+  goodsReceiptItems   GoodsReceiptItem[]
+  returnRequestItems  ReturnRequestItem[]
 
   @@unique([slug, tenantId])
   @@index([tenantId])
@@ -709,9 +714,10 @@ model Customer {
   tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  invoices      Invoice[]
-  repairTickets RepairTicket[]
-  salesOrders   SalesOrder[]
+  invoices       Invoice[]
+  repairTickets  RepairTicket[]
+  salesOrders    SalesOrder[]
+  returnRequests ReturnRequest[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -1669,9 +1675,11 @@ model SalesOrder {
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Relations
-  items     SalesOrderItem[]
-  pickLists PickList[]
-  shipments Shipment[]
+  items          SalesOrderItem[]
+  pickLists      PickList[]
+  shipments      Shipment[]
+  returnRequests ReturnRequest[]
+  waveOrders     WaveOrder[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -2231,6 +2239,173 @@ model GoodsReceiptItem {
 
 enum GRNStatus {
   PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ==================== RETURNS (Phase 3) ====================
+
+model ReturnRequest {
+  id           String @id @default(cuid())
+  returnNumber String @unique @map("return_number")
+
+  // Order link
+  orderId String     @map("order_id")
+  order   SalesOrder @relation(fields: [orderId], references: [id])
+
+  // Customer
+  customerId String?   @map("customer_id")
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  // Type and reason
+  type   ReturnType
+  reason String // Customer-facing reason
+  notes  String? // Internal notes
+
+  // Status
+  status ReturnStatus @default(REQUESTED)
+
+  // Inspection
+  inspectedAt  DateTime? @map("inspected_at")
+  inspectedBy  String?   @map("inspected_by")
+  inspectionNotes String? @map("inspection_notes")
+
+  // Refund
+  refundAmount  Decimal?  @map("refund_amount") @db.Decimal(12, 2)
+  refundMode    String?   @map("refund_mode") // ORIGINAL_PAYMENT, STORE_CREDIT, BANK_TRANSFER
+  refundedAt    DateTime? @map("refunded_at")
+
+  // Restock
+  restockApproved Boolean @default(false) @map("restock_approved")
+
+  // Shipment for return pickup
+  returnShipmentId String?   @map("return_shipment_id")
+  returnAwb        String?   @map("return_awb")
+
+  // Audit
+  createdById String @map("created_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  items ReturnRequestItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([orderId])
+  @@index([status])
+  @@map("return_requests")
+}
+
+model ReturnRequestItem {
+  id String @id @default(cuid())
+
+  returnId String        @map("return_id")
+  return   ReturnRequest @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  productId String?  @map("product_id")
+  product   Product? @relation(fields: [productId], references: [id])
+
+  // Product snapshot
+  productName String @map("product_name")
+
+  // Quantities
+  quantity Int
+
+  // Condition grade after inspection
+  conditionGrade String? @map("condition_grade") // A=Resell, B=Refurbish, C=Scrap
+
+  // Restock info
+  restocked   Boolean @default(false)
+  restockedAt DateTime? @map("restocked_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([returnId])
+  @@map("return_request_items")
+}
+
+enum ReturnType {
+  CUSTOMER_RETURN
+  RTO // Return to Origin (carrier)
+  EXCHANGE
+}
+
+enum ReturnStatus {
+  REQUESTED
+  APPROVED
+  PICKUP_SCHEDULED
+  IN_TRANSIT
+  RECEIVED
+  INSPECTING
+  INSPECTED
+  REFUND_INITIATED
+  REFUNDED
+  CLOSED
+  REJECTED
+}
+
+// ==================== WAVE PLANNING (Phase 3) ====================
+
+model Wave {
+  id         String @id @default(cuid())
+  waveNumber String @unique @map("wave_number")
+
+  // Status
+  status WaveStatus @default(DRAFT)
+
+  // Planning
+  name        String? // Optional wave name (e.g., "Morning Batch - Zone A")
+  carrierZone String? @map("carrier_zone")
+
+  // Timing
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  // Audit
+  createdById String @map("created_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  orders WaveOrder[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("waves")
+}
+
+model WaveOrder {
+  id String @id @default(cuid())
+
+  waveId String @map("wave_id")
+  wave   Wave   @relation(fields: [waveId], references: [id], onDelete: Cascade)
+
+  orderId String     @map("order_id")
+  order   SalesOrder @relation(fields: [orderId], references: [id])
+
+  // Sequence in wave for pick route optimization
+  sequence Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([waveId, orderId])
+  @@index([waveId])
+  @@map("wave_orders")
+}
+
+enum WaveStatus {
+  DRAFT
   IN_PROGRESS
   COMPLETED
   CANCELLED

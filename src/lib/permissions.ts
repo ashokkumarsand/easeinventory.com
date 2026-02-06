@@ -91,6 +91,18 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'returns',
+    label: 'Returns',
+    icon: 'RotateCcw',
+    permissions: [
+      { key: 'returns:view', label: 'View Returns', description: 'See return requests', module: 'returns' },
+      { key: 'returns:create', label: 'Create Returns', description: 'Initiate return requests', module: 'returns' },
+      { key: 'returns:approve', label: 'Approve Returns', description: 'Approve or reject returns', module: 'returns' },
+      { key: 'returns:inspect', label: 'Inspect Returns', description: 'Grade returned items', module: 'returns' },
+      { key: 'returns:refund', label: 'Process Refunds', description: 'Initiate refunds for returns', module: 'returns' },
+    ]
+  },
+  {
     key: 'delivery',
     label: 'Delivery',
     icon: 'PackageCheck',
@@ -157,6 +169,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'orders:view', 'orders:create', 'orders:edit', 'orders:fulfill',
     'shipments:view', 'shipments:create', 'shipments:manage', 'shipments:cod',
     'procurement:view', 'procurement:create', 'procurement:edit', 'procurement:approve', 'procurement:receive',
+    'returns:view', 'returns:create', 'returns:approve', 'returns:inspect', 'returns:refund',
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit',
@@ -180,6 +193,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'invoices:view', 'invoices:create',
     'orders:view', 'orders:create', 'orders:fulfill',
     'shipments:view', 'shipments:create',
+    'returns:view', 'returns:create',
     'delivery:view', 'delivery:create',
   ],
   VIEWER: [

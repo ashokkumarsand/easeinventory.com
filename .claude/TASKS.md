@@ -98,9 +98,9 @@
 - [x] P2-T8: NDR management UI + API | 2026-02-06
 
 ### Phase 3: Returns & Advanced Operations (Week 5-6)
-- [ ] P3-T1: ReturnRequest + Wave schema + migration
-- [ ] P3-T2: Return workflow API + UI
-- [ ] P3-T3: Wave planning API + UI
+- [x] P3-T1: ReturnRequest + Wave schema + migration | 2026-02-06
+- [x] P3-T2: Return workflow API + UI | 2026-02-06
+- [x] P3-T3: Wave planning API + UI | 2026-02-06
 - [ ] P3-T4: Delhivery carrier adapter
 - [ ] P3-T5: Multi-carrier rate comparison
 
