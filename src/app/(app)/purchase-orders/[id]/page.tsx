@@ -3,7 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Check, Loader2, Package, Send, Truck, X } from 'lucide-react';
+import { ArrowLeft, Check, Download, Loader2, Package, Send, Truck, X } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -256,6 +256,13 @@ export default function PurchaseOrderDetailPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => window.open(`/api/purchase-orders/${id}/pdf`, '_blank')}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download PDF
+          </Button>
           {status === 'DRAFT' && (
             <>
               <Button

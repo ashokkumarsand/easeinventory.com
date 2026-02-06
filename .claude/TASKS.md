@@ -93,8 +93,8 @@
 - [x] P2-T3: GRN workflow API + goods-receipt.service.ts | 2026-02-06
 - [x] P2-T4: PO pages (list, detail, create) | 2026-02-06
 - [x] P2-T5: GRN pages (list, detail, create) | 2026-02-06
-- [ ] P2-T6: PO PDF generation
-- [ ] P2-T7: ClearTax GSP adapter for real e-Way Bill
+- [x] P2-T6: PO PDF generation | 2026-02-06
+- [x] P2-T7: ClearTax GSP adapter for real e-Way Bill | 2026-02-06
 - [x] P2-T8: NDR management UI + API | 2026-02-06
 
 ### Phase 3: Returns & Advanced Operations (Week 5-6)
