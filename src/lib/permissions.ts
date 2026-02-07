@@ -161,6 +161,17 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'bom',
+    label: 'BOM / Kits',
+    icon: 'Puzzle',
+    permissions: [
+      { key: 'bom:view', label: 'View BOMs', description: 'See bill of materials and kits', module: 'bom' },
+      { key: 'bom:create', label: 'Create BOMs', description: 'Create new bill of materials', module: 'bom' },
+      { key: 'bom:edit', label: 'Edit BOMs', description: 'Modify BOM details and components', module: 'bom' },
+      { key: 'bom:assemble', label: 'Assemble / Disassemble', description: 'Run assembly and disassembly orders', module: 'bom' },
+    ]
+  },
+  {
     key: 'analytics',
     label: 'Analytics & Intelligence',
     icon: 'Brain',
@@ -197,6 +208,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit', 'suppliers:analytics',
+    'bom:view', 'bom:create', 'bom:edit', 'bom:assemble',
     'analytics:view', 'analytics:configure', 'analytics:reorder',
     'team:view',
     'settings:view'
@@ -222,6 +234,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'shipments:view', 'shipments:create',
     'returns:view', 'returns:create',
     'delivery:view', 'delivery:create',
+    'bom:view',
     'analytics:view',
   ],
   VIEWER: [
@@ -238,6 +251,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'orders:view',
     'shipments:view',
     'procurement:view',
+    'bom:view', 'bom:assemble',
     'cycle_counting:view', 'cycle_counting:count',
     'delivery:view',
   ],

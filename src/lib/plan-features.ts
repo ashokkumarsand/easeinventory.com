@@ -29,7 +29,8 @@ export type FeatureKey =
   | 'reorder_suggestions'
   | 'shipping_analytics'
   | 'cycle_counting'
-  | 'supplier_performance';
+  | 'supplier_performance'
+  | 'bom_management';
 
 export interface PlanFeature {
   name: string;
@@ -170,6 +171,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   supplier_performance: {
     name: 'Supplier Performance',
     description: 'Track lead times, quality, on-time delivery, and reliability scores',
+    minPlan: 'BUSINESS',
+  },
+  bom_management: {
+    name: 'BOM / Kit Management',
+    description: 'Bill of materials, kit assembly, and disassembly workflows',
     minPlan: 'BUSINESS',
   },
 };
@@ -339,6 +345,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/shipments/analytics': 'shipping_analytics',
   '/cycle-counting': 'cycle_counting',
   '/suppliers/performance': 'supplier_performance',
+  '/bom': 'bom_management',
 };
 
 /**
