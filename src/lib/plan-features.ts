@@ -37,7 +37,8 @@ export type FeatureKey =
   | 'dynamic_pricing'
   | 'warehouse_capacity'
   | 'lost_sales'
-  | 'decision_nudges';
+  | 'decision_nudges'
+  | 'lateral_transshipment';
 
 export interface PlanFeature {
   name: string;
@@ -220,6 +221,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'Smart nudges, pipeline visibility, and ordering recommendations',
     minPlan: 'BUSINESS',
   },
+  lateral_transshipment: {
+    name: 'Lateral Transshipment',
+    description: 'Emergency stock transfers between locations with approval workflow',
+    minPlan: 'BUSINESS',
+  },
 };
 
 // Plan details for upgrade modal
@@ -394,6 +400,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/warehouse-capacity': 'warehouse_capacity',
   '/lost-sales': 'lost_sales',
   '/decision-support': 'decision_nudges',
+  '/transshipments': 'lateral_transshipment',
 };
 
 /**
@@ -420,4 +427,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   warehouse_capacity: { minPlan: 'BUSINESS', name: 'Warehouse Capacity' },
   lost_sales: { minPlan: 'BUSINESS', name: 'Lost Sales Tracking' },
   decision_nudges: { minPlan: 'BUSINESS', name: 'Decision Support' },
+  lateral_transshipment: { minPlan: 'BUSINESS', name: 'Lateral Transshipment' },
 };

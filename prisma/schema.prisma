@@ -1380,6 +1380,11 @@ model StockTransfer {
   status TransferStatus @default(PENDING)
   notes  String?
 
+  // Lateral Transshipment (Phase 7)
+  isEmergency Boolean          @default(false) @map("is_emergency")
+  priority    TransferPriority @default(NORMAL)
+  reason      String?
+
   // GST Compliance (e-Way Bill)
   ewayBillNumber  String?   @unique @map("eway_bill_number")
   ewayBillDate    DateTime? @map("eway_bill_date")
@@ -1419,9 +1424,18 @@ model StockTransferItem {
 
 enum TransferStatus {
   PENDING
+  APPROVED
   IN_TRANSIT
   COMPLETED
   CANCELLED
+  REJECTED
+}
+
+enum TransferPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }
 
 model Payslip {

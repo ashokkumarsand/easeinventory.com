@@ -101,6 +101,7 @@ const menuItems = [
     { label: 'Blanket Discounts', icon: Tag, href: '/inventory/discounts' },
     { label: 'Dynamic Pricing', icon: DollarSign, href: '/pricing-rules' },
     { label: 'Warehouse Transfers', icon: ArrowRightLeft, href: '/inventory/transfers' },
+    { label: 'Transshipments', icon: ArrowRightLeft, href: '/transshipments' },
     { label: 'Inventory Locations', icon: Building2, href: '/inventory/locations' },
     { label: 'Warehouse Capacity', icon: Warehouse, href: '/warehouse-capacity' },
     { label: 'Purchase Orders', icon: ClipboardList, href: '/purchase-orders' },
