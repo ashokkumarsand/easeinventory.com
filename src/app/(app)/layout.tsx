@@ -64,7 +64,8 @@ import {
     Truck,
     Users,
     Banknote,
-    Wrench
+    Wrench,
+    DollarSign,
 } from 'lucide-react';
 import { getShortcutForRoute } from '@/hooks/useKeyboardShortcuts';
 import { signOut, useSession } from 'next-auth/react';
@@ -94,6 +95,7 @@ const menuItems = [
     { label: 'NDR Management', icon: AlertCircle, href: '/shipments/ndr' },
     { label: 'Shipping Analytics', icon: BarChart3, href: '/shipments/analytics' },
     { label: 'Blanket Discounts', icon: Tag, href: '/inventory/discounts' },
+    { label: 'Dynamic Pricing', icon: DollarSign, href: '/pricing-rules' },
     { label: 'Warehouse Transfers', icon: ArrowRightLeft, href: '/inventory/transfers' },
     { label: 'Inventory Locations', icon: Building2, href: '/inventory/locations' },
     { label: 'Purchase Orders', icon: ClipboardList, href: '/purchase-orders' },

@@ -137,7 +137,7 @@
 - [x] P6-T6: Order smoothing — dampen order variability to reduce bullwhip effect
 
 ### Phase 7: Advanced Features
-- [ ] P7-T1: Dynamic pricing rules — inventory-level-based pricing, markdown scheduling
+- [x] P7-T1: Dynamic pricing rules — inventory-level-based pricing, markdown scheduling
 - [ ] P7-T2: Warehouse capacity management — capacity per location, utilization dashboard
 - [ ] P7-T3: Spare parts linkage — connect repair tickets to spare parts, maintenance-driven forecasting
 - [ ] P7-T4: Quality grading on returns — Grade A/B/C/Scrap, refurbishment queue, condition-based pricing
