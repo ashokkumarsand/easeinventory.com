@@ -173,6 +173,17 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'pricing',
+    label: 'Pricing',
+    icon: 'DollarSign',
+    permissions: [
+      { key: 'pricing:view', label: 'View Rules', description: 'See pricing rules and recommendations', module: 'pricing' },
+      { key: 'pricing:create', label: 'Create Rules', description: 'Create new pricing rules', module: 'pricing' },
+      { key: 'pricing:edit', label: 'Edit Rules', description: 'Modify pricing rules', module: 'pricing' },
+      { key: 'pricing:delete', label: 'Delete Rules', description: 'Remove pricing rules', module: 'pricing' },
+    ]
+  },
+  {
     key: 'analytics',
     label: 'Analytics & Intelligence',
     icon: 'Brain',
@@ -210,6 +221,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'hr:view', 'hr:attendance', 'hr:leaves',
     'suppliers:view', 'suppliers:create', 'suppliers:edit', 'suppliers:analytics', 'suppliers:payments',
     'bom:view', 'bom:create', 'bom:edit', 'bom:assemble',
+    'pricing:view', 'pricing:create', 'pricing:edit',
     'analytics:view', 'analytics:configure', 'analytics:reorder',
     'team:view',
     'settings:view'
@@ -222,6 +234,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'cycle_counting:view',
     'hr:view', 'hr:payroll',
     'suppliers:view', 'suppliers:settlements', 'suppliers:payments',
+    'pricing:view',
     'analytics:view',
   ],
   TECHNICIAN: [

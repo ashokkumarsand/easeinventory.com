@@ -33,7 +33,8 @@ export type FeatureKey =
   | 'bom_management'
   | 'inventory_valuation'
   | 'supplier_payment_terms'
-  | 'order_smoothing';
+  | 'order_smoothing'
+  | 'dynamic_pricing';
 
 export interface PlanFeature {
   name: string;
@@ -194,6 +195,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   order_smoothing: {
     name: 'Order Smoothing',
     description: 'Bullwhip effect detection and EMA-smoothed order quantities',
+    minPlan: 'BUSINESS',
+  },
+  dynamic_pricing: {
+    name: 'Dynamic Pricing',
+    description: 'Inventory-level-based pricing rules and markdown scheduling',
     minPlan: 'BUSINESS',
   },
 };
@@ -366,6 +372,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/bom': 'bom_management',
   '/inventory-valuation': 'inventory_valuation',
   '/suppliers/payables': 'supplier_payment_terms',
+  '/pricing-rules': 'dynamic_pricing',
 };
 
 /**
@@ -388,4 +395,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   expiry_alerts: { minPlan: 'STARTER', name: 'Expiry Alerts' },
   dead_stock: { minPlan: 'BUSINESS', name: 'Dead Stock Detection' },
   order_smoothing: { minPlan: 'BUSINESS', name: 'Order Smoothing' },
+  dynamic_pricing: { minPlan: 'BUSINESS', name: 'Dynamic Pricing' },
 };

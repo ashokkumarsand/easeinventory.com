@@ -125,6 +125,9 @@ model Tenant {
   // Supplier Payments (Phase 6)
   supplierPayments     SupplierPayment[]
 
+  // Dynamic Pricing (Phase 7)
+  pricingRules         PricingRule[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -2926,4 +2929,76 @@ model AssemblyOrder {
   @@index([bomId])
   @@index([status])
   @@map("assembly_orders")
+}
+
+// ============================================================
+// Dynamic Pricing Rules (Phase 7)
+// ============================================================
+
+model PricingRule {
+  id     String @id @default(cuid())
+  number String @unique // PR-YYYY-XXXX
+
+  name        String
+  description String?
+
+  // What inventory condition triggers this rule
+  triggerType        PricingTrigger @map("trigger_type")
+  thresholdValue     Float          @map("threshold_value")     // e.g. 100 units, 60 days, 0.5 units/day
+  thresholdOperator  String         @default("gt") @map("threshold_operator") // gt, lt, gte, lte
+
+  // Scope — which products the rule applies to
+  scope   PricingRuleScope @default(ALL)
+  scopeId String?          @map("scope_id") // productId, categoryId, or ABC class letter
+
+  // Price adjustment
+  adjustmentType  DiscountType @default(PERCENTAGE) @map("adjustment_type")
+  adjustmentValue Decimal      @map("adjustment_value") @db.Decimal(12, 2) // e.g. 10.00 = 10%
+
+  // Progressive markdown (optional)
+  isProgressive    Boolean @default(false) @map("is_progressive")
+  progressiveSteps Json?   @map("progressive_steps") // [{afterDays: 7, value: 10}, {afterDays: 14, value: 20}]
+
+  // Time bounds
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+
+  // Priority & status
+  priority Int              @default(0)
+  isActive Boolean          @default(true) @map("is_active")
+  status   PricingRuleStatus @default(DRAFT)
+
+  // Audit
+  createdById String @map("created_by_id")
+  tenantId    String @map("tenant_id")
+  tenant      Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([isActive, startDate, endDate])
+  @@map("pricing_rules")
+}
+
+enum PricingTrigger {
+  STOCK_LEVEL     // If stock > or < threshold units
+  DAYS_OF_SUPPLY  // If days-of-supply > threshold days
+  INVENTORY_AGE   // If avg inventory age > threshold days
+  SLOW_MOVER      // If daily velocity < threshold units/day
+  SCHEDULED       // Time-based (flash sale, seasonal)
+}
+
+enum PricingRuleScope {
+  ALL       // All active products
+  PRODUCT   // Specific product (scopeId = productId)
+  CATEGORY  // Products in category (scopeId = categoryId)
+  ABC_CLASS // Products with ABC class (scopeId = A, B, or C)
+}
+
+enum PricingRuleStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  EXPIRED
 }
