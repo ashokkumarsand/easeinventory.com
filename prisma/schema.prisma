@@ -1272,8 +1272,10 @@ model Location {
   subType  String?    @default("ZONE") @map("sub_type") // ZONE, SECTION, RACK, BIN
 
   // Capacity Management
-  capacity    Int? // Max items or weight capacity
+  capacity    Int? // Max units capacity
   currentLoad Int  @default(0) @map("current_load")
+  maxWeightKg Float? @map("max_weight_kg")  // Max weight in kg
+  maxVolumeCbm Float? @map("max_volume_cbm") // Max volume in cubic metres
 
   // Inventory-level discount
   discount Decimal @default(0) @db.Decimal(5, 2) // Percentage discount for all items

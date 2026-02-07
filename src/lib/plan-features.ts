@@ -34,7 +34,8 @@ export type FeatureKey =
   | 'inventory_valuation'
   | 'supplier_payment_terms'
   | 'order_smoothing'
-  | 'dynamic_pricing';
+  | 'dynamic_pricing'
+  | 'warehouse_capacity';
 
 export interface PlanFeature {
   name: string;
@@ -200,6 +201,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   dynamic_pricing: {
     name: 'Dynamic Pricing',
     description: 'Inventory-level-based pricing rules and markdown scheduling',
+    minPlan: 'BUSINESS',
+  },
+  warehouse_capacity: {
+    name: 'Warehouse Capacity',
+    description: 'Capacity tracking, utilization dashboards, and alerts',
     minPlan: 'BUSINESS',
   },
 };
@@ -373,6 +379,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/inventory-valuation': 'inventory_valuation',
   '/suppliers/payables': 'supplier_payment_terms',
   '/pricing-rules': 'dynamic_pricing',
+  '/warehouse-capacity': 'warehouse_capacity',
 };
 
 /**
@@ -396,4 +403,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   dead_stock: { minPlan: 'BUSINESS', name: 'Dead Stock Detection' },
   order_smoothing: { minPlan: 'BUSINESS', name: 'Order Smoothing' },
   dynamic_pricing: { minPlan: 'BUSINESS', name: 'Dynamic Pricing' },
+  warehouse_capacity: { minPlan: 'BUSINESS', name: 'Warehouse Capacity' },
 };

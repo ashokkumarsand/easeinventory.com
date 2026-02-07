@@ -66,6 +66,7 @@ import {
     Banknote,
     Wrench,
     DollarSign,
+    Warehouse,
 } from 'lucide-react';
 import { getShortcutForRoute } from '@/hooks/useKeyboardShortcuts';
 import { signOut, useSession } from 'next-auth/react';
@@ -98,6 +99,7 @@ const menuItems = [
     { label: 'Dynamic Pricing', icon: DollarSign, href: '/pricing-rules' },
     { label: 'Warehouse Transfers', icon: ArrowRightLeft, href: '/inventory/transfers' },
     { label: 'Inventory Locations', icon: Building2, href: '/inventory/locations' },
+    { label: 'Warehouse Capacity', icon: Warehouse, href: '/warehouse-capacity' },
     { label: 'Purchase Orders', icon: ClipboardList, href: '/purchase-orders' },
     { label: 'Goods Receipts', icon: PackageCheck, href: '/goods-receipts' },
     { label: 'Returns', icon: RotateCcw, href: '/returns' },
