@@ -118,6 +118,10 @@ model Tenant {
   reorderSuggestions   ReorderSuggestion[]
   inventoryKpiSnapshots InventoryKpiSnapshot[]
 
+  // BOM / Kit Management (Phase 6)
+  billsOfMaterial      BillOfMaterial[]
+  assemblyOrders       AssemblyOrder[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -555,6 +559,10 @@ model Product {
   // Supply Chain (Phase 6)
   productSuppliers    ProductSupplier[] @relation("ProductSuppliers")
 
+  // BOM / Kit Management (Phase 6)
+  billsOfMaterial     BillOfMaterial[]  @relation("ProductBOMs")
+  bomItems            BOMItem[]         @relation("ComponentBOMItems")
+
   @@unique([slug, tenantId])
   @@index([tenantId])
   @@index([serialNumber])
@@ -732,6 +740,8 @@ enum MovementType {
   REPAIR_IN // Stock In - From repair
   REPAIR_OUT // Stock Out - For repair
   CYCLE_COUNT // Adjustment from cycle count
+  ASSEMBLY_CONSUME // Components consumed during assembly
+  ASSEMBLY_PRODUCE // Finished goods produced from assembly
 }
 
 // ==================== CUSTOMER & INVOICE MODELS ====================
@@ -1260,6 +1270,9 @@ model Location {
 
   // Cycle Counting
   cycleCounts CycleCount[] @relation("CycleCountLocation")
+
+  // BOM / Kit Management (Phase 6)
+  assemblyOrders AssemblyOrder[] @relation("AssemblyLocation")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -2739,4 +2752,107 @@ model ProductSupplier {
   @@index([productId])
   @@index([supplierId])
   @@map("product_suppliers")
+}
+
+// ==================== BOM / KIT MANAGEMENT (Phase 6) ====================
+
+enum BOMStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum AssemblyType {
+  ASSEMBLY
+  DISASSEMBLY
+}
+
+enum AssemblyOrderStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model BillOfMaterial {
+  id        String @id @default(cuid())
+  bomNumber String @unique @map("bom_number")
+
+  // Finished product this BOM produces
+  productId String  @map("product_id")
+  product   Product @relation("ProductBOMs", fields: [productId], references: [id], onDelete: Cascade)
+
+  version     Int       @default(1)
+  name        String?
+  description String?
+  status      BOMStatus @default(DRAFT)
+  isActive    Boolean   @default(true) @map("is_active")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  items          BOMItem[]
+  assemblyOrders AssemblyOrder[]
+
+  @@unique([productId, version])
+  @@index([tenantId])
+  @@index([productId])
+  @@map("bills_of_material")
+}
+
+model BOMItem {
+  id    String @id @default(cuid())
+  bomId String @map("bom_id")
+  bom   BillOfMaterial @relation(fields: [bomId], references: [id], onDelete: Cascade)
+
+  // Component product consumed
+  componentProductId String  @map("component_product_id")
+  componentProduct   Product @relation("ComponentBOMItems", fields: [componentProductId], references: [id], onDelete: Cascade)
+
+  // How many units of this component per 1 finished good
+  quantity       Decimal @db.Decimal(12, 4)
+  wastagePercent Decimal @default(0) @map("wastage_percent") @db.Decimal(5, 2)
+  notes          String?
+
+  @@unique([bomId, componentProductId])
+  @@index([bomId])
+  @@index([componentProductId])
+  @@map("bom_items")
+}
+
+model AssemblyOrder {
+  id             String @id @default(cuid())
+  assemblyNumber String @unique @map("assembly_number")
+
+  bomId String         @map("bom_id")
+  bom   BillOfMaterial @relation(fields: [bomId], references: [id])
+
+  type     AssemblyType        @default(ASSEMBLY)
+  quantity Int
+  status   AssemblyOrderStatus @default(DRAFT)
+
+  // Optional location for stock operations
+  locationId String?   @map("location_id")
+  location   Location? @relation("AssemblyLocation", fields: [locationId], references: [id])
+
+  notes       String?
+  completedAt DateTime? @map("completed_at")
+  createdById String    @map("created_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([bomId])
+  @@index([status])
+  @@map("assembly_orders")
 }
