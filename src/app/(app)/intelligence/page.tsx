@@ -10,7 +10,8 @@ import { ExpiringLotsTable } from '@/components/intelligence/ExpiringLotsTable';
 import { ReorderSuggestionsTable } from '@/components/intelligence/ReorderSuggestionsTable';
 import { DeadStockTable } from '@/components/intelligence/DeadStockTable';
 import { SlowMoverTable } from '@/components/intelligence/SlowMoverTable';
-import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown } from 'lucide-react';
+import { ValuationDashboard } from '@/components/intelligence/ValuationDashboard';
+import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown, Landmark } from 'lucide-react';
 
 const TABS = [
   { value: 'demand', label: 'Demand', icon: TrendingUp },
@@ -21,6 +22,7 @@ const TABS = [
   { value: 'reorder', label: 'Reorder', icon: ShoppingCart },
   { value: 'dead-stock', label: 'Dead Stock', icon: PackageX },
   { value: 'slow-movers', label: 'Slow Movers', icon: TrendingDown },
+  { value: 'valuation', label: 'Valuation', icon: Landmark },
 ] as const;
 
 export default function IntelligencePage() {
@@ -80,6 +82,10 @@ export default function IntelligencePage() {
 
         <TabsContent value="slow-movers" className="mt-6">
           <SlowMoverTable />
+        </TabsContent>
+
+        <TabsContent value="valuation" className="mt-6">
+          <ValuationDashboard />
         </TabsContent>
       </Tabs>
     </div>

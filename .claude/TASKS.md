@@ -132,7 +132,7 @@
 - [x] P6-T1: Multi-supplier per SKU — ProductSupplier model, preferred/emergency supplier config | 2026-02-07
 - [x] P6-T2: Supplier performance tracking — actual vs. promised lead time, quality score, on-time % | 2026-02-07
 - [x] P6-T3: BOM / Kit management — BOM model, component availability, kit assembly workflow | 2026-02-07
-- [ ] P6-T4: Inventory valuation & working capital — total value, carrying cost, capital tied up, GMROI
+- [x] P6-T4: Inventory valuation & working capital — total value, carrying cost, capital tied up, GMROI | 2026-02-07
 - [ ] P6-T5: Supplier payment terms — net-30/60/90 tracking, trade credit visibility
 - [ ] P6-T6: Order smoothing — dampen order variability to reduce bullwhip effect
 
