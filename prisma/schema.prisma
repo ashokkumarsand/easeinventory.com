@@ -522,6 +522,10 @@ model Product {
   leadTimeDays     Int?     @map("lead_time_days")     // Avg days from order to receipt
   isPerishable     Boolean  @default(false) @map("is_perishable")
 
+  // Order Smoothing (Phase 6)
+  smoothingAlpha   Float? @map("smoothing_alpha")      // EMA alpha (0.01-0.99), null = default 0.2
+  reviewPeriodDays Int?   @map("review_period_days")   // Periodic review cycle in days, null = default 7
+
   // Consignment
   isConsignment         Boolean  @default(false) @map("is_consignment")
   consignmentCommission Decimal? @map("consignment_commission") @db.Decimal(5, 2) // % for tenant

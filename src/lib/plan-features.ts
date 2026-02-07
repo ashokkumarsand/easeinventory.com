@@ -32,7 +32,8 @@ export type FeatureKey =
   | 'supplier_performance'
   | 'bom_management'
   | 'inventory_valuation'
-  | 'supplier_payment_terms';
+  | 'supplier_payment_terms'
+  | 'order_smoothing';
 
 export interface PlanFeature {
   name: string;
@@ -188,6 +189,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   supplier_payment_terms: {
     name: 'Supplier Payment Terms',
     description: 'Payment tracking, payables aging, and trade credit visibility',
+    minPlan: 'BUSINESS',
+  },
+  order_smoothing: {
+    name: 'Order Smoothing',
+    description: 'Bullwhip effect detection and EMA-smoothed order quantities',
     minPlan: 'BUSINESS',
   },
 };
@@ -381,4 +387,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   reorder_suggestions: { minPlan: 'BUSINESS', name: 'Reorder Suggestions' },
   expiry_alerts: { minPlan: 'STARTER', name: 'Expiry Alerts' },
   dead_stock: { minPlan: 'BUSINESS', name: 'Dead Stock Detection' },
+  order_smoothing: { minPlan: 'BUSINESS', name: 'Order Smoothing' },
 };
