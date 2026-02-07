@@ -38,7 +38,8 @@ export type FeatureKey =
   | 'warehouse_capacity'
   | 'lost_sales'
   | 'decision_nudges'
-  | 'lateral_transshipment';
+  | 'lateral_transshipment'
+  | 'placement_optimizer';
 
 export interface PlanFeature {
   name: string;
@@ -226,6 +227,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'Emergency stock transfers between locations with approval workflow',
     minPlan: 'BUSINESS',
   },
+  placement_optimizer: {
+    name: 'Placement Optimizer',
+    description: 'Recommend optimal SKU allocation across warehouses based on demand',
+    minPlan: 'BUSINESS',
+  },
 };
 
 // Plan details for upgrade modal
@@ -401,6 +407,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/lost-sales': 'lost_sales',
   '/decision-support': 'decision_nudges',
   '/transshipments': 'lateral_transshipment',
+  '/placement-optimizer': 'placement_optimizer',
 };
 
 /**
@@ -428,4 +435,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   lost_sales: { minPlan: 'BUSINESS', name: 'Lost Sales Tracking' },
   decision_nudges: { minPlan: 'BUSINESS', name: 'Decision Support' },
   lateral_transshipment: { minPlan: 'BUSINESS', name: 'Lateral Transshipment' },
+  placement_optimizer: { minPlan: 'BUSINESS', name: 'Placement Optimizer' },
 };
