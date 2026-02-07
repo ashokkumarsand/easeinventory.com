@@ -1,6 +1,5 @@
 import prisma from '@/lib/prisma';
 import { generateNumber } from '@/lib/number-generator';
-import { Decimal } from '@prisma/client/runtime/library';
 
 interface BOMItemInput {
   componentProductId: string;
@@ -358,7 +357,8 @@ export class BOMService {
               productId: item.componentProductId,
               type: 'ASSEMBLY_CONSUME',
               quantity: -requiredQty,
-              reason: `Assembly ${order.assemblyNumber}: consumed for ${order.bom.product.name}`,
+              notes: `Assembly ${order.assemblyNumber}: consumed for ${order.bom.product.name}`,
+              userId,
               tenantId,
             },
           });
@@ -387,7 +387,8 @@ export class BOMService {
               productId: item.componentProductId,
               type: 'ASSEMBLY_PRODUCE',
               quantity: requiredQty,
-              reason: `Disassembly ${order.assemblyNumber}: recovered from ${order.bom.product.name}`,
+              notes: `Disassembly ${order.assemblyNumber}: recovered from ${order.bom.product.name}`,
+              userId,
               tenantId,
             },
           });
@@ -428,7 +429,8 @@ export class BOMService {
             productId: order.bom.productId,
             type: 'ASSEMBLY_PRODUCE',
             quantity: finishedQty,
-            reason: `Assembly ${order.assemblyNumber}: produced ${finishedQty} units`,
+            notes: `Assembly ${order.assemblyNumber}: produced ${finishedQty} units`,
+            userId,
             tenantId,
           },
         });
@@ -464,7 +466,8 @@ export class BOMService {
             productId: order.bom.productId,
             type: 'ASSEMBLY_CONSUME',
             quantity: -finishedQty,
-            reason: `Disassembly ${order.assemblyNumber}: consumed ${finishedQty} units`,
+            notes: `Disassembly ${order.assemblyNumber}: consumed ${finishedQty} units`,
+            userId,
             tenantId,
           },
         });
