@@ -2700,6 +2700,13 @@ model InventoryKpiSnapshot {
   deadStockValue     Decimal? @map("dead_stock_value") @db.Decimal(14, 2)
   deadStockCount     Int?     @map("dead_stock_count")
 
+  // Inventory Valuation & Working Capital (P6-T4)
+  totalInventoryValueAtSale Decimal? @map("total_inventory_value_at_sale") @db.Decimal(16, 2)
+  carryingCostMonthly       Decimal? @map("carrying_cost_monthly") @db.Decimal(14, 2)
+  carryingCostRate          Decimal? @map("carrying_cost_rate") @db.Decimal(5, 4)
+  inventoryToRevenueRatio   Decimal? @map("inventory_to_revenue_ratio") @db.Decimal(10, 4)
+  inventoryDays             Decimal? @map("inventory_days") @db.Decimal(10, 2)
+
   // Multi-tenant
   tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)

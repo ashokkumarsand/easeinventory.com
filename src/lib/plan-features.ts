@@ -30,7 +30,8 @@ export type FeatureKey =
   | 'shipping_analytics'
   | 'cycle_counting'
   | 'supplier_performance'
-  | 'bom_management';
+  | 'bom_management'
+  | 'inventory_valuation';
 
 export interface PlanFeature {
   name: string;
@@ -176,6 +177,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   bom_management: {
     name: 'BOM / Kit Management',
     description: 'Bill of materials, kit assembly, and disassembly workflows',
+    minPlan: 'BUSINESS',
+  },
+  inventory_valuation: {
+    name: 'Inventory Valuation',
+    description: 'Valuation breakdowns, carrying cost analysis, and working capital metrics',
     minPlan: 'BUSINESS',
   },
 };
@@ -346,6 +352,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/cycle-counting': 'cycle_counting',
   '/suppliers/performance': 'supplier_performance',
   '/bom': 'bom_management',
+  '/inventory-valuation': 'inventory_valuation',
 };
 
 /**

@@ -753,14 +753,30 @@ export class InventoryAnalyticsService {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(now.getDate() - 30);
 
-    const [turnoverResult, gmroiResult, fillRateResult, stockoutResult] = await Promise.all([
+    const [turnoverResult, gmroiResult, fillRateResult, stockoutResult, carryingCostResult, workingCapitalResult, valuationSummary] = await Promise.all([
       this.calculateTurnover(tenantId, thirtyDaysAgo, now),
       this.calculateGMROI(tenantId, thirtyDaysAgo, now),
       this.calculateFillRate(tenantId, thirtyDaysAgo, now),
       this.calculateStockoutRate(tenantId),
+      this.calculateCarryingCost(tenantId),
+      this.calculateWorkingCapitalMetrics(tenantId, thirtyDaysAgo, now),
+      this.getValuationSummary(tenantId),
     ]);
 
     const periodDate = new Date(now.toISOString().slice(0, 10));
+
+    const kpiData = {
+      inventoryTurnover: turnoverResult.turnover,
+      gmroi: gmroiResult.gmroi,
+      fillRate: fillRateResult.fillRate,
+      stockoutRate: stockoutResult.stockoutRate,
+      totalInventoryValue: turnoverResult.totalInventoryValue,
+      totalInventoryValueAtSale: valuationSummary.totalValueAtSale,
+      carryingCostMonthly: carryingCostResult.monthlyCarryingCost,
+      carryingCostRate: carryingCostResult.annualRate,
+      inventoryToRevenueRatio: workingCapitalResult.inventoryToRevenueRatio,
+      inventoryDays: workingCapitalResult.inventoryDays,
+    };
 
     const snapshot = await prisma.inventoryKpiSnapshot.upsert({
       where: {
@@ -770,23 +786,8 @@ export class InventoryAnalyticsService {
           periodType: 'DAILY',
         },
       },
-      update: {
-        inventoryTurnover: turnoverResult.turnover,
-        gmroi: gmroiResult.gmroi,
-        fillRate: fillRateResult.fillRate,
-        stockoutRate: stockoutResult.stockoutRate,
-        totalInventoryValue: turnoverResult.totalInventoryValue,
-      },
-      create: {
-        tenantId,
-        periodDate,
-        periodType: 'DAILY',
-        inventoryTurnover: turnoverResult.turnover,
-        gmroi: gmroiResult.gmroi,
-        fillRate: fillRateResult.fillRate,
-        stockoutRate: stockoutResult.stockoutRate,
-        totalInventoryValue: turnoverResult.totalInventoryValue,
-      },
+      update: kpiData,
+      create: { tenantId, periodDate, periodType: 'DAILY', ...kpiData },
     });
 
     return snapshot;
@@ -1201,6 +1202,211 @@ export class InventoryAnalyticsService {
     const mean = values.reduce((s, v) => s + v, 0) / values.length;
     const variance = values.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / values.length;
     return Math.sqrt(variance);
+  }
+
+  // ============================================================
+  // Section 8: Inventory Valuation & Working Capital (P6-T4)
+  // ============================================================
+
+  /**
+   * Get valuation summary: total value at cost & sale, margin, ABC breakdown
+   */
+  static async getValuationSummary(tenantId: string) {
+    const products = await prisma.product.findMany({
+      where: { tenantId, isActive: true },
+      select: { quantity: true, costPrice: true, salePrice: true, abcClass: true },
+    });
+
+    let totalValueAtCost = 0;
+    let totalValueAtSale = 0;
+    const abcBreakdown: Record<string, { count: number; valueAtCost: number; valueAtSale: number }> = {};
+
+    for (const p of products) {
+      const cost = p.quantity * Number(p.costPrice);
+      const sale = p.quantity * Number(p.salePrice);
+      totalValueAtCost += cost;
+      totalValueAtSale += sale;
+
+      const cls = p.abcClass || 'Unclassified';
+      if (!abcBreakdown[cls]) abcBreakdown[cls] = { count: 0, valueAtCost: 0, valueAtSale: 0 };
+      abcBreakdown[cls].count += 1;
+      abcBreakdown[cls].valueAtCost += cost;
+      abcBreakdown[cls].valueAtSale += sale;
+    }
+
+    // Round breakdown values
+    for (const cls of Object.keys(abcBreakdown)) {
+      abcBreakdown[cls].valueAtCost = Math.round(abcBreakdown[cls].valueAtCost * 100) / 100;
+      abcBreakdown[cls].valueAtSale = Math.round(abcBreakdown[cls].valueAtSale * 100) / 100;
+    }
+
+    const potentialMargin = totalValueAtSale - totalValueAtCost;
+    const marginPct = totalValueAtSale > 0 ? (potentialMargin / totalValueAtSale) * 100 : 0;
+
+    return {
+      totalValueAtCost: Math.round(totalValueAtCost * 100) / 100,
+      totalValueAtSale: Math.round(totalValueAtSale * 100) / 100,
+      potentialMargin: Math.round(potentialMargin * 100) / 100,
+      marginPct: Math.round(marginPct * 100) / 100,
+      totalSKUs: products.length,
+      abcBreakdown,
+    };
+  }
+
+  /**
+   * Valuation grouped by product category
+   */
+  static async getValuationByCategory(tenantId: string) {
+    const products = await prisma.product.findMany({
+      where: { tenantId, isActive: true },
+      select: { quantity: true, costPrice: true, salePrice: true, category: { select: { name: true } } },
+    });
+
+    const categoryMap = new Map<string, { valueAtCost: number; valueAtSale: number; skuCount: number; totalUnits: number }>();
+
+    for (const p of products) {
+      const catName = p.category?.name || 'Uncategorized';
+      const existing = categoryMap.get(catName) || { valueAtCost: 0, valueAtSale: 0, skuCount: 0, totalUnits: 0 };
+      existing.valueAtCost += p.quantity * Number(p.costPrice);
+      existing.valueAtSale += p.quantity * Number(p.salePrice);
+      existing.skuCount += 1;
+      existing.totalUnits += p.quantity;
+      categoryMap.set(catName, existing);
+    }
+
+    const categories = Array.from(categoryMap.entries())
+      .map(([name, data]) => ({
+        name,
+        valueAtCost: Math.round(data.valueAtCost * 100) / 100,
+        valueAtSale: Math.round(data.valueAtSale * 100) / 100,
+        skuCount: data.skuCount,
+        totalUnits: data.totalUnits,
+      }))
+      .sort((a, b) => b.valueAtCost - a.valueAtCost);
+
+    return { categories };
+  }
+
+  /**
+   * Valuation grouped by location
+   */
+  static async getValuationByLocation(tenantId: string) {
+    const locationsList = await prisma.location.findMany({
+      where: { tenantId },
+      select: { id: true, name: true, code: true, type: true },
+    });
+
+    if (locationsList.length === 0) return { locations: [] };
+
+    const locationIds = locationsList.map(l => l.id);
+
+    const stockAtLocations = await prisma.stockAtLocation.findMany({
+      where: { locationId: { in: locationIds }, quantity: { gt: 0 } },
+      include: { product: { select: { costPrice: true, salePrice: true } } },
+    });
+
+    const locationMap = new Map<string, { valueAtCost: number; valueAtSale: number; skuCount: number; totalUnits: number }>();
+
+    for (const sal of stockAtLocations) {
+      const existing = locationMap.get(sal.locationId) || { valueAtCost: 0, valueAtSale: 0, skuCount: 0, totalUnits: 0 };
+      existing.valueAtCost += sal.quantity * Number(sal.product.costPrice);
+      existing.valueAtSale += sal.quantity * Number(sal.product.salePrice);
+      existing.skuCount += 1;
+      existing.totalUnits += sal.quantity;
+      locationMap.set(sal.locationId, existing);
+    }
+
+    const locations = locationsList
+      .map(loc => {
+        const data = locationMap.get(loc.id) || { valueAtCost: 0, valueAtSale: 0, skuCount: 0, totalUnits: 0 };
+        return {
+          name: loc.name,
+          code: loc.code,
+          type: loc.type,
+          valueAtCost: Math.round(data.valueAtCost * 100) / 100,
+          valueAtSale: Math.round(data.valueAtSale * 100) / 100,
+          skuCount: data.skuCount,
+          totalUnits: data.totalUnits,
+        };
+      })
+      .filter(l => l.totalUnits > 0)
+      .sort((a, b) => b.valueAtCost - a.valueAtCost);
+
+    return { locations };
+  }
+
+  /**
+   * Calculate inventory carrying cost
+   */
+  static async calculateCarryingCost(tenantId: string, annualRate = 0.25) {
+    const products = await prisma.product.findMany({
+      where: { tenantId, isActive: true },
+      select: { quantity: true, costPrice: true },
+    });
+
+    const totalInventoryValue = products.reduce((s, p) => s + p.quantity * Number(p.costPrice), 0);
+    const annualCarryingCost = totalInventoryValue * annualRate;
+    const monthlyCarryingCost = annualCarryingCost / 12;
+    const dailyCarryingCost = annualCarryingCost / 365;
+
+    return {
+      totalInventoryValue: Math.round(totalInventoryValue * 100) / 100,
+      annualRate,
+      annualCarryingCost: Math.round(annualCarryingCost * 100) / 100,
+      monthlyCarryingCost: Math.round(monthlyCarryingCost * 100) / 100,
+      dailyCarryingCost: Math.round(dailyCarryingCost * 100) / 100,
+      breakdown: {
+        storage: { label: 'Storage & Warehousing', pct: 0.40, amount: Math.round(annualCarryingCost * 0.40 * 100) / 100 },
+        capitalCost: { label: 'Cost of Capital', pct: 0.30, amount: Math.round(annualCarryingCost * 0.30 * 100) / 100 },
+        insurance: { label: 'Insurance', pct: 0.10, amount: Math.round(annualCarryingCost * 0.10 * 100) / 100 },
+        obsolescence: { label: 'Obsolescence & Shrinkage', pct: 0.15, amount: Math.round(annualCarryingCost * 0.15 * 100) / 100 },
+        handling: { label: 'Handling & Admin', pct: 0.05, amount: Math.round(annualCarryingCost * 0.05 * 100) / 100 },
+      },
+    };
+  }
+
+  /**
+   * Calculate working capital metrics
+   */
+  static async calculateWorkingCapitalMetrics(tenantId: string, startDate: Date, endDate: Date) {
+    const [revenueResult, products] = await Promise.all([
+      prisma.salesOrderItem.aggregate({
+        where: {
+          order: {
+            tenantId,
+            status: { in: ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'] },
+            createdAt: { gte: startDate, lte: endDate },
+          },
+        },
+        _sum: { total: true },
+      }),
+      prisma.product.findMany({
+        where: { tenantId, isActive: true },
+        select: { quantity: true, costPrice: true, salePrice: true },
+      }),
+    ]);
+
+    const periodRevenue = Number(revenueResult._sum.total ?? 0);
+    const totalValueAtCost = products.reduce((s, p) => s + p.quantity * Number(p.costPrice), 0);
+    const totalValueAtSale = products.reduce((s, p) => s + p.quantity * Number(p.salePrice), 0);
+    const capitalTiedUp = totalValueAtCost;
+
+    const daySpan = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+    const turnover = totalValueAtCost > 0 ? periodRevenue / totalValueAtCost : 0;
+    const annualizedTurnover = turnover * (365 / daySpan);
+    const inventoryDays = annualizedTurnover > 0 ? 365 / annualizedTurnover : 999;
+    const inventoryToRevenueRatio = periodRevenue > 0 ? totalValueAtCost / periodRevenue : 0;
+
+    return {
+      periodRevenue: Math.round(periodRevenue * 100) / 100,
+      totalValueAtCost: Math.round(totalValueAtCost * 100) / 100,
+      totalValueAtSale: Math.round(totalValueAtSale * 100) / 100,
+      capitalTiedUp: Math.round(capitalTiedUp * 100) / 100,
+      turnover: Math.round(turnover * 100) / 100,
+      annualizedTurnover: Math.round(annualizedTurnover * 100) / 100,
+      inventoryDays: Math.round(inventoryDays * 100) / 100,
+      inventoryToRevenueRatio: Math.round(inventoryToRevenueRatio * 10000) / 10000,
+    };
   }
 
   private static countDistribution(classes: string[]): Record<string, number> {
