@@ -128,6 +128,9 @@ model Tenant {
   // Dynamic Pricing (Phase 7)
   pricingRules         PricingRule[]
 
+  // Lost Sales (Phase 7)
+  lostSales            LostSale[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -575,6 +578,9 @@ model Product {
 
   // Spare Parts (Phase 7)
   repairPartsUsed     RepairPart[]      @relation("SparePartsUsed")
+
+  // Lost Sales (Phase 7)
+  lostSales           LostSale[]
 
   @@unique([slug, tenantId])
   @@index([tenantId])
@@ -3045,4 +3051,40 @@ enum PricingRuleStatus {
   ACTIVE
   PAUSED
   EXPIRED
+}
+
+// ============================================================
+// Lost Sales Tracking (Phase 7)
+// ============================================================
+
+model LostSale {
+  id String @id @default(cuid())
+
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+
+  // Event details
+  requestedQty    Int     @map("requested_qty")
+  availableQty    Int     @map("available_qty")
+  shortfallQty    Int     @map("shortfall_qty")
+  estimatedRevenue Decimal @map("estimated_revenue") @db.Decimal(12, 2) // shortfall × salePrice
+
+  // Source
+  source String? // ORDER_CANCELLED, ORDER_REJECTED, WALK_IN, ONLINE, MANUAL
+  orderId String? @map("order_id") // Optional link to cancelled order
+  notes   String?
+
+  // Audit
+  recordedById String @map("recorded_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([tenantId])
+  @@index([productId])
+  @@index([createdAt])
+  @@map("lost_sales")
 }

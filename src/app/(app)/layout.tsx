@@ -30,6 +30,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     AlertCircle,
+    AlertTriangle,
     ArrowRightLeft,
     BarChart3,
     Bell,
@@ -112,6 +113,7 @@ const menuItems = [
     { label: 'BOM / Kits', icon: Puzzle, href: '/bom' },
     { label: 'Repair Center', icon: Wrench, href: '/repairs' },
     { label: 'Spare Parts', icon: Wrench, href: '/spare-parts' },
+    { label: 'Lost Sales', icon: AlertTriangle, href: '/lost-sales' },
     { label: 'Invoices', icon: FileText, href: '/invoices' },
     { label: 'Delivery', icon: PackageCheck, href: '/delivery' },
   ]},

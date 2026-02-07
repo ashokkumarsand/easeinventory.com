@@ -35,7 +35,8 @@ export type FeatureKey =
   | 'supplier_payment_terms'
   | 'order_smoothing'
   | 'dynamic_pricing'
-  | 'warehouse_capacity';
+  | 'warehouse_capacity'
+  | 'lost_sales';
 
 export interface PlanFeature {
   name: string;
@@ -206,6 +207,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   warehouse_capacity: {
     name: 'Warehouse Capacity',
     description: 'Capacity tracking, utilization dashboards, and alerts',
+    minPlan: 'BUSINESS',
+  },
+  lost_sales: {
+    name: 'Lost Sales Tracking',
+    description: 'Log stockout events and analyze lost revenue impact',
     minPlan: 'BUSINESS',
   },
 };
@@ -380,6 +386,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/suppliers/payables': 'supplier_payment_terms',
   '/pricing-rules': 'dynamic_pricing',
   '/warehouse-capacity': 'warehouse_capacity',
+  '/lost-sales': 'lost_sales',
 };
 
 /**
@@ -404,4 +411,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   order_smoothing: { minPlan: 'BUSINESS', name: 'Order Smoothing' },
   dynamic_pricing: { minPlan: 'BUSINESS', name: 'Dynamic Pricing' },
   warehouse_capacity: { minPlan: 'BUSINESS', name: 'Warehouse Capacity' },
+  lost_sales: { minPlan: 'BUSINESS', name: 'Lost Sales Tracking' },
 };
