@@ -2475,6 +2475,13 @@ model ReturnRequestItem {
   // Condition grade after inspection
   conditionGrade String? @map("condition_grade") // A=Resell, B=Refurbish, C=Scrap
 
+  // Refurbishment (Phase 7)
+  refurbishmentStatus RefurbishmentStatus? @map("refurbishment_status")
+  refurbishmentNotes  String?              @map("refurbishment_notes")
+  refurbishmentCost   Decimal?             @map("refurbishment_cost") @db.Decimal(12, 2)
+  conditionPrice      Decimal?             @map("condition_price") @db.Decimal(12, 2) // Resale price based on condition
+  refurbishedAt       DateTime?            @map("refurbished_at")
+
   // Restock info
   restocked   Boolean @default(false)
   restockedAt DateTime? @map("restocked_at")
@@ -2483,6 +2490,13 @@ model ReturnRequestItem {
 
   @@index([returnId])
   @@map("return_request_items")
+}
+
+enum RefurbishmentStatus {
+  PENDING    // Awaiting refurbishment
+  IN_PROGRESS
+  COMPLETED
+  SCRAPPED
 }
 
 enum ReturnType {

@@ -103,6 +103,7 @@ const menuItems = [
     { label: 'Purchase Orders', icon: ClipboardList, href: '/purchase-orders' },
     { label: 'Goods Receipts', icon: PackageCheck, href: '/goods-receipts' },
     { label: 'Returns', icon: RotateCcw, href: '/returns' },
+    { label: 'Refurbishment', icon: RotateCcw, href: '/refurbishment' },
     { label: 'Wave Planning', icon: Layers, href: '/waves' },
     { label: 'Cycle Counting', icon: ClipboardCheck, href: '/cycle-counting' },
     { label: 'Suppliers', icon: PackageCheck, href: '/suppliers' },
