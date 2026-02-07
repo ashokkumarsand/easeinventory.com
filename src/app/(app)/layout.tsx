@@ -32,6 +32,7 @@ import {
     AlertCircle,
     AlertTriangle,
     ArrowRightLeft,
+    Lightbulb,
     BarChart3,
     Bell,
     Brain,
@@ -88,6 +89,7 @@ const menuItems = [
     { label: 'Dashboard', icon: Home, href: '/dashboard' },
     { label: 'Analytics', icon: TrendingUp, href: '/analytics' },
     { label: 'Intelligence', icon: Brain, href: '/intelligence' },
+    { label: 'Decision Support', icon: Lightbulb, href: '/decision-support' },
   ]},
   { group: 'Operations', items: [
     { label: 'Inventory', icon: Package, href: '/inventory' },

@@ -36,7 +36,8 @@ export type FeatureKey =
   | 'order_smoothing'
   | 'dynamic_pricing'
   | 'warehouse_capacity'
-  | 'lost_sales';
+  | 'lost_sales'
+  | 'decision_nudges';
 
 export interface PlanFeature {
   name: string;
@@ -214,6 +215,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'Log stockout events and analyze lost revenue impact',
     minPlan: 'BUSINESS',
   },
+  decision_nudges: {
+    name: 'Decision Support',
+    description: 'Smart nudges, pipeline visibility, and ordering recommendations',
+    minPlan: 'BUSINESS',
+  },
 };
 
 // Plan details for upgrade modal
@@ -387,6 +393,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/pricing-rules': 'dynamic_pricing',
   '/warehouse-capacity': 'warehouse_capacity',
   '/lost-sales': 'lost_sales',
+  '/decision-support': 'decision_nudges',
 };
 
 /**
@@ -412,4 +419,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   dynamic_pricing: { minPlan: 'BUSINESS', name: 'Dynamic Pricing' },
   warehouse_capacity: { minPlan: 'BUSINESS', name: 'Warehouse Capacity' },
   lost_sales: { minPlan: 'BUSINESS', name: 'Lost Sales Tracking' },
+  decision_nudges: { minPlan: 'BUSINESS', name: 'Decision Support' },
 };
