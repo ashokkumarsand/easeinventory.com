@@ -63,6 +63,7 @@ import {
     TrendingUp,
     Truck,
     Users,
+    Banknote,
     Wrench
 } from 'lucide-react';
 import { getShortcutForRoute } from '@/hooks/useKeyboardShortcuts';
@@ -102,6 +103,7 @@ const menuItems = [
     { label: 'Cycle Counting', icon: ClipboardCheck, href: '/cycle-counting' },
     { label: 'Suppliers', icon: PackageCheck, href: '/suppliers' },
     { label: 'Supplier Performance', icon: BarChart3, href: '/suppliers/performance' },
+    { label: 'Supplier Payables', icon: Banknote, href: '/suppliers/payables' },
     { label: 'BOM / Kits', icon: Puzzle, href: '/bom' },
     { label: 'Repair Center', icon: Wrench, href: '/repairs' },
     { label: 'Invoices', icon: FileText, href: '/invoices' },

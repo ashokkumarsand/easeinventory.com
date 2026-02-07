@@ -21,6 +21,7 @@ import {
     Building2,
     CheckCircle2,
     ChevronRight,
+    IndianRupee,
     Loader2,
     Mail,
     Phone,
@@ -132,6 +133,12 @@ export default function SuppliersPage() {
                         <Button variant="secondary" className="font-bold rounded-full gap-2">
                             <Banknote size={18} aria-hidden="true" />
                             Settlement Ledger
+                        </Button>
+                    </Link>
+                    <Link href="/suppliers/payables">
+                        <Button variant="secondary" className="font-bold rounded-full gap-2">
+                            <IndianRupee size={18} aria-hidden="true" />
+                            Payables
                         </Button>
                     </Link>
                     <CSVImport
