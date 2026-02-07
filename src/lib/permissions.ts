@@ -135,6 +135,7 @@ export const PERMISSION_MODULES: PermissionModule[] = [
       { key: 'suppliers:edit', label: 'Edit Suppliers', description: 'Modify supplier info', module: 'suppliers' },
       { key: 'suppliers:settlements', label: 'Settlements', description: 'Process consignment payouts', module: 'suppliers' },
       { key: 'suppliers:analytics', label: 'Supplier Analytics', description: 'View supplier performance metrics', module: 'suppliers' },
+      { key: 'suppliers:payments', label: 'Supplier Payments', description: 'Record payments and view payables', module: 'suppliers' },
     ]
   },
   {
@@ -207,7 +208,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'cycle_counting:view', 'cycle_counting:create', 'cycle_counting:count', 'cycle_counting:verify', 'cycle_counting:adjust',
     'delivery:view', 'delivery:create', 'delivery:update',
     'hr:view', 'hr:attendance', 'hr:leaves',
-    'suppliers:view', 'suppliers:create', 'suppliers:edit', 'suppliers:analytics',
+    'suppliers:view', 'suppliers:create', 'suppliers:edit', 'suppliers:analytics', 'suppliers:payments',
     'bom:view', 'bom:create', 'bom:edit', 'bom:assemble',
     'analytics:view', 'analytics:configure', 'analytics:reorder',
     'team:view',
@@ -220,7 +221,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'procurement:view', 'procurement:create', 'procurement:approve',
     'cycle_counting:view',
     'hr:view', 'hr:payroll',
-    'suppliers:view', 'suppliers:settlements',
+    'suppliers:view', 'suppliers:settlements', 'suppliers:payments',
     'analytics:view',
   ],
   TECHNICIAN: [

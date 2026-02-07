@@ -31,7 +31,8 @@ export type FeatureKey =
   | 'cycle_counting'
   | 'supplier_performance'
   | 'bom_management'
-  | 'inventory_valuation';
+  | 'inventory_valuation'
+  | 'supplier_payment_terms';
 
 export interface PlanFeature {
   name: string;
@@ -182,6 +183,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
   inventory_valuation: {
     name: 'Inventory Valuation',
     description: 'Valuation breakdowns, carrying cost analysis, and working capital metrics',
+    minPlan: 'BUSINESS',
+  },
+  supplier_payment_terms: {
+    name: 'Supplier Payment Terms',
+    description: 'Payment tracking, payables aging, and trade credit visibility',
     minPlan: 'BUSINESS',
   },
 };
@@ -353,6 +359,7 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/suppliers/performance': 'supplier_performance',
   '/bom': 'bom_management',
   '/inventory-valuation': 'inventory_valuation',
+  '/suppliers/payables': 'supplier_payment_terms',
 };
 
 /**
