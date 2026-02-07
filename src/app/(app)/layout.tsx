@@ -110,6 +110,7 @@ const menuItems = [
     { label: 'Supplier Payables', icon: Banknote, href: '/suppliers/payables' },
     { label: 'BOM / Kits', icon: Puzzle, href: '/bom' },
     { label: 'Repair Center', icon: Wrench, href: '/repairs' },
+    { label: 'Spare Parts', icon: Wrench, href: '/spare-parts' },
     { label: 'Invoices', icon: FileText, href: '/invoices' },
     { label: 'Delivery', icon: PackageCheck, href: '/delivery' },
   ]},

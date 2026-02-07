@@ -573,6 +573,9 @@ model Product {
   billsOfMaterial     BillOfMaterial[]  @relation("ProductBOMs")
   bomItems            BOMItem[]         @relation("ComponentBOMItems")
 
+  // Spare Parts (Phase 7)
+  repairPartsUsed     RepairPart[]      @relation("SparePartsUsed")
+
   @@unique([slug, tenantId])
   @@index([tenantId])
   @@index([serialNumber])
@@ -1028,10 +1031,35 @@ model RepairTicket {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  // Structured spare parts (Phase 7)
+  repairParts RepairPart[]
+
   @@index([tenantId])
   @@index([ticketNumber])
   @@index([customerId])
   @@map("repair_tickets")
+}
+
+model RepairPart {
+  id String @id @default(cuid())
+
+  ticketId String       @map("ticket_id")
+  ticket   RepairTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  productId String  @map("product_id")
+  product   Product @relation("SparePartsUsed", fields: [productId], references: [id])
+
+  quantity  Int
+  unitCost  Decimal @map("unit_cost") @db.Decimal(12, 2)
+  totalCost Decimal @map("total_cost") @db.Decimal(12, 2)
+
+  notes String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([ticketId])
+  @@index([productId])
+  @@map("repair_parts")
 }
 
 enum RepairStatus {
