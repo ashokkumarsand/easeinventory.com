@@ -165,5 +165,5 @@
 - [x] ML-based demand forecasting — Holt-Winters, regression, ensemble (BL-T1–T8 complete)
 - [ ] Multi-echelon inventory optimization (enterprise feature)
 - [ ] Remanufacturing workflow (niche manufacturing)
-- [ ] Assortment planning tools (retail-specific)
+- [x] Assortment planning tools (retail-specific) — service, 7 API routes, 5 UI components, Intelligence tab
 - [x] Missing pages giving 404 — fixed /settings/billing, /contact, /waves/new, /pricing, help sub-articles, Profile Settings link

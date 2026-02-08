@@ -45,7 +45,8 @@ export type FeatureKey =
   | 'report_builder'
   | 'outgoing_webhooks'
   | 'activity_feed'
-  | 'demand_forecasting';
+  | 'demand_forecasting'
+  | 'assortment_planning';
 
 export interface PlanFeature {
   name: string;
@@ -268,6 +269,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'ML-based demand forecasting with Holt-Winters, regression, and ensemble methods',
     minPlan: 'BUSINESS',
   },
+  assortment_planning: {
+    name: 'Assortment Planning',
+    description: 'Product scoring, lifecycle analysis, category health, and optimization suggestions',
+    minPlan: 'BUSINESS',
+  },
 };
 
 // Plan details for upgrade modal
@@ -485,4 +491,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   bulk_operations: { minPlan: 'STARTER', name: 'Bulk Operations' },
   activity_feed: { minPlan: 'STARTER', name: 'Activity Feed' },
   demand_forecasting: { minPlan: 'BUSINESS', name: 'Demand Forecasting' },
+  assortment_planning: { minPlan: 'BUSINESS', name: 'Assortment Planning' },
 };

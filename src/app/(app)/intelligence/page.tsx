@@ -13,7 +13,8 @@ import { SlowMoverTable } from '@/components/intelligence/SlowMoverTable';
 import { ValuationDashboard } from '@/components/intelligence/ValuationDashboard';
 import { OrderSmoothingDashboard } from '@/components/intelligence/OrderSmoothingDashboard';
 import { ForecastDashboard } from '@/components/intelligence/ForecastDashboard';
-import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown, Landmark, Activity, Sparkles } from 'lucide-react';
+import { AssortmentDashboard } from '@/components/intelligence/AssortmentDashboard';
+import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown, Landmark, Activity, Sparkles, LayoutGrid } from 'lucide-react';
 
 const TABS = [
   { value: 'demand', label: 'Demand', icon: TrendingUp },
@@ -27,6 +28,7 @@ const TABS = [
   { value: 'valuation', label: 'Valuation', icon: Landmark },
   { value: 'order-smoothing', label: 'Smoothing', icon: Activity },
   { value: 'forecasting', label: 'Forecasting', icon: Sparkles },
+  { value: 'assortment', label: 'Assortment', icon: LayoutGrid },
 ] as const;
 
 export default function IntelligencePage() {
@@ -98,6 +100,10 @@ export default function IntelligencePage() {
 
         <TabsContent value="forecasting" className="mt-6">
           <ForecastDashboard />
+        </TabsContent>
+
+        <TabsContent value="assortment" className="mt-6">
+          <AssortmentDashboard />
         </TabsContent>
       </Tabs>
     </div>
