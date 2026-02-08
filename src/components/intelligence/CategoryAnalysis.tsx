@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, FolderOpen, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, FolderOpen, AlertTriangle, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   ScatterChart,
   Scatter,
@@ -35,29 +36,33 @@ function HealthBadge({ health }: { health: string }) {
   return (
     <Badge variant="outline" className={`${color} gap-1`}>
       {icon}
-      {health.replace('_', ' ')}
+      {health.replace(/_/g, ' ')}
     </Badge>
   );
 }
 
 function formatCurrency(val: number): string {
-  if (val >= 100000) return `${(val / 100000).toFixed(1)}L`;
-  if (val >= 1000) return `${(val / 1000).toFixed(1)}K`;
-  return val.toFixed(0);
+  if (val >= 100000) return `\u20B9${(val / 100000).toFixed(1)}L`;
+  if (val >= 1000) return `\u20B9${(val / 1000).toFixed(1)}K`;
+  return `\u20B9${val.toFixed(0)}`;
 }
 
 export function CategoryAnalysis() {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCategories = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/analytics/assortment/categories');
+      if (!res.ok) throw new Error(`Failed to load (${res.status})`);
       const json = await res.json();
       setCategories(json.categories || []);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to fetch category analysis:', e);
+      setError(e.message || 'Failed to load category analysis');
     } finally {
       setLoading(false);
     }
@@ -71,6 +76,22 @@ export function CategoryAnalysis() {
         <Loader2 className="w-5 h-5 animate-spin mr-2" />
         Analyzing categories...
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load categories</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchCategories}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -100,7 +121,7 @@ export function CategoryAnalysis() {
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Category Breadth vs. Avg Score</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent role="img" aria-label="Scatter chart showing category SKU count versus average assortment score">
           <ResponsiveContainer width="100%" height={280}>
             <ScatterChart>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />

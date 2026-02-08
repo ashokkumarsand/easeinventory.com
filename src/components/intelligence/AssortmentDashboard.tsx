@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssortmentOverview } from './AssortmentOverview';
 import { AssortmentScoresTable } from './AssortmentScoresTable';
 import { CategoryAnalysis } from './CategoryAnalysis';
@@ -14,32 +14,31 @@ const SUB_TABS = [
   { value: 'suggestions', label: 'Suggestions' },
 ] as const;
 
-type SubTab = typeof SUB_TABS[number]['value'];
-
 export function AssortmentDashboard() {
-  const [activeTab, setActiveTab] = useState<SubTab>('overview');
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="space-y-6">
-      {/* Sub-navigation */}
-      <div className="flex gap-2">
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <TabsList>
         {SUB_TABS.map(tab => (
-          <Button
-            key={tab.value}
-            variant={activeTab === tab.value ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveTab(tab.value)}
-          >
+          <TabsTrigger key={tab.value} value={tab.value}>
             {tab.label}
-          </Button>
+          </TabsTrigger>
         ))}
-      </div>
+      </TabsList>
 
-      {/* Content */}
-      {activeTab === 'overview' && <AssortmentOverview />}
-      {activeTab === 'scores' && <AssortmentScoresTable />}
-      {activeTab === 'categories' && <CategoryAnalysis />}
-      {activeTab === 'suggestions' && <AssortmentSuggestions />}
-    </div>
+      <TabsContent value="overview" className="mt-6">
+        <AssortmentOverview />
+      </TabsContent>
+      <TabsContent value="scores" className="mt-6">
+        <AssortmentScoresTable />
+      </TabsContent>
+      <TabsContent value="categories" className="mt-6">
+        <CategoryAnalysis />
+      </TabsContent>
+      <TabsContent value="suggestions" className="mt-6">
+        <AssortmentSuggestions />
+      </TabsContent>
+    </Tabs>
   );
 }

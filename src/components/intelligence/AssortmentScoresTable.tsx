@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Search, Loader2, Info } from 'lucide-react';
+import { Search, Loader2, Info, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface AssortmentScore {
   productId: string;
@@ -72,31 +72,47 @@ function LifecycleBadge({ stage }: { stage: string }) {
     DECLINE: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
     END_OF_LIFE: 'bg-red-500/10 text-red-600 border-red-500/20',
   };
-  return <Badge variant="outline" className={colors[stage] || ''}>{stage.replace('_', ' ')}</Badge>;
+  return <Badge variant="outline" className={colors[stage] || ''}>{stage.replace(/_/g, ' ')}</Badge>;
 }
 
 export function AssortmentScoresTable() {
   const [data, setData] = useState<ScoresData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [abcFilter, setAbcFilter] = useState('all');
   const [page, setPage] = useState(1);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounce search input by 300ms
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [search]);
 
   const fetchScores = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams({ page: String(page), pageSize: '25' });
-      if (search) params.set('search', search);
+      if (debouncedSearch) params.set('search', debouncedSearch);
       if (abcFilter !== 'all') params.set('abcClass', abcFilter);
       const res = await fetch(`/api/analytics/assortment/scores?${params}`);
+      if (!res.ok) throw new Error(`Failed to load (${res.status})`);
       const json = await res.json();
       setData(json);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to fetch assortment scores:', e);
+      setError(e.message || 'Failed to load scores');
     } finally {
       setLoading(false);
     }
-  }, [page, search, abcFilter]);
+  }, [page, debouncedSearch, abcFilter]);
 
   useEffect(() => { fetchScores(); }, [fetchScores]);
 
@@ -108,13 +124,14 @@ export function AssortmentScoresTable() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search products..."
+            aria-label="Search products by name or SKU"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select value={abcFilter} onValueChange={(v) => { setAbcFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-32">
+          <SelectTrigger className="w-32" aria-label="Filter by ABC class">
             <SelectValue placeholder="ABC Class" />
           </SelectTrigger>
           <SelectContent>
@@ -126,21 +143,33 @@ export function AssortmentScoresTable() {
         </Select>
       </div>
 
-      {/* Table */}
-      {loading ? (
+      {/* Error State */}
+      {error ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+            <p className="font-medium text-foreground">Failed to load scores</p>
+            <p className="text-sm mt-1">{error}</p>
+            <Button variant="outline" size="sm" className="mt-4" onClick={fetchScores}>
+              <RefreshCw className="w-4 h-4 mr-1.5" />
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      ) : loading ? (
         <div className="flex items-center justify-center h-40 text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" />
           Loading scores...
         </div>
       ) : data && data.data.length > 0 ? (
         <Card>
-          <CardContent className="p-0">
+          <CardContent className="p-0 overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>
                   <TableHead className="text-center">Score</TableHead>
-                  <TableHead className="text-center">
+                  <TableHead className="text-center hidden md:table-cell">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center gap-1 mx-auto">
@@ -171,7 +200,7 @@ export function AssortmentScoresTable() {
                     <TableCell className="text-center">
                       <ScoreBadge score={s.compositeScore} />
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center hidden md:table-cell">
                       <div className="flex gap-0.5 justify-center text-[10px] font-mono">
                         <span title="Revenue" className="px-1 rounded bg-muted">{s.components.revenue}</span>
                         <span title="Stability" className="px-1 rounded bg-muted">{s.components.stability}</span>

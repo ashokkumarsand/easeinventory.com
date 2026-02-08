@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Package, BarChart3, TrendingUp, Lightbulb } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Package, BarChart3, TrendingUp, Lightbulb, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -27,27 +28,36 @@ interface OverviewData {
 }
 
 const LIFECYCLE_COLORS: Record<string, string> = {
-  INTRODUCTION: '#3b82f6',
-  GROWTH: '#22c55e',
-  MATURITY: '#a855f7',
-  DECLINE: '#f59e0b',
-  END_OF_LIFE: '#ef4444',
+  INTRODUCTION: 'hsl(217, 91%, 60%)',
+  GROWTH: 'hsl(142, 71%, 45%)',
+  MATURITY: 'hsl(271, 91%, 65%)',
+  DECLINE: 'hsl(38, 92%, 50%)',
+  END_OF_LIFE: 'hsl(0, 84%, 60%)',
 };
 
-const SCORE_COLORS = ['#ef4444', '#f59e0b', '#3b82f6', '#22c55e'];
+const SCORE_COLORS = [
+  'hsl(0, 84%, 60%)',
+  'hsl(38, 92%, 50%)',
+  'hsl(217, 91%, 60%)',
+  'hsl(142, 71%, 45%)',
+];
 
 export function AssortmentOverview() {
   const [data, setData] = useState<OverviewData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchOverview = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/analytics/assortment');
+      if (!res.ok) throw new Error(`Failed to load (${res.status})`);
       const json = await res.json();
       setData(json);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to fetch assortment overview:', e);
+      setError(e.message || 'Failed to load assortment overview');
     } finally {
       setLoading(false);
     }
@@ -64,11 +74,37 @@ export function AssortmentOverview() {
     );
   }
 
-  if (!data) return null;
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load overview</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchOverview}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <Package className="w-10 h-10 mb-3 opacity-50" />
+          <p className="font-medium">No assortment data available</p>
+          <p className="text-sm mt-1">Add products and run ABC/XYZ classification to see insights</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const lifecycleData = Object.entries(data.lifecycleDistribution)
     .filter(([, count]) => count > 0)
-    .map(([stage, count]) => ({ name: stage.replace('_', ' '), value: count, fill: LIFECYCLE_COLORS[stage] || '#888' }));
+    .map(([stage, count]) => ({ name: stage.replace(/_/g, ' '), value: count, fill: LIFECYCLE_COLORS[stage] || '#888' }));
 
   const totalSuggestions = Object.values(data.suggestionsCount).reduce((s, v) => s + v, 0);
 
@@ -121,7 +157,7 @@ export function AssortmentOverview() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Score Distribution</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent role="img" aria-label="Bar chart showing product score distribution across 4 buckets">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={data.scoreDistribution}>
                 <XAxis dataKey="bucket" tick={{ fontSize: 12 }} />
@@ -142,7 +178,7 @@ export function AssortmentOverview() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Product Lifecycle</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent role="img" aria-label="Pie chart showing product lifecycle stage distribution">
             {lifecycleData.length > 0 ? (
               <div className="flex items-center gap-4">
                 <ResponsiveContainer width="60%" height={220}>
@@ -158,7 +194,7 @@ export function AssortmentOverview() {
                 <div className="flex flex-col gap-1.5">
                   {lifecycleData.map(entry => (
                     <div key={entry.name} className="flex items-center gap-2 text-sm">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.fill }} />
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: entry.fill }} />
                       <span className="text-muted-foreground">{entry.name}</span>
                       <span className="font-medium">{entry.value}</span>
                     </div>

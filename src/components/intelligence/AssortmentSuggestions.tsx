@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, Minus, TrendingUp, Tag, Lightbulb } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Plus, Minus, TrendingUp, Tag, Lightbulb, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface Suggestion {
   action: string;
@@ -31,15 +32,19 @@ const IMPACT_COLOR: Record<string, string> = {
 export function AssortmentSuggestions() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchSuggestions = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/analytics/assortment/suggestions');
+      if (!res.ok) throw new Error(`Failed to load (${res.status})`);
       const json = await res.json();
       setSuggestions(json.suggestions || []);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to fetch assortment suggestions:', e);
+      setError(e.message || 'Failed to load suggestions');
     } finally {
       setLoading(false);
     }
@@ -53,6 +58,22 @@ export function AssortmentSuggestions() {
         <Loader2 className="w-5 h-5 animate-spin mr-2" />
         Generating suggestions...
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load suggestions</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchSuggestions}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -113,7 +134,7 @@ export function AssortmentSuggestions() {
               {items.map((s, i) => (
                 <div key={i} className="flex items-start gap-3 p-3 rounded-lg border bg-card">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="font-medium text-sm truncate">
                         {s.productName || s.categoryName || 'Category suggestion'}
                       </span>
