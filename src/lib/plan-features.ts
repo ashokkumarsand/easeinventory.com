@@ -39,7 +39,12 @@ export type FeatureKey =
   | 'lost_sales'
   | 'decision_nudges'
   | 'lateral_transshipment'
-  | 'placement_optimizer';
+  | 'placement_optimizer'
+  | 'workflow_automation'
+  | 'customer_management'
+  | 'report_builder'
+  | 'outgoing_webhooks'
+  | 'activity_feed';
 
 export interface PlanFeature {
   name: string;
@@ -232,6 +237,31 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'Recommend optimal SKU allocation across warehouses based on demand',
     minPlan: 'BUSINESS',
   },
+  workflow_automation: {
+    name: 'Workflow Automation',
+    description: 'Rule-based automation for reorder, pricing, notifications, and webhooks',
+    minPlan: 'BUSINESS',
+  },
+  customer_management: {
+    name: 'Customer Management',
+    description: 'Customer CRM hub with segmentation, tiers, and CLV analytics',
+    minPlan: 'STARTER',
+  },
+  report_builder: {
+    name: 'Report Builder',
+    description: 'Custom reports with column selection, filters, and CSV/Excel export',
+    minPlan: 'BUSINESS',
+  },
+  outgoing_webhooks: {
+    name: 'Outgoing Webhooks',
+    description: 'Event-driven webhooks for third-party integrations',
+    minPlan: 'ENTERPRISE',
+  },
+  activity_feed: {
+    name: 'Activity Feed',
+    description: 'Business event log and activity timeline across all operations',
+    minPlan: 'STARTER',
+  },
 };
 
 // Plan details for upgrade modal
@@ -408,6 +438,12 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/decision-support': 'decision_nudges',
   '/transshipments': 'lateral_transshipment',
   '/placement-optimizer': 'placement_optimizer',
+  '/automations': 'workflow_automation',
+  '/customers': 'customer_management',
+  '/reports': 'report_builder',
+  '/settings/webhooks': 'outgoing_webhooks',
+  '/bulk-operations': 'bulk_operations',
+  '/activity': 'activity_feed',
 };
 
 /**
@@ -436,4 +472,10 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   decision_nudges: { minPlan: 'BUSINESS', name: 'Decision Support' },
   lateral_transshipment: { minPlan: 'BUSINESS', name: 'Lateral Transshipment' },
   placement_optimizer: { minPlan: 'BUSINESS', name: 'Placement Optimizer' },
+  workflow_automation: { minPlan: 'BUSINESS', name: 'Workflow Automation' },
+  customer_management: { minPlan: 'STARTER', name: 'Customer Management' },
+  report_builder: { minPlan: 'BUSINESS', name: 'Report Builder' },
+  outgoing_webhooks: { minPlan: 'ENTERPRISE', name: 'Outgoing Webhooks' },
+  bulk_operations: { minPlan: 'STARTER', name: 'Bulk Operations' },
+  activity_feed: { minPlan: 'STARTER', name: 'Activity Feed' },
 };

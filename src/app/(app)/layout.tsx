@@ -29,10 +29,13 @@ import {
 } from '@/components/ui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+    Activity,
     AlertCircle,
     AlertTriangle,
     ArrowRightLeft,
+    FileBarChart,
     Lightbulb,
+    Link2,
     MapPin,
     BarChart3,
     Bell,
@@ -65,11 +68,14 @@ import {
     Tag,
     TrendingUp,
     Truck,
+    Upload,
     Users,
     Banknote,
     Wrench,
     DollarSign,
     Warehouse,
+    UserCircle,
+    Zap,
 } from 'lucide-react';
 import { getShortcutForRoute } from '@/hooks/useKeyboardShortcuts';
 import { signOut, useSession } from 'next-auth/react';
@@ -91,10 +97,12 @@ const menuItems = [
     { label: 'Analytics', icon: TrendingUp, href: '/analytics' },
     { label: 'Intelligence', icon: Brain, href: '/intelligence' },
     { label: 'Decision Support', icon: Lightbulb, href: '/decision-support' },
+    { label: 'Activity Feed', icon: Activity, href: '/activity' },
   ]},
   { group: 'Operations', items: [
     { label: 'Inventory', icon: Package, href: '/inventory' },
     { label: 'Orders', icon: ShoppingCart, href: '/orders' },
+    { label: 'Customers', icon: UserCircle, href: '/customers' },
     { label: 'Shipments', icon: Truck, href: '/shipments' },
     { label: 'COD Management', icon: IndianRupee, href: '/shipments/cod' },
     { label: 'NDR Management', icon: AlertCircle, href: '/shipments/ndr' },
@@ -119,6 +127,9 @@ const menuItems = [
     { label: 'Repair Center', icon: Wrench, href: '/repairs' },
     { label: 'Spare Parts', icon: Wrench, href: '/spare-parts' },
     { label: 'Lost Sales', icon: AlertTriangle, href: '/lost-sales' },
+    { label: 'Automations', icon: Zap, href: '/automations' },
+    { label: 'Reports', icon: FileBarChart, href: '/reports' },
+    { label: 'Bulk Operations', icon: Upload, href: '/bulk-operations' },
     { label: 'Invoices', icon: FileText, href: '/invoices' },
     { label: 'Delivery', icon: PackageCheck, href: '/delivery' },
   ]},
@@ -139,6 +150,7 @@ const menuItems = [
     { label: 'Custom Roles', icon: Shield, href: '/settings/roles' },
     { label: 'Custom Domain', icon: Globe, href: '/settings/domains' },
     { label: 'Audit Trail', icon: History, href: '/settings/audit' },
+    { label: 'Webhooks', icon: Link2, href: '/settings/webhooks' },
   ]}
 ];
 

@@ -131,6 +131,14 @@ model Tenant {
   // Lost Sales (Phase 7)
   lostSales            LostSale[]
 
+  // Phase 8: Operational Automation & Customer Intelligence
+  activityEvents       ActivityEvent[]
+  automationRules      AutomationRule[]
+  automationLogs       AutomationLog[]
+  savedReports         SavedReport[]
+  webhookEndpoints     WebhookEndpoint[]
+  webhookDeliveries    WebhookDelivery[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -799,6 +807,15 @@ model Customer {
   companyName String? @map("company_name")
   gstNumber   String? @map("gst_number")
 
+  // CRM fields (Phase 8)
+  segment       CustomerSegment? @default(NEW)
+  tier          CustomerTier?    @default(BRONZE)
+  lifetimeValue Decimal          @default(0) @map("lifetime_value") @db.Decimal(14, 2)
+  totalOrders   Int              @default(0) @map("total_orders")
+  lastOrderDate DateTime?        @map("last_order_date")
+  tags          String[]         @default([])
+  notes         String?          @db.Text
+
   tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -812,6 +829,7 @@ model Customer {
 
   @@index([tenantId])
   @@index([phone])
+  @@index([segment])
   @@map("customers")
 }
 
@@ -3101,4 +3119,252 @@ model LostSale {
   @@index([productId])
   @@index([createdAt])
   @@map("lost_sales")
+}
+
+// ============================================================
+// Phase 8: Operational Automation & Customer Intelligence
+// ============================================================
+
+// ==================== ACTIVITY FEED (P8-T9) ====================
+
+model ActivityEvent {
+  id String @id @default(cuid())
+
+  // Event classification
+  type       String // order.created, shipment.sent, stock.adjusted, etc.
+  entityType String @map("entity_type") // SalesOrder, Shipment, Product, etc.
+  entityId   String @map("entity_id")
+  entityName String? @map("entity_name") // Human-readable label (e.g., "SO-2026-0042")
+
+  // Description
+  description String?
+
+  // Who triggered it
+  userId String? @map("user_id")
+
+  // Additional context
+  metadata Json? @db.JsonB
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([tenantId, createdAt])
+  @@index([entityType, entityId])
+  @@index([type])
+  @@map("activity_events")
+}
+
+// ==================== AUTOMATION ENGINE (P8-T1) ====================
+
+enum AutomationTrigger {
+  STOCK_BELOW_REORDER
+  STOCK_BELOW_SAFETY
+  EXPIRY_APPROACHING
+  DEMAND_SPIKE
+  SLOW_MOVER_DETECTED
+  SCHEDULE
+}
+
+enum AutomationAction {
+  CREATE_PO_SUGGESTION
+  SEND_NOTIFICATION
+  ADJUST_PRICE
+  FLAG_FOR_REVIEW
+  SEND_WEBHOOK
+}
+
+model AutomationRule {
+  id   String @id @default(cuid())
+  name String
+
+  // Trigger & Condition
+  triggerType    AutomationTrigger @map("trigger_type")
+  conditionJson  Json?            @map("condition_json") @db.JsonB  // Product filters, thresholds
+  cronExpression String?          @map("cron_expression") // For SCHEDULE trigger
+
+  // Action
+  actionType      AutomationAction @map("action_type")
+  actionConfigJson Json?           @map("action_config_json") @db.JsonB // Action-specific params
+
+  // State
+  isActive        Boolean   @default(true) @map("is_active")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  triggerCount    Int       @default(0) @map("trigger_count")
+
+  // Audit
+  createdById String @map("created_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  logs AutomationLog[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([isActive, triggerType])
+  @@map("automation_rules")
+}
+
+model AutomationLog {
+  id String @id @default(cuid())
+
+  ruleId String         @map("rule_id")
+  rule   AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  // Execution details
+  triggeredAt DateTime @map("triggered_at")
+  actionTaken String   @map("action_taken")
+  resultJson  Json?    @map("result_json") @db.JsonB
+  success     Boolean  @default(true)
+  errorMessage String? @map("error_message")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([ruleId])
+  @@index([tenantId, createdAt])
+  @@map("automation_logs")
+}
+
+// ==================== REPORT BUILDER (P8-T5) ====================
+
+enum ReportType {
+  INVENTORY_SUMMARY
+  SALES_REPORT
+  SUPPLIER_REPORT
+  CUSTOMER_REPORT
+  FINANCIAL_REPORT
+  STOCK_MOVEMENT
+}
+
+enum ReportFormat {
+  CSV
+  EXCEL
+}
+
+enum ScheduleFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model SavedReport {
+  id   String @id @default(cuid())
+  name String
+
+  reportType  ReportType   @map("report_type")
+  filtersJson Json?        @map("filters_json") @db.JsonB // Dynamic filters
+  columnsJson Json?        @map("columns_json") @db.JsonB // Selected columns
+  format      ReportFormat @default(CSV)
+
+  // Scheduling (P8-T6)
+  scheduleFreq    ScheduleFrequency? @map("schedule_freq")
+  scheduledEmails String[]           @default([]) @map("scheduled_emails")
+  nextRunAt       DateTime?          @map("next_run_at")
+  lastGeneratedAt DateTime?          @map("last_generated_at")
+
+  // Audit
+  createdById String @map("created_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("saved_reports")
+}
+
+// ==================== OUTGOING WEBHOOKS (P8-T7) ====================
+
+model WebhookEndpoint {
+  id  String @id @default(cuid())
+
+  url    String
+  secret String // HMAC signing secret
+
+  // Events this endpoint subscribes to
+  events String[] // e.g., ["order.created", "shipment.delivered"]
+
+  // State
+  isActive        Boolean   @default(true) @map("is_active")
+  failCount       Int       @default(0) @map("fail_count")
+  lastDeliveredAt DateTime? @map("last_delivered_at")
+
+  // Audit
+  createdById String @map("created_by_id")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Relations
+  deliveries WebhookDelivery[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([isActive])
+  @@map("webhook_endpoints")
+}
+
+model WebhookDelivery {
+  id String @id @default(cuid())
+
+  endpointId String          @map("endpoint_id")
+  endpoint   WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  // Event data
+  event   String
+  payload Json   @db.JsonB
+
+  // Response
+  statusCode   Int?    @map("status_code")
+  responseBody String? @map("response_body") @db.Text
+
+  // Delivery status
+  attempts   Int       @default(1)
+  success    Boolean   @default(false)
+
+  deliveredAt DateTime @map("delivered_at")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([endpointId])
+  @@index([tenantId, createdAt])
+  @@map("webhook_deliveries")
+}
+
+// ==================== CUSTOMER ENUMS (P8-T3) ====================
+
+enum CustomerSegment {
+  VIP
+  REGULAR
+  NEW
+  AT_RISK
+  CHURNED
+}
+
+enum CustomerTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
 }

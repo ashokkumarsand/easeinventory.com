@@ -194,6 +194,52 @@ export const PERMISSION_MODULES: PermissionModule[] = [
     ]
   },
   {
+    key: 'automation',
+    label: 'Automation',
+    icon: 'Zap',
+    permissions: [
+      { key: 'automation:view', label: 'View Rules', description: 'See automation rules', module: 'automation' },
+      { key: 'automation:create', label: 'Create Rules', description: 'Create new automation rules', module: 'automation' },
+      { key: 'automation:edit', label: 'Edit Rules', description: 'Modify automation rules', module: 'automation' },
+      { key: 'automation:delete', label: 'Delete Rules', description: 'Remove automation rules', module: 'automation' },
+      { key: 'automation:execute', label: 'Execute Rules', description: 'Manually trigger automation runs', module: 'automation' },
+    ]
+  },
+  {
+    key: 'customers',
+    label: 'Customers',
+    icon: 'Users',
+    permissions: [
+      { key: 'customers:view', label: 'View Customers', description: 'See customer directory', module: 'customers' },
+      { key: 'customers:create', label: 'Add Customers', description: 'Create new customers', module: 'customers' },
+      { key: 'customers:edit', label: 'Edit Customers', description: 'Modify customer details', module: 'customers' },
+      { key: 'customers:delete', label: 'Delete Customers', description: 'Remove customers', module: 'customers' },
+      { key: 'customers:analytics', label: 'Customer Analytics', description: 'View segmentation and CLV analytics', module: 'customers' },
+    ]
+  },
+  {
+    key: 'reports',
+    label: 'Reports',
+    icon: 'FileBarChart',
+    permissions: [
+      { key: 'reports:view', label: 'View Reports', description: 'See saved reports', module: 'reports' },
+      { key: 'reports:create', label: 'Create Reports', description: 'Create and save report configurations', module: 'reports' },
+      { key: 'reports:export', label: 'Export Reports', description: 'Download report data as CSV/Excel', module: 'reports' },
+      { key: 'reports:schedule', label: 'Schedule Reports', description: 'Set up automated report delivery', module: 'reports' },
+    ]
+  },
+  {
+    key: 'webhooks',
+    label: 'Webhooks',
+    icon: 'Link2',
+    permissions: [
+      { key: 'webhooks:view', label: 'View Webhooks', description: 'See webhook endpoints', module: 'webhooks' },
+      { key: 'webhooks:create', label: 'Create Webhooks', description: 'Add new webhook endpoints', module: 'webhooks' },
+      { key: 'webhooks:edit', label: 'Edit Webhooks', description: 'Modify webhook endpoints', module: 'webhooks' },
+      { key: 'webhooks:delete', label: 'Delete Webhooks', description: 'Remove webhook endpoints', module: 'webhooks' },
+    ]
+  },
+  {
     key: 'settings',
     label: 'Settings',
     icon: 'Settings',
@@ -223,6 +269,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'bom:view', 'bom:create', 'bom:edit', 'bom:assemble',
     'pricing:view', 'pricing:create', 'pricing:edit',
     'analytics:view', 'analytics:configure', 'analytics:reorder',
+    'automation:view', 'automation:create', 'automation:edit', 'automation:execute',
+    'customers:view', 'customers:create', 'customers:edit', 'customers:analytics',
+    'reports:view', 'reports:create', 'reports:export', 'reports:schedule',
     'team:view',
     'settings:view'
   ],
@@ -236,6 +285,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'suppliers:view', 'suppliers:settlements', 'suppliers:payments',
     'pricing:view',
     'analytics:view',
+    'customers:view', 'customers:analytics',
+    'reports:view', 'reports:create', 'reports:export',
   ],
   TECHNICIAN: [
     'inventory:view',
@@ -250,6 +301,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'delivery:view', 'delivery:create',
     'bom:view',
     'analytics:view',
+    'customers:view', 'customers:create',
   ],
   VIEWER: [
     'inventory:view',

@@ -136,16 +136,27 @@
 - [x] P6-T5: Supplier payment terms — net-30/60/90 tracking, trade credit visibility
 - [x] P6-T6: Order smoothing — dampen order variability to reduce bullwhip effect
 
-### Phase 7: Advanced Features
+### Phase 7: Advanced Features — COMPLETE
 - [x] P7-T1: Dynamic pricing rules — inventory-level-based pricing, markdown scheduling
 - [x] P7-T2: Warehouse capacity management — capacity per location, utilization dashboard
 - [x] P7-T3: Spare parts linkage — connect repair tickets to spare parts, maintenance-driven forecasting
 - [x] P7-T4: Quality grading on returns — Grade A/B/C/Scrap, refurbishment queue, condition-based pricing
 - [ ] P7-T5: Supplier portal — read-only access for suppliers to see stock levels & velocity
-- [ ] P7-T6: Lost sales tracking — log stockout events, lost revenue analytics
-- [ ] P7-T7: Decision support nudges — smart ordering assistant, pipeline visibility, bias alerts
-- [ ] P7-T8: Lateral transshipment — location-to-location emergency transfers with approval
-- [ ] P7-T9: Inventory placement optimizer — recommend SKU allocation across warehouses
+- [x] P7-T6: Lost sales tracking — log stockout events, lost revenue analytics | commit: 6c0d7d0b
+- [x] P7-T7: Decision support nudges — smart ordering assistant, pipeline visibility, bias alerts | commit: 22547c09
+- [x] P7-T8: Lateral transshipment — location-to-location emergency transfers with approval | commit: 3e87fe95
+- [x] P7-T9: Inventory placement optimizer — recommend SKU allocation across warehouses | commit: 50206f2e
+
+### Phase 8: Operational Automation & Customer Intelligence (2026-02-08)
+- [x] P8-T9: Activity feed & business event log — ActivityEvent model, service, API, UI | 2026-02-08
+- [x] P8-T1: Workflow automation engine — AutomationRule model, rule builder, CRUD API, UI | 2026-02-08
+- [x] P8-T2: Auto-reorder workflow — depends on P8-T1, batch evaluation, template presets | 2026-02-08
+- [x] P8-T3: Customer management hub — enhanced Customer model, segment/tier, CRM pages | 2026-02-08
+- [x] P8-T4: Customer segmentation & CLV analytics — RFM, CLV, at-risk detection | 2026-02-08
+- [x] P8-T5: Report builder & export engine — SavedReport model, CSV/Excel, column picker | 2026-02-08
+- [x] P8-T6: Scheduled reports & email delivery — extends P8-T5 with scheduling | 2026-02-08
+- [x] P8-T7: Outgoing webhooks & event system — WebhookEndpoint model, HMAC, retry logic | 2026-02-08
+- [x] P8-T8: Bulk operations suite — CSV upload/preview/apply for price/inventory/customers | 2026-02-08
 
 ## Pending / Backlog
 - [ ] Fleet models + UI (was P4-T1/T6) — Vehicle, Driver, Trip; only needed for businesses with own delivery fleet
