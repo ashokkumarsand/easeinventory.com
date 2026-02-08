@@ -250,6 +250,41 @@ export const PERMISSION_MODULES: PermissionModule[] = [
       { key: 'settings:domains', label: 'Domain Management', description: 'Configure custom domains', module: 'settings' },
     ]
   },
+  {
+    key: 'fleet',
+    label: 'Fleet Management',
+    icon: 'Truck',
+    permissions: [
+      { key: 'fleet:view', label: 'View Fleet', description: 'See vehicles, drivers, and trips', module: 'fleet' },
+      { key: 'fleet:manage', label: 'Manage Fleet', description: 'Add vehicles, drivers, create trips', module: 'fleet' },
+    ]
+  },
+  {
+    key: 'sla',
+    label: 'SLA Management',
+    icon: 'ClipboardCheck',
+    permissions: [
+      { key: 'sla:view', label: 'View SLAs', description: 'See supplier SLA compliance', module: 'sla' },
+      { key: 'sla:manage', label: 'Manage SLAs', description: 'Define and edit supplier SLA targets', module: 'sla' },
+    ]
+  },
+  {
+    key: 'traceability',
+    label: 'Lot Traceability',
+    icon: 'Fingerprint',
+    permissions: [
+      { key: 'traceability:view', label: 'View Traceability', description: 'Trace lots and run recall simulations', module: 'traceability' },
+    ]
+  },
+  {
+    key: 'remanufacturing',
+    label: 'Remanufacturing',
+    icon: 'RotateCcw',
+    permissions: [
+      { key: 'remanufacturing:view', label: 'View Orders', description: 'See remanufacturing orders', module: 'remanufacturing' },
+      { key: 'remanufacturing:manage', label: 'Manage Orders', description: 'Create and update remanufacturing orders', module: 'remanufacturing' },
+    ]
+  },
 ];
 
 // Default role permission mappings

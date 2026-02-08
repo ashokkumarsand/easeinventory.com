@@ -161,12 +161,17 @@
 ## Onboarding Setup Wizard (2026-02-09)
 - [x] Onboarding setup wizard — 7-step post-approval wizard at /setup with auth, 7 API routes, confetti UI | 2026-02-09
 
-## Pending / Backlog
-- [ ] Fleet models + UI (was P4-T1/T6) — Vehicle, Driver, Trip; only needed for businesses with own delivery fleet
-- [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract; Shiprocket already aggregates Delhivery as a courier option
-- [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist; Shiprocket already compares couriers internally
+## Phase 9: Enterprise Features (2026-02-09)
+- [ ] P9-T1: Multi-echelon inventory optimization — cross-warehouse optimal stock distribution, echelon base-stock policies
+- [ ] P9-T2: Supplier portal — read-only external access for suppliers to see stock levels, PO status, velocity
+- [ ] P9-T3: Remanufacturing workflow — disassembly BOM, yield tracking, remanufactured SKU linkage
+- [ ] P9-T4: Fleet management — Vehicle, Driver, Trip models, route planning, delivery assignment UI
+- [ ] P9-T5: Lot genealogy & traceability — full chain from supplier lot → warehouse → customer, recall support
+- [ ] P9-T6: SLA management — supplier SLA definitions, breach alerts, penalty tracking, compliance dashboard
+
+## Pending / Backlog (Lower Priority)
+- [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract
+- [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist
 - [x] ML-based demand forecasting — Holt-Winters, regression, ensemble (BL-T1–T8 complete)
-- [ ] Multi-echelon inventory optimization (enterprise feature)
-- [ ] Remanufacturing workflow (niche manufacturing)
 - [x] Assortment planning tools (retail-specific) — service, 7 API routes, 5 UI components, Intelligence tab
 - [x] Missing pages giving 404 — fixed /settings/billing, /contact, /waves/new, /pricing, help sub-articles, Profile Settings link

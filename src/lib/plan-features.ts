@@ -46,7 +46,13 @@ export type FeatureKey =
   | 'outgoing_webhooks'
   | 'activity_feed'
   | 'demand_forecasting'
-  | 'assortment_planning';
+  | 'assortment_planning'
+  | 'multi_echelon'
+  | 'lot_genealogy'
+  | 'sla_management'
+  | 'fleet_management'
+  | 'remanufacturing'
+  | 'supplier_portal';
 
 export interface PlanFeature {
   name: string;
@@ -274,6 +280,36 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'Product scoring, lifecycle analysis, category health, and optimization suggestions',
     minPlan: 'BUSINESS',
   },
+  multi_echelon: {
+    name: 'Multi-Echelon Optimization',
+    description: 'Cross-warehouse optimal stock distribution with echelon base-stock policies',
+    minPlan: 'ENTERPRISE',
+  },
+  lot_genealogy: {
+    name: 'Lot Genealogy & Traceability',
+    description: 'Full chain traceability from supplier to customer with recall simulation',
+    minPlan: 'ENTERPRISE',
+  },
+  sla_management: {
+    name: 'SLA Management',
+    description: 'Supplier SLA definitions, breach detection, penalty tracking, and compliance dashboard',
+    minPlan: 'ENTERPRISE',
+  },
+  fleet_management: {
+    name: 'Fleet Management',
+    description: 'Vehicle, driver, and trip management for own-fleet delivery operations',
+    minPlan: 'ENTERPRISE',
+  },
+  remanufacturing: {
+    name: 'Remanufacturing',
+    description: 'Disassembly BOM, yield tracking, and remanufactured SKU linkage',
+    minPlan: 'ENTERPRISE',
+  },
+  supplier_portal: {
+    name: 'Supplier Portal',
+    description: 'Read-only access for suppliers to view stock levels, PO status, and velocity',
+    minPlan: 'ENTERPRISE',
+  },
 };
 
 // Plan details for upgrade modal
@@ -456,6 +492,11 @@ export const GATED_MENU_ITEMS: Record<string, FeatureKey> = {
   '/settings/webhooks': 'outgoing_webhooks',
   '/bulk-operations': 'bulk_operations',
   '/activity': 'activity_feed',
+  '/multi-echelon': 'multi_echelon',
+  '/lot-genealogy': 'lot_genealogy',
+  '/sla-management': 'sla_management',
+  '/fleet': 'fleet_management',
+  '/remanufacturing': 'remanufacturing',
 };
 
 /**
@@ -492,4 +533,9 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   activity_feed: { minPlan: 'STARTER', name: 'Activity Feed' },
   demand_forecasting: { minPlan: 'BUSINESS', name: 'Demand Forecasting' },
   assortment_planning: { minPlan: 'BUSINESS', name: 'Assortment Planning' },
+  multi_echelon: { minPlan: 'ENTERPRISE', name: 'Multi-Echelon Optimization' },
+  lot_genealogy: { minPlan: 'ENTERPRISE', name: 'Lot Genealogy' },
+  sla_management: { minPlan: 'ENTERPRISE', name: 'SLA Management' },
+  fleet_management: { minPlan: 'ENTERPRISE', name: 'Fleet Management' },
+  remanufacturing: { minPlan: 'ENTERPRISE', name: 'Remanufacturing' },
 };
