@@ -166,4 +166,4 @@
 - [ ] Multi-echelon inventory optimization (enterprise feature)
 - [ ] Remanufacturing workflow (niche manufacturing)
 - [ ] Assortment planning tools (retail-specific)
-- [ ] Missing pages giving 404 — /settings/billing, profile settings in master admin, and other linked pages that don't have implementations yet. Audit all nav links and create stub pages or proper implementations.
+- [x] Missing pages giving 404 — fixed /settings/billing, /contact, /waves/new, /pricing, help sub-articles, Profile Settings link

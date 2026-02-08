@@ -457,7 +457,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                          </Button>
                        </DropdownMenuTrigger>
                        <DropdownMenuContent align="end" side="top">
-                         <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+                         <DropdownMenuItem onClick={() => window.location.href = '/settings'}>Profile Settings</DropdownMenuItem>
                          <DropdownMenuItem className="text-destructive" onClick={() => signOut()}>Log Out</DropdownMenuItem>
                        </DropdownMenuContent>
                      </DropdownMenu>
