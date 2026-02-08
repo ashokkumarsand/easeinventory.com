@@ -1,64 +1,8 @@
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { DEFAULT_CATEGORIES } from '@/lib/setup-categories';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
-
-// Default categories based on common business types
-const DEFAULT_CATEGORIES: Record<string, string[]> = {
-  'electronics': [
-    'Smartphones',
-    'Laptops',
-    'Tablets',
-    'Wearables',
-    'Audio',
-    'Cameras',
-    'Gaming',
-    'Accessories',
-    'Cables & Chargers',
-    'Storage Devices',
-  ],
-  'retail': [
-    'Clothing',
-    'Footwear',
-    'Accessories',
-    'Home & Living',
-    'Beauty',
-    'Sports',
-    'Toys',
-    'Books',
-    'Food & Beverages',
-    'Health',
-  ],
-  'pharmacy': [
-    'Medicines',
-    'OTC Drugs',
-    'Healthcare',
-    'Personal Care',
-    'Baby Care',
-    'Supplements',
-    'Medical Devices',
-    'First Aid',
-  ],
-  'hardware': [
-    'Tools',
-    'Plumbing',
-    'Electrical',
-    'Paint',
-    'Building Materials',
-    'Fasteners',
-    'Safety Equipment',
-    'Garden',
-  ],
-  'general': [
-    'General',
-    'Electronics',
-    'Accessories',
-    'Parts',
-    'Consumables',
-    'Services',
-    'Other',
-  ],
-};
 
 export async function GET(request: NextRequest) {
   try {

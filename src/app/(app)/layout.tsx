@@ -263,6 +263,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       if (user?.onboardingStatus === 'PENDING') {
         router.push('/onboarding');
+        return;
+      }
+
+      if (user?.setupComplete === false && user?.registrationStatus !== 'PENDING') {
+        router.push('/setup');
+        return;
       }
     }
   }, [status, session, router]);

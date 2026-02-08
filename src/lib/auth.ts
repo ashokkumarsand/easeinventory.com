@@ -46,6 +46,7 @@ export const authOptions: NextAuthOptions = {
             role: 'SUPER_ADMIN',
             onboardingStatus: 'COMPLETED',
             registrationStatus: 'APPROVED',
+            setupComplete: true,
             plan: 'ENTERPRISE' as PlanType,
             planExpiresAt: null,
           };
@@ -92,6 +93,7 @@ export const authOptions: NextAuthOptions = {
           role: user.role,
           onboardingStatus: (user.tenant?.settings as any)?.onboardingStatus || 'PENDING',
           registrationStatus: user.tenant?.registrationStatus || 'PENDING',
+          setupComplete: (user.tenant?.settings as any)?.setupComplete ?? true,
           customDomain: user.tenant?.customDomain || null,
           plan: (user.tenant?.plan as PlanType) || 'FREE',
           planExpiresAt: user.tenant?.planExpiresAt || null,
@@ -118,6 +120,7 @@ export const authOptions: NextAuthOptions = {
         token.customDomain = (user as any).customDomain;
         token.plan = (user as any).plan;
         token.planExpiresAt = (user as any).planExpiresAt;
+        token.setupComplete = (user as any).setupComplete;
 
         // Check if internal staff
         const isInternalDomain = user.email?.endsWith('@easeinventory.com');
@@ -141,6 +144,7 @@ export const authOptions: NextAuthOptions = {
         token.registrationStatus = session.registrationStatus;
         if (session.plan) token.plan = session.plan;
         if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
+        if (session.setupComplete !== undefined) token.setupComplete = session.setupComplete;
       }
       return token;
     },
@@ -157,6 +161,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).backofficePermissions = token.backofficePermissions;
         (session.user as any).plan = token.plan;
         (session.user as any).planExpiresAt = token.planExpiresAt;
+        (session.user as any).setupComplete = token.setupComplete;
       }
       return session;
     },

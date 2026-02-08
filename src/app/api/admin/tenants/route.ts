@@ -53,11 +53,21 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
+    // Merge setupComplete into existing settings when approving
+    const existing = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { settings: true },
+    });
+    const currentSettings = (existing?.settings as any) || {};
+
     const tenant = await prisma.tenant.update({
       where: { id: tenantId },
       data: {
         registrationStatus: status,
         isActive: status === TenantStatus.APPROVED,
+        ...(status === TenantStatus.APPROVED && {
+          settings: { ...currentSettings, setupComplete: false },
+        }),
       },
     });
 

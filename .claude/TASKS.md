@@ -158,6 +158,9 @@
 - [x] P8-T7: Outgoing webhooks & event system — WebhookEndpoint model, HMAC, retry logic | 2026-02-08
 - [x] P8-T8: Bulk operations suite — CSV upload/preview/apply for price/inventory/customers | 2026-02-08
 
+## Onboarding Setup Wizard (2026-02-09)
+- [x] Onboarding setup wizard — 7-step post-approval wizard at /setup with auth, 7 API routes, confetti UI | 2026-02-09
+
 ## Pending / Backlog
 - [ ] Fleet models + UI (was P4-T1/T6) — Vehicle, Driver, Trip; only needed for businesses with own delivery fleet
 - [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract; Shiprocket already aggregates Delhivery as a courier option
