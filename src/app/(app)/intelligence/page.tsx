@@ -50,7 +50,7 @@ export default function IntelligencePage() {
       {/* Tab Layout */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div className="relative">
-          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap scrollbar-none">
+          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap scrollbar-none" aria-label="Intelligence module tabs">
             {TABS.map(tab => (
               <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5 shrink-0">
                 <tab.icon className="w-4 h-4" />

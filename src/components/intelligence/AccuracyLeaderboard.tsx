@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -20,7 +21,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { Trophy, AlertTriangle } from 'lucide-react';
+import { Trophy, AlertTriangle, AlertCircle, RefreshCw, Loader2 } from 'lucide-react';
 
 interface LeaderboardItem {
   productId: string;
@@ -61,17 +62,48 @@ function ConfidenceBadge({ mape }: { mape: number }) {
 export function AccuracyLeaderboard() {
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch('/api/analytics/forecasts/accuracy')
-      .then(r => r.json())
-      .then(setData)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/analytics/forecasts/accuracy');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setData(await res.json());
+    } catch (e) {
+      console.error('Failed to fetch accuracy data:', e);
+      setError(e instanceof Error ? e.message : 'An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load accuracy data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchData}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (loading) {
-    return <div className="flex items-center justify-center h-40 text-muted-foreground">Loading accuracy data...</div>;
+    return (
+      <div className="flex items-center justify-center h-40 text-muted-foreground">
+        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+        Loading accuracy data...
+      </div>
+    );
   }
 
   if (!data || (data.best.length === 0 && data.worst.length === 0)) {

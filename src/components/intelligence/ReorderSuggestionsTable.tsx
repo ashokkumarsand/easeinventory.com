@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { RefreshCw, ShoppingCart, XCircle, ArrowRightCircle, AlertTriangle, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import { ColDef } from 'ag-grid-community';
 
 interface ReorderSuggestion {
@@ -79,9 +80,10 @@ export function ReorderSuggestionsTable() {
     const res = await fetch(`/api/analytics/reorder-suggestions/${id}/convert`, { method: 'POST' });
     const json = await res.json();
     if (res.ok) {
+      toast.success('Suggestion converted to Purchase Order');
       await fetchData();
     } else {
-      alert(json.message || 'Failed to convert');
+      toast.error(json.message || 'Failed to convert suggestion to PO');
     }
   };
 
