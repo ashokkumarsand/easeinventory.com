@@ -191,7 +191,7 @@ export const StyledSelect: React.FC<StyledSelectProps> = ({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
+          {options.filter((option) => option.value !== '').map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
