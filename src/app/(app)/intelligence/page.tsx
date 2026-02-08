@@ -12,7 +12,8 @@ import { DeadStockTable } from '@/components/intelligence/DeadStockTable';
 import { SlowMoverTable } from '@/components/intelligence/SlowMoverTable';
 import { ValuationDashboard } from '@/components/intelligence/ValuationDashboard';
 import { OrderSmoothingDashboard } from '@/components/intelligence/OrderSmoothingDashboard';
-import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown, Landmark, Activity } from 'lucide-react';
+import { ForecastDashboard } from '@/components/intelligence/ForecastDashboard';
+import { Brain, TrendingUp, Shield, Grid3X3, BarChart3, Clock, ShoppingCart, PackageX, TrendingDown, Landmark, Activity, Sparkles } from 'lucide-react';
 
 const TABS = [
   { value: 'demand', label: 'Demand', icon: TrendingUp },
@@ -25,6 +26,7 @@ const TABS = [
   { value: 'slow-movers', label: 'Slow Movers', icon: TrendingDown },
   { value: 'valuation', label: 'Valuation', icon: Landmark },
   { value: 'order-smoothing', label: 'Smoothing', icon: Activity },
+  { value: 'forecasting', label: 'Forecasting', icon: Sparkles },
 ] as const;
 
 export default function IntelligencePage() {
@@ -92,6 +94,10 @@ export default function IntelligencePage() {
 
         <TabsContent value="order-smoothing" className="mt-6">
           <OrderSmoothingDashboard />
+        </TabsContent>
+
+        <TabsContent value="forecasting" className="mt-6">
+          <ForecastDashboard />
         </TabsContent>
       </Tabs>
     </div>

@@ -191,6 +191,7 @@ export const PERMISSION_MODULES: PermissionModule[] = [
       { key: 'analytics:view', label: 'View Analytics', description: 'View analytics dashboards and intelligence', module: 'analytics' },
       { key: 'analytics:configure', label: 'Configure Analytics', description: 'Run classifications, set reorder points', module: 'analytics' },
       { key: 'analytics:reorder', label: 'Reorder Suggestions', description: 'View and act on reorder suggestions', module: 'analytics' },
+      { key: 'analytics:forecast', label: 'Demand Forecasting', description: 'Generate and view demand forecasts', module: 'analytics' },
     ]
   },
   {
@@ -268,7 +269,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'suppliers:view', 'suppliers:create', 'suppliers:edit', 'suppliers:analytics', 'suppliers:payments',
     'bom:view', 'bom:create', 'bom:edit', 'bom:assemble',
     'pricing:view', 'pricing:create', 'pricing:edit',
-    'analytics:view', 'analytics:configure', 'analytics:reorder',
+    'analytics:view', 'analytics:configure', 'analytics:reorder', 'analytics:forecast',
     'automation:view', 'automation:create', 'automation:edit', 'automation:execute',
     'customers:view', 'customers:create', 'customers:edit', 'customers:analytics',
     'reports:view', 'reports:create', 'reports:export', 'reports:schedule',

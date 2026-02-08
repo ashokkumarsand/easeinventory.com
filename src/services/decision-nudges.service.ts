@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma';
+import type { ForecastPoint } from '@/services/demand-forecast.service';
 
 // ============================================================
 // Types
@@ -12,7 +13,11 @@ export type NudgeCategory =
   | 'LOST_REVENUE'
   | 'EXPIRY'
   | 'PRICING'
-  | 'PIPELINE';
+  | 'PIPELINE'
+  | 'FORECAST_STOCKOUT'
+  | 'DEMAND_SPIKE_FORECAST'
+  | 'DEMAND_DROP_FORECAST'
+  | 'LOW_FORECAST_CONFIDENCE';
 
 export type NudgeSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
 
@@ -103,6 +108,7 @@ export class DecisionNudgesService {
       expiringLots,
       lostSales,
       bullwhipProducts,
+      forecastNudges,
     ] = await Promise.all([
       this.getStockoutRisks(tenantId),
       this.getOverstocked(tenantId),
@@ -110,9 +116,10 @@ export class DecisionNudgesService {
       this.getExpiringLots(tenantId),
       this.getLostSalesNudges(tenantId),
       this.getBullwhipNudges(tenantId),
+      this.getForecastNudges(tenantId),
     ]);
 
-    nudges.push(...stockoutRisks, ...overstocked, ...demandShifts, ...expiringLots, ...lostSales, ...bullwhipProducts);
+    nudges.push(...stockoutRisks, ...overstocked, ...demandShifts, ...expiringLots, ...lostSales, ...bullwhipProducts, ...forecastNudges);
 
     return nudges;
   }
@@ -466,6 +473,104 @@ export class DecisionNudgesService {
           productId: p.id,
           productName: p.name,
           sku: p.sku ?? undefined,
+        });
+      }
+    }
+
+    return nudges;
+  }
+
+  /**
+   * Forecast-based nudges: stockout prediction, demand spike/drop, low confidence
+   */
+  private static async getForecastNudges(tenantId: string): Promise<Nudge[]> {
+    const forecasts = await prisma.demandForecast.findMany({
+      where: { tenantId, isActive: true, isBest: true },
+      include: { product: { select: { id: true, name: true, sku: true, quantity: true, leadTimeDays: true } } },
+    });
+
+    const nudges: Nudge[] = [];
+    let counter = 0;
+
+    for (const f of forecasts) {
+      const data = f.forecastData as unknown as ForecastPoint[];
+      if (!Array.isArray(data) || data.length === 0) continue;
+
+      const forecastAvg = data.reduce((s, p) => s + p.value, 0) / data.length;
+      if (forecastAvg <= 0) continue;
+
+      const daysOfSupply = Math.floor(f.product.quantity / forecastAvg);
+      const leadTime = f.product.leadTimeDays ?? 7;
+
+      // FORECAST_STOCKOUT: will run out before next PO arrives
+      if (daysOfSupply < leadTime && daysOfSupply < 30) {
+        nudges.push({
+          id: `forecast-stockout-${counter++}`,
+          category: 'FORECAST_STOCKOUT',
+          severity: daysOfSupply <= 3 ? 'CRITICAL' : daysOfSupply <= 7 ? 'HIGH' : 'MEDIUM',
+          title: 'Predicted Stockout',
+          message: `${f.product.name} is forecasted to stock out in ${daysOfSupply} days (lead time: ${leadTime}d). Reorder now.`,
+          metric: `${daysOfSupply} days`,
+          actionLabel: 'View Forecast',
+          actionHref: `/intelligence/forecast/${f.product.id}`,
+          productId: f.product.id,
+          productName: f.product.name,
+          sku: f.product.sku ?? undefined,
+        });
+      }
+
+      // DEMAND_SPIKE_FORECAST: forecast shows significant increase in last 7 days of horizon
+      if (data.length >= 14) {
+        const firstWeekAvg = data.slice(0, 7).reduce((s, p) => s + p.value, 0) / 7;
+        const lastWeekAvg = data.slice(-7).reduce((s, p) => s + p.value, 0) / 7;
+        if (firstWeekAvg > 0) {
+          const change = ((lastWeekAvg - firstWeekAvg) / firstWeekAvg) * 100;
+          if (change > 30) {
+            nudges.push({
+              id: `forecast-spike-${counter++}`,
+              category: 'DEMAND_SPIKE_FORECAST',
+              severity: change > 50 ? 'HIGH' : 'MEDIUM',
+              title: 'Demand Spike Forecast',
+              message: `${f.product.name} demand is forecast to increase ${Math.round(change)}% over the next ${f.horizonDays} days.`,
+              metric: `+${Math.round(change)}%`,
+              actionLabel: 'View Forecast',
+              actionHref: `/intelligence/forecast/${f.product.id}`,
+              productId: f.product.id,
+              productName: f.product.name,
+              sku: f.product.sku ?? undefined,
+            });
+          } else if (change < -30) {
+            nudges.push({
+              id: `forecast-drop-${counter++}`,
+              category: 'DEMAND_DROP_FORECAST',
+              severity: 'LOW',
+              title: 'Demand Drop Forecast',
+              message: `${f.product.name} demand is forecast to decrease ${Math.abs(Math.round(change))}% — consider reducing orders.`,
+              metric: `${Math.round(change)}%`,
+              actionLabel: 'View Forecast',
+              actionHref: `/intelligence/forecast/${f.product.id}`,
+              productId: f.product.id,
+              productName: f.product.name,
+              sku: f.product.sku ?? undefined,
+            });
+          }
+        }
+      }
+
+      // LOW_FORECAST_CONFIDENCE: MAPE > 30%
+      if (f.mape !== null && f.mape > 30) {
+        nudges.push({
+          id: `forecast-lowconf-${counter++}`,
+          category: 'LOW_FORECAST_CONFIDENCE',
+          severity: 'INFO',
+          title: 'Low Forecast Confidence',
+          message: `${f.product.name} forecast has ${f.mape.toFixed(0)}% MAPE. Consider manual review.`,
+          metric: `${f.mape.toFixed(0)}% MAPE`,
+          actionLabel: 'View Forecast',
+          actionHref: `/intelligence/forecast/${f.product.id}`,
+          productId: f.product.id,
+          productName: f.product.name,
+          sku: f.product.sku ?? undefined,
         });
       }
     }

@@ -139,6 +139,10 @@ model Tenant {
   webhookEndpoints     WebhookEndpoint[]
   webhookDeliveries    WebhookDelivery[]
 
+  // Demand Forecasting (Backlog)
+  demandForecasts      DemandForecast[]
+  forecastAccuracyLogs ForecastAccuracyLog[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -589,6 +593,10 @@ model Product {
 
   // Lost Sales (Phase 7)
   lostSales           LostSale[]
+
+  // Demand Forecasting (Backlog)
+  demandForecasts      DemandForecast[]
+  forecastAccuracyLogs ForecastAccuracyLog[]
 
   @@unique([slug, tenantId])
   @@index([tenantId])
@@ -3367,4 +3375,80 @@ enum CustomerTier {
   SILVER
   GOLD
   PLATINUM
+}
+
+// ==================== DEMAND FORECASTING (Backlog) ====================
+
+enum ForecastMethod {
+  SMA
+  EMA
+  HOLT_WINTERS
+  LINEAR_REGRESSION
+  ENSEMBLE
+}
+
+model DemandForecast {
+  id String @id @default(cuid())
+
+  productId String          @map("product_id")
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  method      ForecastMethod
+  horizonDays Int            @map("horizon_days")
+
+  // Forecast output: JSON array of { date, value, lower, upper }
+  forecastData Json @map("forecast_data") @db.JsonB
+
+  // Accuracy metrics
+  mape  Float? // Mean Absolute Percentage Error
+  mae   Float? // Mean Absolute Error
+  bias  Float? // Forecast Bias
+  rmse  Float? // Root Mean Squared Error
+
+  // Method parameters (e.g., alpha, beta, gamma, window)
+  parameters Json? @db.JsonB
+
+  // State
+  isActive Boolean @default(true) @map("is_active")
+  isBest   Boolean @default(false) @map("is_best")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([productId, isActive])
+  @@index([tenantId, isBest])
+  @@index([tenantId, createdAt])
+  @@map("demand_forecasts")
+}
+
+model ForecastAccuracyLog {
+  id String @id @default(cuid())
+
+  productId String         @map("product_id")
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  method      ForecastMethod
+  periodStart DateTime     @map("period_start")
+  periodEnd   DateTime     @map("period_end")
+
+  // Accuracy metrics
+  mape       Float
+  mae        Float
+  bias       Float
+  rmse       Float
+  dataPoints Int @map("data_points")
+
+  // Multi-tenant
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([productId, method])
+  @@index([tenantId, createdAt])
+  @@map("forecast_accuracy_logs")
 }

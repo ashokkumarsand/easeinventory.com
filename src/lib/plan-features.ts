@@ -44,7 +44,8 @@ export type FeatureKey =
   | 'customer_management'
   | 'report_builder'
   | 'outgoing_webhooks'
-  | 'activity_feed';
+  | 'activity_feed'
+  | 'demand_forecasting';
 
 export interface PlanFeature {
   name: string;
@@ -262,6 +263,11 @@ export const PLAN_FEATURES: Record<FeatureKey, PlanFeature> = {
     description: 'Business event log and activity timeline across all operations',
     minPlan: 'STARTER',
   },
+  demand_forecasting: {
+    name: 'Demand Forecasting',
+    description: 'ML-based demand forecasting with Holt-Winters, regression, and ensemble methods',
+    minPlan: 'BUSINESS',
+  },
 };
 
 // Plan details for upgrade modal
@@ -478,4 +484,5 @@ export const ANALYTICS_WIDGETS: Record<string, { minPlan: PlanType; name: string
   outgoing_webhooks: { minPlan: 'ENTERPRISE', name: 'Outgoing Webhooks' },
   bulk_operations: { minPlan: 'STARTER', name: 'Bulk Operations' },
   activity_feed: { minPlan: 'STARTER', name: 'Activity Feed' },
+  demand_forecasting: { minPlan: 'BUSINESS', name: 'Demand Forecasting' },
 };

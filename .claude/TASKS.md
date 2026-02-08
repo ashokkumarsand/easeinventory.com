@@ -162,7 +162,8 @@
 - [ ] Fleet models + UI (was P4-T1/T6) — Vehicle, Driver, Trip; only needed for businesses with own delivery fleet
 - [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract; Shiprocket already aggregates Delhivery as a courier option
 - [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist; Shiprocket already compares couriers internally
-- [ ] ML-based demand forecasting (requires P5-T1 data maturity)
+- [x] ML-based demand forecasting — Holt-Winters, regression, ensemble (BL-T1–T8 complete)
 - [ ] Multi-echelon inventory optimization (enterprise feature)
 - [ ] Remanufacturing workflow (niche manufacturing)
 - [ ] Assortment planning tools (retail-specific)
+- [ ] Missing pages giving 404 — /settings/billing, profile settings in master admin, and other linked pages that don't have implementations yet. Audit all nav links and create stub pages or proper implementations.

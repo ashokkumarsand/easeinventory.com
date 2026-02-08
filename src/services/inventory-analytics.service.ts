@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma';
 import { DemandPeriodType, Prisma } from '@prisma/client';
+import { DemandForecastService } from './demand-forecast.service';
 
 // ============================================================
 // Types
@@ -425,9 +426,14 @@ export class InventoryAnalyticsService {
     });
 
     const leadTime = product?.leadTimeDays ?? product?.supplier?.avgLeadTimeDays ?? 7;
-    const ss = this.calculateSafetyStock(velocity.avgDailyDemand, velocity.stdDeviation, leadTime, serviceLevel);
-    const rop = this.calculateReorderPoint(velocity.avgDailyDemand, leadTime, ss);
-    const eoq = this.calculateEOQ(velocity.avgDailyDemand * 365, 500, Number(product?.costPrice ?? 100) * 0.25);
+
+    // Use forecasted demand when available, fall back to historical
+    const forecastedDemand = await DemandForecastService.getForecastedDailyDemand(productId, tenantId);
+    const avgDaily = forecastedDemand ?? velocity.avgDailyDemand;
+
+    const ss = this.calculateSafetyStock(avgDaily, velocity.stdDeviation, leadTime, serviceLevel);
+    const rop = this.calculateReorderPoint(avgDaily, leadTime, ss);
+    const eoq = this.calculateEOQ(avgDaily * 365, 500, Number(product?.costPrice ?? 100) * 0.25);
 
     await prisma.product.update({
       where: { id: productId },
@@ -936,13 +942,19 @@ export class InventoryAnalyticsService {
     for (const product of products) {
       if (product.reorderPoint == null || product.quantity > product.reorderPoint) continue;
 
-      // Get recent demand for avg daily
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 30);
-      const dailyMap = await this.calculateDemand(product.id, tenantId, startDate, endDate);
-      const totalQty = Array.from(dailyMap.values()).reduce((s, d) => s + d.quantity, 0);
-      const avgDaily = totalQty / 30;
+      // Use forecasted demand when available, fall back to historical 30-day avg
+      const forecastedDemand = await DemandForecastService.getForecastedDailyDemand(product.id, tenantId);
+      let avgDaily: number;
+      if (forecastedDemand !== null && forecastedDemand > 0) {
+        avgDaily = forecastedDemand;
+      } else {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 30);
+        const dailyMap = await this.calculateDemand(product.id, tenantId, startDate, endDate);
+        const totalQty = Array.from(dailyMap.values()).reduce((s, d) => s + d.quantity, 0);
+        avgDaily = totalQty / 30;
+      }
 
       const suggestedQty = product.economicOrderQty ?? Math.max(
         Math.ceil(avgDaily * (product.leadTimeDays ?? 7) * 2),
