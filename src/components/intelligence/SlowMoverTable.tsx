@@ -5,7 +5,7 @@ import { DataTable } from '@/components/ui/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { RefreshCw, TrendingDown } from 'lucide-react';
+import { AlertCircle, RefreshCw, TrendingDown } from 'lucide-react';
 import { ColDef } from 'ag-grid-community';
 
 interface SlowMoverItem {
@@ -27,9 +27,11 @@ export function SlowMoverTable() {
   const [totalValue, setTotalValue] = useState(0);
   const [overallAvgVelocity, setOverallAvgVelocity] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/analytics/slow-movers');
       const json = await res.json();
@@ -39,6 +41,7 @@ export function SlowMoverTable() {
       setOverallAvgVelocity(json.overallAvgVelocity || 0);
     } catch (err) {
       console.error('Failed to fetch slow movers:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -103,9 +106,17 @@ export function SlowMoverTable() {
       width: 110,
       cellRenderer: (params: any) => {
         const pct = Math.round(Number(params.value) * 100);
+        const level = pct <= 10 ? 'very low' : pct <= 20 ? 'low' : 'moderate';
         return (
           <div className="flex items-center gap-1.5">
-            <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+            <div
+              className="w-16 h-2 rounded-full bg-muted overflow-hidden"
+              role="meter"
+              aria-label={`Velocity: ${pct}% of average (${level})`}
+              aria-valuenow={pct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
               <div
                 className={`h-full rounded-full ${pct <= 10 ? 'bg-destructive' : pct <= 20 ? 'bg-amber-500' : 'bg-primary'}`}
                 style={{ width: `${Math.min(pct, 100)}%` }}
@@ -117,6 +128,22 @@ export function SlowMoverTable() {
       },
     },
   ];
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load slow mover data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchData}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-4">

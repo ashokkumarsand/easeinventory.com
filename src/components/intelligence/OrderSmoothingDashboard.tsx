@@ -26,6 +26,7 @@ import {
   Activity,
   TrendingDown,
   AlertTriangle,
+  AlertCircle,
   Package,
   Settings2,
   ChevronDown,
@@ -119,9 +120,9 @@ function severityColor(severity: string) {
 }
 
 function bullwhipBarColor(index: number) {
-  if (index < 1) return '#22c55e';
-  if (index < 2) return '#f59e0b';
-  return '#ef4444';
+  if (index < 1) return 'hsl(142, 71%, 45%)';
+  if (index < 2) return 'hsl(38, 92%, 50%)';
+  return 'hsl(0, 84%, 60%)';
 }
 
 // ============================================================
@@ -252,6 +253,7 @@ function BullwhipChart({
         <CardTitle className="text-base">Bullwhip Analysis — Top Products</CardTitle>
       </CardHeader>
       <CardContent>
+        <div role="img" aria-label="Bar chart showing bullwhip index for top products">
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 20 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
@@ -265,10 +267,11 @@ function BullwhipChart({
               }}
               formatter={(value) => [Number(value).toFixed(2), 'Bullwhip Index']}
             />
-            <ReferenceLine x={1} stroke="#f59e0b" strokeDasharray="3 3" label="No amplification" />
+            <ReferenceLine x={1} stroke="hsl(38, 92%, 50%)" strokeDasharray="3 3" label="No amplification" />
             <Bar dataKey="bullwhipIndex" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
@@ -284,6 +287,7 @@ function DemandChart({ timeSeries }: { timeSeries: { date: string; actual: numbe
   const sampled = timeSeries.filter((_, i) => i % step === 0);
 
   return (
+    <div role="img" aria-label="Line chart comparing actual demand versus EMA smoothed demand over time">
     <ResponsiveContainer width="100%" height={200}>
       <LineChart data={sampled} margin={{ top: 5, right: 10, bottom: 5, left: 10 }}>
         <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
@@ -298,17 +302,18 @@ function DemandChart({ timeSeries }: { timeSeries: { date: string; actual: numbe
           }}
         />
         <Legend />
-        <Line type="monotone" dataKey="actual" stroke="#3b82f6" dot={false} name="Actual Demand" />
+        <Line type="monotone" dataKey="actual" stroke="hsl(217, 91%, 60%)" dot={false} name="Actual Demand" />
         <Line
           type="monotone"
           dataKey="smoothed"
-          stroke="#f97316"
+          stroke="hsl(25, 95%, 53%)"
           strokeDasharray="5 5"
           dot={false}
           name="EMA Smoothed"
         />
       </LineChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 
@@ -562,11 +567,13 @@ export function OrderSmoothingDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [bullwhipData, setBullwhipData] = useState<BullwhipItem[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [days, setDays] = useState(90);
   const [configProduct, setConfigProduct] = useState<SmoothedProduct | null>(null);
 
   const fetchData = useCallback(async (period: number) => {
     setIsLoading(true);
+    setError(null);
     try {
       const [dashRes, bullRes] = await Promise.all([
         fetch(`/api/analytics/order-smoothing?lookbackDays=${period}`),
@@ -577,8 +584,10 @@ export function OrderSmoothingDashboard() {
         const result = await bullRes.json();
         setBullwhipData(result.data);
       }
-    } catch (err) {
-      console.error('Failed to fetch order smoothing data:', err);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'An unexpected error occurred';
+      setError(message);
+      console.error('Failed to fetch order smoothing data:', e);
     } finally {
       setIsLoading(false);
     }
@@ -603,15 +612,32 @@ export function OrderSmoothingDashboard() {
     }
   };
 
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={() => fetchData(days)}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Controls */}
       <div className="flex items-center justify-end gap-2">
-        <div className="flex items-center gap-1 bg-foreground/[0.06] rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-foreground/[0.06] rounded-lg p-1" role="group" aria-label="Select time period">
           {PERIOD_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setDays(opt.value)}
+              aria-pressed={days === opt.value}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 days === opt.value
                   ? 'bg-primary text-primary-foreground'

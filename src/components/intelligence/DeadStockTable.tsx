@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, PackageX, AlertTriangle } from 'lucide-react';
+import { RefreshCw, PackageX, AlertTriangle, AlertCircle } from 'lucide-react';
 import { ColDef } from 'ag-grid-community';
 
 interface DeadStockItem {
@@ -34,18 +34,22 @@ export function DeadStockTable() {
   const [totalCount, setTotalCount] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [noSaleDays, setNoSaleDays] = useState('90');
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const res = await fetch(`/api/analytics/dead-stock?noSaleDays=${noSaleDays}`);
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const json = await res.json();
       setData(json.products || []);
       setTotalCount(json.totalCount || 0);
       setTotalValue(json.totalValue || 0);
     } catch (err) {
       console.error('Failed to fetch dead stock:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -124,6 +128,22 @@ export function DeadStockTable() {
     },
   ];
 
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load dead stock data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchData}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Summary */}
@@ -161,7 +181,7 @@ export function DeadStockTable() {
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">No sales in</span>
           <Select value={noSaleDays} onValueChange={setNoSaleDays}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px]" aria-label="Filter by time period">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

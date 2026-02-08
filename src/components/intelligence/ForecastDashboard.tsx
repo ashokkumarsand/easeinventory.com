@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
+  AlertCircle,
   RefreshCw,
   Brain,
   Target,
@@ -89,27 +91,41 @@ const METHOD_LABELS: Record<string, string> = {
 export function ForecastDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const [abcFilter, setAbcFilter] = useState('all');
   const [page, setPage] = useState(1);
   const [tab, setTab] = useState<'overview' | 'accuracy'>('overview');
 
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [search]);
+
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams({ page: String(page), pageSize: '25' });
-      if (search) params.set('search', search);
+      if (debouncedSearch) params.set('search', debouncedSearch);
       if (abcFilter !== 'all') params.set('abcClass', abcFilter);
       const res = await fetch(`/api/analytics/forecasts?${params}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       setData(json);
     } catch (e) {
       console.error('Failed to fetch forecast dashboard:', e);
+      setError(e instanceof Error ? e.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
-  }, [page, search, abcFilter]);
+  }, [page, debouncedSearch, abcFilter]);
 
   useEffect(() => {
     fetchDashboard();
@@ -145,29 +161,31 @@ export function ForecastDashboard() {
     <div className="space-y-6">
       {/* Action Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex gap-2">
-          <Button
-            variant={tab === 'overview' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setTab('overview')}
-          >
-            Overview
-          </Button>
-          <Button
-            variant={tab === 'accuracy' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setTab('accuracy')}
-          >
-            Accuracy
-          </Button>
-        </div>
+        <Tabs value={tab} onValueChange={(v) => setTab(v as 'overview' | 'accuracy')}>
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="accuracy">Accuracy</TabsTrigger>
+          </TabsList>
+        </Tabs>
         <Button onClick={handleGenerate} disabled={generating} size="sm">
           {generating ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-1.5" />}
           {generating ? 'Generating...' : 'Generate Forecasts'}
         </Button>
       </div>
 
-      {tab === 'accuracy' ? (
+      {error ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+            <p className="font-medium text-foreground">Failed to load forecast data</p>
+            <p className="text-sm mt-1">{error}</p>
+            <Button variant="outline" size="sm" className="mt-4" onClick={fetchDashboard}>
+              <RefreshCw className="w-4 h-4 mr-1.5" />
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      ) : tab === 'accuracy' ? (
         <AccuracyLeaderboard />
       ) : (
         <>
@@ -239,13 +257,14 @@ export function ForecastDashboard() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search products..."
+                aria-label="Search products"
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 className="pl-9"
               />
             </div>
             <Select value={abcFilter} onValueChange={(v) => { setAbcFilter(v); setPage(1); }}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32" aria-label="Filter by method">
                 <SelectValue placeholder="ABC Class" />
               </SelectTrigger>
               <SelectContent>
@@ -265,7 +284,7 @@ export function ForecastDashboard() {
             </div>
           ) : data && data.products.length > 0 ? (
             <Card>
-              <CardContent className="p-0">
+              <CardContent className="p-0 overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -296,7 +315,7 @@ export function ForecastDashboard() {
                         <TableCell className="text-right">{p.forecastedDailyDemand.toFixed(1)}</TableCell>
                         <TableCell className="text-right">
                           <span className={p.daysOfSupply < 7 ? 'text-red-500 font-medium' : p.daysOfSupply < 14 ? 'text-yellow-500' : ''}>
-                            {p.daysOfSupply >= 999 ? '∞' : p.daysOfSupply}
+                            {p.daysOfSupply >= 999 ? <span aria-label="Unlimited" title="Unlimited">∞</span> : p.daysOfSupply}
                           </span>
                         </TableCell>
                         <TableCell className="text-center text-xs">

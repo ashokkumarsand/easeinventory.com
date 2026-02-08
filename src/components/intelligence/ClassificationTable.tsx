@@ -7,7 +7,7 @@ import { DataTable } from '@/components/ui/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RefreshCw, Grid3X3 } from 'lucide-react';
+import { RefreshCw, Grid3X3, AlertCircle, X } from 'lucide-react';
 import { ColDef } from 'ag-grid-community';
 
 interface ClassifiedProduct {
@@ -33,11 +33,13 @@ export function ClassificationTable() {
   const [total, setTotal] = useState(0);
   const [matrix, setMatrix] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isClassifying, setIsClassifying] = useState(false);
   const [selectedCombo, setSelectedCombo] = useState<{ abc: string; xyz: string } | null>(null);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
       params.set('pageSize', '100');
@@ -47,12 +49,14 @@ export function ClassificationTable() {
       }
 
       const res = await fetch(`/api/analytics/abc-xyz?${params}`);
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const json = await res.json();
       setData(json.data || []);
       setTotal(json.total || 0);
       if (json.matrix) setMatrix(json.matrix);
     } catch (err) {
       console.error('Failed to fetch classification data:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -142,6 +146,22 @@ export function ClassificationTable() {
     },
   ];
 
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load classification data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchData}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -149,7 +169,7 @@ export function ClassificationTable() {
           {selectedCombo && (
             <Badge variant="secondary" className="gap-1">
               Filtered: {selectedCombo.abc}{selectedCombo.xyz}
-              <button onClick={() => setSelectedCombo(null)} className="ml-1 text-xs hover:text-destructive">&times;</button>
+              <button onClick={() => setSelectedCombo(null)} className="ml-1 hover:text-destructive" aria-label="Close"><X className="w-4 h-4" /></button>
             </Badge>
           )}
         </div>

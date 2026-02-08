@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { DataTable } from '@/components/ui/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Clock, XCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Clock, RefreshCw, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ColDef } from 'ag-grid-community';
 
 interface ExpiringLot {
@@ -43,25 +44,27 @@ export function ExpiringLotsTable() {
   const [alerts, setAlerts] = useState<ExpiryAlerts | null>(null);
   const [waste, setWaste] = useState<WasteMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const [alertsRes, wasteRes] = await Promise.all([
-          fetch('/api/analytics/expiring-lots'),
-          fetch('/api/analytics/waste'),
-        ]);
-        if (alertsRes.ok) setAlerts(await alertsRes.json());
-        if (wasteRes.ok) setWaste(await wasteRes.json());
-      } catch (err) {
-        console.error('Failed to fetch perishable data:', err);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [alertsRes, wasteRes] = await Promise.all([
+        fetch('/api/analytics/expiring-lots'),
+        fetch('/api/analytics/waste'),
+      ]);
+      if (alertsRes.ok) setAlerts(await alertsRes.json());
+      if (wasteRes.ok) setWaste(await wasteRes.json());
+    } catch (err) {
+      console.error('Failed to fetch perishable data:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
     }
-    fetchData();
-  }, []);
+  };
+
+  useEffect(() => { fetchData(); }, []);
 
   const allLots = alerts
     ? [...alerts.critical.lots, ...alerts.warning.lots, ...alerts.notice.lots]
@@ -132,6 +135,22 @@ export function ExpiringLotsTable() {
     },
   ];
 
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load expiring lots</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchData}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Summary Cards */}
@@ -139,7 +158,7 @@ export function ExpiringLotsTable() {
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-500" />
+              <XCircle className="w-5 h-5 text-red-500" aria-label="Critical or expired lots" />
               <div>
                 <p className="text-xs text-muted-foreground">Critical/Expired</p>
                 <p className="text-2xl font-black text-destructive">{alerts?.critical.count ?? 0}</p>
@@ -150,7 +169,7 @@ export function ExpiringLotsTable() {
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              <AlertTriangle className="w-5 h-5 text-amber-500" aria-label="Warning: expiring within 30 days" />
               <div>
                 <p className="text-xs text-muted-foreground">Warning (≤30d)</p>
                 <p className="text-2xl font-black text-amber-500">{alerts?.warning.count ?? 0}</p>
@@ -161,7 +180,7 @@ export function ExpiringLotsTable() {
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-500" />
+              <Clock className="w-5 h-5 text-blue-500" aria-label="Notice: expiring within 90 days" />
               <div>
                 <p className="text-xs text-muted-foreground">Notice (≤90d)</p>
                 <p className="text-2xl font-black">{alerts?.notice.count ?? 0}</p>

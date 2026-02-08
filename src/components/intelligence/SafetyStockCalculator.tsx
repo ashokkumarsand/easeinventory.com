@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DataTable } from '@/components/ui/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calculator, RefreshCw, Search, Shield } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertCircle, Calculator, RefreshCw, Search, Shield } from 'lucide-react';
 import { ColDef } from 'ag-grid-community';
 
 interface SafetyStockRow {
@@ -28,28 +29,42 @@ export function SafetyStockCalculator() {
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isRecalculating, setIsRecalculating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const [page, setPage] = useState(1);
   const [serviceLevel, setServiceLevel] = useState(0.95);
 
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [search]);
+
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
       params.set('page', String(page));
       params.set('pageSize', '50');
-      if (search) params.set('search', search);
+      if (debouncedSearch) params.set('search', debouncedSearch);
 
       const res = await fetch(`/api/analytics/safety-stock?${params}`);
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const json = await res.json();
       setData(json.data || []);
       setTotal(json.total || 0);
     } catch (err) {
       console.error('Failed to fetch safety stock data:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
-  }, [page, search]);
+  }, [page, debouncedSearch]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -149,6 +164,22 @@ export function SafetyStockCalculator() {
     },
   ];
 
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load safety stock data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchData}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Summary Cards */}
@@ -177,17 +208,18 @@ export function SafetyStockCalculator() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <select
-                value={serviceLevel}
-                onChange={(e) => setServiceLevel(Number(e.target.value))}
-                className="text-sm font-bold bg-transparent border rounded px-2 py-1"
-              >
-                <option value={0.85}>85%</option>
-                <option value={0.90}>90%</option>
-                <option value={0.95}>95%</option>
-                <option value={0.97}>97%</option>
-                <option value={0.99}>99%</option>
-              </select>
+              <Select value={String(serviceLevel)} onValueChange={(val) => setServiceLevel(Number(val))}>
+                <SelectTrigger className="w-[80px] text-sm font-bold" aria-label="Service level">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0.85">85%</SelectItem>
+                  <SelectItem value="0.9">90%</SelectItem>
+                  <SelectItem value="0.95">95%</SelectItem>
+                  <SelectItem value="0.97">97%</SelectItem>
+                  <SelectItem value="0.99">99%</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
@@ -202,6 +234,7 @@ export function SafetyStockCalculator() {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="pl-9"
+            aria-label="Search products"
           />
         </div>
         <Button onClick={handleBulkRecalculate} disabled={isRecalculating}>

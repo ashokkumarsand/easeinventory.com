@@ -5,16 +5,19 @@ import { KpiStatCards } from './KpiStatCards';
 import { KpiTrendChart } from './KpiTrendChart';
 import { AgingChart } from './AgingChart';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Save } from 'lucide-react';
+import { AlertCircle, RefreshCw, Save } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 export function KpiDashboard() {
   const [kpiData, setKpiData] = useState<any>(null);
   const [historyData, setHistoryData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchKpis = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const [kpiRes, historyRes] = await Promise.all([
         fetch('/api/analytics/kpis'),
@@ -27,6 +30,7 @@ export function KpiDashboard() {
       }
     } catch (err) {
       console.error('Failed to fetch KPIs:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -43,6 +47,22 @@ export function KpiDashboard() {
       setIsSaving(false);
     }
   };
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <AlertCircle className="w-10 h-10 mb-3 text-destructive opacity-70" />
+          <p className="font-medium text-foreground">Failed to load KPI data</p>
+          <p className="text-sm mt-1">{error}</p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={fetchKpis}>
+            <RefreshCw className="w-4 h-4 mr-1.5" />
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
