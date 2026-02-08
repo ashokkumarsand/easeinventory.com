@@ -37,6 +37,38 @@ interface SkuEchelonData {
   recommendation: string;
 }
 
+interface EchelonAlert {
+  id: string;
+  type: 'low_stock' | 'overstock' | 'imbalance';
+  severity: 'critical' | 'warning' | 'info';
+  productId: string;
+  productName: string;
+  sku: string | null;
+  locationId?: string;
+  locationName?: string;
+  currentValue: number;
+  optimalValue: number;
+  message: string;
+}
+
+interface RebalanceRecommendation {
+  productId: string;
+  productName: string;
+  sku: string | null;
+  fromLocationId: string;
+  fromLocationName: string;
+  toLocationId: string;
+  toLocationName: string;
+  quantity: number;
+  reason: string;
+}
+
+interface EchelonAlerts {
+  summary: { critical: number; warning: number; info: number };
+  alerts: EchelonAlert[];
+  recommendations: RebalanceRecommendation[];
+}
+
 interface EchelonPolicy {
   productId: string;
   locationId: string;
@@ -321,6 +353,115 @@ export class MultiEchelonService {
       skuAnalysis: topSkus,
       policies: policies.slice(0, 200),
       networkHealth,
+    };
+  }
+
+  static async getAlerts(tenantId: string): Promise<EchelonAlerts> {
+    const dashboard = await this.getDashboard(tenantId, 90, 0.95);
+    const alerts: EchelonAlert[] = [];
+    const recommendations: RebalanceRecommendation[] = [];
+    let alertCounter = 0;
+
+    for (const sku of dashboard.skuAnalysis) {
+      for (const loc of sku.locations) {
+        if (loc.demandRate === 0 && loc.currentStock === 0) continue;
+
+        // Low stock: serviceLevel < 50%
+        if (loc.serviceLevel < 50 && loc.optimalStock > 0) {
+          alerts.push({
+            id: `alert-${++alertCounter}`,
+            type: 'low_stock',
+            severity: loc.serviceLevel < 25 ? 'critical' : 'warning',
+            productId: sku.productId,
+            productName: sku.productName,
+            sku: sku.sku,
+            locationId: loc.locationId,
+            locationName: loc.locationName,
+            currentValue: loc.currentStock,
+            optimalValue: loc.optimalStock,
+            message: `${sku.productName} at ${loc.locationName}: only ${loc.currentStock} units vs ${loc.optimalStock} optimal (${loc.serviceLevel}% service level)`,
+          });
+        }
+
+        // Overstock: serviceLevel > 200%
+        if (loc.serviceLevel > 200) {
+          alerts.push({
+            id: `alert-${++alertCounter}`,
+            type: 'overstock',
+            severity: 'info',
+            productId: sku.productId,
+            productName: sku.productName,
+            sku: sku.sku,
+            locationId: loc.locationId,
+            locationName: loc.locationName,
+            currentValue: loc.currentStock,
+            optimalValue: loc.optimalStock,
+            message: `${sku.productName} at ${loc.locationName}: ${loc.currentStock} units vs ${loc.optimalStock} optimal (excess stock)`,
+          });
+        }
+      }
+
+      // Imbalance: networkImbalance > 30%
+      if (sku.networkImbalance > 30) {
+        alerts.push({
+          id: `alert-${++alertCounter}`,
+          type: 'imbalance',
+          severity: sku.networkImbalance > 50 ? 'critical' : 'warning',
+          productId: sku.productId,
+          productName: sku.productName,
+          sku: sku.sku,
+          currentValue: sku.networkImbalance,
+          optimalValue: 15,
+          message: `${sku.productName}: network imbalance at ${sku.networkImbalance}% — stock unevenly distributed`,
+        });
+
+        // Generate rebalancing recommendations
+        const excess = sku.locations
+          .filter((l) => l.delta < -5)
+          .sort((a, b) => a.delta - b.delta); // most excess first
+        const deficit = sku.locations
+          .filter((l) => l.delta > 5)
+          .sort((a, b) => b.delta - a.delta); // most needed first
+
+        let ei = 0;
+        let di = 0;
+        while (ei < excess.length && di < deficit.length) {
+          const from = excess[ei];
+          const to = deficit[di];
+          const transferQty = Math.min(Math.abs(from.delta), to.delta);
+          if (transferQty > 0) {
+            recommendations.push({
+              productId: sku.productId,
+              productName: sku.productName,
+              sku: sku.sku,
+              fromLocationId: from.locationId,
+              fromLocationName: from.locationName,
+              toLocationId: to.locationId,
+              toLocationName: to.locationName,
+              quantity: transferQty,
+              reason: `Move ${transferQty} units to improve service level at ${to.locationName}`,
+            });
+          }
+          excess[ei] = { ...from, delta: from.delta + transferQty };
+          deficit[di] = { ...to, delta: to.delta - transferQty };
+          if (Math.abs(excess[ei].delta) <= 5) ei++;
+          if (deficit[di].delta <= 5) di++;
+        }
+      }
+    }
+
+    // Sort alerts: critical first, then warning, then info
+    const severityOrder = { critical: 0, warning: 1, info: 2 };
+    alerts.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+
+    return {
+      summary: {
+        critical: alerts.filter((a) => a.severity === 'critical').length,
+        warning: alerts.filter((a) => a.severity === 'warning').length,
+        info: alerts.filter((a) => a.severity === 'info').length,
+      },
+      alerts: alerts.slice(0, 100),
+      recommendations: recommendations.slice(0, 50),
     };
   }
 }

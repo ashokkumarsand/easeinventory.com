@@ -19,6 +19,7 @@ const footerLinks = {
     { label: 'Experts', href: '/careers' },
   ],
   resources: [
+    { label: 'Blog', href: '/blog' },
     { label: 'Knowledge Base', href: '/help' },
     { label: 'API Reference', href: '/api-docs' },
     { label: 'System Status', href: '/status' },

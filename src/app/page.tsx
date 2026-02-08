@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { cookies, headers } from 'next/headers';
 
 import AboutUs from '@/components/landing/AboutUs';
+import Blog from '@/components/landing/Blog';
 import ComingSoon from '@/components/landing/ComingSoon';
 import ContactForm from '@/components/landing/ContactForm';
 import CTA from '@/components/landing/CTA';
@@ -16,6 +17,7 @@ import HowItWorks from '@/components/landing/HowItWorks';
 import Navbar from '@/components/landing/Navbar';
 import Pricing from '@/components/landing/Pricing';
 import Testimonials from '@/components/landing/Testimonials';
+import { getAllPosts } from '@/lib/blog';
 import PreviewBadge from '@/components/preview/PreviewBadge';
 import PublicTenantPage from '@/components/public/PublicTenantPage';
 
@@ -82,6 +84,9 @@ export default async function HomePage() {
     }
   }
   
+  // Fetch blog posts for landing page
+  const blogPosts = getAllPosts().slice(0, 3);
+
   // Show Coming Soon only on the actual production root domain
   if (isRootDomain && !isLocal) {
     // Check if an admin wants to preview the full site
@@ -108,6 +113,7 @@ export default async function HomePage() {
               <HowItWorks />
               <Pricing />
               <Testimonials />
+              <Blog posts={blogPosts} />
               <ContactForm />
               <FAQ />
               <CTA />
@@ -148,6 +154,7 @@ export default async function HomePage() {
         <HowItWorks />
         <Pricing />
         <Testimonials />
+        <Blog posts={blogPosts} />
         <ContactForm />
         <FAQ />
         <CTA />

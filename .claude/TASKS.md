@@ -162,12 +162,18 @@
 - [x] Onboarding setup wizard — 7-step post-approval wizard at /setup with auth, 7 API routes, confetti UI | 2026-02-09
 
 ## Phase 9: Enterprise Features (2026-02-09)
-- [ ] P9-T1: Multi-echelon inventory optimization — cross-warehouse optimal stock distribution, echelon base-stock policies
-- [ ] P9-T2: Supplier portal — read-only external access for suppliers to see stock levels, PO status, velocity
-- [ ] P9-T3: Remanufacturing workflow — disassembly BOM, yield tracking, remanufactured SKU linkage
-- [ ] P9-T4: Fleet management — Vehicle, Driver, Trip models, route planning, delivery assignment UI
-- [ ] P9-T5: Lot genealogy & traceability — full chain from supplier lot → warehouse → customer, recall support
-- [ ] P9-T6: SLA management — supplier SLA definitions, breach alerts, penalty tracking, compliance dashboard
+- [x] P9-T1: Multi-echelon inventory optimization — cross-warehouse optimal stock distribution | 2026-02-09 | commit: 041dc6fa
+- [ ] P9-T2: Supplier portal — read-only external access for suppliers (requires separate auth)
+- [x] P9-T3: Remanufacturing workflow — disassembly BOM, yield tracking | 2026-02-09 | commit: 041dc6fa
+- [x] P9-T4: Fleet management — Vehicle, Driver, Trip tracking | 2026-02-09 | commit: 041dc6fa
+- [x] P9-T5: Lot genealogy & traceability — full chain + recall simulation | 2026-02-09 | commit: 041dc6fa
+- [x] P9-T6: SLA management — compliance scoring, breach detection, penalties | 2026-02-09 | commit: 041dc6fa
+
+## Phase 10: Multi-Echelon Optimization Enhancement + Blog (2026-02-09)
+- [x] P10-T1: Enhanced multi-echelon with alerts — low stock alerts, rebalancing alerts across warehouses | 2026-02-09
+- [x] P10-T2: Scheduled rebalancing management — schedule config via Tenant.settings | 2026-02-09
+- [x] P10-T3: Blog post about multi-echelon optimization — feature spotlight article | 2026-02-09
+- [x] P10-T4: Add blog to main landing page — blog section + footer link | 2026-02-09
 
 ## Pending / Backlog (Lower Priority)
 - [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract

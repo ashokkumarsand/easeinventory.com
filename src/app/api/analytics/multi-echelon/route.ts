@@ -12,6 +12,13 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
+    const mode = searchParams.get('mode');
+
+    if (mode === 'alerts') {
+      const data = await MultiEchelonService.getAlerts(tenantId);
+      return NextResponse.json(data);
+    }
+
     const lookbackDays = parseInt(searchParams.get('lookbackDays') || '90');
     const serviceLevel = parseFloat(searchParams.get('serviceLevel') || '0.95');
 
