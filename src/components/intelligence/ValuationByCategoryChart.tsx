@@ -52,7 +52,7 @@ export function ValuationByCategoryChart({ data }: ValuationByCategoryChartProps
           <span className="text-xs text-muted-foreground">{data.categories.length} categories</span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent role="img" aria-label="Horizontal bar chart showing inventory valuation by category at cost and sale price">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData} layout="vertical" margin={{ left: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -70,8 +70,8 @@ export function ValuationByCategoryChart({ data }: ValuationByCategoryChartProps
               ]}
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
-            <Bar dataKey="Cost Value" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
-            <Bar dataKey="Sale Value" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+            <Bar dataKey="Cost Value" fill="hsl(258, 90%, 66%)" radius={[0, 4, 4, 0]} />
+            <Bar dataKey="Sale Value" fill="hsl(217, 91%, 60%)" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

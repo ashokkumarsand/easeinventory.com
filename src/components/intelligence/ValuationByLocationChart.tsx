@@ -18,7 +18,7 @@ interface ValuationByLocationChartProps {
   data: { locations: LocationData[] } | null;
 }
 
-const COLORS = ['#8b5cf6', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4', '#84cc16'];
+const COLORS = ['hsl(258, 90%, 66%)', 'hsl(217, 91%, 60%)', 'hsl(142, 71%, 45%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)', 'hsl(330, 81%, 60%)', 'hsl(188, 95%, 43%)', 'hsl(84, 81%, 44%)'];
 
 export function ValuationByLocationChart({ data }: ValuationByLocationChartProps) {
   if (!data || data.locations.length === 0) {
@@ -49,7 +49,7 @@ export function ValuationByLocationChart({ data }: ValuationByLocationChartProps
           <span className="text-xs text-muted-foreground">{data.locations.length} locations</span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent role="img" aria-label="Pie chart showing inventory valuation distribution by location">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie

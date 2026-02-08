@@ -69,6 +69,7 @@ export function ForecastChart({
   }
 
   return (
+    <div role="img" aria-label="Area chart showing historical demand and forecasted values with confidence bands">
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted/30" />
@@ -142,5 +143,6 @@ export function ForecastChart({
         />
       </AreaChart>
     </ResponsiveContainer>
+    </div>
   );
 }

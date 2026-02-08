@@ -29,7 +29,7 @@ export function ABCXYZMatrix({ matrix, onCellClick }: ABCXYZMatrixProps) {
         <CardTitle className="text-sm">ABC/XYZ Classification Matrix</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2" role="grid" aria-label="ABC/XYZ classification matrix showing product counts per segment">
           {/* Header row */}
           <div className="text-xs font-bold text-muted-foreground text-center py-2" />
           {['X', 'Y', 'Z'].map(xyz => (

@@ -64,6 +64,7 @@ export function ValuationDashboard() {
               key={opt.value}
               onClick={() => setDays(opt.value)}
               aria-label={`Select valuation period ${opt.label}`}
+              aria-pressed={days === opt.value}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 days === opt.value
                   ? 'bg-primary text-primary-foreground'

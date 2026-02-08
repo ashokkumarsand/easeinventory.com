@@ -49,14 +49,17 @@ export default function IntelligencePage() {
 
       {/* Tab Layout */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start overflow-x-auto flex-nowrap">
-          {TABS.map(tab => (
-            <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5 shrink-0">
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="relative">
+          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap scrollbar-none">
+            {TABS.map(tab => (
+              <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5 shrink-0">
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none lg:hidden" aria-hidden="true" />
+        </div>
 
         <TabsContent value="demand" className="mt-6">
           <DemandVelocityTable />

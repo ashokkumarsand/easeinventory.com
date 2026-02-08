@@ -16,7 +16,7 @@ interface CarryingCostBreakdownProps {
   data: CarryingCostData | null;
 }
 
-const COLORS = ['#8b5cf6', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
+const COLORS = ['hsl(258, 90%, 66%)', 'hsl(217, 91%, 60%)', 'hsl(142, 71%, 45%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)'];
 
 function formatINR(value: number) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
@@ -53,7 +53,7 @@ export function CarryingCostBreakdown({ data }: CarryingCostBreakdownProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent role="img" aria-label="Donut chart showing carrying cost breakdown by component">
         <ResponsiveContainer width="100%" height={280}>
           <PieChart>
             <Pie

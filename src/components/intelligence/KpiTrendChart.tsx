@@ -45,7 +45,7 @@ export function KpiTrendChart({ data }: KpiTrendChartProps) {
       <CardHeader>
         <CardTitle className="text-sm">KPI Trends Over Time</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent role="img" aria-label="Line chart showing KPI trends over time including turnover, GMROI, fill rate, and stockout rate">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -65,10 +65,10 @@ export function KpiTrendChart({ data }: KpiTrendChartProps) {
               labelFormatter={(v) => new Date(v).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
-            <Line type="monotone" dataKey="turnover" stroke="#3b82f6" strokeWidth={2} dot={false} name="Turnover" />
-            <Line type="monotone" dataKey="gmroi" stroke="#22c55e" strokeWidth={2} dot={false} name="GMROI" />
-            <Line type="monotone" dataKey="fillRate" stroke="#f59e0b" strokeWidth={2} dot={false} name="Fill Rate %" />
-            <Line type="monotone" dataKey="stockoutRate" stroke="#ef4444" strokeWidth={2} dot={false} name="Stockout %" />
+            <Line type="monotone" dataKey="turnover" stroke="hsl(217, 91%, 60%)" strokeWidth={2} dot={false} name="Turnover" />
+            <Line type="monotone" dataKey="gmroi" stroke="hsl(142, 71%, 45%)" strokeWidth={2} dot={false} name="GMROI" />
+            <Line type="monotone" dataKey="fillRate" stroke="hsl(38, 92%, 50%)" strokeWidth={2} dot={false} name="Fill Rate %" />
+            <Line type="monotone" dataKey="stockoutRate" stroke="hsl(0, 84%, 60%)" strokeWidth={2} dot={false} name="Stockout %" />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

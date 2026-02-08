@@ -92,7 +92,7 @@ export function AccuracyLeaderboard() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Method Performance (Avg MAPE %)</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent role="img" aria-label="Bar chart comparing average MAPE across forecasting methods">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart
                 data={data.methodComparison.map(m => ({

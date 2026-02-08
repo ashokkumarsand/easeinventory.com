@@ -8,7 +8,7 @@ interface AgingChartProps {
   data: Record<string, number> | null;
 }
 
-const BUCKET_COLORS = ['#22c55e', '#84cc16', '#f59e0b', '#f97316', '#ef4444'];
+const BUCKET_COLORS = ['hsl(142, 71%, 45%)', 'hsl(84, 81%, 44%)', 'hsl(38, 92%, 50%)', 'hsl(25, 95%, 53%)', 'hsl(0, 84%, 60%)'];
 
 function formatINR(value: number) {
   if (value >= 100000) return `${(value / 100000).toFixed(1)}L`;
@@ -50,7 +50,7 @@ export function AgingChart({ data }: AgingChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent role="img" aria-label="Bar chart showing inventory aging distribution across time buckets">
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
