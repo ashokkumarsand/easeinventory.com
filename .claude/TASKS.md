@@ -175,6 +175,38 @@
 - [x] P10-T3: Blog post about multi-echelon optimization — feature spotlight article | 2026-02-09
 - [x] P10-T4: Add blog to main landing page — blog section + footer link | 2026-02-09
 
+## Phase 11: AWS SST Migration (2026-02-09)
+> Architecture docs: `docs/AWS-SST-MIGRATION-ANALYSIS.md`, `docs/MICROSERVICES-ARCHITECTURE.md`
+> Strategy: Strangler Fig — incremental extraction, 7 thick services
+
+### Phase 1: Infrastructure + Monorepo Skeleton
+- [x] P11-T1: SST v3 init — sst.config.ts, VPC, Aurora, Redis, S3, EventBridge | 2026-02-09
+- [x] P11-T2: Core package — @app/core with Prisma, Redis, auth, events, validators | 2026-02-09
+- [x] P11-T3: Functions package — @app/functions with 6 Hono service skeletons + 4 workers | 2026-02-09
+- [x] P11-T4: CI/CD — GitHub Actions workflows for lint/test/build/deploy | 2026-02-09
+- [x] P11-T5: Monorepo config — npm workspaces, vitest, tsconfig exclusions | 2026-02-09
+
+### Phase 2: Extract Analytics Service (pending)
+- [ ] P11-T6: Analytics Hono app — migrate 51 analytics routes to @app/functions/analytics
+- [ ] P11-T7: API Gateway V2 for analytics — JWT auth, Next.js proxy setup
+
+### Phase 3: Extract Order Service (pending)
+- [ ] P11-T8: Order Hono app — migrate 17 order/shipment routes
+- [ ] P11-T9: EventBridge integration — OrderCreated, OrderShipped events
+
+### Phase 4: Extract Inventory Service (pending)
+- [ ] P11-T10: Inventory Hono app — migrate 28 inventory routes + stock check API
+
+### Phase 5: Extract Remaining Services (pending)
+- [ ] P11-T11: Finance, Supply Chain, Platform services
+- [ ] P11-T12: Worker service — webhook delivery, report gen, bulk ops, analytics cron
+
+### Phase 6: Remove Next.js API Routes (pending)
+- [ ] P11-T13: Frontend API client — typed HTTP client for all services
+- [ ] P11-T14: Remove Next.js API routes — pure SSR frontend
+
+---
+
 ## Pending / Backlog (Lower Priority)
 - [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract
 - [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist

@@ -1,0 +1,13 @@
+{
+  "name": "@app/functions",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@app/core": "*",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
