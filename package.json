@@ -16,6 +16,11 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report tests/ui-audit/report",
+    "services": "tsx packages/functions/src/dev-server.ts",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "dev:full": "docker compose up -d && npm run dev",
     "sst:dev": "sst dev",
     "sst:deploy": "sst deploy",
     "sst:remove": "sst remove",
@@ -37,6 +42,7 @@
     "@aws-sdk/client-eventbridge": "^3.985.0",
     "@aws-sdk/client-s3": "^3.985.0",
     "@aws-sdk/client-sqs": "^3.985.0",
+    "@hono/node-server": "^1.19.9",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
@@ -117,6 +123,7 @@
     "sst": "^3.17.38",
     "supabase": "^2.75.2",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.0.18"
   }

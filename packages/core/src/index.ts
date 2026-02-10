@@ -12,6 +12,7 @@ export { PERMISSIONS } from "./auth/permissions";
 
 // Events
 export { publishEvent } from "./events/publish";
+export { localBus } from "./events/local-bus";
 export { EVENT_SOURCE, EVENT_TYPE } from "./events/types";
 export type {
   DomainEvent,
