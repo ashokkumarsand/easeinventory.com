@@ -80,8 +80,8 @@ const Hero: React.FC = () => {
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            WhatsApp alerts and high-precision status tracking.
-            Remove the burden of service management in minutes.
+            Inventory, orders, procurement, repairs, analytics &amp; automation
+            — unified in one platform built for Indian businesses.
           </p>
 
           {/* CTAs */}

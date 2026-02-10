@@ -19,7 +19,7 @@ export default function PromotionsPage() {
         title: '',
         content: '',
         type: 'EMAIL',
-        targetPlans: ['FREE', 'STARTER']
+        targetPlans: ['TRIAL', 'BASIC']
     });
 
     const fetchPromotions = async () => {
@@ -48,7 +48,7 @@ export default function PromotionsPage() {
             });
             if (res.ok) {
                 setShowCreate(false);
-                setNewPromo({ title: '', content: '', type: 'EMAIL', targetPlans: ['FREE', 'STARTER'] });
+                setNewPromo({ title: '', content: '', type: 'EMAIL', targetPlans: ['TRIAL', 'BASIC'] });
                 fetchPromotions();
             }
         } catch (error) {

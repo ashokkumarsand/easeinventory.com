@@ -101,14 +101,16 @@ async function handleSubscriptionActivated(payload: any) {
   const billingCycle = subscription.notes?.billing_cycle;
 
   if (tenantId) {
-    // Map plan name to PlanType enum
-    const planMap: Record<string, 'FREE' | 'STARTER' | 'BUSINESS' | 'ENTERPRISE'> = {
-      'starter': 'STARTER',
+    // Map plan name to PlanType enum (new 3-plan model)
+    const planMap: Record<string, 'BASIC' | 'BUSINESS' | 'ENTERPRISE'> = {
+      'basic': 'BASIC',
+      'starter': 'BASIC', // backward compat
       'business': 'BUSINESS',
       'professional': 'ENTERPRISE',
+      'enterprise': 'ENTERPRISE',
     };
 
-    const plan = planMap[planName] || 'STARTER';
+    const plan = planMap[planName] || 'BASIC';
     const expiresAt = billingCycle === 'annual' 
       ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
       : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -117,8 +119,16 @@ async function handleSubscriptionActivated(payload: any) {
     const planFeatures = {
       customDomainAllowed: plan === 'BUSINESS' || plan === 'ENTERPRISE',
       apiAccessAllowed: plan === 'ENTERPRISE',
-      whatsappLimit: plan === 'STARTER' ? 100 : plan === 'BUSINESS' ? 500 : 2000,
-      storageLimit: plan === 'STARTER' ? 500 : plan === 'BUSINESS' ? 5120 : 25600, // MB
+      whatsappLimit: plan === 'BASIC' ? 100 : plan === 'BUSINESS' ? 500 : 2000,
+      storageLimit: plan === 'BASIC' ? 2048 : plan === 'BUSINESS' ? 25600 : 102400, // MB
+    };
+
+    // Set effective limits based on plan
+    const effectiveLimits = {
+      effectiveUserLimit: plan === 'BASIC' ? 5 : plan === 'BUSINESS' ? 15 : -1,
+      effectiveProductLimit: plan === 'BASIC' ? 500 : plan === 'BUSINESS' ? 5000 : -1,
+      effectiveLocationLimit: plan === 'BASIC' ? 1 : plan === 'BUSINESS' ? 5 : -1,
+      effectiveStorageLimit: plan === 'BASIC' ? 2 : plan === 'BUSINESS' ? 25 : 100,
     };
 
     // Get current tenant settings
@@ -134,6 +144,8 @@ async function handleSubscriptionActivated(payload: any) {
       data: {
         plan,
         planExpiresAt: expiresAt,
+        trialEndsAt: null, // Clear trial on paid plan
+        ...effectiveLimits,
         settings: {
           ...currentSettings,
           paymentPending: false,
@@ -208,12 +220,13 @@ async function handleSubscriptionHalted(payload: any) {
   const tenantId = subscription.notes?.tenant_id;
 
   if (tenantId) {
-    // Downgrade to FREE plan
+    // Downgrade to TRIAL plan (expired)
     await prisma.tenant.update({
       where: { id: tenantId },
       data: {
-        plan: 'FREE',
+        plan: 'TRIAL',
         planExpiresAt: null,
+        trialEndsAt: new Date(), // expired immediately
       }
     });
 

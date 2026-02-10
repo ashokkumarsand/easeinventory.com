@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { PlanType } from '@/lib/plan-features';
+import { PlanType, normalizePlanType } from '@/lib/plan-features';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -95,8 +95,9 @@ export const authOptions: NextAuthOptions = {
           registrationStatus: user.tenant?.registrationStatus || 'PENDING',
           setupComplete: (user.tenant?.settings as any)?.setupComplete ?? true,
           customDomain: user.tenant?.customDomain || null,
-          plan: (user.tenant?.plan as PlanType) || 'FREE',
+          plan: normalizePlanType((user.tenant?.plan as string) || 'TRIAL'),
           planExpiresAt: user.tenant?.planExpiresAt || null,
+          trialEndsAt: (user.tenant as any)?.trialEndsAt || null,
         };
       },
     }),
@@ -118,8 +119,9 @@ export const authOptions: NextAuthOptions = {
         token.onboardingStatus = (user as any).onboardingStatus;
         token.registrationStatus = (user as any).registrationStatus;
         token.customDomain = (user as any).customDomain;
-        token.plan = (user as any).plan;
+        token.plan = normalizePlanType((user as any).plan || 'TRIAL');
         token.planExpiresAt = (user as any).planExpiresAt;
+        token.trialEndsAt = (user as any).trialEndsAt;
         token.setupComplete = (user as any).setupComplete;
 
         // Check if internal staff
@@ -142,8 +144,9 @@ export const authOptions: NextAuthOptions = {
         token.tenantSlug = session.tenantSlug;
         token.onboardingStatus = session.onboardingStatus;
         token.registrationStatus = session.registrationStatus;
-        if (session.plan) token.plan = session.plan;
+        if (session.plan) token.plan = normalizePlanType(session.plan);
         if (session.planExpiresAt) token.planExpiresAt = session.planExpiresAt;
+        if (session.trialEndsAt) token.trialEndsAt = session.trialEndsAt;
         if (session.setupComplete !== undefined) token.setupComplete = session.setupComplete;
       }
       return token;
@@ -161,6 +164,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).backofficePermissions = token.backofficePermissions;
         (session.user as any).plan = token.plan;
         (session.user as any).planExpiresAt = token.planExpiresAt;
+        (session.user as any).trialEndsAt = token.trialEndsAt;
         (session.user as any).setupComplete = token.setupComplete;
       }
       return session;

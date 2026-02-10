@@ -57,8 +57,15 @@ model Tenant {
   ifscCode      String? @map("ifsc_code")
 
   // Subscription
-  plan          PlanType  @default(FREE)
+  plan          PlanType  @default(TRIAL)
   planExpiresAt DateTime? @map("plan_expires_at")
+  trialEndsAt   DateTime? @map("trial_ends_at")
+
+  // Effective limits (base plan + add-ons)
+  effectiveUserLimit     Int? @map("effective_user_limit")
+  effectiveProductLimit  Int? @map("effective_product_limit")
+  effectiveLocationLimit Int? @map("effective_location_limit")
+  effectiveStorageLimit  Int? @map("effective_storage_limit") // in GB
 
   // Settings
   settings           Json?
@@ -143,6 +150,9 @@ model Tenant {
   demandForecasts      DemandForecast[]
   forecastAccuracyLogs ForecastAccuracyLog[]
 
+  // Plan Add-ons
+  planAddOns           PlanAddOn[]
+
   @@index([slug])
   @@index([customDomain])
   @@map("tenants")
@@ -157,10 +167,36 @@ enum BusinessType {
 }
 
 enum PlanType {
-  FREE
-  STARTER
+  TRIAL
+  BASIC
+  FREE      // @deprecated — maps to TRIAL for backward compatibility
+  STARTER   // @deprecated — maps to BASIC for backward compatibility
   BUSINESS
   ENTERPRISE
+}
+
+enum AddOnType {
+  EXTRA_USERS
+  EXTRA_SKUS
+  EXTRA_LOCATIONS
+  EXTRA_STORAGE
+}
+
+model PlanAddOn {
+  id           String    @id @default(cuid())
+  tenantId     String    @map("tenant_id")
+  tenant       Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  type         AddOnType
+  quantity     Int       @default(1) // e.g. 2 extra user packs
+  pricePerUnit Int       // price in INR paise (e.g. 19900 = ₹199)
+  isActive     Boolean   @default(true) @map("is_active")
+  startsAt     DateTime  @default(now()) @map("starts_at")
+  expiresAt    DateTime? @map("expires_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("plan_add_ons")
 }
 
 enum TenantStatus {

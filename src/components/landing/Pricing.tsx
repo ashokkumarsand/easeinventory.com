@@ -1,91 +1,88 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Check, Crown, X } from 'lucide-react';
+import { ADD_ON_PRICES, PlanType, normalizePlanType } from '@/lib/plan-features';
+import { ArrowRight, Check, Crown, Zap, Sparkles, Building2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 
-const PLAN_ORDER = ['FREE', 'STARTER', 'BUSINESS', 'ENTERPRISE'] as const;
-type PlanName = (typeof PLAN_ORDER)[number];
+const PLAN_ORDER: PlanType[] = ['BASIC', 'BUSINESS', 'ENTERPRISE'];
 
 function getPlanIndex(planName: string): number {
-  return PLAN_ORDER.indexOf(planName.toUpperCase() as PlanName);
+  const normalized = normalizePlanType(planName);
+  return PLAN_ORDER.indexOf(normalized);
 }
 
 const plans = [
   {
-    name: 'Free',
-    description: 'For small businesses getting started',
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    period: 'forever',
+    key: 'BASIC' as PlanType,
+    name: 'Basic',
+    icon: <Zap className="w-5 h-5" />,
+    description: 'Core operations for small shops',
+    monthlyPrice: 599,
+    yearlyPrice: 499,
+    period: '/mo',
+    trialCta: true,
     features: [
-      { text: 'Up to 100 products', included: true },
-      { text: '1 user', included: true },
+      { text: '500 products / 5 users', included: true },
       { text: '1 location', included: true },
-      { text: 'Basic inventory tracking', included: true },
-      { text: 'Simple invoicing', included: true },
-      { text: 'Email support', included: true },
-      { text: 'WhatsApp notifications', included: false },
-      { text: 'Custom domain', included: false },
+      { text: '200 invoices/mo', included: true },
+      { text: '2 GB storage', included: true },
+      { text: 'Orders & procurement', included: true },
+      { text: 'Carrier integration', included: true },
+      { text: 'Demand analytics', included: true },
+      { text: 'Smart reorder & dynamic pricing', included: true },
+      { text: 'BOM / kit management', included: true },
+      { text: 'Report builder', included: true },
+    ],
+    cta: 'Start 14-Day Free Trial',
+    popular: false,
+  },
+  {
+    key: 'BUSINESS' as PlanType,
+    name: 'Business',
+    icon: <Sparkles className="w-5 h-5" />,
+    description: 'Multi-location growth features',
+    monthlyPrice: 3999,
+    yearlyPrice: 3332,
+    period: '/mo',
+    trialCta: false,
+    features: [
+      { text: '5,000 products / 15 users', included: true },
+      { text: '5 locations', included: true },
+      { text: 'Unlimited invoices', included: true },
+      { text: '25 GB storage', included: true },
+      { text: 'Everything in Basic', included: true },
+      { text: 'Multi-location inventory', included: true },
+      { text: 'Custom roles & domain', included: true },
+      { text: 'Inventory intelligence', included: true },
+      { text: 'Workflow automation', included: true },
+      { text: 'Add-on credits for extra capacity', included: true },
     ],
     cta: 'Get Started',
-    popular: false,
-  },
-  {
-    name: 'Starter',
-    description: 'For growing businesses',
-    monthlyPrice: 999,
-    yearlyPrice: 799,
-    period: '/mo',
-    features: [
-      { text: 'Up to 500 products', included: true },
-      { text: '5 users', included: true },
-      { text: '2 locations', included: true },
-      { text: 'WhatsApp notifications', included: true },
-      { text: 'Bulk import/export', included: true },
-      { text: 'Basic reports', included: true },
-      { text: 'Chat support', included: true },
-      { text: 'Custom domain', included: false },
-    ],
-    cta: 'Start Growing',
-    popular: false,
-  },
-  {
-    name: 'Business',
-    description: 'For established businesses',
-    monthlyPrice: 2499,
-    yearlyPrice: 1999,
-    period: '/mo',
-    features: [
-      { text: 'Unlimited products', included: true },
-      { text: '20 users', included: true },
-      { text: '5 locations', included: true },
-      { text: 'Custom domain', included: true },
-      { text: 'Advanced analytics', included: true },
-      { text: 'Priority support', included: true },
-      { text: 'API access', included: true },
-      { text: 'White label', included: false },
-    ],
-    cta: 'Scale Up',
     popular: true,
   },
   {
+    key: 'ENTERPRISE' as PlanType,
     name: 'Enterprise',
-    description: 'For large organizations',
-    monthlyPrice: 4999,
-    yearlyPrice: 3999,
-    period: '/mo',
+    icon: <Building2 className="w-5 h-5" />,
+    description: 'Compliance, traceability, white-label',
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    period: '',
+    trialCta: false,
     features: [
-      { text: 'Unlimited users', included: true },
-      { text: 'Unlimited locations', included: true },
-      { text: 'Full API access', included: true },
-      { text: 'White label', included: true },
-      { text: 'SSO integration', included: true },
-      { text: 'Dedicated manager', included: true },
-      { text: 'Custom integrations', included: true },
-      { text: 'SLA guarantee', included: true },
+      { text: 'Unlimited everything', included: true },
+      { text: '100 GB storage', included: true },
+      { text: 'Everything in Business', included: true },
+      { text: 'API access & webhooks', included: true },
+      { text: 'White label & SSO', included: true },
+      { text: 'Multi-echelon optimization', included: true },
+      { text: 'Lot genealogy & traceability', included: true },
+      { text: 'Fleet management', included: true },
+      { text: 'SLA management', included: true },
+      { text: 'Priority 24/7 support', included: true },
     ],
     cta: 'Contact Sales',
     popular: false,
@@ -99,25 +96,21 @@ const Pricing: React.FC = () => {
   const { data: session, status } = useSession();
 
   const user = session?.user as any;
-  const userPlan = user?.plan || 'FREE';
+  const userPlan = normalizePlanType(user?.plan || 'TRIAL');
   const userRole = user?.role;
   const isSuperAdmin = userRole === 'SUPER_ADMIN';
   const isAuthenticated = status === 'authenticated';
   const userPlanIndex = getPlanIndex(userPlan);
 
-  const getPlanCTA = (planName: string) => {
+  const getPlanCTA = (planKey: PlanType, defaultCta: string) => {
     if (isSuperAdmin) {
       return { text: 'Full Access', variant: 'secondary' as const, disabled: true };
     }
-    const planIndex = getPlanIndex(planName);
+    const planIndex = getPlanIndex(planKey);
     if (!isAuthenticated) {
-      return {
-        text: planName === 'Free' ? 'Get Started Free' : `Start with ${planName}`,
-        variant: 'default' as const,
-        disabled: false,
-      };
+      return { text: defaultCta, variant: 'default' as const, disabled: false };
     }
-    if (planIndex === userPlanIndex) {
+    if (planKey === userPlan) {
       return { text: 'Current Plan', variant: 'secondary' as const, disabled: true };
     }
     if (planIndex > userPlanIndex) {
@@ -154,7 +147,7 @@ const Pricing: React.FC = () => {
           <div className="glass-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
             <span className="w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">
-              The Momentum Engine
+              Simple, Transparent Pricing
             </span>
           </div>
           <h2
@@ -164,6 +157,9 @@ const Pricing: React.FC = () => {
             Select Your
             <span className="gradient-text block">Growth Trajectory.</span>
           </h2>
+          <p className="text-muted-foreground mb-8">
+            Start with a 14-day free trial. No credit card required.
+          </p>
 
           {/* Billing Toggle */}
           <div
@@ -207,16 +203,17 @@ const Pricing: React.FC = () => {
           )}
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 lg:px-4">
+        {/* Pricing Cards — 3 columns */}
+        <div className="grid md:grid-cols-3 gap-6 lg:gap-8 lg:px-4 max-w-5xl mx-auto">
           {plans.map((plan, index) => {
-            const ctaInfo = getPlanCTA(plan.name);
+            const ctaInfo = getPlanCTA(plan.key, plan.cta);
             const isCurrentPlan = ctaInfo.text === 'Current Plan';
-            const isUserPlan = getPlanIndex(plan.name) === userPlanIndex && isAuthenticated;
+            const isUserPlan = plan.key === userPlan && isAuthenticated;
+            const isEnterprise = plan.key === 'ENTERPRISE';
 
             return (
               <div
-                key={plan.name}
+                key={plan.key}
                 className={`relative transition-all duration-700 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}
@@ -240,22 +237,40 @@ const Pricing: React.FC = () => {
                 >
                   {/* Plan header */}
                   <div className="mb-6">
-                    <h3 className="text-lg font-bold text-foreground mb-1">{plan.name}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        plan.popular ? 'bg-primary/20 text-primary' : 'bg-foreground/10 text-foreground/60'
+                      }`}>
+                        {plan.icon}
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
+                    </div>
                     <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
 
                   {/* Price */}
                   <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-black text-foreground">
-                        {plan.monthlyPrice === 0
-                          ? '₹0'
-                          : `₹${billingCycle === 'yearly' ? plan.yearlyPrice.toLocaleString('en-IN') : plan.monthlyPrice.toLocaleString('en-IN')}`}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {plan.monthlyPrice === 0 ? '/forever' : plan.period}
-                      </span>
-                    </div>
+                    {isEnterprise ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-black text-foreground">Custom</span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-foreground">
+                            ₹{billingCycle === 'yearly'
+                              ? plan.yearlyPrice.toLocaleString('en-IN')
+                              : plan.monthlyPrice.toLocaleString('en-IN')}
+                          </span>
+                          <span className="text-sm text-muted-foreground">{plan.period}</span>
+                        </div>
+                        {billingCycle === 'yearly' && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            ₹{(plan.yearlyPrice * 12).toLocaleString('en-IN')} billed yearly
+                          </p>
+                        )}
+                      </>
+                    )}
                   </div>
 
                   {/* Features */}
@@ -263,18 +278,10 @@ const Pricing: React.FC = () => {
                     {plan.features.map((feature) => (
                       <li
                         key={feature.text}
-                        className={`flex items-start gap-3 text-sm ${
-                          feature.included ? 'text-foreground/80' : 'text-foreground/30'
-                        }`}
+                        className="flex items-start gap-3 text-sm text-foreground/80"
                       >
-                        {feature.included ? (
-                          <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                        ) : (
-                          <X className="w-4 h-4 text-foreground/20 mt-0.5 shrink-0" />
-                        )}
-                        <span className={feature.included ? '' : 'line-through'}>
-                          {feature.text}
-                        </span>
+                        <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                        <span>{feature.text}</span>
                       </li>
                     ))}
                   </ul>
@@ -300,6 +307,11 @@ const Pricing: React.FC = () => {
                   >
                     {ctaInfo.disabled ? (
                       <span className="flex items-center justify-center gap-2">{ctaInfo.text}</span>
+                    ) : isEnterprise ? (
+                      <Link href="/contact" className="flex items-center justify-center gap-2">
+                        {ctaInfo.text}
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
                     ) : (
                       <Link href="/register" className="flex items-center justify-center gap-2">
                         {ctaInfo.text}
@@ -311,6 +323,61 @@ const Pricing: React.FC = () => {
               </div>
             );
           })}
+        </div>
+
+        {/* Add-on Credits Section */}
+        <div
+          className={`mt-16 max-w-4xl mx-auto transition-all duration-700 delay-300 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="text-center mb-8">
+            <h3 className="text-xl font-bold mb-2">Need More? Add Credits</h3>
+            <p className="text-sm text-muted-foreground">
+              Business plan users can purchase add-on credits for extra capacity
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {ADD_ON_PRICES.map((addOn) => (
+              <div
+                key={addOn.type}
+                className="feature-card p-5 rounded-xl text-center"
+              >
+                <p className="text-sm font-bold mb-1">{addOn.name}</p>
+                <p className="text-2xl font-black text-primary">₹{addOn.pricePerUnit}</p>
+                <p className="text-xs text-muted-foreground mt-1">{addOn.unit}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Enterprise Feature Links */}
+        <div
+          className={`mt-12 text-center transition-all duration-700 delay-400 ${
+            isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <p className="text-sm text-muted-foreground mb-3">
+            Explore all platform capabilities:
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              { name: 'Warehouse & Orders', href: '/features/warehouse' },
+              { name: 'Supply Chain', href: '/features/supply-chain' },
+              { name: 'Intelligence', href: '/features/intelligence' },
+              { name: 'Automation', href: '/features/automation' },
+              { name: 'Multi-Location', href: '/features/multi-location' },
+              { name: 'Enterprise Suite', href: '/features/enterprise' },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-xs font-semibold text-primary hover:underline px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10 hover:border-primary/20 transition-colors"
+              >
+                {link.name} →
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Bottom note */}

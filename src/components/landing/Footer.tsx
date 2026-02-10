@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
               </span>
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/[0.03] border border-foreground/5 text-xs font-medium text-muted-foreground">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                Free Forever Plan
+                14-Day Free Trial
               </span>
             </div>
           </div>

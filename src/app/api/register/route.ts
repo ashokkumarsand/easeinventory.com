@@ -108,12 +108,15 @@ export async function POST(req: Request) {
     const logoInitials = generateInitials(brandName);
 
     // Determine initial plan based on selection
-    const planMap: Record<string, 'FREE' | 'STARTER' | 'BUSINESS' | 'ENTERPRISE'> = {
-      'starter': 'STARTER',
+    const planMap: Record<string, 'TRIAL' | 'BASIC' | 'BUSINESS' | 'ENTERPRISE'> = {
+      'basic': 'BASIC',
+      'starter': 'BASIC', // backward compat
       'business': 'BUSINESS',
       'professional': 'ENTERPRISE',
+      'enterprise': 'ENTERPRISE',
     };
-    const initialPlan = selectedPlan ? (planMap[selectedPlan] || 'FREE') : 'FREE';
+    const initialPlan = selectedPlan ? (planMap[selectedPlan] || 'TRIAL') : 'TRIAL';
+    const trialEndsAt = initialPlan === 'TRIAL' ? new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) : null;
 
     // Atomic transaction to create Tenant and User
     const result = await prisma.$transaction(async (tx) => {
@@ -134,13 +137,18 @@ export async function POST(req: Request) {
           // Tenant can add more in settings later
           allowedCurrencies: [tenantCurrency],
           plan: initialPlan,
+          trialEndsAt: trialEndsAt,
+          effectiveUserLimit: initialPlan === 'BUSINESS' ? 15 : 5,
+          effectiveProductLimit: initialPlan === 'BUSINESS' ? 5000 : 500,
+          effectiveLocationLimit: initialPlan === 'BUSINESS' ? 5 : 1,
+          effectiveStorageLimit: initialPlan === 'BUSINESS' ? 25 : 2,
           settings: {
             logoInitials: logoInitials,
             onboardingStatus: 'PENDING',
             documentsUploaded: false,
-            selectedPlan: selectedPlan || 'starter',
+            selectedPlan: selectedPlan || 'basic',
             billingCycle: billingCycle || 'monthly',
-            paymentPending: selectedPlan && selectedPlan !== 'starter',
+            paymentPending: selectedPlan && selectedPlan !== 'basic',
           }
         }
       });

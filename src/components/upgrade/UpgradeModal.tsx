@@ -19,35 +19,38 @@ import {
   formatPrice,
   getUnlockedFeatures,
 } from '@/lib/plan-features';
-import { Check, Crown, Sparkles, Star, Zap } from 'lucide-react';
+import { Check, Crown, Sparkles, Zap, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 const PLAN_ICONS: Record<PlanType, React.ReactNode> = {
-  FREE: <Star className="w-5 h-5" />,
-  STARTER: <Zap className="w-5 h-5" />,
+  TRIAL: <Zap className="w-5 h-5" />,
+  BASIC: <Zap className="w-5 h-5" />,
   BUSINESS: <Sparkles className="w-5 h-5" />,
   ENTERPRISE: <Crown className="w-5 h-5" />,
 };
 
-// Explicit color classes to prevent Tailwind purging
 const PLAN_COLOR_CLASSES: Record<PlanType, { bg: string; text: string }> = {
-  FREE: { bg: 'bg-zinc-500/10', text: 'text-zinc-500' },
-  STARTER: { bg: 'bg-primary/10', text: 'text-primary' },
+  TRIAL: { bg: 'bg-zinc-500/10', text: 'text-zinc-500' },
+  BASIC: { bg: 'bg-primary/10', text: 'text-primary' },
   BUSINESS: { bg: 'bg-secondary/10', text: 'text-secondary' },
   ENTERPRISE: { bg: 'bg-amber-500/10', text: 'text-amber-500' },
 };
+
+const UPGRADE_PLANS: PlanType[] = ['BASIC', 'BUSINESS', 'ENTERPRISE'];
 
 export function UpgradeModal() {
   const { plan, isUpgradeModalOpen, hideUpgradeModal, currentFeature, recommendedPlan } = usePlan();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
 
   const featureInfo = currentFeature ? PLAN_FEATURES[currentFeature] : null;
-  const plans: PlanType[] = ['FREE', 'STARTER', 'BUSINESS', 'ENTERPRISE'];
 
   const handleUpgrade = (targetPlan: PlanType) => {
-    // In production, this would redirect to Razorpay checkout
-    window.location.href = `/settings/billing?plan=${targetPlan}&cycle=${billingCycle}`;
+    if (targetPlan === 'ENTERPRISE') {
+      window.location.href = '/contact?ref=upgrade';
+    } else {
+      window.location.href = `/settings/billing?plan=${targetPlan}&cycle=${billingCycle}`;
+    }
     hideUpgradeModal();
   };
 
@@ -89,16 +92,19 @@ export function UpgradeModal() {
             </Tabs>
           </div>
 
-          {/* Plan Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {plans.map((planType) => {
+          {/* Plan Cards — 3 columns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {UPGRADE_PLANS.map((planType) => {
               const details = PLAN_DETAILS[planType];
-              const isCurrentPlan = plan === planType;
+              const isCurrentPlan = plan === planType || (plan === 'TRIAL' && planType === 'BASIC');
               const isUpgrade = PLAN_HIERARCHY[planType] > PLAN_HIERARCHY[plan];
               const isRecommended = planType === recommendedPlan;
-              const price =
-                billingCycle === 'yearly' ? details.yearlyPrice / 12 : details.price;
-              const unlockedFeatures = isUpgrade ? getUnlockedFeatures(plan, planType) : [];
+              const isEnterprise = planType === 'ENTERPRISE';
+              const price = isEnterprise
+                ? 0
+                : billingCycle === 'yearly'
+                  ? details.yearlyPrice / 12
+                  : details.price;
 
               return (
                 <div
@@ -136,27 +142,33 @@ export function UpgradeModal() {
                   </div>
 
                   <div className="mb-4">
-                    <span className="text-3xl font-black">{formatPrice(price)}</span>
-                    {price > 0 && <span className="text-foreground/40 text-sm">/month</span>}
-                    {billingCycle === 'yearly' && price > 0 && (
-                      <p className="text-xs text-foreground/40 mt-1">
-                        Billed {formatPrice(details.yearlyPrice)} yearly
-                      </p>
+                    {isEnterprise ? (
+                      <span className="text-2xl font-black">Contact Sales</span>
+                    ) : (
+                      <>
+                        <span className="text-3xl font-black">{formatPrice(price)}</span>
+                        <span className="text-foreground/40 text-sm">/month</span>
+                        {billingCycle === 'yearly' && (
+                          <p className="text-xs text-foreground/40 mt-1">
+                            Billed {formatPrice(details.yearlyPrice)} yearly
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
 
                   <p className="text-sm text-foreground/50 mb-4">{details.description}</p>
 
                   <ul className="space-y-2 mb-6">
-                    {details.features.slice(0, 5).map((feature, idx) => (
+                    {details.features.slice(0, 6).map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-sm">
                         <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" aria-hidden="true" />
                         <span className="text-foreground/70">{feature}</span>
                       </li>
                     ))}
-                    {details.features.length > 5 && (
+                    {details.features.length > 6 && (
                       <li className="text-xs text-foreground/40 pl-6">
-                        +{details.features.length - 5} more features
+                        +{details.features.length - 6} more features
                       </li>
                     )}
                   </ul>
@@ -164,11 +176,13 @@ export function UpgradeModal() {
                   <Button
                     variant={isRecommended ? 'default' : isCurrentPlan ? 'secondary' : isUpgrade ? 'default' : 'outline'}
                     className="w-full font-bold rounded-full"
-                    disabled={isCurrentPlan || !isUpgrade}
+                    disabled={isCurrentPlan || (!isUpgrade && !isEnterprise)}
                     onClick={() => handleUpgrade(planType)}
                   >
                     {isCurrentPlan
-                      ? 'Current Plan'
+                      ? plan === 'TRIAL' ? 'Subscribe to Basic' : 'Current Plan'
+                      : isEnterprise
+                      ? 'Contact Sales'
                       : isUpgrade
                       ? `Upgrade to ${details.name}`
                       : 'Downgrade'}

@@ -3,10 +3,16 @@
 import {
   ArrowRight,
   Bell,
+  Bot,
+  Building2,
   FileText,
   Globe,
+  LineChart,
+  Link2,
   PackageSearch,
+  Truck,
   Users,
+  Warehouse,
   Wrench,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -54,6 +60,48 @@ const features = [
       'Attendance tracking, performance-based payroll, and secure role management.',
     icon: Users,
     href: '/features/staff',
+  },
+  {
+    title: 'Warehouse & Orders',
+    description:
+      'Sales orders, procurement, shipping, returns, wave planning and pick lists in one flow.',
+    icon: Warehouse,
+    href: '/features/warehouse',
+  },
+  {
+    title: 'Supply Chain',
+    description:
+      'Multi-supplier management, BOM/kits, inventory valuation, payment terms and order smoothing.',
+    icon: Link2,
+    href: '/features/supply-chain',
+  },
+  {
+    title: 'Intelligence',
+    description:
+      'Demand forecasting, safety stock, ABC/XYZ analysis, and assortment planning powered by data.',
+    icon: LineChart,
+    href: '/features/intelligence',
+  },
+  {
+    title: 'Automation',
+    description:
+      'Workflow rules, auto-reorder, scheduled reports, webhooks and bulk operations.',
+    icon: Bot,
+    href: '/features/automation',
+  },
+  {
+    title: 'Multi-Location',
+    description:
+      'Inter-location transfers, lateral transshipment, placement optimizer and capacity management.',
+    icon: Truck,
+    href: '/features/multi-location',
+  },
+  {
+    title: 'Enterprise Suite',
+    description:
+      'API access, SSO, white label, multi-echelon optimization, lot genealogy and SLA management.',
+    icon: Building2,
+    href: '/features/enterprise',
   },
 ];
 
@@ -106,12 +154,12 @@ const Features: React.FC = () => {
             <span className="gradient-text block">Absolute Zero chaos.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We combined inventory, repairs, and accounting into one fluid
-            interface designed for the speed of modern Indian retail.
+            Inventory, warehouse ops, supply chain, analytics and automation —
+            all unified in one platform designed for Indian businesses.
           </p>
         </div>
 
-        {/* Features Grid — 3x2 */}
+        {/* Features Grid — 3x4 */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;

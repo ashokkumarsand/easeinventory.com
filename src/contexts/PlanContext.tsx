@@ -6,6 +6,10 @@ import {
   hasFeatureAccess,
   PLAN_FEATURES,
   getRecommendedUpgrade,
+  normalizePlanType,
+  isTrialPlan as checkIsTrialPlan,
+  getTrialDaysRemaining,
+  canPurchaseAddOns,
 } from '@/lib/plan-features';
 import { useSession } from 'next-auth/react';
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
@@ -13,6 +17,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 interface PlanContextValue {
   plan: PlanType;
   planExpiresAt: Date | null;
+  trialEndsAt: Date | null;
   isLoading: boolean;
   hasFeature: (feature: FeatureKey) => boolean;
   requireFeature: (feature: FeatureKey) => boolean;
@@ -25,6 +30,11 @@ interface PlanContextValue {
   isEnterprise: boolean;
   shouldShowUpgrade: boolean;
   userRole: string | null;
+  // New: trial + add-on fields
+  isTrialPlan: boolean;
+  trialDaysRemaining: number | null;
+  isTrialExpired: boolean;
+  canBuyAddOns: boolean;
 }
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -35,8 +45,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const [currentFeature, setCurrentFeature] = useState<FeatureKey | null>(null);
 
   const user = session?.user as any;
-  const plan: PlanType = user?.plan || 'FREE';
+  const rawPlan = user?.plan || 'TRIAL';
+  const plan: PlanType = normalizePlanType(rawPlan);
   const planExpiresAt = user?.planExpiresAt ? new Date(user.planExpiresAt) : null;
+  const trialEndsAt = user?.trialEndsAt ? new Date(user.trialEndsAt) : null;
   const isLoading = status === 'loading';
   const userRole = user?.role || null;
 
@@ -45,6 +57,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const isEnterprise = plan === 'ENTERPRISE';
   // Don't show upgrade UI for super admins or enterprise users
   const shouldShowUpgrade = !isSuperAdmin && !isEnterprise;
+
+  // Trial status
+  const isTrialPlan = checkIsTrialPlan(plan);
+  const trialDaysRemaining = getTrialDaysRemaining(trialEndsAt);
+  const isTrialExpired = isTrialPlan && trialDaysRemaining !== null && trialDaysRemaining <= 0;
+  const canBuyAddOns = canPurchaseAddOns(plan);
 
   const hasFeature = useCallback(
     (feature: FeatureKey): boolean => {
@@ -82,6 +100,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     () => ({
       plan,
       planExpiresAt,
+      trialEndsAt,
       isLoading,
       hasFeature,
       requireFeature,
@@ -94,10 +113,15 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       isEnterprise,
       shouldShowUpgrade,
       userRole,
+      isTrialPlan,
+      trialDaysRemaining,
+      isTrialExpired,
+      canBuyAddOns,
     }),
     [
       plan,
       planExpiresAt,
+      trialEndsAt,
       isLoading,
       hasFeature,
       requireFeature,
@@ -110,6 +134,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       isEnterprise,
       shouldShowUpgrade,
       userRole,
+      isTrialPlan,
+      trialDaysRemaining,
+      isTrialExpired,
+      canBuyAddOns,
     ]
   );
 

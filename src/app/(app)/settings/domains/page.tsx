@@ -45,7 +45,7 @@ export default function DomainSettingsPage() {
             const settings = settingsData.tenant?.settings || {};
             const planFeatures = settings.planFeatures || {};
             setCustomDomainAllowed(planFeatures.customDomainAllowed === true);
-            setCurrentPlan(settingsData.tenant?.plan || 'FREE');
+            setCurrentPlan(settingsData.tenant?.plan || 'TRIAL');
 
             // Fetch domain settings
             const domainRes = await fetch('/api/domains');

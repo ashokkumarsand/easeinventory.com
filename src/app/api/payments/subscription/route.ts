@@ -5,22 +5,31 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Razorpay subscription plans - configured in dashboard
 const RAZORPAY_PLANS = {
-  starter_monthly: process.env.RAZORPAY_PLAN_STARTER_MONTHLY || 'plan_starter_monthly',
-  starter_annual: process.env.RAZORPAY_PLAN_STARTER_ANNUAL || 'plan_starter_annual',
+  basic_monthly: process.env.RAZORPAY_PLAN_BASIC_MONTHLY || 'plan_basic_monthly',
+  basic_annual: process.env.RAZORPAY_PLAN_BASIC_ANNUAL || 'plan_basic_annual',
+  // Legacy keys for backward compat
+  starter_monthly: process.env.RAZORPAY_PLAN_BASIC_MONTHLY || 'plan_basic_monthly',
+  starter_annual: process.env.RAZORPAY_PLAN_BASIC_ANNUAL || 'plan_basic_annual',
   business_monthly: process.env.RAZORPAY_PLAN_BUSINESS_MONTHLY || 'plan_business_monthly',
   business_annual: process.env.RAZORPAY_PLAN_BUSINESS_ANNUAL || 'plan_business_annual',
-  professional_monthly: process.env.RAZORPAY_PLAN_PROFESSIONAL_MONTHLY || 'plan_professional_monthly',
-  professional_annual: process.env.RAZORPAY_PLAN_PROFESSIONAL_ANNUAL || 'plan_professional_annual',
+  professional_monthly: process.env.RAZORPAY_PLAN_ENTERPRISE_MONTHLY || 'plan_enterprise_monthly',
+  professional_annual: process.env.RAZORPAY_PLAN_ENTERPRISE_ANNUAL || 'plan_enterprise_annual',
+  enterprise_monthly: process.env.RAZORPAY_PLAN_ENTERPRISE_MONTHLY || 'plan_enterprise_monthly',
+  enterprise_annual: process.env.RAZORPAY_PLAN_ENTERPRISE_ANNUAL || 'plan_enterprise_annual',
 };
 
 // Plan pricing in paise (for verification)
 const PLAN_PRICING = {
-  starter_monthly: 49900, // ₹499
-  starter_annual: 499900, // ₹4,999
-  business_monthly: 99900, // ₹999
-  business_annual: 999900, // ₹9,999
-  professional_monthly: 199900, // ₹1,999
-  professional_annual: 1999900, // ₹19,999
+  basic_monthly: 59900, // ₹599
+  basic_annual: 599000, // ₹5,990
+  starter_monthly: 59900, // backward compat
+  starter_annual: 599000,
+  business_monthly: 399900, // ₹3,999
+  business_annual: 3999000, // ₹39,990
+  professional_monthly: 0, // Contact sales
+  professional_annual: 0,
+  enterprise_monthly: 0,
+  enterprise_annual: 0,
 };
 
 // POST - Create Razorpay Subscription

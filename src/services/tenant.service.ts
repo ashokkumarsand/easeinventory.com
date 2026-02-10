@@ -45,6 +45,7 @@ export class TenantService {
       throw new Error('This subdomain is already taken');
     }
 
+    const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
     const tenant = await prisma.tenant.create({
       data: {
         name: input.name,
@@ -57,7 +58,12 @@ export class TenantService {
         city: input.city,
         state: input.state,
         pincode: input.pincode,
-        plan: 'FREE',
+        plan: 'TRIAL',
+        trialEndsAt,
+        effectiveUserLimit: 5,
+        effectiveProductLimit: 500,
+        effectiveLocationLimit: 1,
+        effectiveStorageLimit: 2,
       },
     });
 

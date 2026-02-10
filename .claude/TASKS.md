@@ -207,6 +207,33 @@
 
 ---
 
+## Pricing Redesign: 3-Plan Model with Credits (2026-02-10)
+- [x] PR-T1: Prisma schema — PlanType enum (TRIAL/BASIC/BUSINESS/ENTERPRISE + deprecated FREE/STARTER), AddOnType enum, PlanAddOn model, Tenant fields (trialEndsAt, effective limits) | 2026-02-10
+- [x] PR-T2: Rewrite plan-features.ts — 54 features across 3 tiers, add-on prices, backward compat, new utilities | 2026-02-10
+- [x] PR-T3: Create plan-limits.ts — server-side limit checking, recalculateEffectiveLimits | 2026-02-10
+- [x] PR-T4: Backend updates — auth.ts JWT mapping, PlanContext (trial/add-on awareness), usePlanFeatures hooks, tenant service (TRIAL default), register API, payment webhook | 2026-02-10
+- [x] PR-T5: New API routes — /api/plan/add-ons (CRUD), /api/plan/limits (usage vs limits) | 2026-02-10
+- [x] PR-T6: Pricing page — 3-column (Basic ₹599, Business ₹3,999 recommended, Enterprise contact sales), add-on credits section, enterprise feature links | 2026-02-10
+- [x] PR-T7: Billing page — trial countdown banner, limit progress bars, add-on management (Business only), 3-plan comparison | 2026-02-10
+- [x] PR-T8: UpgradeModal — 3-column, trial-aware messaging | 2026-02-10
+- [x] PR-T9: UpgradeBanner — trial countdown, expired trial alert, CTA button with days remaining | 2026-02-10
+- [x] PR-T10: Admin pages — licenses (TRIAL filter), promotions (TRIAL/BASIC targets) | 2026-02-10
+- [x] PR-T11: Payment subscription route — updated plan map and pricing (BASIC/BUSINESS/ENTERPRISE) | 2026-02-10
+- [x] PR-T12: Build verification — npm run build passes, no type errors | 2026-02-10
+
+---
+
+## Landing Page: Fix Broken Links + Showcase All Features (2026-02-10)
+- [x] LP-T1: Expand Features.tsx — 6 → 12 cards (4x3 grid) with 6 new grouped feature cards | 2026-02-10
+- [x] LP-T2: Create 6 new feature pages (warehouse, supply-chain, intelligence, automation, multi-location, enterprise) | 2026-02-10
+- [x] LP-T3: Fix Pricing.tsx — replace 4 broken enterprise links with 6 working feature page links | 2026-02-10
+- [x] LP-T4: Create /careers page | 2026-02-10
+- [x] LP-T5: Update Hero.tsx subtitle to reflect full platform scope | 2026-02-10
+- [x] LP-T6: Fix Footer.tsx badge — "Free Forever Plan" → "14-Day Free Trial" | 2026-02-10
+- [x] LP-T7: Build verification — npm run build passes, zero type errors | 2026-02-10
+
+---
+
 ## Pending / Backlog (Lower Priority)
 - [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract
 - [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist

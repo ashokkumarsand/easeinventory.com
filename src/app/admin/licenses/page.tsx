@@ -99,7 +99,7 @@ export default function LicenseRegistryPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Active Subscriptions</p>
-                            <h3 className="text-2xl font-black">{tenants.filter(t => t.plan !== 'FREE').length}</h3>
+                            <h3 className="text-2xl font-black">{tenants.filter(t => t.plan !== 'FREE' && t.plan !== 'TRIAL').length}</h3>
                         </div>
                     </CardContent>
                 </Card>

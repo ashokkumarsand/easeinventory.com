@@ -7,9 +7,11 @@ import {
   GATED_MENU_ITEMS,
   ANALYTICS_WIDGETS,
   PLAN_HIERARCHY,
+  ADD_ON_PRICES,
   hasFeatureAccess,
   getUnlockedFeatures,
   formatPrice,
+  normalizePlanType,
 } from '@/lib/plan-features';
 
 export { usePlan };
@@ -21,11 +23,16 @@ export function usePlanFeatures() {
   const {
     plan,
     planExpiresAt,
+    trialEndsAt,
     isLoading,
     hasFeature,
     requireFeature,
     showUpgradeModal,
     recommendedPlan,
+    isTrialPlan,
+    trialDaysRemaining,
+    isTrialExpired,
+    canBuyAddOns,
   } = usePlan();
 
   /**
@@ -50,7 +57,8 @@ export function usePlanFeatures() {
   const isAnalyticsWidgetAvailable = (widgetKey: string): boolean => {
     const widget = ANALYTICS_WIDGETS[widgetKey];
     if (!widget) return true;
-    return PLAN_HIERARCHY[plan] >= PLAN_HIERARCHY[widget.minPlan];
+    return hasFeatureAccess(plan, widgetKey as FeatureKey) ||
+      PLAN_HIERARCHY[plan] >= PLAN_HIERARCHY[widget.minPlan];
   };
 
   /**
@@ -102,16 +110,16 @@ export function usePlanFeatures() {
   };
 
   /**
-   * Check if user should see upgrade prompts (FREE or STARTER)
+   * Check if user should see upgrade prompts (TRIAL or BASIC)
    */
   const shouldShowUpgradePrompts = (): boolean => {
-    return plan === 'FREE' || plan === 'STARTER';
+    return plan === 'TRIAL' || plan === 'BASIC';
   };
 
   /**
-   * Check if user is on free plan
+   * Check if user is on free/trial plan
    */
-  const isFreePlan = (): boolean => plan === 'FREE';
+  const isFreePlan = (): boolean => isTrialPlan;
 
   /**
    * Check if user has premium plan (BUSINESS or ENTERPRISE)
@@ -120,10 +128,30 @@ export function usePlanFeatures() {
     return plan === 'BUSINESS' || plan === 'ENTERPRISE';
   };
 
+  /**
+   * Get available add-on options for the current plan
+   */
+  const getAvailableAddOns = () => {
+    if (!canBuyAddOns) return [];
+    return ADD_ON_PRICES.filter((a) => a.availableOn.includes(plan));
+  };
+
+  /**
+   * Get the limit status string for a resource
+   */
+  const getLimitStatus = (current: number, limit: number): 'ok' | 'warning' | 'critical' | 'unlimited' => {
+    if (limit === -1) return 'unlimited';
+    const pct = (current / limit) * 100;
+    if (pct >= 100) return 'critical';
+    if (pct >= 80) return 'warning';
+    return 'ok';
+  };
+
   return {
     // Core plan info
     plan,
     planExpiresAt,
+    trialEndsAt,
     isLoading,
     recommendedPlan,
 
@@ -152,10 +180,19 @@ export function usePlanFeatures() {
     isFreePlan,
     isPremiumPlan,
 
+    // Trial & add-ons
+    isTrialPlan,
+    trialDaysRemaining,
+    isTrialExpired,
+    canBuyAddOns,
+    getAvailableAddOns,
+    getLimitStatus,
+
     // Re-exports
     PLAN_FEATURES,
     PLAN_DETAILS,
     ANALYTICS_WIDGETS,
+    ADD_ON_PRICES,
     formatPrice,
   };
 }

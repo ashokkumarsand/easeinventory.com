@@ -134,7 +134,7 @@ export default function SupplierPayablesPage() {
       setSummary(summaryData);
       setCreditStatus(creditData);
       setSuppliers(
-        (suppliersData.data || suppliersData || []).map((s: any) => ({ id: s.id, name: s.name })),
+        (suppliersData.suppliers || []).map((s: any) => ({ id: s.id, name: s.name })),
       );
     } catch (err) {
       console.error('Failed to fetch payables data:', err);
