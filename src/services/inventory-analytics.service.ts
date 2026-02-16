@@ -294,10 +294,10 @@ export class InventoryAnalyticsService {
 
     const results = products.map(product => {
       const snapshots = snapshotsByProduct.get(product.id) || [];
-      const totalQty = snapshots.reduce((s, snap) => s + snap.totalQuantity, 0);
+      const totalQty = snapshots.reduce((s, snap) => s + (snap.totalQuantity ?? 0), 0);
       const days = Math.max(snapshots.length, 1);
       const avgDaily = totalQty / days;
-      const latestSnap = snapshots[0];
+      const latestSnap = snapshots.length > 0 ? snapshots[0] : null;
 
       return {
         productId: product.id,
@@ -308,9 +308,9 @@ export class InventoryAnalyticsService {
         xyzClass: product.xyzClass,
         avgDailyDemand: Math.round(avgDaily * 100) / 100,
         avgWeeklyDemand: Math.round(avgDaily * 7 * 100) / 100,
-        movingAvg7d: latestSnap ? Number(latestSnap.movingAvg7d || 0) : 0,
-        movingAvg30d: latestSnap ? Number(latestSnap.movingAvg30d || 0) : 0,
-        stdDeviation: latestSnap ? Number(latestSnap.stdDeviation || 0) : 0,
+        movingAvg7d: latestSnap ? Number(latestSnap.movingAvg7d ?? 0) : 0,
+        movingAvg30d: latestSnap ? Number(latestSnap.movingAvg30d ?? 0) : 0,
+        stdDeviation: latestSnap ? Number(latestSnap.stdDeviation ?? 0) : 0,
         totalQuantitySold: totalQty,
       };
     });

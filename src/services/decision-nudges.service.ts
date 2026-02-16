@@ -69,8 +69,8 @@ export class DecisionNudgesService {
    */
   static async getDashboard(tenantId: string): Promise<NudgeDashboard> {
     const [nudges, pipeline] = await Promise.all([
-      this.generateNudges(tenantId),
-      this.getPipeline(tenantId),
+      this.generateNudges(tenantId).catch(() => [] as Nudge[]),
+      this.getPipeline(tenantId).catch(() => [] as PipelineItem[]),
     ]);
 
     // Sort: CRITICAL first, then HIGH, etc.
@@ -101,6 +101,11 @@ export class DecisionNudgesService {
   private static async generateNudges(tenantId: string): Promise<Nudge[]> {
     const nudges: Nudge[] = [];
 
+    // Wrap each sub-query so a single failure doesn't cascade to 500
+    const safe = async (fn: () => Promise<Nudge[]>): Promise<Nudge[]> => {
+      try { return await fn(); } catch { return []; }
+    };
+
     const [
       stockoutRisks,
       overstocked,
@@ -110,13 +115,13 @@ export class DecisionNudgesService {
       bullwhipProducts,
       forecastNudges,
     ] = await Promise.all([
-      this.getStockoutRisks(tenantId),
-      this.getOverstocked(tenantId),
-      this.getDemandShifts(tenantId),
-      this.getExpiringLots(tenantId),
-      this.getLostSalesNudges(tenantId),
-      this.getBullwhipNudges(tenantId),
-      this.getForecastNudges(tenantId),
+      safe(() => this.getStockoutRisks(tenantId)),
+      safe(() => this.getOverstocked(tenantId)),
+      safe(() => this.getDemandShifts(tenantId)),
+      safe(() => this.getExpiringLots(tenantId)),
+      safe(() => this.getLostSalesNudges(tenantId)),
+      safe(() => this.getBullwhipNudges(tenantId)),
+      safe(() => this.getForecastNudges(tenantId)),
     ]);
 
     nudges.push(...stockoutRisks, ...overstocked, ...demandShifts, ...expiringLots, ...lostSales, ...bullwhipProducts, ...forecastNudges);

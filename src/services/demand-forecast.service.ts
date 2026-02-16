@@ -956,8 +956,9 @@ export class DemandForecastService {
 
     // Build product summaries
     const products: ProductForecastSummary[] = forecasts.map(f => {
-      const data = f.forecastData as unknown as ForecastPoint[];
-      const forecastAvg = data.length > 0 ? data.reduce((s, p) => s + p.value, 0) / data.length : 0;
+      const raw = f.forecastData as unknown;
+      const data = Array.isArray(raw) ? (raw as ForecastPoint[]) : [];
+      const forecastAvg = data.length > 0 ? data.reduce((s, p) => s + (p.value ?? 0), 0) / data.length : 0;
       const leadTime = f.product.leadTimeDays ?? 7;
       const daysOfSupply = forecastAvg > 0 ? Math.floor(f.product.quantity / forecastAvg) : 999;
 
