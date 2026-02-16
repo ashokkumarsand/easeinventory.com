@@ -1,27 +1,49 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/ui-audit',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html', { outputFolder: 'tests/ui-audit/report' }], ['list']],
+  reporter: [
+    ['html', { outputFolder: 'test-results/report', open: 'never' }],
+    ['list'],
+  ],
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
   projects: [
+    // ── E2E Auth Setup ──
     {
-      name: 'chromium-light',
+      name: 'e2e-setup',
+      testDir: './tests/e2e',
+      testMatch: /auth\.setup\.ts/,
+    },
+    // ── E2E Tests ──
+    {
+      name: 'e2e-chromium',
+      testDir: './tests/e2e',
+      testIgnore: /auth\.setup\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'test-results/.auth/tenant.json',
+      },
+      dependencies: ['e2e-setup'],
+    },
+    // ── Existing UI Audit Projects (unchanged) ──
+    {
+      name: 'ui-audit-light',
+      testDir: './tests/ui-audit',
       use: {
         ...devices['Desktop Chrome'],
         colorScheme: 'light',
       },
     },
     {
-      name: 'chromium-dark',
+      name: 'ui-audit-dark',
+      testDir: './tests/ui-audit',
       use: {
         ...devices['Desktop Chrome'],
         colorScheme: 'dark',
