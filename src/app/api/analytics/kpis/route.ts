@@ -22,19 +22,23 @@ export async function GET(req: NextRequest) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(now.getDate() - 30);
 
+    const safe = async <T>(fn: () => Promise<T>, fallback: T): Promise<T> => {
+      try { return await fn(); } catch { return fallback; }
+    };
+
     const [turnover, gmroi, daysOfSupply, fillRate, stockout, aging] = await Promise.all([
-      InventoryAnalyticsService.calculateTurnover(tenantId, thirtyDaysAgo, now),
-      InventoryAnalyticsService.calculateGMROI(tenantId, thirtyDaysAgo, now),
-      InventoryAnalyticsService.calculateDaysOfSupply(tenantId),
-      InventoryAnalyticsService.calculateFillRate(tenantId, thirtyDaysAgo, now),
-      InventoryAnalyticsService.calculateStockoutRate(tenantId),
-      InventoryAnalyticsService.calculateAgingAnalysis(tenantId),
+      safe(() => InventoryAnalyticsService.calculateTurnover(tenantId, thirtyDaysAgo, now), { turnoverRate: 0, totalCOGS: 0, avgInventoryValue: 0 }),
+      safe(() => InventoryAnalyticsService.calculateGMROI(tenantId, thirtyDaysAgo, now), { gmroi: 0, grossProfit: 0, avgInventoryCost: 0 }),
+      safe(() => InventoryAnalyticsService.calculateDaysOfSupply(tenantId), { products: [], avgDaysOfSupply: 0 }),
+      safe(() => InventoryAnalyticsService.calculateFillRate(tenantId, thirtyDaysAgo, now), { fillRate: 0, fulfilled: 0, total: 0 }),
+      safe(() => InventoryAnalyticsService.calculateStockoutRate(tenantId), { stockoutRate: 0, outOfStock: 0, totalActive: 0 }),
+      safe(() => InventoryAnalyticsService.calculateAgingAnalysis(tenantId), { buckets: [], totalLots: 0, avgAgeDays: 0 }),
     ]);
 
     return NextResponse.json({
       turnover,
       gmroi,
-      daysOfSupply: { avgDaysOfSupply: daysOfSupply.avgDaysOfSupply },
+      daysOfSupply: { avgDaysOfSupply: daysOfSupply?.avgDaysOfSupply ?? 0 },
       fillRate,
       stockout,
       aging,

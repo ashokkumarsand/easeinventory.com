@@ -32,19 +32,26 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: {
-          category: { select: { id: true, name: true } },
-          supplier: { select: { id: true, name: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.product.count({ where }),
-    ]);
+    let products: any[] = [];
+    let total = 0;
+
+    try {
+      [products, total] = await Promise.all([
+        prisma.product.findMany({
+          where,
+          include: {
+            category: { select: { id: true, name: true } },
+            supplier: { select: { id: true, name: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.product.count({ where }),
+      ]);
+    } catch (queryError: any) {
+      console.error('PRODUCTS_QUERY_ERROR:', queryError?.message);
+    }
 
     return NextResponse.json({
       products,

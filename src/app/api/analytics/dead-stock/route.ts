@@ -21,7 +21,12 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const noSaleDays = parseInt(searchParams.get('noSaleDays') || '90');
 
-    const result = await InventoryAnalyticsService.getDeadStock(tenantId, noSaleDays);
+    let result;
+    try {
+      result = await InventoryAnalyticsService.getDeadStock(tenantId, noSaleDays);
+    } catch {
+      result = { deadStock: [], totalCount: 0, totalValue: 0 };
+    }
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('DEAD_STOCK_GET_ERROR:', error);

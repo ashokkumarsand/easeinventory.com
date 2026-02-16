@@ -234,6 +234,15 @@
 
 ---
 
+## E2E Testing with Playwright + Runtime Fixes (2026-02-16)
+- [x] Phase 1: Fix runtime issues — defensive error handling in DecisionNudgesService, InventoryAnalyticsService, DemandForecastService | commit: 36ca0ffd
+- [x] Phase 2: Expand seed endpoint — user, category, 5 products, 2 suppliers, location | commit: ecbcd27e
+- [x] Phase 3: Playwright infrastructure — config, auth setup, fixtures, page objects, API helper | commit: df02ffae
+- [x] Phase 4: 15 E2E test specs — health, auth, pages, APIs, workflows | commit: 6f21be10
+- [x] Phase 5: Package scripts + gitignore | commit: 2d27157c
+
+---
+
 ## Pending / Backlog (Lower Priority)
 - [ ] Direct Delhivery adapter (was P3-T4) — only if customer has direct Delhivery contract
 - [ ] Cross-aggregator rate comparison (was P3-T5) — only after 2+ carrier adapters exist

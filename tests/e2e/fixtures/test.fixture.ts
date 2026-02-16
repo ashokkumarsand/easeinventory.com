@@ -22,12 +22,25 @@ class ApiHelper {
 
   async healthCheck() {
     const res = await this.get('/api/health');
-    return res.json();
+    return { status: res.status(), body: await res.json() };
   }
 
   async seedData() {
     const res = await this.get('/api/test/seed-demo');
-    return res.json();
+    return { status: res.status(), body: await res.json() };
+  }
+
+  /** Fetch JSON with status */
+  async getJSON<T = unknown>(path: string): Promise<{ status: number; data: T }> {
+    const res = await this.get(path);
+    const data = await res.json().catch(() => null);
+    return { status: res.status(), data: data as T };
+  }
+
+  async postJSON<T = unknown>(path: string, body: unknown): Promise<{ status: number; data: T }> {
+    const res = await this.post(path, body);
+    const data = await res.json().catch(() => null);
+    return { status: res.status(), data: data as T };
   }
 }
 

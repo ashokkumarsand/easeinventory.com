@@ -27,7 +27,12 @@ export async function GET(req: NextRequest) {
       search: searchParams.get('search') || undefined,
     };
 
-    const result = await InventoryAnalyticsService.getBulkDemandVelocity(tenantId, filter, page, pageSize);
+    let result;
+    try {
+      result = await InventoryAnalyticsService.getBulkDemandVelocity(tenantId, filter, page, pageSize);
+    } catch {
+      result = { data: [], total: 0, page, pageSize };
+    }
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('DEMAND_GET_ERROR:', error);

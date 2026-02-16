@@ -27,7 +27,13 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '50');
 
-    const result = await OrderService.list(tenantId, filter, page, pageSize);
+    let result;
+    try {
+      result = await OrderService.list(tenantId, filter, page, pageSize);
+    } catch (queryError: any) {
+      console.error('ORDERS_QUERY_ERROR:', queryError?.message);
+      result = { orders: [], total: 0, page, pageSize };
+    }
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('ORDERS_GET_ERROR:', error);

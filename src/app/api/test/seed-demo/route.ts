@@ -14,7 +14,7 @@ export async function GET() {
   }
 
   try {
-    // 1. Tenant
+    // 1. Tenant — use BUSINESS plan to avoid PlanType enum migration issues
     const tenant = await prisma.tenant.upsert({
       where: { slug: 'e2e-test' },
       update: {},
@@ -26,6 +26,7 @@ export async function GET() {
         city: 'Pune',
         primaryColor: '#0070f3',
         gstNumber: '27AABCE1234F1ZP',
+        plan: 'BUSINESS',
       },
     });
 

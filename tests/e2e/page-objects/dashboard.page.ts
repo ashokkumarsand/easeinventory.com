@@ -5,14 +5,12 @@ export class DashboardPage {
   readonly sidebar: Locator;
   readonly welcomeHeading: Locator;
   readonly searchBar: Locator;
-  readonly userMenu: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.sidebar = page.locator('[data-sidebar="true"]');
+    this.sidebar = page.locator('aside, [role="complementary"]').first();
     this.welcomeHeading = page.getByRole('heading', { name: /welcome/i });
-    this.searchBar = page.getByPlaceholder(/search/i);
-    this.userMenu = page.locator('button:has(.rounded-full)').last();
+    this.searchBar = page.getByRole('button', { name: /search/i });
   }
 
   async goto() {
@@ -20,10 +18,11 @@ export class DashboardPage {
   }
 
   async navigateTo(menuText: string) {
+    // Menu items have shortcut text appended (e.g., "Inventory G → I")
     await this.sidebar.getByRole('link', { name: new RegExp(menuText, 'i') }).first().click();
   }
 
   getMenuGroup(groupName: string) {
-    return this.sidebar.getByText(groupName, { exact: false });
+    return this.sidebar.getByRole('heading', { name: groupName });
   }
 }

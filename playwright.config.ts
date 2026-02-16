@@ -5,6 +5,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
+  outputDir: 'test-results/artifacts',
   reporter: [
     ['html', { outputFolder: 'test-results/report', open: 'never' }],
     ['list'],

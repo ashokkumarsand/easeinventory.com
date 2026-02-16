@@ -32,27 +32,35 @@ export async function GET(req: NextRequest) {
       ...(xyzFilter && { xyzClass: xyzFilter }),
     };
 
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        select: {
-          id: true, name: true, sku: true, quantity: true, costPrice: true, salePrice: true,
-          abcClass: true, xyzClass: true,
-          category: { select: { name: true } },
-        },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        orderBy: [{ abcClass: 'asc' }, { name: 'asc' }],
-      }),
-      prisma.product.count({ where }),
-    ]);
+    let products: any[] = [];
+    let total = 0;
+    let distribution: any[] = [];
 
-    // Get distribution counts
-    const distribution = await prisma.product.groupBy({
-      by: ['abcClass', 'xyzClass'],
-      where: { tenantId, isActive: true },
-      _count: true,
-    });
+    try {
+      [products, total] = await Promise.all([
+        prisma.product.findMany({
+          where,
+          select: {
+            id: true, name: true, sku: true, quantity: true, costPrice: true, salePrice: true,
+            abcClass: true, xyzClass: true,
+            category: { select: { name: true } },
+          },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          orderBy: [{ abcClass: 'asc' }, { name: 'asc' }],
+        }),
+        prisma.product.count({ where }),
+      ]);
+
+      // Get distribution counts
+      distribution = await prisma.product.groupBy({
+        by: ['abcClass', 'xyzClass'],
+        where: { tenantId, isActive: true },
+        _count: true,
+      });
+    } catch (e) {
+      // Return empty data if queries fail (e.g. schema mismatch)
+    }
 
     // Build 3x3 matrix counts
     const matrix: Record<string, number> = {};

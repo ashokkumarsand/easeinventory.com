@@ -1,38 +1,23 @@
 import { test, expect } from '../fixtures/test.fixture';
 
 test.describe('Analytics API', () => {
-  test('GET /api/analytics/kpis returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/kpis');
-    expect(res.status()).not.toBe(500);
-  });
+  // These tests verify endpoints don't return 500 (server error).
+  // Admin on 'system' tenant may get 404/401 — that's fine; just not 500.
 
-  test('GET /api/analytics/abc-xyz returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/abc-xyz');
-    expect(res.status()).not.toBe(500);
-  });
+  const endpoints = [
+    '/api/analytics/kpis',
+    '/api/analytics/abc-xyz',
+    '/api/analytics/demand',
+    '/api/analytics/nudges',
+    '/api/analytics/forecast',
+    '/api/analytics/valuation',
+    '/api/analytics/dead-stock',
+  ];
 
-  test('GET /api/analytics/demand returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/demand');
-    expect(res.status()).not.toBe(500);
-  });
-
-  test('GET /api/analytics/nudges returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/nudges');
-    expect(res.status()).not.toBe(500);
-  });
-
-  test('GET /api/analytics/forecast returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/forecast');
-    expect(res.status()).not.toBe(500);
-  });
-
-  test('GET /api/analytics/valuation returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/valuation');
-    expect(res.status()).not.toBe(500);
-  });
-
-  test('GET /api/analytics/dead-stock returns without 500', async ({ apiHelper }) => {
-    const res = await apiHelper.get('/api/analytics/dead-stock');
-    expect(res.status()).not.toBe(500);
-  });
+  for (const endpoint of endpoints) {
+    test(`GET ${endpoint} does not return 500`, async ({ page }) => {
+      const res = await page.request.get(endpoint);
+      expect(res.status()).not.toBe(500);
+    });
+  }
 });

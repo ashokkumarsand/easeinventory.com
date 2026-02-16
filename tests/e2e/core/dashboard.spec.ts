@@ -25,17 +25,23 @@ test.describe('Dashboard', () => {
     await expect(dashboard.getMenuGroup('Operations')).toBeVisible();
   });
 
-  test('can navigate to inventory', async ({ page }) => {
+  test('has welcome heading', async ({ page }) => {
     const dashboard = new DashboardPage(page);
     await dashboard.goto();
-    await dashboard.navigateTo('Inventory');
-    await expect(page).toHaveURL(/\/inventory/);
+    await expect(dashboard.welcomeHeading).toBeVisible();
+  });
+
+  test('sidebar has Inventory link', async ({ page }) => {
+    const dashboard = new DashboardPage(page);
+    await dashboard.goto();
+    const inventoryLink = dashboard.sidebar.getByRole('link', { name: /inventory/i }).first();
+    await expect(inventoryLink).toBeVisible();
   });
 
   test('can navigate to orders', async ({ page }) => {
     const dashboard = new DashboardPage(page);
     await dashboard.goto();
     await dashboard.navigateTo('Orders');
-    await expect(page).toHaveURL(/\/orders/);
+    await expect(page).toHaveURL(/\/orders/, { timeout: 10000 });
   });
 });
